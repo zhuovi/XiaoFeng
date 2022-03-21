@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>XiaoFeng</id>
+    <version>1.8.0.113</version>
+    <authors>Jacky</authors>
+    <description>基础类库,数据库中间件,网络通讯中间件</description>
+    <releaseNotes>www.fayelf.com</releaseNotes>
+    <copyright>CopyRight @ 2008-2023 魔法精灵软件(www.fayelf.com) QQ:7092734 Email:jacky@fayelf.com</copyright>
+    <tags>FAYELF</tags>
+    <dependencies>
+      <group targetFramework=".NETFramework4.8">
+        <dependency id="Microsoft.CSharp" version="4.7.0" exclude="Build,Analyzers" />
+        <dependency id="System.Management" version="5.0.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework=".NETCoreApp3.1">
+        <dependency id="Microsoft.AspNetCore.Http" version="2.2.2" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Caching.Abstractions" version="3.1.20" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Caching.Memory" version="3.1.20" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.FileProviders.Abstractions" version="3.1.20" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.FileProviders.Physical" version="3.1.20" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Primitives" version="5.0.1" exclude="Build,Analyzers" />
+        <dependency id="System.Drawing.Common" version="5.0.2" exclude="Build,Analyzers" />
+        <dependency id="System.Management" version="5.0.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework="net5.0">
+        <dependency id="Microsoft.AspNetCore.Http" version="2.2.2" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Caching.Abstractions" version="5.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Caching.Memory" version="5.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.FileProviders.Abstractions" version="5.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.FileProviders.Physical" version="5.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Primitives" version="5.0.1" exclude="Build,Analyzers" />
+        <dependency id="System.Drawing.Common" version="5.0.2" exclude="Build,Analyzers" />
+        <dependency id="System.Management" version="5.0.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework=".NETStandard2.1">
+        <dependency id="Microsoft.AspNetCore.Http" version="2.2.2" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.CSharp" version="4.7.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Caching.Abstractions" version="5.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Caching.Memory" version="5.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.FileProviders.Abstractions" version="5.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.FileProviders.Physical" version="5.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Primitives" version="5.0.1" exclude="Build,Analyzers" />
+        <dependency id="System.Drawing.Common" version="5.0.2" exclude="Build,Analyzers" />
+        <dependency id="System.Management" version="5.0.0" exclude="Build,Analyzers" />
+        <dependency id="System.Text.Encoding.CodePages" version="5.0.0" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.Configuration" targetFramework=".NETFramework4.8" />
+      <frameworkAssembly assemblyName="System.IO.Compression" targetFramework=".NETFramework4.8" />
+      <frameworkAssembly assemblyName="System.Net.Http" targetFramework=".NETFramework4.8" />
+      <frameworkAssembly assemblyName="System.Runtime.Caching" targetFramework=".NETFramework4.8" />
+      <frameworkAssembly assemblyName="System.Transactions" targetFramework=".NETFramework4.8" />
+      <frameworkAssembly assemblyName="System.Web" targetFramework=".NETFramework4.8" />
+    </frameworkAssemblies>
+  </metadata>
+  <files>
+    <file src="E:\Work\XiaoFeng\bin\Debug\net48\XiaoFeng.dll" target="lib\net48\XiaoFeng.dll" />
+    <file src="E:\Work\XiaoFeng\bin\Debug\net48\XiaoFeng.xml" target="lib\net48\XiaoFeng.xml" />
+    <file src="E:\Work\XiaoFeng\bin\Debug\net5.0\XiaoFeng.dll" target="lib\net5.0\XiaoFeng.dll" />
+    <file src="E:\Work\XiaoFeng\bin\Debug\net5.0\XiaoFeng.xml" target="lib\net5.0\XiaoFeng.xml" />
+    <file src="E:\Work\XiaoFeng\bin\Debug\netcoreapp3.1\XiaoFeng.dll" target="lib\netcoreapp3.1\XiaoFeng.dll" />
+    <file src="E:\Work\XiaoFeng\bin\Debug\netcoreapp3.1\XiaoFeng.xml" target="lib\netcoreapp3.1\XiaoFeng.xml" />
+    <file src="E:\Work\XiaoFeng\bin\Debug\netstandard2.1\XiaoFeng.dll" target="lib\netstandard2.1\XiaoFeng.dll" />
+    <file src="E:\Work\XiaoFeng\bin\Debug\netstandard2.1\XiaoFeng.xml" target="lib\netstandard2.1\XiaoFeng.xml" />
+  </files>
+</package>

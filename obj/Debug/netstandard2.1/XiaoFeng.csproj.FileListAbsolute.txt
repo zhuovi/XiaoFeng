@@ -1,0 +1,11 @@
+E:\Work\XiaoFeng\bin\Debug\netstandard2.1\XiaoFeng.deps.json
+E:\Work\XiaoFeng\bin\Debug\netstandard2.1\XiaoFeng.dll
+E:\Work\XiaoFeng\bin\Debug\netstandard2.1\XiaoFeng.pdb
+E:\Work\XiaoFeng\bin\Debug\netstandard2.1\XiaoFeng.xml
+E:\Work\XiaoFeng\obj\Debug\netstandard2.1\XiaoFeng.csproj.AssemblyReference.cache
+E:\Work\XiaoFeng\obj\Debug\netstandard2.1\XiaoFeng.GeneratedMSBuildEditorConfig.editorconfig
+E:\Work\XiaoFeng\obj\Debug\netstandard2.1\XiaoFeng.AssemblyInfoInputs.cache
+E:\Work\XiaoFeng\obj\Debug\netstandard2.1\XiaoFeng.AssemblyInfo.cs
+E:\Work\XiaoFeng\obj\Debug\netstandard2.1\XiaoFeng.csproj.CoreCompileInputs.cache
+E:\Work\XiaoFeng\obj\Debug\netstandard2.1\XiaoFeng.dll
+E:\Work\XiaoFeng\obj\Debug\netstandard2.1\XiaoFeng.pdb

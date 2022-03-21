@@ -1,0 +1,193 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Reflection;
+using XiaoFeng.Model.Core;
+using System.ComponentModel;
+using System.Collections;
+
+namespace XiaoFeng
+{
+    /*
+    ===================================================================
+       Author : jacky
+       Email : jacky@zhuovi.com
+       QQ : 7092734
+       Site : www.zhuovi.com
+    ===================================================================
+    */
+    /// <summary>
+    /// 自定义属性扩展
+    /// Verstion : 1.1.0
+    /// Author : jacky
+    /// Email : jacky@zhuovi.com
+    /// QQ : 7092734
+    /// Site : www.zhuovi.com
+    /// Create Time : 2017/11/15 09:41:58
+    /// Update Time : 2018/04/09 16:01:29
+    /// </summary>
+    public static partial class PrototypeHelper
+    {
+        #region 方法
+        /// <summary>
+        /// 获取自定义属性
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="t">对象</param>
+        /// <returns></returns>
+        public static TableAttribute GetTableAttribute<T>(this T t)
+        {
+            Type type = t is Type ? t as Type : typeof(T);
+            return type.GetCustomAttribute<TableAttribute>();
+        }
+        /// <summary>
+        /// 获取自定义属性
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="t">对象</param>
+        /// <returns></returns>
+        public static ColumnAttribute GetColumnAttribute<T>(this T t) where T : MemberInfo
+        {
+            return (t as MemberInfo).GetCustomAttribute<ColumnAttribute>();
+        }
+        /// <summary>
+        /// 获取自定义属性值
+        /// </summary>
+        /// <typeparam name="T">自定义属性类型</typeparam>
+        /// <param name="t">类型</param>
+        /// <param name="func">Lambda表达式</param>
+        /// <param name="name">类型方法或属性</param>
+        /// <returns></returns>
+        public static object GetCustomAttributeValue<T>(this Type t, Func<T, object> func, string name = "") where T : Attribute
+        {
+            object val = new object();
+            T tc = default(T);
+            if (t == null) return tc;
+            if (name.IsNullOrEmpty())
+            {
+                tc = t.GetCustomAttribute<T>();
+                if (tc == null) return val;
+            }
+            else
+            {
+                MemberInfo mInfo = t.GetMember(name).FirstOrDefault();
+                if (mInfo == null) return null;
+                tc = mInfo.GetCustomAttributes(typeof(T), false).FirstOrDefault() as T;
+            }
+            val = tc == null ? null : func(tc);
+            return val;
+        }
+        /// <summary>
+        /// 获取自定义属性
+        /// </summary>
+        /// <typeparam name="T">自定义属性类型</typeparam>
+        /// <param name="t">自定义属性类型</param>
+        /// <returns></returns>
+        public static T GetCustomAttribute<T>(this Type t) where T : Attribute
+        {
+            T tc = default(T);
+            if (t == null) return tc;
+            object _t = t.GetCustomAttributes(typeof(T), true).FirstOrDefault();
+            return (_t ?? tc) as T;
+        }
+        /// <summary>
+        /// 获取自定义属性值
+        /// </summary>
+        /// <typeparam name="T">自定义属性类型</typeparam>
+        /// <param name="m">属性对象</param>
+        /// <param name="func">Lambda表达式</param>
+        /// <returns></returns>
+        public static object GetCustomAttributeValue<T>(this MemberInfo m, Func<T, object> func) where T : Attribute
+        {
+            if (func == null) return null;
+            T val = m.GetCustomAttribute<T>();
+            return val == default(T) ? default(T) : func(val);
+        }
+        /// <summary>
+        /// 获取自定义属性
+        /// </summary>
+        /// <typeparam name="T">自定义属性类型</typeparam>
+        /// <param name="m">属性对象</param>
+        /// <returns></returns>
+        public static T GetCustomAttribute<T>(this MemberInfo m) where T : Attribute
+        {
+            T tc = default(T);
+            if (m == null) return tc;
+            object _t = m.GetCustomAttributes(typeof(T), true).FirstOrDefault();
+            return (_t ?? tc) as T;
+        }
+        /// <summary>
+        /// 获取指定属性或事件的描述
+        /// </summary>
+        /// <param name="t">类型</param>
+        /// <returns></returns>
+        public static string GetDescription(this Type t)
+        {
+            return t.GetCustomAttributeValue<DescriptionAttribute>(a => a.Description).ToString();
+        }
+        /// <summary>
+        /// 获取枚举Description
+        /// </summary>
+        /// <param name="_">枚举</param>
+        /// <returns></returns>
+        public static string GetDescription(this Enum _)
+        {
+            return _.GetType().GetMember(_.ToString())[0].GetDescription();
+        }
+        /// <summary>
+        /// 获取指定属性或事件的描述
+        /// </summary>
+        /// <param name="m">类型</param>
+        /// <returns></returns>
+        public static string GetDescription(this MemberInfo m)
+        {
+            object val = m.GetCustomAttributeValue<DescriptionAttribute>(a => a.Description);
+            return val == null ? "" : val.ToString();
+        }
+        /// <summary>
+        /// 获取指定属性或事件的描述
+        /// </summary>
+        /// <param name="t">类型</param>
+        /// <returns></returns>
+        public static string GetDisplayName(this Type t)
+        {
+            return t.GetCustomAttributeValue<DisplayNameAttribute>(a => a.DisplayName).ToString();
+        }
+        /// <summary>
+        /// 获取指定属性或事件的描述
+        /// </summary>
+        /// <param name="m">类型</param>
+        /// <returns></returns>
+        public static string GetDisplayName(this MemberInfo m)
+        {
+            return m.GetCustomAttributeValue<DisplayNameAttribute>(a => a.DisplayName).ToString();
+        }
+        /// <summary>
+        /// 获取元素类型
+        /// </summary>
+        /// <param name="type">类型</param>
+        /// <returns></returns>
+        public static Type GetElementXType(this Type type)
+        {
+            if (type.HasElementType) return type.GetElementType();
+            if (type.As<IEnumerable>())
+            {
+                // 如果实现了IEnumerable<>接口，那么取泛型参数
+                foreach (var item in type.GetInterfaces())
+                {
+                    if (item.IsGenericType && item.GetGenericTypeDefinition() == typeof(IEnumerable<>)) return item.GetGenericArguments()[0];
+                }
+            }
+            return null;
+        }
+        /// <summary>
+        /// 是否包括字段忽略属性
+        /// </summary>
+        /// <param name="member">成员元数据</param>
+        /// <returns></returns>
+        public static Boolean HasFieldIgnore(this MemberInfo member) => member.GetCustomAttribute<FieldIgnoreAttribute>() != null;
+        #endregion
+    }
+}
