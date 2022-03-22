@@ -492,7 +492,16 @@ namespace XiaoFeng.IO
             
             path = path.TrimEnd(new char[] { '\\', '/' });
             if (!path.IsBasePath())
-                path = OS.Platform.CurrentDirectory + DirectorySeparatorChar + path;
+            {
+                DirectoryInfo directoryInfo = OS.Platform.CurrentDirectory.ToDirectoryInfo();
+                path = path.RemovePattern(@"^\.\/");
+                while (path.IsMatch(@"^\.\.\/"))
+                {
+                    path = path.RemovePattern(@"^\.\.\/");
+                    directoryInfo = directoryInfo.Parent;
+                }
+                path = directoryInfo.FullName + DirectorySeparatorChar + path;
+            }
             return path.ReplacePattern(@"[\/\\]+", DirectorySeparatorChar.ToString());
             /*
             var os = OS.Platform.GetOSPlatform();
