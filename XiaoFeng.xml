@@ -1541,7 +1541,7 @@
             <param name="_">字符串</param>
             <returns>字符串</returns>
         </member>
-        <member name="M:XiaoFeng.PrototypeHelper.GetUri(System.Web.HttpRequest)">
+        <member name="M:XiaoFeng.PrototypeHelper.GetUri(Microsoft.AspNetCore.Http.HttpRequest)">
             <summary>
             获取当前Uri
             </summary>
@@ -2287,6 +2287,23 @@
             JSON串转对象
             </summary>
             <param name="_">JSON串</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.PrototypeHelper.EntityToJson(System.Object,XiaoFeng.Json.JsonSerializerSetting)">
+            <summary>
+            对象转JSON串
+            </summary>
+            <param name="o">对象</param>
+            <param name="formatting">Json格式设置</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.PrototypeHelper.JsonToEntity``1(System.String,XiaoFeng.Json.JsonSerializerSetting)">
+            <summary>
+            JSON串转对象
+            </summary>
+            <typeparam name="T">对象类型</typeparam>
+            <param name="_">JSON串</param>
+            <param name="formatting">配置</param>
             <returns></returns>
         </member>
         <member name="M:XiaoFeng.PrototypeHelper.IsSystemAssembly(System.Reflection.Assembly)">
@@ -4127,6 +4144,11 @@
             是否为空
             </summary>
         </member>
+        <member name="P:XiaoFeng.Cache.FileProvider.Provider">
+            <summary>
+            监控目录
+            </summary>
+        </member>
         <member name="P:XiaoFeng.Cache.FileProvider.ChangeToken">
             <summary>
             文件列表
@@ -4180,6 +4202,11 @@
         <member name="T:XiaoFeng.Cache.MemoryCacheHelper">
             <summary>
             内存缓存
+            </summary>
+        </member>
+        <member name="F:XiaoFeng.Cache.MemoryCacheHelper.Cache">
+            <summary>
+            缓存操作
             </summary>
         </member>
         <member name="M:XiaoFeng.Cache.MemoryCacheHelper.Contains(System.String)">
@@ -6029,98 +6056,6 @@
             <param name="indented">是否格式化</param>
             <param name="comment">是否带注释说明</param>
         </member>
-        <member name="T:XiaoFeng.Config.ConfigurationHelper">
-            <summary>
-            ConfigurationHelper 类说明
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Config.ConfigurationHelper.#ctor">
-            <summary>
-            无参构造器
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Config.ConfigurationHelper.#ctor(System.String)">
-            <summary>
-            设置配置文件
-            </summary>
-            <param name="ConfigPath">配置文件</param>
-        </member>
-        <member name="P:XiaoFeng.Config.ConfigurationHelper.Path">
-            <summary>
-            路径
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Config.ConfigurationHelper.config">
-            <summary>
-            操作对象
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Config.ConfigurationHelper.Get(System.String)">
-            <summary>
-            获取配置结点内容
-            </summary>
-            <param name="key">配置结点名称</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Config.ConfigurationHelper.GetConfig(System.String)">
-            <summary>
-            获取配置结点内容
-            </summary>
-            <param name="key">配置结点名称</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Config.ConfigurationHelper.GetConnectionString(System.String)">
-            <summary>
-            获取配置结点内容
-            </summary>
-            <param name="key">配置结点名称</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Config.ConfigurationHelper.GetConnectionString(System.Int32)">
-            <summary>
-            获取配置结点内容
-            </summary>
-            <param name="index">配置结点位置</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Config.ConfigurationHelper.SetAppSetting(System.String,System.String)">
-            <summary>
-            更新配置结点内容
-            </summary>
-            <param name="key">Key</param>
-            <param name="value">Value</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Config.ConfigurationHelper.RemoveAppSetting(System.String)">
-            <summary>
-            移除配置结点内容
-            </summary>
-            <param name="key">Key</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Config.ConfigurationHelper.SetConnectionString(System.String,System.String,System.String)">
-            <summary>
-            更新配置结点内容
-            </summary>
-            <param name="key">Key</param>
-            <param name="provider">Provider Name</param>
-            <param name="value">Value</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Config.ConfigurationHelper.RemoveConnectionString(System.String)">
-            <summary>
-            移除配置结点内容
-            </summary>
-            <param name="key">Key</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Config.ConfigurationHelper.GetSection(System.String)">
-            <summary>
-            获取指定配置节点
-            </summary>
-            <param name="name">节点名称</param>
-            <returns></returns>
-        </member>
         <member name="T:XiaoFeng.Config.ContentTypeMapping">
             <summary>
             文件MIME
@@ -7791,11 +7726,12 @@
             无参构造器
             </summary>
         </member>
-        <member name="M:XiaoFeng.Data.DataHelper.#ctor(System.String)">
+        <member name="M:XiaoFeng.Data.DataHelper.#ctor(XiaoFeng.Data.DbProviderType,System.String)">
             <summary>
             配置数据库
             </summary>
-            <param name="connectionString">数据库连接字符串</param>
+            <param name="provider">数据库驱动</param>
+            <param name="connectionString">数据库连接串</param>
         </member>
         <member name="M:XiaoFeng.Data.DataHelper.#ctor(XiaoFeng.Data.ConnectionConfig)">
             <summary>
@@ -16627,6 +16563,24 @@
             <param name="likeStr">子串</param>
             <returns></returns>
         </member>
+        <member name="M:XiaoFeng.Data.SQL.PrototypeHelper.DateAddSQL(System.DateTime,System.Int64,System.String)">
+            <summary>
+            扩展SQL DateAdd 语法
+            </summary>
+            <param name="date">日期</param>
+            <param name="val">值</param>
+            <param name="format">格式 年yy,yyyy 季度qq,q 月mm,m 年中的日dy,y 日dd,d 周wk,ww 星期dw,w 小时hh 分钟mi,n 秒ss,s 毫秒ms 微秒mcs 纳秒ns</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.PrototypeHelper.DateAddSQL(System.Nullable{System.DateTime},System.Int64,System.String)">
+            <summary>
+            扩展SQL DateAdd 语法
+            </summary>
+            <param name="date">日期</param>
+            <param name="val">值</param>
+            <param name="format">格式 年yy,yyyy 季度qq,q 月mm,m 年中的日dy,y 日dd,d 周wk,ww 星期dw,w 小时hh 分钟mi,n 秒ss,s 毫秒ms 微秒mcs 纳秒ns</param>
+            <returns></returns>
+        </member>
         <member name="M:XiaoFeng.Data.SQL.PrototypeHelper.DateDiffSQL(System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.String)">
             <summary>
             扩展SQL DateDiff 语法
@@ -20978,7 +20932,7 @@
             日志队列
             </summary>
         </member>
-        <member name="M:XiaoFeng.IIS.LoggingModel.WriteLog(System.Web.HttpApplication,System.DateTime,System.DateTime,System.Diagnostics.Process,System.TimeSpan,System.Int64,System.Int64)">
+        <member name="M:XiaoFeng.IIS.LoggingModel.WriteLog(Microsoft.AspNetCore.Http.HttpContext,System.DateTime,System.DateTime,System.Diagnostics.Process,System.TimeSpan,System.Int64,System.Int64)">
             <summary>
             写日志
             </summary>
@@ -21857,76 +21811,6 @@
             <param name="param">路径串</param>
             <returns>路径</returns>
         </member>
-        <member name="T:XiaoFeng.INIHelper">
-            <summary>
-            INI 操作类
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.INIHelper.#ctor">
-            <summary>
-            无参构造器
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.INIHelper.#ctor(System.String)">
-            <summary>
-            无参构造器
-            </summary>
-            <param name="path">文件路径 绝对路径</param>
-        </member>
-        <member name="F:XiaoFeng.INIHelper._HPath">
-            <summary>
-            文件路径
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.INIHelper.HPath">
-            <summary>
-            文件路径
-            </summary>
-        </member>
-        <member name="F:XiaoFeng.INIHelper._FPath">
-            <summary>
-            文件路径 绝对路径
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.INIHelper.FPath">
-            <summary>
-            文件路径 绝对路径
-            </summary>
-        </member>
-        <member name="F:XiaoFeng.INIHelper._ErrorMessage">
-            <summary>
-            错误信息
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.INIHelper.ErrorMessage">
-            <summary>
-            错误信息
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.INIHelper.WriteValue(System.String,System.String,System.String)">
-            <summary>
-            写INI文件
-            </summary>
-            <param name="section">段落，格式[]</param>
-            <param name="key">键</param>
-            <param name="iValue">值</param>
-        </member>
-        <member name="M:XiaoFeng.INIHelper.ReadValue(System.String,System.String)">
-            <summary>
-            读取INI文件
-            </summary>
-            <param name="section">段落，格式[]</param>
-            <param name="key">键</param>
-            <returns>返回的键值</returns>
-        </member>
-        <member name="M:XiaoFeng.INIHelper.ReadValues(System.String,System.String)">
-            <summary>
-            读取INI文件
-            </summary>
-            <param name="section">段落，格式[]</param>
-            <param name="key">键</param>
-            <returns>返回byte类型的section组或键值组</returns>
-        </member>
         <member name="T:XiaoFeng.Json.DescriptionConverter">
             <summary>
             属性值
@@ -21984,6 +21868,104 @@
             <summary>
             属性配置
             </summary>
+        </member>
+        <member name="T:XiaoFeng.Json.JsonConverterDateTime">
+            <summary>
+            日期转换器
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Json.JsonConverterDateTime.#ctor">
+            <summary>
+            构造器
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Json.JsonConverterDateTime.#ctor(System.String)">
+            <summary>
+            设置格式
+            </summary>
+            <param name="format">格式</param>
+        </member>
+        <member name="P:XiaoFeng.Json.JsonConverterDateTime.Format">
+            <summary>
+            格式
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Json.JsonConverterDateTime.Read(System.Text.Json.Utf8JsonReader@,System.Type,System.Text.Json.JsonSerializerOptions)">
+            <summary>
+            读JSON
+            </summary>
+            <param name="reader">JsonReader</param>
+            <param name="typeToConvert">类型</param>
+            <param name="options">配置</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Json.JsonConverterDateTime.Write(System.Text.Json.Utf8JsonWriter,System.DateTime,System.Text.Json.JsonSerializerOptions)">
+            <summary>
+            写JSON
+            </summary>
+            <param name="writer">JsonWriter</param>
+            <param name="value">值</param>
+            <param name="options">配置</param>
+        </member>
+        <member name="T:XiaoFeng.Json.JsonConverterGuid">
+            <summary>
+            Guid转换器
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Json.JsonConverterGuid.#ctor">
+            <summary>
+            构造器
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Json.JsonConverterGuid.#ctor(System.String)">
+            <summary>
+            设置格式
+            </summary>
+            <param name="format">格式</param>
+        </member>
+        <member name="P:XiaoFeng.Json.JsonConverterGuid.Format">
+            <summary>
+            格式
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Json.JsonConverterGuid.Read(System.Text.Json.Utf8JsonReader@,System.Type,System.Text.Json.JsonSerializerOptions)">
+            <summary>
+            读JSON
+            </summary>
+            <param name="reader">JsonReader</param>
+            <param name="typeToConvert">类型</param>
+            <param name="options">配置</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Json.JsonConverterGuid.Write(System.Text.Json.Utf8JsonWriter,System.Guid,System.Text.Json.JsonSerializerOptions)">
+            <summary>
+            写JSON
+            </summary>
+            <param name="writer">JsonWriter</param>
+            <param name="value">值</param>
+            <param name="options">配置</param>
+        </member>
+        <member name="T:XiaoFeng.Json.JsonConverterType">
+            <summary>
+            类型转换器
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Json.JsonConverterType.Read(System.Text.Json.Utf8JsonReader@,System.Type,System.Text.Json.JsonSerializerOptions)">
+            <summary>
+            读JSON
+            </summary>
+            <param name="reader">JsonReader</param>
+            <param name="typeToConvert">类型</param>
+            <param name="options">配置</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Json.JsonConverterType.Write(System.Text.Json.Utf8JsonWriter,System.Type,System.Text.Json.JsonSerializerOptions)">
+            <summary>
+            写JSON
+            </summary>
+            <param name="writer">JsonWriter</param>
+            <param name="value">值</param>
+            <param name="options">配置</param>
         </member>
         <member name="T:XiaoFeng.Json.JsonData">
             <summary>
@@ -35875,9 +35857,52 @@
             请求对象
             </summary>
         </member>
+        <member name="P:XiaoFeng.Web.HttpContext.App">
+            <summary>
+            应用程式建立器
+            </summary>
+        </member>
+        <member name="F:XiaoFeng.Web.HttpContext._contextAccessor">
+            <summary>
+            访问器
+            </summary>
+        </member>
         <member name="P:XiaoFeng.Web.HttpContext.Current">
             <summary>
-            当前请求对象
+            当前上下文
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Web.HttpContext.Configure(Microsoft.AspNetCore.Http.IHttpContextAccessor)">
+            <summary>
+            配置当前HttpContext
+            </summary>
+            <param name="contextAccessor">访问器</param>
+        </member>
+        <member name="M:XiaoFeng.Web.HttpContext.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder)">
+            <summary>
+            配置当前应用程式建立器
+            </summary>
+            <param name="app">应用程式建立器</param>
+        </member>
+        <member name="T:XiaoFeng.Web.HttpContextX">
+            <summary>
+            请求对象
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Web.HttpContextX.#ctor(Microsoft.AspNetCore.Http.IHttpContextAccessor)">
+            <summary>
+            依赖注入
+            </summary>
+            <param name="accessor">访问器</param>
+        </member>
+        <member name="F:XiaoFeng.Web.HttpContextX._contextAccessor">
+            <summary>
+            访问器
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Web.HttpContextX.HttpContextAccessor">
+            <summary>
+            访问器
             </summary>
         </member>
         <member name="T:XiaoFeng.Web.HttpCookie">
@@ -36485,7 +36510,7 @@
             上传入口
             </summary>
         </member>
-        <member name="M:XiaoFeng.Web.UpLoadFile.UpLoad(System.Web.HttpPostedFile,System.String)">
+        <member name="M:XiaoFeng.Web.UpLoadFile.UpLoad(Microsoft.AspNetCore.Http.IFormFile,System.String)">
             <summary>
             上传入口
             </summary>
@@ -37042,7 +37067,7 @@
             <param name="name">名称</param>
             <returns></returns>
         </member>
-        <member name="M:XiaoFeng.XToken._Value``1(System.Collections.Specialized.NameValueCollection,System.String,``0)">
+        <member name="M:XiaoFeng.XToken._Value``1(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,Microsoft.Extensions.Primitives.StringValues}},System.String,``0)">
             <summary>
             获取数据并验证有效性 过滤SQL注入
             </summary>
@@ -37052,7 +37077,7 @@
             <param name="defaultValue">默认值</param>
             <returns></returns>
         </member>
-        <member name="M:XiaoFeng.XToken._Value``1(System.Collections.Specialized.NameValueCollection,System.String,XiaoFeng.Validator.ValidateFormat)">
+        <member name="M:XiaoFeng.XToken._Value``1(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,Microsoft.Extensions.Primitives.StringValues}},System.String,XiaoFeng.Validator.ValidateFormat)">
             <summary>
             获取数据并验证有效性 过滤SQL注入
             </summary>
@@ -37062,7 +37087,7 @@
             <param name="format">验证规则</param>
             <returns></returns>
         </member>
-        <member name="M:XiaoFeng.XToken._Value``1(System.Collections.Specialized.NameValueCollection,System.String,System.Linq.Expressions.Expression{System.Func{XiaoFeng.Validator.ValidatorFormat,System.Boolean}})">
+        <member name="M:XiaoFeng.XToken._Value``1(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,Microsoft.Extensions.Primitives.StringValues}},System.String,System.Linq.Expressions.Expression{System.Func{XiaoFeng.Validator.ValidatorFormat,System.Boolean}})">
             <summary>
             获取数据并验证有效性 过滤SQL注入
             </summary>
@@ -37072,7 +37097,7 @@
             <param name="func">Lambda表达式</param>
             <returns></returns>
         </member>
-        <member name="M:XiaoFeng.XToken._value(System.Collections.Specialized.NameValueCollection,System.String)">
+        <member name="M:XiaoFeng.XToken._value(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,Microsoft.Extensions.Primitives.StringValues}},System.String)">
             <summary>
             获取原始值
             </summary>
@@ -38403,37 +38428,6 @@
             </summary>
             <param name="ZipPath">压缩包路径</param>
             <param name="rootPath">目录地址</param>
-            <param name="compressionLevel">压缩级别</param>
-            <param name="encoding">编码</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Zip.ZipHelper.Create(System.String,System.String[])">
-            <summary>
-            创建压缩包
-            </summary>
-            <param name="zipPath">压缩包路径</param>
-            <param name="filePath">文件地址</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Zip.ZipHelper.Dispose">
-            <summary>
-            释放资源
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Zip.ZipHelper.Dispose(System.Boolean)">
-            <summary>
-            释放资源
-            </summary>
-            <param name="f"></param>
-        </member>
-        <member name="M:XiaoFeng.Zip.ZipHelper.Finalize">
-            <summary>
-            析构器
-            </summary>
-        </member>
-    </members>
-</doc>
-��址</param>
             <param name="compressionLevel">压缩级别</param>
             <param name="encoding">编码</param>
             <returns></returns>

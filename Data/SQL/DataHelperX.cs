@@ -2303,7 +2303,7 @@ namespace XiaoFeng.Data.SQL
             else
             {
                 var updateColumns = this.ExpressionRouter(fResult.Body);
-                updateColumns = updateColumns.Trim(new char[] { '(', ')' });
+                updateColumns = updateColumns.RemovePattern(@"(^\(|\)$)");
                 var Columns = updateColumns.SplitPattern(@"\)+\s+AND\s+\(+");
                 /*var leftChar = "";
                 if (this.Config.ProviderType == DbProviderType.MySql || this.Config.ProviderType == DbProviderType.Oracle)

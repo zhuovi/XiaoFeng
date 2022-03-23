@@ -615,7 +615,8 @@ namespace XiaoFeng.Data.SQL
             }
             else if (exp is MethodCallExpression mce)
             {
-                if (this.SqlFun.TryGetValue(mce.Method.Name, out string SqlFun))
+                var MethodName = mce.Method.Name;
+                if (this.SqlFun.TryGetValue(MethodName, out string SqlFun))
                 {
                     List<string> args = new List<string>();
                     /*if (mce.Object != null)
@@ -627,12 +628,13 @@ namespace XiaoFeng.Data.SQL
                     {
                         args.Add(ExpressionRouter(a));
                     });
-                    if (mce.Method.Name.IsMatch(@"^(IndexOf|StartsWith|EndsWith|Substring|Replace|Sum|Contains|ToLower|ToUpper|Trim|TrimStart|TrimEnd|Length)$"))
+                    
+                    if (MethodName.IsMatch(@"^(IndexOf|StartsWith|EndsWith|Substring|Replace|Sum|Contains|ToLower|ToUpper|Trim|TrimStart|TrimEnd|Length)$"))
                     {
                         var o = ExpressionRouter(mce.Object);
                         if (!args.Contains(o)) args.Insert(0, o);
                     }
-                    if (SqlFun.IsMatch(@"^(DATEDIFF|DATEPART|TIMESTAMPDIFF|DATE_FORMAT)\("))
+                    if (SqlFun.IsMatch(@"^(DATEDIFF|DATEPART|TIMESTAMPDIFF|DATE_FORMAT|DATEADD)\("))
                     {
                         var b = args.Last();
                         args.RemoveAt(args.Count - 1);
@@ -641,13 +643,13 @@ namespace XiaoFeng.Data.SQL
                         {
                             if (dfType == "yy" || dfType == "yyyy")
                                 dfType = "YEAR";
-                            else if (dfType == "qq" || dfType == "qq")
+                            else if (dfType == "qq" || dfType == "q")
                                 dfType = "QUARTER";
                             else if (dfType == "mm" || dfType == "m")
                                 dfType = "MOUTH";
                             else if (dfType == "dd" || dfType == "d")
                                 dfType = "DAY";
-                            else if (dfType == "wk" || dfType == "w")
+                            else if (dfType == "wk" || dfType == "ww" || dfType == "w")
                                 dfType = "WEEK";
                             else if (dfType == "hh")
                                 dfType = "HOUR";
@@ -659,7 +661,7 @@ namespace XiaoFeng.Data.SQL
                                 dfType = "MICROSECOND";
                         }
                         this.RemoveParam(b);
-                        if (this.DataHelper.ProviderType == DbProviderType.Dameng)
+                        if (!MethodName.EqualsIgnoreCase("DateAddSQL") && this.DataHelper.ProviderType == DbProviderType.Dameng)
                         {
                             b = args.Last();
                             args.RemoveAt(args.Count - 1);

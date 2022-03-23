@@ -212,6 +212,31 @@ namespace XiaoFeng.Data.SQL
         public static bool NotLikeSQLX(this string str, string likeStr) { return true; }
         #endregion
 
+        #region 扩展SQL DateAdd 语法
+        /// <summary>
+        /// 扩展SQL DateAdd 语法
+        /// </summary>
+        /// <param name="date">日期</param>
+        /// <param name="val">值</param>
+        /// <param name="format">格式 年yy,yyyy 季度qq,q 月mm,m 年中的日dy,y 日dd,d 周wk,ww 星期dw,w 小时hh 分钟mi,n 秒ss,s 毫秒ms 微秒mcs 纳秒ns</param>
+        /// <returns></returns>
+        public static DateTime DateAddSQL(this DateTime date, long val, string format)
+        {
+            return date;
+        }
+        /// <summary>
+        /// 扩展SQL DateAdd 语法
+        /// </summary>
+        /// <param name="date">日期</param>
+        /// <param name="val">值</param>
+        /// <param name="format">格式 年yy,yyyy 季度qq,q 月mm,m 年中的日dy,y 日dd,d 周wk,ww 星期dw,w 小时hh 分钟mi,n 秒ss,s 毫秒ms 微秒mcs 纳秒ns</param>
+        /// <returns></returns>
+        public static DateTime DateAddSQL(this DateTime? date, long val, string format)
+        {
+            return date.GetValueOrDefault();
+        }
+        #endregion
+
         #region 扩展SQL DateDiff 语法
         /// <summary>
         /// 扩展SQL DateDiff 语法
@@ -220,7 +245,6 @@ namespace XiaoFeng.Data.SQL
         /// <param name="SecondDate">第二个时间</param>
         /// <param name="format">格式 年yy,yyyy 季度qq,q 月mm,m 年中的日dy,y 日dd,d 周wk,ww 星期dw,w 小时hh 分钟mi,n 秒ss,s 毫秒ms 微秒mcs 纳秒ns</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:删除未使用的参数", Justification = "<挂起>")] 
         public static int DateDiffSQL(this DateTime? firstDate, DateTime? SecondDate, string format) { return 1; }
         /// <summary>
         /// 扩展SQL DateDiff 语法
@@ -229,7 +253,6 @@ namespace XiaoFeng.Data.SQL
         /// <param name="SecondDate">第二个时间</param>
         /// <param name="format">格式 年yy,yyyy 季度qq,q 月mm,m 年中的日dy,y 日dd,d 周wk,ww 星期dw,w 小时hh 分钟mi,n 秒ss,s 毫秒ms 微秒mcs 纳秒ns</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:删除未使用的参数", Justification = "<挂起>")] 
         public static int DateDiffSQL(this DateTime firstDate, DateTime SecondDate, string format) { return 1; }
         #endregion
 
@@ -259,7 +282,6 @@ namespace XiaoFeng.Data.SQL
         /// <param name="Date">当前时间</param>
         /// <param name="format"></param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:删除未使用的参数", Justification = "<挂起>")] 
         public static string DateFormatSQL(this DateTime? Date, string format) { return string.Empty; }
         /// <summary>
         /// 扩展SQL DateFormat 语法
@@ -267,7 +289,6 @@ namespace XiaoFeng.Data.SQL
         /// <param name="Date">当前时间</param>
         /// <param name="format"></param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:删除未使用的参数", Justification = "<挂起>")] 
         public static string DateFormatSQL(this DateTime Date, string format) { return string.Empty; }
         #endregion
 
