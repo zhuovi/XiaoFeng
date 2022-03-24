@@ -352,7 +352,7 @@ namespace XiaoFeng.Json
                 data.Columns.Each<DataColumn>(c =>
                 {
                     var fw = WritePair(c.ColumnName, dr[c.ColumnName], _first ? "" : ",");
-                    if (first && fw) _first = false;
+                    if (_first && fw) _first = false;
                 });
                 Builder.Append('}');
             });
