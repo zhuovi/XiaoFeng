@@ -938,10 +938,10 @@ namespace XiaoFeng.Data
                 first = "DISTINCT ";
                 _ = _.RemovePattern(@"\s*DISTINCT\s*");
                 var _list = new List<string>();
-                _.Split(new char[] {','}, StringSplitOptions.RemoveEmptyEntries).Each(a =>
-                {
-                    _list.Add(FieldFormat(dbProviderType, a));
-                });
+                _.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Each(a =>
+                  {
+                      _list.Add(FieldFormat(dbProviderType, a));
+                  });
                 return first + _list.Join(",");
             }
             switch (dbProviderType)
@@ -960,6 +960,13 @@ namespace XiaoFeng.Data
             }
             return first + _;
         }
+        #endregion
+
+        #region SQL 函数
+        /// <summary>
+        /// SQL 函数
+        /// </summary>
+        public static string[] SQLFun = new string[] { "Upper","UCASE", "Lower","LCASE","MID", "Trim", "Substring", "Stuff", "Reverse","StrReverse", "Replicate", "Replace", "Len", "Right", "Left", "Round", "Ceiling", "Floor","FIX", "Abs","INT", "Charindex", "Date_Format","FORMAT", "INSTR", "DatePart", "DateDiff", "DATE_ADD","DATEADD", "Patindex", "CONVERT", "RTRIM", "LTRIM","ISNULL", "TIMESTAMPDIFF" };
         #endregion
     }
 }

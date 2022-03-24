@@ -652,9 +652,24 @@ select {Limits} row_number() over({OrderBy}) as TempID, * from
         {
             if (list == null || !list.Any()) return;
             if (this.UpdateColumns == null) this.UpdateColumns = new List<object>();
+            var SQLFunString = DataSQLFun.SQLFun.Join("|").ToRegexUnescape();
             list.Each(a =>
             {
-                var _ = a.ReplacePattern(@"\s+is\s+null\s+", " = null");
+                var _ = a.TrimStart('(');
+                var m = _.GetMatches(@"(?<a>(" + SQLFunString + @")\()");
+                if (m.Count == 0) 
+                    _ = _.TrimEnd(')');
+                else
+                {
+                    var num = _.GetMatch(@"(?<a>\)+)$").Length;
+                    var nums = _.GetMatches(@"(?<a>\))").Count;
+                    var _n = m.Count - (nums - num);
+                    if (_n > num)
+                        _ += new String(')', _n - num);
+                    else if (_n < num)
+                        _ = _.RemovePattern(@"\){" + (nums - m.Count) + @"}$");
+                }
+                _ = _.ReplacePattern(@"\s+is\s+null\s+", " = null");
                 if (!this.UpdateColumns.Contains(_)) this.UpdateColumns.Add(_);
             });
             //this.UpdateColumns.AddRange(list);

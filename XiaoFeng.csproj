@@ -5,10 +5,10 @@
     <Product>基础类库 数据库中间件</Product>
     <Description>基础类库,数据库中间件,网络通讯中间件</Description>
     <Copyright>CopyRight @ 2008-2023 魔法精灵软件(www.fayelf.com) QQ:7092734 Email:jacky@fayelf.com</Copyright>
-    <Version>1.9.2.0323</Version>
+    <Version>1.9.3.0324</Version>
     <Company>河南魔法精灵软件科技有限公司</Company>
-    <AssemblyVersion>1.9.2.2022</AssemblyVersion>
-    <FileVersion>1.9.2.3</FileVersion>
+    <AssemblyVersion>1.9.3.2022</AssemblyVersion>
+    <FileVersion>1.9.3.4</FileVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>

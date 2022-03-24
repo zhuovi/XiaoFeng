@@ -2289,23 +2289,6 @@
             <param name="_">JSON串</param>
             <returns></returns>
         </member>
-        <member name="M:XiaoFeng.PrototypeHelper.EntityToJson(System.Object,XiaoFeng.Json.JsonSerializerSetting)">
-            <summary>
-            对象转JSON串
-            </summary>
-            <param name="o">对象</param>
-            <param name="formatting">Json格式设置</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.PrototypeHelper.JsonToEntity``1(System.String,XiaoFeng.Json.JsonSerializerSetting)">
-            <summary>
-            JSON串转对象
-            </summary>
-            <typeparam name="T">对象类型</typeparam>
-            <param name="_">JSON串</param>
-            <param name="formatting">配置</param>
-            <returns></returns>
-        </member>
         <member name="M:XiaoFeng.PrototypeHelper.IsSystemAssembly(System.Reflection.Assembly)">
             <summary>
             是否是系统程序集
@@ -17830,6 +17813,11 @@
             <param name="_">字段名</param>
             <returns></returns>
         </member>
+        <member name="F:XiaoFeng.Data.DataSQLFun.SQLFun">
+            <summary>
+            SQL 函数
+            </summary>
+        </member>
         <member name="T:XiaoFeng.Data.SubTableConfig">
             <summary>
             分表配置
@@ -21868,104 +21856,6 @@
             <summary>
             属性配置
             </summary>
-        </member>
-        <member name="T:XiaoFeng.Json.JsonConverterDateTime">
-            <summary>
-            日期转换器
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Json.JsonConverterDateTime.#ctor">
-            <summary>
-            构造器
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Json.JsonConverterDateTime.#ctor(System.String)">
-            <summary>
-            设置格式
-            </summary>
-            <param name="format">格式</param>
-        </member>
-        <member name="P:XiaoFeng.Json.JsonConverterDateTime.Format">
-            <summary>
-            格式
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Json.JsonConverterDateTime.Read(System.Text.Json.Utf8JsonReader@,System.Type,System.Text.Json.JsonSerializerOptions)">
-            <summary>
-            读JSON
-            </summary>
-            <param name="reader">JsonReader</param>
-            <param name="typeToConvert">类型</param>
-            <param name="options">配置</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Json.JsonConverterDateTime.Write(System.Text.Json.Utf8JsonWriter,System.DateTime,System.Text.Json.JsonSerializerOptions)">
-            <summary>
-            写JSON
-            </summary>
-            <param name="writer">JsonWriter</param>
-            <param name="value">值</param>
-            <param name="options">配置</param>
-        </member>
-        <member name="T:XiaoFeng.Json.JsonConverterGuid">
-            <summary>
-            Guid转换器
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Json.JsonConverterGuid.#ctor">
-            <summary>
-            构造器
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Json.JsonConverterGuid.#ctor(System.String)">
-            <summary>
-            设置格式
-            </summary>
-            <param name="format">格式</param>
-        </member>
-        <member name="P:XiaoFeng.Json.JsonConverterGuid.Format">
-            <summary>
-            格式
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Json.JsonConverterGuid.Read(System.Text.Json.Utf8JsonReader@,System.Type,System.Text.Json.JsonSerializerOptions)">
-            <summary>
-            读JSON
-            </summary>
-            <param name="reader">JsonReader</param>
-            <param name="typeToConvert">类型</param>
-            <param name="options">配置</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Json.JsonConverterGuid.Write(System.Text.Json.Utf8JsonWriter,System.Guid,System.Text.Json.JsonSerializerOptions)">
-            <summary>
-            写JSON
-            </summary>
-            <param name="writer">JsonWriter</param>
-            <param name="value">值</param>
-            <param name="options">配置</param>
-        </member>
-        <member name="T:XiaoFeng.Json.JsonConverterType">
-            <summary>
-            类型转换器
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Json.JsonConverterType.Read(System.Text.Json.Utf8JsonReader@,System.Type,System.Text.Json.JsonSerializerOptions)">
-            <summary>
-            读JSON
-            </summary>
-            <param name="reader">JsonReader</param>
-            <param name="typeToConvert">类型</param>
-            <param name="options">配置</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Json.JsonConverterType.Write(System.Text.Json.Utf8JsonWriter,System.Type,System.Text.Json.JsonSerializerOptions)">
-            <summary>
-            写JSON
-            </summary>
-            <param name="writer">JsonWriter</param>
-            <param name="value">值</param>
-            <param name="options">配置</param>
         </member>
         <member name="T:XiaoFeng.Json.JsonData">
             <summary>
@@ -38338,6 +38228,127 @@
             <param name="model">对象</param>
             <param name="encode">编码</param>
             <param name="removeNamespaces">是否移除命名空间</param>
+            <param name="removeXmlDeclaration">是否移除XML声明</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.XmlConvert.DeserializeObject``1(System.String,System.String)">
+            <summary>
+            反序列化
+            </summary>
+            <typeparam name="T">泛型</typeparam>
+            <param name="xml">XML数据</param>
+            <param name="encode">编码</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.XmlConvert.DeserializeObject(System.Type,System.String)">
+            <summary>
+            反序列化
+            </summary>
+            <param name="type">类型</param>
+            <param name="xml">XML字符串</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.XmlConvert.DeserializeObject(System.Type,System.IO.Stream)">
+            <summary>
+            反序列化
+            </summary>
+            <param name="type">对象类型</param>
+            <param name="stream">数据流</param>
+            <returns></returns>
+        </member>
+        <member name="T:XiaoFeng.Zip.ZipHelper">
+            <summary>
+            压缩操作类
+            Verstion : 1.0.0
+            Author : jacky
+            Email : jacky@zhuovi.com
+            QQ : 7092734
+            Site : www.zhuovi.com
+            Create Time : 2017/10/11 16:13:17
+            Update Time : 2017/10/11 16:13:17
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Zip.ZipHelper.#ctor">
+            <summary>
+            无参构造器
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Zip.ZipHelper.Instance">
+            <summary>
+            静态方法
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Zip.ZipHelper.UNZip(System.String,System.String,System.Text.Encoding)">
+            <summary>
+            解压文件
+            </summary>
+            <param name="ZipPath">压缩包路径</param>
+            <param name="rootPath">解压的目录</param>
+            <param name="encoding">编码</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Zip.ZipHelper.GetList(System.String,System.Text.Encoding)">
+            <summary>
+            获取压缩包内文件
+            </summary>
+            <param name="zipPath">压缩包路径</param>
+            <param name="encoding">编码</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Zip.ZipHelper.Create(System.String,System.String)">
+            <summary>
+            创建压缩包
+            </summary>
+            <param name="ZipPath">压缩包路径</param>
+            <param name="rootPath">目录地址</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Zip.ZipHelper.Create(System.String,System.String,System.IO.Compression.CompressionLevel)">
+            <summary>
+            创建压缩包
+            </summary>
+            <param name="ZipPath">压缩包路径</param>
+            <param name="rootPath">目录地址</param>
+            <param name="compressionLevel">压缩级别</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Zip.ZipHelper.Create(System.String,System.String,System.IO.Compression.CompressionLevel,System.Text.Encoding)">
+            <summary>
+            创建压缩包
+            </summary>
+            <param name="ZipPath">压缩包路径</param>
+            <param name="rootPath">目录地址</param>
+            <param name="compressionLevel">压缩级别</param>
+            <param name="encoding">编码</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Zip.ZipHelper.Create(System.String,System.String[])">
+            <summary>
+            创建压缩包
+            </summary>
+            <param name="zipPath">压缩包路径</param>
+            <param name="filePath">文件地址</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Zip.ZipHelper.Dispose">
+            <summary>
+            释放资源
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Zip.ZipHelper.Dispose(System.Boolean)">
+            <summary>
+            释放资源
+            </summary>
+            <param name="f"></param>
+        </member>
+        <member name="M:XiaoFeng.Zip.ZipHelper.Finalize">
+            <summary>
+            析构器
+            </summary>
+        </member>
+    </members>
+</doc>
+�命名空间</param>
             <param name="removeXmlDeclaration">是否移除XML声明</param>
             <returns></returns>
         </member>

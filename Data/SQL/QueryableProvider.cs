@@ -896,7 +896,7 @@ namespace XiaoFeng.Data.SQL
                         var o = ExpressionRouter(mce.Object);
                         if (!args.Contains(o)) args.Insert(0, o);
                     }
-                    else if (SqlFun.IsMatch(@"^(DATEDIFF|DATEPART|TIMESTAMPDIFF|DATE_FORMAT)\("))
+                    else if (SqlFun.IsMatch(@"^(DATEDIFF|DATEPART|TIMESTAMPDIFF|DATE_FORMAT|DATEADD)\("))
                     {
                         var b = args.Last();
                         args.RemoveAt(args.Count - 1);
@@ -1148,7 +1148,7 @@ namespace XiaoFeng.Data.SQL
                         var o = ExpressionRouter(mce.Object);
                         if (!args.Contains(o)) args.Insert(0, o);
                     }
-                    else if (SqlFun.IsMatch(@"^(DATEDIFF|DATEPART|TIMESTAMPDIFF|DATE_FORMAT)\("))
+                    else if (SqlFun.IsMatch(@"^(DATEDIFF|DATEPART|TIMESTAMPDIFF|DATE_FORMAT|DATEADD)\("))
                     {
                         var b = args.Last();
                         args.RemoveAt(args.Count - 1);
