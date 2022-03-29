@@ -281,7 +281,10 @@ namespace XiaoFeng.Redis
                     {
                         if (num == 1)
                         {
-                            length = ms.ToArray().GetString().GetMatch(@"^\$(?<a>\d+)\r\n").ToCast<int>();
+                            var str = ms.ToArray().GetString();
+                            if (str.IsMatch(@"^\$\d+\r\n"))
+                                length = str.GetMatch(@"^\$(?<a>\d+)\r\n").ToCast<int>();
+                            else break;
                         }
                         if (length == ms.Length - length.ToString().Length - 5) break;
                     }else

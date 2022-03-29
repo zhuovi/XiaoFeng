@@ -59,6 +59,7 @@ namespace XiaoFeng.Json
         /// <returns></returns>
         public static T DeserializeObject<T>(string json)
         {
+            if (typeof(T) == typeof(String)) return json.ToCast<T>();
             using (var js = new JsonReader())
                 return js.Read<T>(json);
         }
