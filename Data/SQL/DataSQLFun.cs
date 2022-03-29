@@ -173,7 +173,7 @@ namespace XiaoFeng.Data
         /// </summary>
         private Dictionary<string, string> _SQLiteFun = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         /// <summary>
-        /// SQLServer 对象集
+        /// SQLite 对象集
         /// </summary>
         public Dictionary<string, string> SQLiteFun
         {
@@ -185,7 +185,7 @@ namespace XiaoFeng.Data
                     {
                         {"StartsWith","{0} LIKE {1}"},
                         {"EndsWith","{0} LIKE {1}"},
-                        {"Contains","CHARINDEX({1},{0}) > 0"},
+                        {"Contains","INSTR({1},{0}) > 0"},
                         {"Length","LENGTH({0})"},
                         {"Replace","REPLACE({0},{1},{2})"},
                         {"Substring","SUBSTRING({0},{1},{2})"},
@@ -202,8 +202,8 @@ namespace XiaoFeng.Data
                         {"NotLikeSQLX","{0} NOT LIKE {1}"},
                         {"InSQL","{0} IN ({1})"},
                         {"NotInSQL","{0} NOT IN ({1})"},
-                        {"IndexOf","CHARINDEX({1},{0})"},
-                        {"CharIndexSQL","CHARINDEX({1},{0})"},
+                        {"IndexOf","INSTR({1},{0})"},
+                        {"CharIndexSQL","INSTR({1},{0})"},
                         {"PatindexSQL","PATINDEX({0},{1})"},
                         {"DateAddSQL","DATETIME({0},'localtime','{1} {2}')"},
                         {"DateDiffSQL","ROUND((julianday({1}) - julianday({0})){2})"},
@@ -243,11 +243,11 @@ namespace XiaoFeng.Data
             }
         }
         /// <summary>
-        /// SQLServer 对象集
+        /// SQLite 对象集
         /// </summary>
         private Dictionary<string, string> _SQLiteUnFun = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         /// <summary>
-        /// SQLServer 对象集
+        /// SQLite 对象集
         /// </summary>
         public Dictionary<string, string> SQLiteUnFun
         {
@@ -259,7 +259,7 @@ namespace XiaoFeng.Data
                     {
                         {"StartsWith","{0} NOT LIKE {1}"},
                         {"EndsWith","{0} LIKE {1}"},
-                        {"Contains","CHARINDEX({1},{0}) <= 0"},
+                        {"Contains","INSTR({1},{0}) <= 0"},
                         {"Length","LENGTH({0})"},
                         {"Replace","REPLACE({0},{1},{2})"},
                         {"Substring","SUBSTRING({0},{1},{2})"},
@@ -276,8 +276,8 @@ namespace XiaoFeng.Data
                         {"NotLikeSQLX","{0} LIKE {1}"},
                         {"InSQL","{0} NOT IN ({1})"},
                         {"NotInSQL","{0} IN ({1})"},
-                        {"IndexOf","CHARINDEX({1},{0})"},
-                        {"CharIndexSQL","CHARINDEX({1},{0})"},
+                        {"IndexOf","INSTR({1},{0})"},
+                        {"CharIndexSQL","INSTR({1},{0})"},
                         {"PatindexSQL","PATINDEX({0},{1})"},
                         {"DateAddSQL","DATETIME({0},'localtime','{1} {2}')"},
                         {"DateDiffSQL","ROUND((julianday({1}) - julianday({0})){2})"},

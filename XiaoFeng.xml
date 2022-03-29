@@ -17734,17 +17734,17 @@
         </member>
         <member name="P:XiaoFeng.Data.DataSQLFun.SQLiteFun">
             <summary>
-            SQLServer 对象集
+            SQLite 对象集
             </summary>
         </member>
         <member name="F:XiaoFeng.Data.DataSQLFun._SQLiteUnFun">
             <summary>
-            SQLServer 对象集
+            SQLite 对象集
             </summary>
         </member>
         <member name="P:XiaoFeng.Data.DataSQLFun.SQLiteUnFun">
             <summary>
-            SQLServer 对象集
+            SQLite 对象集
             </summary>
         </member>
         <member name="F:XiaoFeng.Data.DataSQLFun._MySqlFun">
