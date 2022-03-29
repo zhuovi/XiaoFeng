@@ -5,12 +5,11 @@
     <Product>基础类库 数据库中间件</Product>
     <Description>基础类库,数据库中间件,网络通讯中间件</Description>
     <Copyright>CopyRight @ 2008-2023 魔法精灵软件(www.fayelf.com) QQ:7092734 Email:jacky@fayelf.com</Copyright>
-    <Version>1.9.3.0324</Version>
+    <Version>1.9.4.0329</Version>
     <Company>河南魔法精灵软件科技有限公司</Company>
-    <AssemblyVersion>1.9.3.2022</AssemblyVersion>
-    <FileVersion>1.9.3.4</FileVersion>
+    <AssemblyVersion>1.9.4.2022</AssemblyVersion>
+    <FileVersion>1.9.4.5</FileVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
     <PackageTags>FAYELF</PackageTags>
     <PackageReleaseNotes>www.fayelf.com</PackageReleaseNotes>
@@ -47,6 +46,9 @@
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0|AnyCPU'">
 	  <WarningLevel>4</WarningLevel>
 	</PropertyGroup>
+	<ItemGroup>
+	  <Compile Remove="Redis\RedisClient - 复制.cs" />
+	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="System.Management" Version="5.0.0" />
 	</ItemGroup>

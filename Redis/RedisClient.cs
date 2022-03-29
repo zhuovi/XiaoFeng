@@ -261,23 +261,34 @@ namespace XiaoFeng.Redis
         /// <returns>响应结果</returns>
         public CommandResult GetCommandResult(CommandType commandType)
         {
+            var ms = new MemoryStream();
+            var num = 0;
+            var length = 0;
             while (this.IsConnected.HasValue && this.IsConnected.Value)
             {
                 if (Stream.DataAvailable)
                 {
-                    var bs = new MemoryStream();
                     var bytes = new byte[MemorySize];
-                    var count = Stream.Read(bytes, 0, bytes.Length);
-                    while (count > 0)
+                    do
                     {
-                        bs.Write(bytes, 0, count);
-                        Array.Clear(bytes, 0, count);
-                        count = Stream.DataAvailable ? Stream.Read(bytes, 0, bytes.Length) : 0;
-                    }
-                    return new CommandResult(commandType, bs.ToArray());
+                        Array.Clear(bytes, 0, MemorySize);
+                        var count = Stream.Read(bytes, 0, bytes.Length);
+                        ms.Write(bytes, 0, count);
+
+                    } while (Stream.DataAvailable);
+                    num++;
+                    if (commandType == CommandType.HGET)
+                    {
+                        if (num == 1)
+                        {
+                            length = ms.ToArray().GetString().GetMatch(@"^\$(?<a>\d+)\r\n").ToCast<int>();
+                        }
+                        if (length == ms.Length - length.ToString().Length - 5) break;
+                    }else
+                        break;
                 }
             }
-            return null;
+            return new CommandResult(commandType, ms.ToArray());
         }
         #endregion
 

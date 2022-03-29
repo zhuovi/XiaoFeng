@@ -93,7 +93,12 @@ namespace XiaoFeng.Data
         /// 瀚高
         /// </summary>
         [Description("瀚高")] 
-        Highgo = 1<<15
+        Highgo = 1<<15,
+        /// <summary>
+        /// postgresql 
+        /// </summary>
+        [Description("postgresql ")]
+        Npgsql = 1<<16
     }
     #endregion
 }

@@ -69,7 +69,7 @@ namespace XiaoFeng.Xml
         public virtual XmlElement CreateElement(string name, object text)
         {
             var element = base.CreateElement(name);
-            element.Value = text.ToString();
+            element.InnerText = text?.ToString();
             return element;
         }
         #endregion

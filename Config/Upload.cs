@@ -105,6 +105,7 @@ namespace XiaoFeng.Config
         /// <returns></returns>
         public string GetDomainPath(string basePath)
         {
+            if (basePath.IsNullOrEmpty()) return basePath;
             if (this.Domain.IsNotNullOrEmpty() && !basePath.StartsWith("http") && !basePath.IsMatch(@"^" + this.Domain.ToRegexEscape()))
             {
                 basePath = this.Domain.RemovePattern(@"[\\/]+$") + "/" + basePath.RemovePattern(@"^[\\/]+");
@@ -121,6 +122,7 @@ namespace XiaoFeng.Config
         /// <returns></returns>
         public string GetNotDomainPath(string domainPath)
         {
+            if (domainPath.IsNullOrEmpty()) return domainPath;
             if (this.Domain.IsNotNullOrEmpty() && domainPath.IsMatch(@"^" + this.Domain.ToRegexEscape())) domainPath = domainPath.RemovePattern(@"^" + this.Domain.ToRegexEscape());
             if (!domainPath.IsMatch(@"/")) domainPath = "/" + domainPath;
             return domainPath;
