@@ -68,7 +68,7 @@ namespace XiaoFeng.Web
         /// <summary>
         /// 取消标识
         /// </summary>
-        CancellationToken Token { get; set; }
+        CancellationTokenSource Token { get; set; }
         /// <summary>
         /// 文件格式
         /// </summary>

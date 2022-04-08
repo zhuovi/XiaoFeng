@@ -1,24 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net48;netcoreapp3.1;netstandard2.1;net5.0;</TargetFrameworks>
+    <TargetFrameworks>net48;netcoreapp3.1;netstandard2.1;net5.0;net6.0;</TargetFrameworks>
     <Authors>Jacky</Authors>
     <Product>基础类库 数据库中间件</Product>
     <Description>基础类库,数据库中间件,网络通讯中间件</Description>
     <Copyright>CopyRight @ 2008-2023 魔法精灵软件(www.fayelf.com) QQ:7092734 Email:jacky@fayelf.com</Copyright>
-    <Version>1.9.4.0329</Version>
+    <Version>1.9.7.0405</Version>
     <Company>河南魔法精灵软件科技有限公司</Company>
-    <AssemblyVersion>1.9.4.2022</AssemblyVersion>
-    <FileVersion>1.9.4.5</FileVersion>
+    <AssemblyVersion>1.9.7.2022</AssemblyVersion>
+    <FileVersion>1.9.7.8</FileVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
     <PackageTags>FAYELF</PackageTags>
     <PackageReleaseNotes>www.fayelf.com</PackageReleaseNotes>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>E:\Work\XiaoFeng\XiaoFeng.xml</DocumentationFile>
+    <DocumentationFile>D:\Work\XiaoFeng\XiaoFeng.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>E:\Work\XiaoFeng\XiaoFeng.xml</DocumentationFile>
+    <DocumentationFile>D:\Work\XiaoFeng\XiaoFeng.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
     <DefineConstants>TRACE;NET48;NETSTANDARD20;NETSTANDARD21;NET5_0;NET6_0;NETCOREAPP3_1</DefineConstants>

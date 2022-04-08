@@ -499,7 +499,7 @@ namespace XiaoFeng.Json
             var strNum = data.JsonString.Substring(start, data.Index - start);
             if (strNum.IsMatch(@"^(\+|-)?\d+[.]\d+$"))
             {
-                if (float.TryParse(strNum, out float fValue))
+                if (double.TryParse(strNum, out var fValue))
                 {
                     return new JsonValue(fValue);
                 }

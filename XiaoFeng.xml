@@ -159,6 +159,51 @@
             无参构造器
             </summary>
         </member>
+        <member name="T:XiaoFeng.ForeignAttribute">
+            <summary>
+            外键特性
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.ForeignAttribute.#ctor">
+            <summary>
+            无参构造器
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.ForeignAttribute.#ctor(System.Type)">
+            <summary>
+            设置类型
+            </summary>
+            <param name="entityType"></param>
+        </member>
+        <member name="M:XiaoFeng.ForeignAttribute.#ctor(System.String,System.String,System.String,System.Type)">
+            <summary>
+            设置外键
+            </summary>
+            <param name="key">KEY</param>
+            <param name="field">当前字段</param>
+            <param name="format">格式 key='${field}'</param>
+            <param name="type">外键表类型</param>
+        </member>
+        <member name="P:XiaoFeng.ForeignAttribute.Key">
+            <summary>
+            外键KEY
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.ForeignAttribute.Field">
+            <summary>
+            当前字段
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.ForeignAttribute.Format">
+            <summary>
+            条件格式
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.ForeignAttribute.Type">
+            <summary>
+            表类型
+            </summary>
+        </member>
         <member name="T:XiaoFeng.OmitEmptyNodeAttribute">
             <summary>
             忽略空节点
@@ -431,6 +476,30 @@
             </summary>
             <typeparam name="T">对象</typeparam>
             <param name="_">数据表</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.PrototypeHelper.ToList(System.Data.DataTable,System.Type)">
+            <summary>
+            转换成列表
+            </summary>
+            <param name="dataTable">DataTable</param>
+            <param name="type">类型</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.PrototypeHelper.ToEntity(System.Data.DataTable,System.Type)">
+            <summary>
+            转换成对象
+            </summary>
+            <param name="dataTable">DataTable</param>
+            <param name="type">类型</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.PrototypeHelper.ToEntity(System.Data.DataRow,System.Type)">
+            <summary>
+            转换成对象
+            </summary>
+            <param name="dataRow">行数据</param>
+            <param name="type">类型</param>
             <returns></returns>
         </member>
         <member name="M:XiaoFeng.PrototypeHelper.ToEntity``1(System.Data.DataTable)">
@@ -1541,7 +1610,7 @@
             <param name="_">字符串</param>
             <returns>字符串</returns>
         </member>
-        <member name="M:XiaoFeng.PrototypeHelper.GetUri(Microsoft.AspNetCore.Http.HttpRequest)">
+        <member name="M:XiaoFeng.PrototypeHelper.GetUri(System.Web.HttpRequest)">
             <summary>
             获取当前Uri
             </summary>
@@ -2289,23 +2358,6 @@
             <param name="_">JSON串</param>
             <returns></returns>
         </member>
-        <member name="M:XiaoFeng.PrototypeHelper.EntityToJson(System.Object,XiaoFeng.Json.JsonSerializerSetting)">
-            <summary>
-            对象转JSON串
-            </summary>
-            <param name="o">对象</param>
-            <param name="formatting">Json格式设置</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.PrototypeHelper.JsonToEntity``1(System.String,XiaoFeng.Json.JsonSerializerSetting)">
-            <summary>
-            JSON串转对象
-            </summary>
-            <typeparam name="T">对象类型</typeparam>
-            <param name="_">JSON串</param>
-            <param name="formatting">配置</param>
-            <returns></returns>
-        </member>
         <member name="M:XiaoFeng.PrototypeHelper.IsSystemAssembly(System.Reflection.Assembly)">
             <summary>
             是否是系统程序集
@@ -2869,6 +2921,11 @@
             基础类型
             </summary>
         </member>
+        <member name="P:XiaoFeng.Model.Entity`1.EntityType">
+            <summary>
+            基础类型
+            </summary>
+        </member>
         <member name="P:XiaoFeng.Model.Entity`1.Create">
             <summary>
             当前类型对象
@@ -3014,11 +3071,27 @@
             <param name="func">条件</param>
             <returns></returns>
         </member>
+        <member name="M:XiaoFeng.Model.Entity`1.Find(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Type)">
+            <summary>
+            查找
+            </summary>
+            <param name="func">条件</param>
+            <param name="type">类型</param>
+            <returns></returns>
+        </member>
         <member name="M:XiaoFeng.Model.Entity`1.Find(System.String)">
             <summary>
             查找
             </summary>
             <param name="whereString">条件</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Model.Entity`1.Find(System.String,System.Type)">
+            <summary>
+            查找
+            </summary>
+            <param name="whereString">条件</param>
+            <param name="type">类型</param>
             <returns></returns>
         </member>
         <member name="M:XiaoFeng.Model.Entity`1.Find(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String)">
@@ -3029,10 +3102,27 @@
             <param name="whereString">条件</param>
             <returns></returns>
         </member>
+        <member name="M:XiaoFeng.Model.Entity`1.Find(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String,System.Type)">
+            <summary>
+            查找
+            </summary>
+            <param name="func">条件</param>
+            <param name="whereString">条件</param>
+            <param name="type">类型</param>
+            <returns></returns>
+        </member>
         <member name="M:XiaoFeng.Model.Entity`1.ToList(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
             返回列表
             </summary>
+            <param name="func">条件</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Model.Entity`1.ToList(System.Type,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+            返回列表
+            </summary>
+            <param name="type">类型</param>
             <param name="func">条件</param>
             <returns></returns>
         </member>
@@ -3043,12 +3133,29 @@
             <param name="whereString">条件</param>
             <returns></returns>
         </member>
+        <member name="M:XiaoFeng.Model.Entity`1.ToList(System.String,System.Type)">
+            <summary>
+            返回列表
+            </summary>
+            <param name="whereString">条件</param>
+            <param name="type">type</param>
+            <returns></returns>
+        </member>
         <member name="M:XiaoFeng.Model.Entity`1.ToList(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String)">
             <summary>
             返回列表
             </summary>
             <param name="func">条件</param>
             <param name="whereString">条件</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Model.Entity`1.ToList(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String,System.Type)">
+            <summary>
+            返回列表
+            </summary>
+            <param name="func">条件</param>
+            <param name="whereString">条件</param>
+            <param name="type">类型</param>
             <returns></returns>
         </member>
         <member name="M:XiaoFeng.Model.Entity`1.ToObjectList(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
@@ -3308,12 +3415,29 @@
             <param name="func">条件</param>
             <returns></returns>
         </member>
+        <member name="M:XiaoFeng.Model.IEntity`1.Find(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Type)">
+            <summary>
+            查找
+            </summary>
+            <param name="func">条件</param>
+            <param name="type">类型</param>
+            <returns></returns>
+        </member>
         <member name="M:XiaoFeng.Model.IEntity`1.Find(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String)">
             <summary>
             查找
             </summary>
             <param name="func">条件</param>
             <param name="whereString">条件</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Model.IEntity`1.Find(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String,System.Type)">
+            <summary>
+            查找
+            </summary>
+            <param name="func">条件</param>
+            <param name="whereString">条件</param>
+            <param name="type">类型</param>
             <returns></returns>
         </member>
         <member name="M:XiaoFeng.Model.IEntity`1.ToList(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
@@ -3323,12 +3447,29 @@
             <param name="func">条件</param>
             <returns></returns>
         </member>
+        <member name="M:XiaoFeng.Model.IEntity`1.ToList(System.Type,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+            返回列表
+            </summary>
+            <param name="type">类型</param>
+            <param name="func">条件</param>
+            <returns></returns>
+        </member>
         <member name="M:XiaoFeng.Model.IEntity`1.ToList(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String)">
             <summary>
             返回列表
             </summary>
             <param name="func">条件</param>
             <param name="whereString">条件</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Model.IEntity`1.ToList(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.String,System.Type)">
+            <summary>
+            返回列表
+            </summary>
+            <param name="func">条件</param>
+            <param name="whereString">条件</param>
+            <param name="type">类型</param>
             <returns></returns>
         </member>
         <member name="M:XiaoFeng.Model.IEntity`1.ToObjectList(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
@@ -4144,11 +4285,6 @@
             是否为空
             </summary>
         </member>
-        <member name="P:XiaoFeng.Cache.FileProvider.Provider">
-            <summary>
-            监控目录
-            </summary>
-        </member>
         <member name="P:XiaoFeng.Cache.FileProvider.ChangeToken">
             <summary>
             文件列表
@@ -4202,11 +4338,6 @@
         <member name="T:XiaoFeng.Cache.MemoryCacheHelper">
             <summary>
             内存缓存
-            </summary>
-        </member>
-        <member name="F:XiaoFeng.Cache.MemoryCacheHelper.Cache">
-            <summary>
-            缓存操作
             </summary>
         </member>
         <member name="M:XiaoFeng.Cache.MemoryCacheHelper.Contains(System.String)">
@@ -6056,6 +6187,98 @@
             <param name="indented">是否格式化</param>
             <param name="comment">是否带注释说明</param>
         </member>
+        <member name="T:XiaoFeng.Config.ConfigurationHelper">
+            <summary>
+            ConfigurationHelper 类说明
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Config.ConfigurationHelper.#ctor">
+            <summary>
+            无参构造器
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Config.ConfigurationHelper.#ctor(System.String)">
+            <summary>
+            设置配置文件
+            </summary>
+            <param name="ConfigPath">配置文件</param>
+        </member>
+        <member name="P:XiaoFeng.Config.ConfigurationHelper.Path">
+            <summary>
+            路径
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Config.ConfigurationHelper.config">
+            <summary>
+            操作对象
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Config.ConfigurationHelper.Get(System.String)">
+            <summary>
+            获取配置结点内容
+            </summary>
+            <param name="key">配置结点名称</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Config.ConfigurationHelper.GetConfig(System.String)">
+            <summary>
+            获取配置结点内容
+            </summary>
+            <param name="key">配置结点名称</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Config.ConfigurationHelper.GetConnectionString(System.String)">
+            <summary>
+            获取配置结点内容
+            </summary>
+            <param name="key">配置结点名称</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Config.ConfigurationHelper.GetConnectionString(System.Int32)">
+            <summary>
+            获取配置结点内容
+            </summary>
+            <param name="index">配置结点位置</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Config.ConfigurationHelper.SetAppSetting(System.String,System.String)">
+            <summary>
+            更新配置结点内容
+            </summary>
+            <param name="key">Key</param>
+            <param name="value">Value</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Config.ConfigurationHelper.RemoveAppSetting(System.String)">
+            <summary>
+            移除配置结点内容
+            </summary>
+            <param name="key">Key</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Config.ConfigurationHelper.SetConnectionString(System.String,System.String,System.String)">
+            <summary>
+            更新配置结点内容
+            </summary>
+            <param name="key">Key</param>
+            <param name="provider">Provider Name</param>
+            <param name="value">Value</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Config.ConfigurationHelper.RemoveConnectionString(System.String)">
+            <summary>
+            移除配置结点内容
+            </summary>
+            <param name="key">Key</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Config.ConfigurationHelper.GetSection(System.String)">
+            <summary>
+            获取指定配置节点
+            </summary>
+            <param name="name">节点名称</param>
+            <returns></returns>
+        </member>
         <member name="T:XiaoFeng.Config.ContentTypeMapping">
             <summary>
             文件MIME
@@ -7726,12 +7949,11 @@
             无参构造器
             </summary>
         </member>
-        <member name="M:XiaoFeng.Data.DataHelper.#ctor(XiaoFeng.Data.DbProviderType,System.String)">
+        <member name="M:XiaoFeng.Data.DataHelper.#ctor(System.String)">
             <summary>
             配置数据库
             </summary>
-            <param name="provider">数据库驱动</param>
-            <param name="connectionString">数据库连接串</param>
+            <param name="connectionString">数据库连接字符串</param>
         </member>
         <member name="M:XiaoFeng.Data.DataHelper.#ctor(XiaoFeng.Data.ConnectionConfig)">
             <summary>
@@ -10743,61 +10965,7 @@
             <param name="callback">回调</param>
             <returns></returns>
         </member>
-        <member name="M:XiaoFeng.Data.Pool.IDataBase.ExecuteReaderAsync(System.String,System.Data.CommandType,System.Data.Common.DbParameter[],System.Action{System.Data.Common.DbDataReader})">
-            <summary>
-            执行储存过程返回一个DataReader
-            </summary>
-            <param name="commandText">SQL语句或储存过程名称</param>
-            <param name="commandType">CommandType类型</param>
-            <param name="parameter">Parameter数组</param>
-            <param name="callback">回调</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Data.Pool.IDataBase.ExecuteReaderAsync(System.String,System.Data.Common.DbParameter[])">
-            <summary>
-            执行储存过程返回一个DataReader
-            </summary>
-            <param name="commandText">SQL语句或储存过程名称</param>
-            <param name="parameter">Parameter数组</param>
-            <returns>返回一个DataReader</returns>
-        </member>
-        <member name="M:XiaoFeng.Data.Pool.IDataBase.ExecuteReaderAsync(System.String,System.Data.CommandType,System.Data.Common.DbParameter[])">
-            <summary>
-            异步执行储存过程返回一个DataReader
-            </summary>
-            <param name="commandText">SQL语句或储存过程名称</param>
-            <param name="commandType">CommandType类型</param>
-            <param name="parameter">Parameter数组</param>
-            <returns>返回一个DataReader</returns>
-        </member>
-        <member name="T:XiaoFeng.Data.ProviderFactory">
-            <summary> 
-            DbProviderFactory工厂类
-            </summary> 
-        </member>
-        <member name="P:XiaoFeng.Data.ProviderFactory.ProviderInvariantNames">
-            <summary>
-            驱动集
-            </summary>
-        </member>
-        <member name="F:XiaoFeng.Data.ProviderFactory.providerFactoies">
-            <summary>
-            驱动集
-            </summary>
-        </member>
-        <member name="F:XiaoFeng.Data.ProviderFactory.Lock">
-            <summary>
-            独占锁
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Data.ProviderFactory.GetProviderInvariantName(XiaoFeng.Data.DbProviderType)">
-            <summary> 
-            获取指定数据库类型对应的程序集名称 
-            </summary> 
-            <param name="providerType">数据库类型枚举</param> 
-            <returns></returns> 
-        </member>
-        <member name="M:XiaoFeng.Data.ProviderFactory.GetDbProviderFactory(XiaoFeng.Data.DbProviderType)">
+        <member name="M:XiaoFeng.Data.Pool.IDataBase.ExecuteReaderAsync(System.String,System.Data.CommandType,System.Data.Common.DbParameter[M:XiaoFeng.Data.ProviderFactory.GetDbProviderFactory(XiaoFeng.Data.DbProviderType)">
             <summary> 
             获取指定类型的数据库对应的DbProviderFactory 
             </summary> 
@@ -12008,6 +12176,20 @@
             <typeparam name="TResult">返回类型</typeparam>
             <returns></returns>
         </member>
+        <member name="M:XiaoFeng.Data.SQL.DataHelperX`1.ToEntity(System.Type)">
+             <summary>
+             返回数据实体
+             </summary>
+            <param name="type">返回类型</param>
+             <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.DataHelperX`1.SetForeignKey``1(``0)">
+            <summary>
+            设置对象有外键数据
+            </summary>
+            <typeparam name="TResult">类型</typeparam>
+            <param name="data">数据</param>
+        </member>
         <member name="M:XiaoFeng.Data.SQL.DataHelperX`1.ToEntity">
             <summary>
             返回数据实体
@@ -12044,6 +12226,13 @@
             返回数据实体集合
             </summary>
             <typeparam name="TResult">返回类型</typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.DataHelperX`1.ToList(System.Type)">
+            <summary>
+            返回数据实体集合
+            </summary>
+            <param name="type">类型</param>
             <returns></returns>
         </member>
         <member name="M:XiaoFeng.Data.SQL.DataHelperX`1.ToList``1(System.Int32,System.Int32)">
@@ -13704,6 +13893,75 @@
             Description : 优化GetTop方法
             </summary>
         </member>
+        <member n</summary>
+            <param name="func">条件</param>
+            <param name="tableType">表类型</param>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.DataHelperX`6.AS">
+            <summary>
+            复制
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.DataHelperX`6.Clone">
+            <summary>
+            复制
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.DataHelperX`6.Cache(System.Nullable{System.UInt32})">
+            <summary>
+            设置缓存
+            </summary>
+            <param name="TimeOut">缓存过期时长 单位为秒</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.DataHelperX`6.NoCache">
+            <summary>
+            不缓存
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="F:XiaoFeng.Data.SQL.DataHelperX`6.disposedValue">
+            <summary>
+            要检测冗余调用
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.DataHelperX`6.Dispose(System.Boolean)">
+            <summary>
+            释放资源
+            </summary>
+            <param name="disposing">要检测冗余调用</param>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.DataHelperX`6.Finalize">
+            <summary>
+            析构器
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.DataHelperX`6.System#IDisposable#Dispose">
+            <summary>
+            添加此代码以正确实现可处置模式。
+            </summary>
+        </member>
+        <member name="T:XiaoFeng.Data.SQL.RunSQLEventHandler">
+            <summary>
+            执行完SQL委托方法
+            </summary>
+            <param name="sender">对象</param>
+        </member>
+        <member name="T:XiaoFeng.Data.SQL.DataSQL">
+            <summary>
+            DataSQL操作类
+            Verstion : 1.0.3
+            Author : jacky
+            Email : jacky@zhuovi.com
+            QQ : 7092734
+            Site : www.zhuovi.com
+            Create Time : 2017/12/18 11:05:38
+            Update Time : 2018/09/04 17:36:26
+            Description : 优化GetTop方法
+            </summary>
+        </member>
         <member name="M:XiaoFeng.Data.SQL.DataSQL.#ctor">
             <summary>
             无参构造器
@@ -13755,85 +14013,7 @@
             </summary>
         </member>
         <member name="P:XiaoFeng.Data.SQL.DataSQL.LastSQLString">
-            <summary>
-            上一次执行SQL语句
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Data.SQL.DataSQL.LastSQLParameter">
-            <summary>
-            上一次执行SQL语句带入存储过程参数
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Data.SQL.DataSQL.Columns">
-            <summary>
-            显示字段
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Data.SQL.DataSQL.UpdateColumns">
-            <summary>
-            设置字段
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Data.SQL.DataSQL.WhereString">
-            <summary>
-            条件
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Data.SQL.DataSQL.Where">
-            <summary>
-            条件
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Data.SQL.DataSQL.PageSize">
-            <summary>
-            一页多少条
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Data.SQL.DataSQL.PageCount">
-            <summary>
-            共有多少页
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Data.SQL.DataSQL.Counts">
-            <summary>
-            共有多少条
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Data.SQL.DataSQL.Top">
-            <summary>
-            前多少条
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Data.SQL.DataSQL.Limit">
-            <summary>
-            跳过多少条
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Data.SQL.DataSQL.OrderByString">
-            <summary>
-            排序
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Data.SQL.DataSQL.GroupByString">
-            <summary>
-            分组
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Data.SQL.DataSQL.SQLType">
-            <summary>
-            处理类型
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Data.SQL.DataSQL.Config">
-            <summary>
-            数据库驱动
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Data.SQL.DataSQL.RunSQLTime">
-            <summary>
-            执行SQL时长 单位为毫秒
-            </summary>
-        </member>
+          </member>
         <member name="P:XiaoFeng.Data.SQL.DataSQL.SpliceSQLTime">
             <summary>
             拼接SQL时长 单位为毫秒
@@ -14171,6 +14351,72 @@
         </member>
         <member name="M:XiaoFeng.Data.SQL.DataSQL3.SetOn(System.String,System.String)">
             <summary>
+            <param name="dSQL">DataSQL2对象</param>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.DataSQL2.Clone">
+            <summary>
+            复制当前对象
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.DataSQL2.NextChar(System.String)">
+            <summary>
+            遍历字符
+            </summary>
+            <param name="str">字符串</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.DataSQL2.SetColumnPrefix(System.String,System.String)">
+            <summary>
+            设置字段前缀
+            </summary>
+            <param name="str">字符串</param>
+            <param name="prefix">前缀</param>
+            <returns></returns>
+        </member>
+        <member name="T:XiaoFeng.Data.SQL.DataSQL3">
+            <summary>
+            多表存储结构
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.DataSQL3.#ctor">
+            <summary>
+            无参构造器
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Data.SQL.DataSQL3.OnString">
+            <summary>
+            ON条件
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Data.SQL.DataSQL3.JoinType">
+            <summary>
+            联表类型
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.DataSQL3.SetOnAndJoinType(System.String,XiaoFeng.Data.SQL.JoinType)">
+            <summary>
+            设置 On和JoinType
+            </summary>
+            <param name="OnString">On字符串</param>
+            <param name="joinType">关联表类型</param>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.DataSQL3.SetJoinType(System.String,XiaoFeng.Data.SQL.JoinType)">
+            <summary>
+            设置JoinType
+            </summary>
+            <param name="name">名称</param>
+            <param name="jType">类型</param>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.DataSQL3.GetJoinType(System.String)">
+            <summary>
+            获取JoinType
+            </summary>
+            <param name="name">名称</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.DataSQL3.SetOn(System.String,System.String)">
+            <summary>
             设置On字符串
             </summary>
             <param name="name">名称</param>
@@ -14218,80 +14464,7 @@
             是否缓存
             </summary>
         </member>
-        <member name="P:XiaoFeng.Data.SQL.DataSqlQ.CacheTimeOut">
-            <summary>
-            缓存时长 单位为秒
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Data.SQL.DataSqlQ.IsHitCache">
-            <summary>
-            是否命中缓存
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Data.SQL.DataSqlQ.HitCacheCount">
-            <summary>
-            命中缓存次数
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Data.SQL.DataSqlQ.CacheKey">
-            <summary>
-            缓存Key
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Data.SQL.DataSqlQ.ModelType">
-            <summary>
-            类型
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Data.SQL.DataSqlQ.If">
-            <summary>
-            条件
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Data.SQL.DataSqlQ.Then">
-            <summary>
-            符合条件 执行
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Data.SQL.DataSqlQ.Else">
-            <summary>
-            不符合条件执行
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Data.SQL.DataSqlQ.ElseIf">
-            <summary>
-            其它的条件
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Data.SQL.DataSqlQ.ElseIfThen">
-            <summary>
-            其它的条件执行
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Data.SQL.DataSqlQ.Config">
-            <summary>
-            数据库配置
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Data.SQL.DataSqlQ.RunSQLTime">
-            <summary>
-            运行时长
-            </summary>
-        </member>
-        <member name="T:XiaoFeng.Data.SQL.IQueryableQ">
-            <summary>
-            数据拼接接口
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Data.SQL.IQueryableQ.If``1(XiaoFeng.Data.SQL.IQueryableX{``0})">
-            <summary>
-            条件
-            </summary>
-            <typeparam name="T">类型</typeparam>
-            <param name="query">IQueryableX</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Data.SQL.IQueryableQ.Then``1(XiaoFeng.Data.SQL.IQueryableX{``0}[])">
+        <member name="P:X">
             <summary>
             符合条件执行
             </summary>
@@ -14337,6 +14510,68 @@
         <member name="M:XiaoFeng.Data.SQL.IQueryableQ.NoCache">
             <summary>
             不缓存
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:XiaoFeng.Data.SQL.IQueryableX`1">
+            <summary>
+            操作SQL
+            </summary>
+            <typeparam name="T">类型</typeparam>
+        </member>
+        <member name="E:XiaoFeng.Data.SQL.IQueryableX`1.SQLCallBack">
+            <summary>
+            执行完SQL回调
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.IQueryableX`1.Add``1(``0)">
+            <summary>
+            插入数据
+            </summary>
+            <typeparam name="TOther">类型</typeparam>
+            <param name="model">数据Model</param>
+            <returns>返回自增长ID</returns>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.IQueryableX`1.Inserts``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            插入数据
+            </summary>
+            <typeparam name="TOther">类型</typeparam>
+            <param name="models">实例集合</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.IQueryableX`1.InsertQ``1(``0)">
+            <summary>
+            插入数据
+            </summary>
+            <typeparam name="TOther">类型</typeparam>
+            <param name="model">数据Model</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.IQueryableX`1.Insert``1(``0)">
+            <summary>
+            插入数据
+            </summary>
+            <typeparam name="TOther">类型</typeparam>
+            <param name="model">实例</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.IQueryableX`1.Insert``1(``0,System.Int64@)">
+            <summary>
+            插入数据
+            </summary>
+            <typeparam name="TOther">类型</typeparam>
+            <param name="model">数据Model</param>
+            <param name="ID">自增长ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.IQueryableX`1.InsertQ``1(System.Linq.Expressions.Expression{System.Func{`0,``0}})">
+            <summary>
+            插入数据
+            </summary>
+            <typeparam name="TOther">类型</typeparam>
+            <param name="fResult">结果对象</param>
+            <       不缓存
             </summary>
             <returns></returns>
         </member>
@@ -14525,61 +14760,7 @@
             </summary>
             <param name="tableName">表名</param>
             <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Data.SQL.IQueryableX`1.SetTable(System.Collections.Generic.Dictionary{XiaoFeng.Data.SQL.TableType,System.String})">
-            <summary>
-            设置表名
-            </summary>
-            <param name="tableName">对象</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Data.SQL.IQueryableX`1.Where(System.String)">
-            <summary>
-            扩展SQL 条件算法
-            </summary>
-            <param name="whereString">条件字符串</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Data.SQL.IQueryableX`1.Where(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
-            <summary>
-            扩展SQL 条件算法
-            </summary>
-            <param name="func">条件Lambda</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Data.SQL.IQueryableX`1.Where``1(``0)">
-            <summary>
-            扩展SQL 条件算法
-            </summary>
-            <typeparam name="TOther">类型</typeparam>
-            <param name="model">条件字符串</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Data.SQL.IQueryableX`1.ToEntity">
-            <summary>
-            返回数据实体
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Data.SQL.IQueryableX`1.ToEntity``1">
-            <summary>
-            返回数据实体
-            </summary>
-            <typeparam name="TResult">返回类型</typeparam>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Data.SQL.IQueryableX`1.ToList">
-            <summary>
-            返回数据实体集合
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Data.SQL.IQueryableX`1.ToList(System.Int32,System.Int32)">
-            <summary>
-            返回数据实体集合
-            </summary>
-            <param name="page">当前页码</param>
-            <param name="pageSize">一页多少条</param>
+   Size">一页多少条</param>
             <returns></returns>
         </member>
         <member name="M:XiaoFeng.Data.SQL.IQueryableX`1.ToList(System.Int32,System.Int32,System.Int32@,System.Int32@,System.String)">
@@ -14600,6 +14781,13 @@
             <typeparam name="TResult">返回类型</typeparam>
             <returns></returns>
         </member>
+        <member name="M:XiaoFeng.Data.SQL.IQueryableX`1.ToList(System.Type)">
+            <summary>
+            返回数据实体集合
+            </summary>
+            <param name="type">类型</param>
+            <returns></returns>
+        </member>
         <member name="M:XiaoFeng.Data.SQL.IQueryableX`1.ToList``1(System.Int32,System.Int32)">
             <summary>
             返回数据实体集合
@@ -14610,6 +14798,60 @@
             <returns></returns>
         </member>
         <member name="M:XiaoFeng.Data.SQL.IQueryableX`1.ToList``1(System.Int32,System.Int32,System.Int32@,System.Int32@,System.String)">
+            <summary>
+            获取数据列表
+            </summary>
+            <typeparam name="TResult">返回类型</typeparam>
+            <param name="page">当前页码</param>
+            <param name="pageSize">一页多少条</param>
+            <param name="pageCount">共有多少页</param>
+            <param name="counts">共有多少条</param>
+            <param name="primaryKey">主键</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.IQueryableX`1.Take(System.Int32)">
+            <summary>
+            前几条数据
+            </summary>
+            <param name="topCount">前多少条</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.IQueryableX`1.Take(System.Int32,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+            前几条数据
+            </summary>
+            <param name="topCount">前多少条</param>
+            <param name="func">条件Lambda</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.IQueryableX`1.TakeWhile(System.Int32,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+            前几条数据
+            </summary>
+            <param name="topCount">前多少条</param>
+            <param name="func">条件Lambda</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.IQueryableX`1.OrderBy(System.String)">
+            <summary>
+            设置正序排序
+            </summary>
+            <param name="orderString">排序字符串</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.IQueryableX`1.ThenBy``1(System.Linq.Expressions.Expression{System.Func{`0,``0}})">
+            <summary>
+            设置正序排序
+            </summary>
+            <typeparam name="TResult">类型</typeparam>
+            <param name="func">正序Lambda</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Data.SQL.IQueryableX`1.OrderBy``1(System.Linq.Expressions.Expression{System.Func{`0,``0}})">
+            <summary>
+            设置正序排序
+            </summary>
+            <typestem.Int32,System.Int32,System.Int32@,System.Int32@,System.String)">
             <summary>
             获取数据列表
             </summary>
@@ -20937,7 +21179,7 @@
             日志队列
             </summary>
         </member>
-        <member name="M:XiaoFeng.IIS.LoggingModel.WriteLog(Microsoft.AspNetCore.Http.HttpContext,System.DateTime,System.DateTime,System.Diagnostics.Process,System.TimeSpan,System.Int64,System.Int64)">
+        <member name="M:XiaoFeng.IIS.LoggingModel.WriteLog(System.Web.HttpApplication,System.DateTime,System.DateTime,System.Diagnostics.Process,System.TimeSpan,System.Int64,System.Int64)">
             <summary>
             写日志
             </summary>
@@ -21816,6 +22058,76 @@
             <param name="param">路径串</param>
             <returns>路径</returns>
         </member>
+        <member name="T:XiaoFeng.INIHelper">
+            <summary>
+            INI 操作类
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.INIHelper.#ctor">
+            <summary>
+            无参构造器
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.INIHelper.#ctor(System.String)">
+            <summary>
+            无参构造器
+            </summary>
+            <param name="path">文件路径 绝对路径</param>
+        </member>
+        <member name="F:XiaoFeng.INIHelper._HPath">
+            <summary>
+            文件路径
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.INIHelper.HPath">
+            <summary>
+            文件路径
+            </summary>
+        </member>
+        <member name="F:XiaoFeng.INIHelper._FPath">
+            <summary>
+            文件路径 绝对路径
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.INIHelper.FPath">
+            <summary>
+            文件路径 绝对路径
+            </summary>
+        </member>
+        <member name="F:XiaoFeng.INIHelper._ErrorMessage">
+            <summary>
+            错误信息
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.INIHelper.ErrorMessage">
+            <summary>
+            错误信息
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.INIHelper.WriteValue(System.String,System.String,System.String)">
+            <summary>
+            写INI文件
+            </summary>
+            <param name="section">段落，格式[]</param>
+            <param name="key">键</param>
+            <param name="iValue">值</param>
+        </member>
+        <member name="M:XiaoFeng.INIHelper.ReadValue(System.String,System.String)">
+            <summary>
+            读取INI文件
+            </summary>
+            <param name="section">段落，格式[]</param>
+            <param name="key">键</param>
+            <returns>返回的键值</returns>
+        </member>
+        <member name="M:XiaoFeng.INIHelper.ReadValues(System.String,System.String)">
+            <summary>
+            读取INI文件
+            </summary>
+            <param name="section">段落，格式[]</param>
+            <param name="key">键</param>
+            <returns>返回byte类型的section组或键值组</returns>
+        </member>
         <member name="T:XiaoFeng.Json.DescriptionConverter">
             <summary>
             属性值
@@ -21873,104 +22185,6 @@
             <summary>
             属性配置
             </summary>
-        </member>
-        <member name="T:XiaoFeng.Json.JsonConverterDateTime">
-            <summary>
-            日期转换器
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Json.JsonConverterDateTime.#ctor">
-            <summary>
-            构造器
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Json.JsonConverterDateTime.#ctor(System.String)">
-            <summary>
-            设置格式
-            </summary>
-            <param name="format">格式</param>
-        </member>
-        <member name="P:XiaoFeng.Json.JsonConverterDateTime.Format">
-            <summary>
-            格式
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Json.JsonConverterDateTime.Read(System.Text.Json.Utf8JsonReader@,System.Type,System.Text.Json.JsonSerializerOptions)">
-            <summary>
-            读JSON
-            </summary>
-            <param name="reader">JsonReader</param>
-            <param name="typeToConvert">类型</param>
-            <param name="options">配置</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Json.JsonConverterDateTime.Write(System.Text.Json.Utf8JsonWriter,System.DateTime,System.Text.Json.JsonSerializerOptions)">
-            <summary>
-            写JSON
-            </summary>
-            <param name="writer">JsonWriter</param>
-            <param name="value">值</param>
-            <param name="options">配置</param>
-        </member>
-        <member name="T:XiaoFeng.Json.JsonConverterGuid">
-            <summary>
-            Guid转换器
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Json.JsonConverterGuid.#ctor">
-            <summary>
-            构造器
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Json.JsonConverterGuid.#ctor(System.String)">
-            <summary>
-            设置格式
-            </summary>
-            <param name="format">格式</param>
-        </member>
-        <member name="P:XiaoFeng.Json.JsonConverterGuid.Format">
-            <summary>
-            格式
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Json.JsonConverterGuid.Read(System.Text.Json.Utf8JsonReader@,System.Type,System.Text.Json.JsonSerializerOptions)">
-            <summary>
-            读JSON
-            </summary>
-            <param name="reader">JsonReader</param>
-            <param name="typeToConvert">类型</param>
-            <param name="options">配置</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Json.JsonConverterGuid.Write(System.Text.Json.Utf8JsonWriter,System.Guid,System.Text.Json.JsonSerializerOptions)">
-            <summary>
-            写JSON
-            </summary>
-            <param name="writer">JsonWriter</param>
-            <param name="value">值</param>
-            <param name="options">配置</param>
-        </member>
-        <member name="T:XiaoFeng.Json.JsonConverterType">
-            <summary>
-            类型转换器
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Json.JsonConverterType.Read(System.Text.Json.Utf8JsonReader@,System.Type,System.Text.Json.JsonSerializerOptions)">
-            <summary>
-            读JSON
-            </summary>
-            <param name="reader">JsonReader</param>
-            <param name="typeToConvert">类型</param>
-            <param name="options">配置</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Json.JsonConverterType.Write(System.Text.Json.Utf8JsonWriter,System.Type,System.Text.Json.JsonSerializerOptions)">
-            <summary>
-            写JSON
-            </summary>
-            <param name="writer">JsonWriter</param>
-            <param name="value">值</param>
-            <param name="options">配置</param>
         </member>
         <member name="T:XiaoFeng.Json.JsonData">
             <summary>
@@ -23460,7 +23674,138 @@
             <summary>
             写数组
             </summary>
-            <param name="arr">数组</param><summary>
+            <param name="arr">数组</param>
+        </member>
+        <member name="M:XiaoFeng.Json.JsonWriterX.WriteSD(System.Collections.Specialized.StringDictionary)">
+            <summary>
+            写字典
+            </summary>
+            <param name="dic">字典</param>
+        </member>
+        <member name="M:XiaoFeng.Json.JsonWriterX.WriteStringDictionary(System.Collections.IDictionary)">
+            <summary>
+            写字典
+            </summary>
+            <param name="dic">字典</param>
+        </member>
+        <member name="M:XiaoFeng.Json.JsonWriterX.WriteStringDictionary(System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <summary>
+            写字典
+            </summary>
+            <param name="dic">字典</param>
+        </member>
+        <member name="M:XiaoFeng.Json.JsonWriterX.WriteDictionary(System.Collections.IDictionary)">
+            <summary>
+            写字典
+            </summary>
+            <param name="dic">字典</param>
+        </member>
+        <member name="M:XiaoFeng.Json.JsonWriterX.WriteStringFast(System.String)">
+            <summary>
+            写字符串
+            </summary>
+            <param name="str">字符串</param>
+        </member>
+        <member name="M:XiaoFeng.Json.JsonWriterX.WriteString(System.String)">
+            <summary>
+            写字符串
+            </summary>
+            <param name="str">字符串</param>
+        </member>
+        <member name="M:XiaoFeng.Json.JsonWriterX.WriteType(System.Type)">
+            <summary>
+            写类型
+            </summary>
+            <param name="type">类型</param>
+        </member>
+        <member name="M:XiaoFeng.Json.JsonWriterX.WriteJsonValue(XiaoFeng.Json.JsonValue)">
+            <summary>
+            写JsonValue
+            </summary>
+            <param name="jsonValue"></param>
+        </member>
+        <member name="M:XiaoFeng.Json.JsonWriterX.Format(System.String)">
+            <summary>格式化Json文本</summary>
+            <param name="json"></param>
+            <returns></returns>
+        </member>
+        <member name="T:XiaoFeng.Json.StringEnumConverter">
+            <summary>
+            枚举字符
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Json.StringEnumConverter.#ctor">
+            <summary>
+            初始化属性值
+            </summary>
+        </member>
+        <member name="T:XiaoFeng.Json.XValue">
+            <summary>
+            定义类型
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Json.XValue.#ctor(System.Object,XiaoFeng.Json.JsonType)">
+            <summary>
+            设置值
+            </summary>
+            <param name="value">值</param>
+            <param name="type">类型</param>
+        </member>
+        <member name="M:XiaoFeng.Json.XValue.#ctor">
+            <summary>
+            设置Null
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Json.XValue.#ctor(System.Int32)">
+            <summary>
+            设置数字
+            </summary>
+            <param name="value">值</param>
+        </member>
+        <member name="M:XiaoFeng.Json.XValue.#ctor(System.UInt32)">
+            <summary>
+            设置数字
+            </summary>
+            <param name="value">值</param>
+        </member>
+        <member name="M:XiaoFeng.Json.XValue.#ctor(System.Int16)">
+            <summary>
+            设置数字
+            </summary>
+            <param name="value">值</param>
+        </member>
+        <member name="M:XiaoFeng.Json.XValue.#ctor(System.UInt16)">
+            <summary>
+            设置数字
+            </summary>
+            <param name="value">值</param>
+        </member>
+        <member name="M:XiaoFeng.Json.XValue.#ctor(System.Int64)">
+            <summary>
+            设置数字
+            </summary>
+            <param name="value">值</param>
+        </member>
+        <member name="M:XiaoFeng.Json.XValue.#ctor(System.UInt64)">
+            <summary>
+            设置数字
+            </summary>
+            <param name="value">值</param>
+        </member>
+        <member name="M:XiaoFeng.Json.XValue.#ctor(System.Double)">
+            <summary>
+            设置数字
+            </summary>
+            <param name="value">值</param>
+        </member>
+        <member name="M:XiaoFeng.Json.XValue.#ctor(System.Decimal)">
+            <summary>
+            设置数字
+            </summary>
+            <param name="value">值</param>
+        </member>
+        <member name="M:XiaoFeng.Json.XValue.#ctor(System.Single)">
+            <summary>
             设置数字
             </summary>
             <param name="value">值</param>
@@ -25536,136 +25881,6 @@
             4位操作码，定义有效负载数据，如果收到了一个未知的操作码，连接必须断开.
             </summary>
         </member>
-        <member name="P:XiaoFeng.Net.INetSession.IsDataMe="M:XiaoFeng.Net.INetServer.BulkAddIpBlack(System.Collections.Generic.List{System.String})">
-            <summary>
-            批量加入黑名单
-            </summary>
-            <param name="list">列表</param>
-        </member>
-        <member name="M:XiaoFeng.Net.INetServer.AddIpBlack(System.String)">
-            <summary>
-            加入黑名单
-            </summary>
-            <param name="ip">ip</param>
-        </member>
-        <member name="M:XiaoFeng.Net.INetServer.RemoveIpBlack(System.String)">
-            <summary>
-            移除黑名单
-            </summary>
-            <param name="ip">ip</param>
-        </member>
-        <member name="M:XiaoFeng.Net.INetServer.ClearIpBlack">
-            <summary>
-            清空黑名单
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Net.INetServer.IsBlackIP(System.String)">
-            <summary>
-            是否在黑名单
-            </summary>
-            <param name="ip">ip</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Net.INetServer.Close(System.Func{XiaoFeng.Net.IServerSession,System.Boolean})">
-            <summary>
-            关闭在线列表中的客户端
-            </summary>
-            <param name="func">满足条件的函数</param>
-        </member>
-        <member name="M:XiaoFeng.Net.INetServer.Close(XiaoFeng.Net.IServerSession)">
-            <summary>
-            关闭客户端连接
-            </summary>
-            <param name="session">连接</param>
-        </member>
-        <member name="M:XiaoFeng.Net.INetServer.Close(System.Net.IPEndPoint)">
-            <summary>
-            关闭客户端连接
-            </summary>
-            <param name="endPoint">IP节点</param>
-        </member>
-        <member name="M:XiaoFeng.Net.INetServer.Close(System.Net.EndPoint)">
-            <summary>
-            关闭客户端连接
-            </summary>
-            <param name="endPoint">IP节点</param>
-        </member>
-        <member name="M:XiaoFeng.Net.INetServer.Close(System.String,System.String)">
-            <summary>
-            关闭客户端连接
-            </summary>
-            <param name="ip">客户端IP</param>
-            <param name="port">端口</param>
-        </member>
-        <member name="M:XiaoFeng.Net.INetServer.Close(System.String,System.Int32)">
-            <summary>
-            关闭客户端连接
-            </summary>
-            <param name="ip">客户端IP</param>
-            <param name="port">端口</param>
-        </member>
-        <member name="M:XiaoFeng.Net.INetServer.IsConnected(System.Net.IPEndPoint)">
-            <summary>
-            是否在线
-            </summary>
-            <param name="endPoint">IP和port</param>
-            <returns></returns>
-        </member>
-        <member name="T:XiaoFeng.Net.INetSession">
-            <summary>
-            ISession
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Net.INetSession.WsType">
-            <summary>
-            WS类型
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Net.INetSession.Encoding">
-            <summary>
-            编码
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Net.INetSession.Headers">
-            <summary>
-            Header头信息
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Net.INetSession.SocketType">
-            <summary>
-            是否是WebSocket
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Net.INetSession.DataType">
-            <summary>
-            Socket数据类型
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Net.INetSession.EndPoint">
-            <summary>
-            请求地址
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Net.INetSession.CancelToken">
-            <summary>
-            取消通知
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Net.INetSession.ConnectionSocket">
-            <summary>
-            Socket
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Net.INetSession.ConnectionTime">
-            <summary>
-            连接时间
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Net.INetSession.OpCode">
-            <summary>
-            4位操作码，定义有效负载数据，如果收到了一个未知的操作码，连接必须断开.
-            </summary>
-        </member>
         <member name="P:XiaoFeng.Net.INetSession.IsDataMasked">
             <summary>
             是否打包
@@ -26153,112 +26368,135 @@
         </member>
         <member name="P:XiaoFeng.Net.NetServer`1.Port">
             <summary>
-    mmary>
-            发送文件
-            </summary>
-            <param name="fileName">文件路径</param>
-            <param name="session">连接</param>
-        </member>
-        <member name="M:XiaoFeng.Net.NetServer`1.Send(System.String)">
-            <summary>
-            发送消息
-            </summary>
-            <param name="message">消息</param>
-        </member>
-        <member name="M:XiaoFeng.Net.NetServer`1.Send(System.String,System.Net.Sockets.Socket)">
-            <summary>
-            发送消息
-            </summary>
-            <param name="message">消息</param>
-            <param name="socket">连接</param>
-        </member>
-        <member name="M:XiaoFeng.Net.NetServer`1.Send(System.String,XiaoFeng.Net.IServerSession)">
-            <summary>
-            发送消息
-            </summary>
-            <param name="message">消息</param>
-            <param name="session">连接</param>
-        </member>
-        <member name="M:XiaoFeng.Net.NetServer`1.Send(System.Byte[])">
-            <summary>
-            发送消息
-            </summary>
-            <param name="bytes">消息</param>
-        </member>
-        <member name="M:XiaoFeng.Net.NetServer`1.Send(System.Byte[],System.Net.Sockets.Socket)">
-            <summary>
-            发送消息
-            </summary>
-            <param name="bytes">消息</param>
-            <param name="socket">连接</param>
-        </member>
-        <member name="M:XiaoFeng.Net.NetServer`1.Send(System.Byte[],XiaoFeng.Net.IServerSession)">
-            <summary>
-            发送消息
-            </summary>
-            <param name="bytes">消息</param>
-            <param name="session">连接</param>
-        </member>
-        <member name="M:XiaoFeng.Net.NetServer`1.AddQueue(XiaoFeng.Net.IServerSession)">
-            <summary>
-            加入队列
-            </summary>
-            <param name="session"></param>
-        </member>
-        <member name="M:XiaoFeng.Net.NetServer`1.RemoveQueue(XiaoFeng.Net.INetSession)">
-            <summary>
-            移除队列
-            </summary>
-            <param name="session">会话</param>
-        </member>
-        <member name="M:XiaoFeng.Net.NetServer`1.RemoveQueue(System.Net.IPEndPoint)">
-            <summary>
-            移除队列
-            </summary>
-            <param name="endPoint">网络地址</param>
-        </member>
-        <member name="M:XiaoFeng.Net.NetServer`1.ClearQueue">
-            <summary>
-            清空队列
+            侦听网络端口
             </summary>
         </member>
-        <member name="M:XiaoFeng.Net.NetServer`1.GetQueue(System.Net.Sockets.Socket)">
+        <member name="P:XiaoFeng.Net.NetServer`1.AddressFamily">
             <summary>
-            获取连接对象
+            使用的寻址方案
             </summary>
-            <param name="socket">连接</param>
-            <returns></returns>
         </member>
-        <member name="M:XiaoFeng.Net.NetServer`1.GetQueue(System.Func{XiaoFeng.Net.IServerSession,System.Boolean})">
+        <member name="P:XiaoFeng.Net.NetServer`1.SocketType">
             <summary>
-            获取在线列表中的客户端
+            连接类型
             </summary>
-            <param name="func">满足条件的函数</param>
-            <returns></returns>
         </member>
-        <member name="M:XiaoFeng.Net.NetServer`1.CountQueue">
+        <member name="P:XiaoFeng.Net.NetServer`1.ProtocolType">
             <summary>
-            获取队列数
+            协议类型
             </summary>
-            <returns></returns>
         </member>
-        <member name="M:XiaoFeng.Net.NetServer`1.UpdateQueue(XiaoFeng.Net.IServerSession)">
+        <member name="P:XiaoFeng.Net.NetServer`1.ListenCount">
             <summary>
-            更新队列[不用调用更新队列直接可以更改]
+            连接请求数
             </summary>
-            <param name="session">连接</param>
         </member>
-        <member name="M:XiaoFeng.Net.NetServer`1.GetData">
+        <member name="F:XiaoFeng.Net.NetServer`1.CancelToken">
             <summary>
-            复制出一个在线列表
+            取消通知
             </summary>
-            <returns></returns>
         </member>
-        <member name="M:XiaoFeng.Net.NetServer`1.BulkAddIpBlack(System.Collections.Generic.List{System.String})">
+        <member name="P:XiaoFeng.Net.NetServer`1.SocketAuth">
             <summary>
-            批量加入黑名单
+            验证Socket请求的合法性
             </summary>
-            <paramLocalmachineIPAddress">
+        </member>
+        <member name="P:XiaoFeng.Net.NetServer`1.IpBlackList">
+            <summary>
+            黑名单列表
+            </summary>
+        </member>
+        <member name="F:XiaoFeng.Net.NetServer`1.RWLock">
+            <summary>
+            读写锁
+            </summary>
+        </member>
+        <member name="F:XiaoFeng.Net.NetServer`1.AlreadyDisposed">
+            <summary>
+            准备释放
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Net.NetServer`1.ServerSocket">
+            <summary>
+            服务监听
+            </summary>
+        </member>
+        <member name="F:XiaoFeng.Net.NetServer`1.MaxBufferSize">
+            <summary>
+            最大接收数
+            </summary>
+        </member>
+        <member name="F:XiaoFeng.Net.NetServer`1.FirstByte">
+            <summary>
+            开始字节
+            </summary>
+        </member>
+        <member name="F:XiaoFeng.Net.NetServer`1.LastByte">
+            <summary>
+            结尾字节
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Net.NetServer`1.ConnectionSocketList">
+            <summary>
+            连接列表
+            </summary>
+        </member>
+        <member name="F:XiaoFeng.Net.NetServer`1._ServerLocation">
+            <summary>
+            WS地址
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Net.NetServer`1.ServerLocation">
+            <summary>
+            WS地址
+            </summary>
+        </member>
+        <member name="E:XiaoFeng.Net.NetServer`1.OnNewConnection">
+            <summary>
+            新的连接事件
+            </summary>
+        </member>
+        <member name="E:XiaoFeng.Net.NetServer`1.OnMessage">
+            <summary>
+            接收消息事件
+            </summary>
+        </member>
+        <member name="E:XiaoFeng.Net.NetServer`1.OnMessageByte">
+            <summary>
+            接收消息事件
+            </summary>
+        </member>
+        <member name="E:XiaoFeng.Net.NetServer`1.OnDisconnected">
+            <summary>
+            断开连接事件
+            </summary>
+        </member>
+        <member name="E:XiaoFeng.Net.NetServer`1.OnStop">
+            <summary>
+            停止服务事件
+            </summary>
+        </member>
+        <member name="E:XiaoFeng.Net.NetServer`1.OnError">
+            <summary>
+            出错事件
+            </summary>
+        </member>
+        <member name="E:XiaoFeng.Net.NetServer`1.OnClientError">
+            <summary>
+            客户端错误事件
+            </summary>
+        </member>
+        <member name="E:XiaoFeng.Net.NetServer`1.OnStart">
+            <summary>
+            服务器启动事件
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Net.NetServer`1.Init">
+            <summary>
+            初始化
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Net.NetServer`1.GetLocalmachineIPAddress">
             <summary>
             获取地址
             </summary>
@@ -26940,7 +27178,66 @@
             </summary>
             <param name="address">要下载的资源的 URI。</param>
             <param name="fileName">要放置在本地计算机上的文件的名称。</param>
-            <param name="callback"address">要接收字符串资源的 URI。 有关 HTTP 资源，此 URI 必须标识可以接受使用 POST 方法，如脚本或 ASP 页发送的请求的资源。</param>
+            <param name="callback">回调方法</param>
+            <param name="userToken">用户定义的对象传递给异步操作完成时调用的方法。</param>
+        </member>
+        <member name="M:XiaoFeng.Net.WebClientHelper.DownloadDataAsync(System.Uri,System.Net.DownloadDataCompletedEventHandler,System.Object)">
+            <summary>
+            作为资源下载 System.Byte 数组，从异步操作的形式指定的 URI 数组。
+            </summary>
+            <param name="address">一个 System.Uri 包含要下载的 URI。</param>
+            <param name="callback">回调方法</param>
+            <param name="userToken">用户定义的对象传递给异步操作完成时调用的方法。</param>
+        </member>
+        <member name="M:XiaoFeng.Net.WebClientHelper.UploadDataAsync(System.Uri,System.Byte[],System.Net.UploadDataCompletedEventHandler)">
+            <summary>
+            将数据缓冲区上载到通过使用 POST 方法的 URI 标识的资源。 此方法不会阻止调用线程。
+            </summary>
+            <param name="address">要接收的数据资源的 URI。</param>
+            <param name="data">要向资源发送的数据缓冲区。</param>
+            <param name="callback">回调方法</param>
+        </member>
+        <member name="M:XiaoFeng.Net.WebClientHelper.UploadDataAsync(System.Uri,System.String,System.Byte[],System.Net.UploadDataCompletedEventHandler,System.Object)">
+            <summary>
+            将数据缓冲区上载到通过使用 POST 方法的 URI 标识的资源。 此方法不会阻止调用线程。
+            </summary>
+            <param name="address">要接收的数据资源的 URI。</param>
+            <param name="method">用来将数据发送到该资源的方法。 如果 null, ，默认情况下，开机自检 （http） 和 STOR ftp。</param>
+            <param name="data">要向资源发送的数据缓冲区。</param>
+            <param name="callback">回调方法</param>
+            <param name="userToken">用户定义的对象传递给异步操作完成时调用的方法。</param>
+        </member>
+        <member name="M:XiaoFeng.Net.WebClientHelper.UploadFileAsyncs(System.Uri,System.String,System.String,System.Net.UploadFileCompletedEventHandler,System.Object)">
+            <summary>
+            将指定的本地文件上载到指定的资源使用 POST 方法。 此方法不会阻止调用线程。
+            </summary>
+            <param name="address">要接收的文件资源的 URI。 有关 HTTP 资源，此 URI 必须标识可以接受使用 POST 方法，如脚本或 ASP 页发送的请求的资源。</param>
+            <param name="method">用来将数据发送到该资源的方法。 如果 null, ，默认情况下，开机自检 （http） 和 STOR ftp。</param>
+            <param name="fileName">要发送到资源的文件。</param>
+            <param name="callback">回调方法</param>
+            <param name="userToken">用户定义的对象传递给异步操作完成时调用的方法。</param>
+        </member>
+        <member name="M:XiaoFeng.Net.WebClientHelper.UploadFileAsyncs(System.Uri,System.String,System.Net.UploadFileCompletedEventHandler)">
+            <summary>
+            将指定的本地文件上载到指定的资源使用 POST 方法。 此方法不会阻止调用线程。
+            </summary>
+            <param name="address">要接收的文件资源的 URI。 有关 HTTP 资源，此 URI 必须标识可以接受使用 POST 方法，如脚本或 ASP 页发送的请求的资源。</param>
+            <param name="fileName">要发送到资源的文件。</param>
+            <param name="callback">回调方法</param>
+        </member>
+        <member name="M:XiaoFeng.Net.WebClientHelper.UploadStringAsync(System.Uri,System.String,System.Net.UploadStringCompletedEventHandler)">
+            <summary>
+            将指定的字符串上载到指定的资源。 此方法不会阻止调用线程。
+            </summary>
+            <param name="address">要接收字符串资源的 URI。 有关 HTTP 资源，此 URI 必须标识可以接受使用 POST 方法，如脚本或 ASP 页发送的请求的资源。</param>
+            <param name="data">要上载的字符串。</param>
+            <param name="callback">回调方法</param>
+        </member>
+        <member name="M:XiaoFeng.Net.WebClientHelper.UploadStringAsync(System.Uri,System.String,System.String,System.Net.UploadStringCompletedEventHandler,System.Object)">
+            <summary>
+            将指定的字符串上载到指定的资源。 此方法不会阻止调用线程。
+            </summary>
+            <param name="address">要接收字符串资源的 URI。 有关 HTTP 资源，此 URI 必须标识可以接受使用 POST 方法，如脚本或 ASP 页发送的请求的资源。</param>
             <param name="method">用于将文件发送到该资源的 HTTP 方法。 如果为 null，默认值为 POST （http） 和 STOR ftp。</param>
             <param name="data">要上载的字符串。</param>
             <param name="callback">回调方法</param>
@@ -27695,143 +27992,6 @@
             $第一个参数字节长度 CR LF
             第一个参数 CR LF
             ...
-            $第N个参数字         <summary>
-            获取一组随机字符串
-            </summary>
-            <param name="count">数组长度</param>
-            <param name="length">字符串长度</param>
-            <param name="ranType">类型</param>
-            <param name="isRepeat">是否重复</param>
-            <returns></returns>
-        </member>
-        <member name="T:XiaoFeng.RandomType">
-            <summary>
-            生成字符类型
-            </summary>
-        </member>
-        <member name="F:XiaoFeng.RandomType.Number">
-            <summary>
-            数字
-            </summary>
-        </member>
-        <member name="F:XiaoFeng.RandomType.Letter">
-            <summary>
-            字母
-            </summary>
-        </member>
-        <member name="F:XiaoFeng.RandomType.Special">
-            <summary>
-            特殊字符
-            </summary>
-        </member>
-        <member name="F:XiaoFeng.RandomType.All">
-            <summary>
-            所有
-            </summary>
-        </member>
-        <member name="T:XiaoFeng.Redis.Command">
-            <summary>
-            命令请求类
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Redis.Command.#ctor(XiaoFeng.Redis.CommandType,System.Object[])">
-            <summary>
-            无参构造器
-            </summary>
-            <param name="commandType">命令类型</param>
-            <param name="datas">参数集</param>
-        </member>
-        <member name="P:XiaoFeng.Redis.Command.Stream">
-            <summary>
-            网络流
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Redis.Command.CommandType">
-            <summary>
-            命令类型
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Redis.Command.Datas">
-            <summary>
-            命令数据
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Redis.Command.ToString">
-            <summary>
-            命令行
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Redis.Command.ToBytes">
-            <summary>
-            命令行字节组
-            </summary>
-        </member>
-        <member name="T:XiaoFeng.Redis.CommandResult">
-            <summary>
-            命令响应结果
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Redis.CommandResult.#ctor(XiaoFeng.Redis.CommandType,System.String)">
-            <summary>
-            设置结果行
-            </summary>
-            <param name="commandType">命令</param>
-            <param name="line">结果行</param>
-        </member>
-        <member name="P:XiaoFeng.Redis.CommandResult.Line">
-            <summary>
-            命令
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Redis.CommandResult.CommandType">
-            <summary>
-            命令
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Redis.CommandResult.OK">
-            <summary>
-            是否成功
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Redis.CommandResult.Message">
-            <summary>
-            错误消息
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Redis.CommandResult.Value">
-            <summary>
-            值
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Redis.CommandResult.#ctor(XiaoFeng.Redis.CommandType,System.Byte[])">
-            <summary>
-            设置结果行
-            </summary>
-            <param name="commandType">命令</param>
-            <param name="bytes">结果集字节</param>
-        </member>
-        <member name="M:XiaoFeng.Redis.CommandResult.GetString(System.String,System.Collections.Generic.Dictionary{System.String,System.String}@)">
-            <summary>
-            获取数据
-            </summary>
-            <param name="str">结果</param>
-            <param name="dict">数据</param>
-        </member>
-        <member name="M:XiaoFeng.Redis.CommandResult.GetString(System.String,System.Collections.Generic.List{System.String}@)">
-            <summary>
-            获取数据
-            </summary>
-            <param name="str">结果</param>
-            <param name="list">数据</param>
-        </member>
-        <member name="T:XiaoFeng.Redis.CommandType">
-            <summary>
-            执行命令
-            *参数个数 CR LF
-            $第一个参数字节长度 CR LF
-            第一个参数 CR LF
-            ...
             $第N个参数字节长度 CR LF
             第N个参数数据 CR LF
             </summary>
@@ -28131,113 +28291,108 @@
             获取哈希表中所有值。
             </summary>
         </member>
-�并存储在 destination 中
+        <member name="P:XiaoFeng.Redis.CommandType.HSCAN">
+            <summary>
+            迭代哈希表中的键值对。
             </summary>
         </member>
-        <member name="P:XiaoFeng.Redis.CommandType.SISMEMBER">
+        <member name="P:XiaoFeng.Redis.CommandType.BLPOP">
             <summary>
-            判断 member 元素是否是集合 key 的成员
+            移出并获取列表的第一个元素， 如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止。
             </summary>
         </member>
-        <member name="P:XiaoFeng.Redis.CommandType.SMEMBERS">
+        <member name="P:XiaoFeng.Redis.CommandType.BRPOP">
             <summary>
-            返回集合中的所有成员
+            移出并获取列表的最后一个元素， 如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止。
             </summary>
         </member>
-        <member name="P:XiaoFeng.Redis.CommandType.SPOP">
+        <member name="P:XiaoFeng.Redis.CommandType.BRPOPLPUSH">
             <summary>
-            移除并返回集合中的一个随机元素
+            从列表中弹出一个值，将弹出的元素插入到另外一个列表中并返回它； 如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止。
             </summary>
         </member>
-        <member name="P:XiaoFeng.Redis.CommandType.SRANDMEMBER">
+        <member name="P:XiaoFeng.Redis.CommandType.LINDEX">
             <summary>
-            返回集合中一个或多个随机数
+            通过索引获取列表中的元素
             </summary>
         </member>
-        <member name="P:XiaoFeng.Redis.CommandType.SREM">
+        <member name="P:XiaoFeng.Redis.CommandType.LINSERT">
             <summary>
-            移除集合中一个或多个成员
+            在列表的元素前或者后插入元素
             </summary>
         </member>
-        <member name="P:XiaoFeng.Redis.CommandType.SUNION">
+        <member name="P:XiaoFeng.Redis.CommandType.LLEN">
             <summary>
-            返回所有给定集合的并集
+            获取列表长度
             </summary>
         </member>
-        <member name="P:XiaoFeng.Redis.CommandType.SUNIONSTORE">
+        <member name="P:XiaoFeng.Redis.CommandType.LPOP">
             <summary>
-            所有给定集合的并集存储在 destination 集合中
+            移出并获取列表的第一个元素
             </summary>
         </member>
-        <member name="P:XiaoFeng.Redis.CommandType.SMOVE">
+        <member name="P:XiaoFeng.Redis.CommandType.LPUSH">
             <summary>
-            将 member 元素从 source 集合移动到 destination 集合
+            将一个或多个值插入到列表头部
             </summary>
         </member>
-        <member name="P:XiaoFeng.Redis.CommandType.SSCAN">
+        <member name="P:XiaoFeng.Redis.CommandType.LPUSHX">
             <summary>
-            迭代集合中的元素
+            将一个值插入到已存在的列表头部
             </summary>
         </member>
-        <member name="P:XiaoFeng.Redis.CommandType.ZADD">
+        <member name="P:XiaoFeng.Redis.CommandType.LRANGE">
             <summary>
-            向有序集合添加一个或多个成员，或者更新已存在成员的分数
+            获取列表指定范围内的元素
             </summary>
         </member>
-        <member name="P:XiaoFeng.Redis.CommandType.ZCARD">
+        <member name="P:XiaoFeng.Redis.CommandType.LREM">
             <summary>
-            获取有序集合的成员数
+            移除列表元素
             </summary>
         </member>
-        <member name="P:XiaoFeng.Redis.CommandType.ZCOUNT">
+        <member name="P:XiaoFeng.Redis.CommandType.LSET">
             <summary>
-            计算在有序集合中指定区间分数的成员数
+            通过索引设置列表元素的值
             </summary>
         </member>
-        <member name="P:XiaoFeng.Redis.CommandType.ZINCRBY">
+        <member name="P:XiaoFeng.Redis.CommandType.LTRIM">
             <summary>
-            有序集合中对指定成员的分数加上增量 increment
+            对一个列表进行修剪(trim)，就是说，让列表只保留指定区间内的元素，不在指定区间之内的元素都将被删除。
             </summary>
         </member>
-        <member name="P:XiaoFeng.Redis.CommandType.ZINTERSTORE">
+        <member name="P:XiaoFeng.Redis.CommandType.RPOP">
             <summary>
-            计算给定的一个或多个有序集的交集并将结果集存储在新的有序集合 destination 中
+            移除列表的最后一个元素，返回值为移除的元素。
             </summary>
         </member>
-        <member name="P:XiaoFeng.Redis.CommandType.ZLEXCOUNT">
+        <member name="P:XiaoFeng.Redis.CommandType.RPOPLPUSH">
             <summary>
-            在有序集合中计算指定字典区间内成员数量
+            移除列表的最后一个元素，并将该元素添加到另一个列表并返回
             </summary>
         </member>
-        <member name="P:XiaoFeng.Redis.CommandType.ZRANGE">
+        <member name="P:XiaoFeng.Redis.CommandType.RPUSH">
             <summary>
-            通过索引区间返回有序集合指定区间内的成员
+            在列表中添加一个或多个值
             </summary>
         </member>
-        <member name="P:XiaoFeng.Redis.CommandType.ZRANGEBYLEX">
+        <member name="P:XiaoFeng.Redis.CommandType.RPUSHX">
             <summary>
-            通过字典区间返回有序集合的成员
+            为已存在的列表添加值
             </summary>
         </member>
-        <member name="P:XiaoFeng.Redis.CommandType.ZRANGEBYSCORE">
+        <member name="P:XiaoFeng.Redis.CommandType.SADD">
             <summary>
-            通过分数返回有序集合指定区间内的成员
+            向集合添加一个或多个成员
             </summary>
         </member>
-        <member name="P:XiaoFeng.Redis.CommandType.ZRANK">
+        <member name="P:XiaoFeng.Redis.CommandType.SCARD">
             <summary>
-            返回有序集合中指定成员的索引
+            获取集合的成员数
             </summary>
         </member>
-        <member name="P:XiaoFeng.Redis.CommandType.ZREM">
+        <member name="P:XiaoFeng.Redis.CommandType.SDIFF">
             <summary>
-            移除有序集合中的一个或多个成员
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Redis.CommandType.ZREMRANGEBYLEX">
-            <summary>
-            移除有序集合中给定的字典区间的所有成员
-       <summary>
             返回第一个集合与其他集合之间的差异。
             </summary>
         </member>
@@ -28446,7 +28601,119 @@
             指退订给定的频道。
             </summary>
         </member>
-        <member name="P:XiaoFeng.Redis.CommandTy��滤已经删除的消息
+        <member name="P:XiaoFeng.Redis.CommandType.DISCARD">
+            <summary>
+            取消事务，放弃执行事务块内的所有命令。
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Redis.CommandType.EXEC">
+            <summary>
+            执行所有事务块内的命令。
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Redis.CommandType.MULTI">
+            <summary>
+            标记一个事务块的开始。
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Redis.CommandType.UNWATCH">
+            <summary>
+            取消 WATCH 命令对所有 key 的监视。
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Redis.CommandType.WATCH">
+            <summary>
+            监视一个(或多个) key ，如果在事务执行之前这个(或这些) key 被其他命令所改动，那么事务将被打断。
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Redis.CommandType.GEOADD">
+            <summary>
+            用于存储指定的地理空间位置，可以将一个或多个经度(longitude)、纬度(latitude)、位置名称(member)添加到指定的 key 中
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Redis.CommandType.GEOPOS">
+            <summary>
+            用于从给定的 key 里返回所有指定名称(member)的位置（经度和纬度），不存在的返回 nil。
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Redis.CommandType.GEODIST">
+            <summary>
+            用于返回两个给定位置之间的距离。
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Redis.CommandType.GEORADIUS">
+            <summary>
+            以给定的经纬度为中心， 返回键包含的位置元素当中， 与中心的距离不超过给定最大距离的所有位置元素。
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Redis.CommandType.GEORADIUSBYMEMBER">
+            <summary>
+            以给定的经纬度为中心， 返回键包含的位置元素当中， 与中心的距离不超过给定最大距离的所有位置元素。
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Redis.CommandType.GEOSEARCH">
+            <summary>
+            搜索以给定的经纬度为中心， 返回键包含的位置元素当中， 与中心的距离不超过给定最大距离的所有位置元素。
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Redis.CommandType.GEOSEARCHSTORE">
+            <summary>
+            搜索以给定的经纬度为中心， 返回键包含的位置元素当中， 与中心的距离不超过给定最大距离的所有位置元素存储到列表中。
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Redis.CommandType.GEOHASH">
+            <summary>
+            保存地理位置的坐标。
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Redis.CommandType.AUTH">
+            <summary>
+            验证密码是否正确
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Redis.CommandType.ECHO">
+            <summary>
+            打印字符串
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Redis.CommandType.PING">
+            <summary>
+            查看服务是否运行
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Redis.CommandType.QUIT">
+            <summary>
+            关闭当前连接
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Redis.CommandType.SELECT">
+            <summary>
+            切换到指定的数据库
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Redis.CommandType.XADD">
+            <summary>
+            使用 XADD 向队列添加消息，如果指定的队列不存在，则创建一个队列
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Redis.CommandType.XTRIM">
+            <summary>
+            对流进行修剪，限制长度
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Redis.CommandType.XDEL">
+            <summary>
+            删除消息
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Redis.CommandType.XLEN">
+            <summary>
+            获取流包含的元素数量，即消息长度
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Redis.CommandType.XRANGE">
+            <summary>
+            获取消息列表，会自动过滤已经删除的消息
             </summary>
         </member>
         <member name="P:XiaoFeng.Redis.CommandType.XREVRANGE">
@@ -28847,80 +29114,67 @@
               6     15          15     ±0.0027           ±0.0055             ±0.61
               7     17          18     ±0.00068          ±0.00068            ±0.0761
               8     20          20     ±0.000086         ±0.000172           ±0.01911
-              9     22           <param name="key">key</param>
-            <param name="geos">经纬度集</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Redis.RedisClient.GeoAddAsync(System.String,XiaoFeng.Redis.GeoModel[])">
-            <summary>
-            存储指定的地理空间位置，可以将一个或多个经度(longitude)、纬度(latitude)、位置名称(member)添加到指定的 key 中 异步
-            </summary>
-            <param name="key">key</param>
-            <param name="geos">经纬度集</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Redis.RedisClient.GetGeoPos(System.String,System.Nullable{System.Int32},System.Object[])">
-            <summary>
-            用于从给定的 key 里返回所有指定名称(member)的位置（经度和纬度），不存在的返回 nil。
+              9     22          23     ±0.000021         ±0.000021           ±0.00478
+              10    25          25     ±0.00000268       ±0.00000536         ±0.0005971
+              11    27          28     ±0.00000067       ±0.00000067         ±0.0001492
+              12    30          30     ±0.00000008       ±0.00000017         ±0.0000186
             </summary>
             <param name="key">key</param>
             <param name="dbNum">库索引</param>
             <param name="members">元素</param>
             <returns></returns>
         </member>
-        <member name="M:XiaoFeng.Redis.RedisClient.GetGeoPosAsync(System.String,System.Nullable{System.Int32},System.Object[])">
+        <member name="M:XiaoFeng.Redis.RedisClient.GetGeoHashAsync(System.String,System.Nullable{System.Int32},System.Object[])">
             <summary>
-            用于从给定的 key 里返回所有指定名称(member)的位置（经度和纬度），不存在的返回 nil。 异步
+            获取一个或多个位置元素的 geohash 值 异步
+            GeoHash 编码长度与精度
+            长度  Lat位数   Lng位数   Lat误差           Lng误差               KM误差
+              1     2           3      ±23               ±23                 ±2500
+              2     5           5      ±2.8              ±5.6                ±630
+              3     7           8      ±0.70             ±0.76               ±78
+              4     10          10     ±0.087            ±0.18               ±20
+              5     12          13     ±0.022            ±0.022              ±2.4
+              6     15          15     ±0.0027           ±0.0055             ±0.61
+              7     17          18     ±0.00068          ±0.00068            ±0.0761
+              8     20          20     ±0.000086         ±0.000172           ±0.01911
+              9     22          23     ±0.000021         ±0.000021           ±0.00478
+              10    25          25     ±0.00000268       ±0.00000536         ±0.0005971
+              11    27          28     ±0.00000067       ±0.00000067         ±0.0001492
+              12    30          30     ±0.00000008       ±0.00000017         ±0.0000186
             </summary>
             <param name="key">key</param>
             <param name="dbNum">库索引</param>
             <param name="members">元素</param>
             <returns></returns>
         </member>
-        <member name="M:XiaoFeng.Redis.RedisClient.GetGeoPos(System.String,System.Object[])">
-            <summary>
-            用于从给定的 key 里返回所有指定名称(member)的位置（经度和纬度），不存在的返回 nil。
-            </summary>
-            <param name="key">key</param>
-            <param name="members">元素</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Redis.RedisClient.GetGeoPosAsync(System.String,System.Object[])">
-            <summary>
-            用于从给定的 key 里返回所有指定名称(member)的位置（经度和纬度），不存在的返回 nil。 异步
-            </summary>
-            <param name="key">key</param>
-            <param name="members">元素</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Redis.RedisClient.GetGeoDist(System.String,System.String,System.String,XiaoFeng.Redis.UnitType,System.Nullable{System.Int32})">
-            <summary>
-            返回两个给定位置之间的距离
-            </summary>
-            <param name="key">key</param>
-            <param name="firstMember">第一个位置</param>
-            <param name="secondMember">第二个位置</param>
-            <param name="unitType">单位类型</param>
-            <param name="dbNum">库索引</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Redis.RedisClient.GetGeoDistAsync(System.String,System.String,System.String,XiaoFeng.Redis.UnitType,System.Nullable{System.Int32})">
-            <summary>
-            返回两个给定位置之间的距离 异步
-            </summary>
-            <param name="key">key</param>
-            <param name="firstMember">第一个位置</param>
-            <param name="secondMember">第二个位置</param>
-            <param name="unitType">单位类型</param>
-            <param name="dbNum">库索引</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Redis.RedisClient.GetGeoHash(System.String,System.Nullable{System.Int32},System.Object[])">
+        <member name="M:XiaoFeng.Redis.RedisClient.GetGeoHash(System.String,System.Object[])">
             <summary>
             获取一个或多个位置元素的 geohash 值
             GeoHash 编码长度与精度
             长度  Lat位数   Lng位数   Lat误差           Lng误差               KM误差
-              1     2           3      ±23               ±23                 ±2500       1     2           3      ±23               ±23                 ±2500
+              1     2           3      ±23               ±23                 ±2500
+              2     5           5      ±2.8              ±5.6                ±630
+              3     7           8      ±0.70             ±0.76               ±78
+              4     10          10     ±0.087            ±0.18               ±20
+              5     12          13     ±0.022            ±0.022              ±2.4
+              6     15          15     ±0.0027           ±0.0055             ±0.61
+              7     17          18     ±0.00068          ±0.00068            ±0.0761
+              8     20          20     ±0.000086         ±0.000172           ±0.01911
+              9     22          23     ±0.000021         ±0.000021           ±0.00478
+              10    25          25     ±0.00000268       ±0.00000536         ±0.0005971
+              11    27          28     ±0.00000067       ±0.00000067         ±0.0001492
+              12    30          30     ±0.00000008       ±0.00000017         ±0.0000186
+            </summary>
+            <param name="key">key</param>
+            <param name="members">元素</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Redis.RedisClient.GetGeoHashAsync(System.String,System.Object[])">
+            <summary>
+            获取一个或多个位置元素的 geohash 值 异步
+            GeoHash 编码长度与精度
+            长度  Lat位数   Lng位数   Lat误差           Lng误差               KM误差
+              1     2           3      ±23               ±23                 ±2500
               2     5           5      ±2.8              ±5.6                ±630
               3     7           8      ±0.70             ±0.76               ±78
               4     10          10     ±0.087            ±0.18               ±20
@@ -34099,135 +34353,6 @@
             <summary>
             数据库配置
             </summary>
-        </me    <summary>
-            设置连接数据
-            </summary>
-            <param name="Host">Host</param>
-            <param name="Port">端口</param>
-        </member>
-        <member name="T:XiaoFeng.Sockets.WsType">
-            <summary>
-            WebSocket类型
-            </summary>
-        </member>
-        <member name="F:XiaoFeng.Sockets.WsType.Null">
-            <summary>
-            无
-            </summary>
-        </member>
-        <member name="F:XiaoFeng.Sockets.WsType.WS">
-            <summary>
-            WS类型
-            </summary>
-        </member>
-        <member name="F:XiaoFeng.Sockets.WsType.WSS">
-            <summary>
-            WSS类型
-            </summary>
-        </member>
-        <member name="T:XiaoFeng.Sockets.SocketDataType">
-            <summary>
-            Socket 数据类型
-            </summary>
-        </member>
-        <member name="F:XiaoFeng.Sockets.SocketDataType.String">
-            <summary>
-            字符串类型
-            </summary>
-        </member>
-        <member name="F:XiaoFeng.Sockets.SocketDataType.HexString">
-            <summary>
-            16进制类型 一般用于串口传输
-            </summary>
-        </member>
-        <member name="T:XiaoFeng.Table.BaseTable">
-            <summary>
-            基础表
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Table.BaseTable.#ctor">
-            <summary>
-            无参构造器
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Table.BaseTable.GetTableAttribute(System.Type,System.String,System.String,System.Int32)">
-            <summary>
-            获取表配置属性
-            </summary>
-            <param name="type">类型</param>
-            <param name="tableName">表名</param>
-            <param name="connName">连接串</param>
-            <param name="connIndex">索引</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Table.BaseTable.GetField(XiaoFeng.ColumnAttribute,XiaoFeng.Data.DbProviderType)">
-            <summary>
-            获取字段定义
-            </summary>
-            <param name="column">字段配置</param>
-            <param name="providerType">驱动类型</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Table.BaseTable.GetDefaultValue(System.String,XiaoFeng.Data.DbProviderType)">
-            <summary>
-            获取默认值
-            </summary>
-            <param name="defaultValue">默认值</param>
-            <param name="providerType">驱动类型</param>
-            <returns></returns>
-        </member>
-        <member name="T:XiaoFeng.Table.ITable">
-            <summary>
-            创建表接口
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Table.ITable.Create``1(System.String,System.String,System.Int32)">
-            <summary>
-            创建表
-            </summary>
-            <typeparam name="T">类型</typeparam>
-            <param name="tableName">表名</param>
-            <param name="connName">连接串名</param>
-            <param name="connIndex">连接串索引</param>
-            <returns></returns>
-        </member>
-        <member name="M:XiaoFeng.Table.ITable.Create(System.Type,System.String,System.String,System.Int32)">
-            <summary>
-            创建表
-            </summary>
-            <param name="modelType">类型</param>
-            <param name="tableName">表名</param>
-            <param name="connName">连接串名</param>
-            <param name="connIndex">连接串索引</param>
-            <returns></returns>
-        </member>
-        <member name="T:XiaoFeng.Table.MakeTable">
-            <summary>
-            通过Model创建表
-            Verstion : 1.0.0
-            Author : jacky
-            Email : jacky@zhuovi.com
-            QQ : 7092734
-            Site : www.zhuovi.com
-            Create Time : 2019/03/18 16:32:26
-            Update Time : 2019/03/18 16:32:26
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Table.MakeTable.#ctor">
-            <summary>
-            无参构造器
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Table.MakeTable.#ctor(XiaoFeng.Data.ConnectionConfig)">
-            <summary>
-            设置数据库配置
-            </summary>
-            <param name="config">数据库配置</param>
-        </member>
-        <member name="P:XiaoFeng.Table.MakeTable.Config">
-            <summary>
-            数据库配置
-            </summary>
         </member>
         <member name="M:XiaoFeng.Table.MakeTable.Create``1(System.String,System.String,System.Int32)">
             <summary>
@@ -34343,6 +34468,13 @@
             加入任务
             </summary>
             <param name="action">事件</param>
+        </member>
+        <member name="M:XiaoFeng.Threading.BackgroundTaskQueue.AddWorkItem(System.Action{System.Object},System.Object)">
+            <summary>
+            加入任务
+            </summary>
+            <param name="action">事件</param>
+            <param name="state">数据对象</param>
         </member>
         <member name="M:XiaoFeng.Threading.BackgroundTaskQueue.AddWorkItem(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task})">
             <summary>
@@ -35039,6 +35171,109 @@
             <typeparam name="T">类型</typeparam>
             <param name="func">方法</param>
             <returns></returns>
+        </member>
+        <member name="T:XiaoFeng.Threading.TaskPool">
+            <summary>
+            任务队列池
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Threading.TaskPool.#ctor">
+            <summary>
+            无参构造器
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Threading.TaskPool.#ctor(System.Int32)">
+            <summary>
+            设置最大线程数
+            </summary>
+            <param name="MaxCount">最大线程数</param>
+        </member>
+        <member name="P:XiaoFeng.Threading.TaskPool.PendingWorkItemCount">
+            <summary>
+            获取当前排队等待处理的工作项的数量。
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Threading.TaskPool.CompletedWorkItemCount">
+            <summary>
+            完成工作项数
+            </summary>
+        </member>
+        <member name="F:XiaoFeng.Threading.TaskPool._CompletedWorkItemCount">
+            <summary>
+            完成工作项数
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Threading.TaskPool.MaxTaskCount">
+            <summary>
+            最大任务数
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Threading.TaskPool.TaskingCount">
+            <summary>
+            正在运行的任务数
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Threading.TaskPool.TaskQueue">
+            <summary>
+            任务队列
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Threading.TaskPool.TaskList">
+            <summary>
+            执行任务列表
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Threading.TaskPool.ConsumeState">
+            <summary>
+            消费运行状态
+            </summary>
+        </member>
+        <member name="P:XiaoFeng.Threading.TaskPool.CancelToken">
+            <summary>
+            取消信号
+            </summary>
+        </member>
+        <member name="F:XiaoFeng.Threading.TaskPool.Manual">
+            <summary>
+            线程同步信号
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Threading.TaskPool.QueueUserWorkItem(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task})">
+            <summary>
+            添加任务
+            </summary>
+            <param name="task">任务</param>
+        </member>
+        <member name="M:XiaoFeng.Threading.TaskPool.QueueUserWorkItem(System.Action)">
+            <summary>
+            添加任务
+            </summary>
+            <param name="action">委托</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Threading.TaskPool.QueueUserWorkItem(System.Action{System.Object},System.Object)">
+            <summary>
+            添加任务
+            </summary>
+            <param name="action">委托</param>
+            <param name="state">数据对象</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Threading.TaskPool.Wake">
+            <summary>
+            唤醒线程去执行任务
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Threading.TaskPool.Execute(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task})">
+            <summary>
+            执行任务
+            </summary>
+            <param name="task">任务</param>
+        </member>
+        <member name="M:XiaoFeng.Threading.TaskPool.Cancel">
+            <summary>
+            取消
+            </summary>
         </member>
         <member name="T:XiaoFeng.Threading.Time">
             <summary>
@@ -35951,52 +36186,9 @@
             请求对象
             </summary>
         </member>
-        <member name="P:XiaoFeng.Web.HttpContext.App">
-            <summary>
-            应用程式建立器
-            </summary>
-        </member>
-        <member name="F:XiaoFeng.Web.HttpContext._contextAccessor">
-            <summary>
-            访问器
-            </summary>
-        </member>
         <member name="P:XiaoFeng.Web.HttpContext.Current">
             <summary>
-            当前上下文
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Web.HttpContext.Configure(Microsoft.AspNetCore.Http.IHttpContextAccessor)">
-            <summary>
-            配置当前HttpContext
-            </summary>
-            <param name="contextAccessor">访问器</param>
-        </member>
-        <member name="M:XiaoFeng.Web.HttpContext.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder)">
-            <summary>
-            配置当前应用程式建立器
-            </summary>
-            <param name="app">应用程式建立器</param>
-        </member>
-        <member name="T:XiaoFeng.Web.HttpContextX">
-            <summary>
-            请求对象
-            </summary>
-        </member>
-        <member name="M:XiaoFeng.Web.HttpContextX.#ctor(Microsoft.AspNetCore.Http.IHttpContextAccessor)">
-            <summary>
-            依赖注入
-            </summary>
-            <param name="accessor">访问器</param>
-        </member>
-        <member name="F:XiaoFeng.Web.HttpContextX._contextAccessor">
-            <summary>
-            访问器
-            </summary>
-        </member>
-        <member name="P:XiaoFeng.Web.HttpContextX.HttpContextAccessor">
-            <summary>
-            访问器
+            当前请求对象
             </summary>
         </member>
         <member name="T:XiaoFeng.Web.HttpCookie">
@@ -36604,7 +36796,7 @@
             上传入口
             </summary>
         </member>
-        <member name="M:XiaoFeng.Web.UpLoadFile.UpLoad(Microsoft.AspNetCore.Http.IFormFile,System.String)">
+        <member name="M:XiaoFeng.Web.UpLoadFile.UpLoad(System.Web.HttpPostedFile,System.String)">
             <summary>
             上传入口
             </summary>
@@ -37161,7 +37353,7 @@
             <param name="name">名称</param>
             <returns></returns>
         </member>
-        <member name="M:XiaoFeng.XToken._Value``1(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,Microsoft.Extensions.Primitives.StringValues}},System.String,``0)">
+        <member name="M:XiaoFeng.XToken._Value``1(System.Collections.Specialized.NameValueCollection,System.String,``0)">
             <summary>
             获取数据并验证有效性 过滤SQL注入
             </summary>
@@ -37171,7 +37363,7 @@
             <param name="defaultValue">默认值</param>
             <returns></returns>
         </member>
-        <member name="M:XiaoFeng.XToken._Value``1(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,Microsoft.Extensions.Primitives.StringValues}},System.String,XiaoFeng.Validator.ValidateFormat)">
+        <member name="M:XiaoFeng.XToken._Value``1(System.Collections.Specialized.NameValueCollection,System.String,XiaoFeng.Validator.ValidateFormat)">
             <summary>
             获取数据并验证有效性 过滤SQL注入
             </summary>
@@ -37181,7 +37373,7 @@
             <param name="format">验证规则</param>
             <returns></returns>
         </member>
-        <member name="M:XiaoFeng.XToken._Value``1(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,Microsoft.Extensions.Primitives.StringValues}},System.String,System.Linq.Expressions.Expression{System.Func{XiaoFeng.Validator.ValidatorFormat,System.Boolean}})">
+        <member name="M:XiaoFeng.XToken._Value``1(System.Collections.Specialized.NameValueCollection,System.String,System.Linq.Expressions.Expression{System.Func{XiaoFeng.Validator.ValidatorFormat,System.Boolean}})">
             <summary>
             获取数据并验证有效性 过滤SQL注入
             </summary>
@@ -37191,7 +37383,7 @@
             <param name="func">Lambda表达式</param>
             <returns></returns>
         </member>
-        <member name="M:XiaoFeng.XToken._value(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,Microsoft.Extensions.Primitives.StringValues}},System.String)">
+        <member name="M:XiaoFeng.XToken._value(System.Collections.Specialized.NameValueCollection,System.String)">
             <summary>
             获取原始值
             </summary>
@@ -38522,6 +38714,37 @@
             </summary>
             <param name="ZipPath">压缩包路径</param>
             <param name="rootPath">目录地址</param>
+            <param name="compressionLevel">压缩级别</param>
+            <param name="encoding">编码</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Zip.ZipHelper.Create(System.String,System.String[])">
+            <summary>
+            创建压缩包
+            </summary>
+            <param name="zipPath">压缩包路径</param>
+            <param name="filePath">文件地址</param>
+            <returns></returns>
+        </member>
+        <member name="M:XiaoFeng.Zip.ZipHelper.Dispose">
+            <summary>
+            释放资源
+            </summary>
+        </member>
+        <member name="M:XiaoFeng.Zip.ZipHelper.Dispose(System.Boolean)">
+            <summary>
+            释放资源
+            </summary>
+            <param name="f"></param>
+        </member>
+        <member name="M:XiaoFeng.Zip.ZipHelper.Finalize">
+            <summary>
+            析构器
+            </summary>
+        </member>
+    </members>
+</doc>
+��址</param>
             <param name="compressionLevel">压缩级别</param>
             <param name="encoding">编码</param>
             <returns></returns>

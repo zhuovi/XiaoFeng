@@ -70,9 +70,24 @@ namespace XiaoFeng.Model
         /// 查找
         /// </summary>
         /// <param name="func">条件</param>
+        /// <param name="type">类型</param>
+        /// <returns></returns>
+        object Find(Expression<Func<T, bool>> func, Type type);
+        /// <summary>
+        /// 查找
+        /// </summary>
+        /// <param name="func">条件</param>
         /// <param name="whereString">条件</param>
         /// <returns></returns>
         T Find(Expression<Func<T, bool>> func, string whereString);
+        /// <summary>
+        /// 查找
+        /// </summary>
+        /// <param name="func">条件</param>
+        /// <param name="whereString">条件</param>
+        /// <param name="type">类型</param>
+        /// <returns></returns>
+        object Find(Expression<Func<T, bool>> func, string whereString, Type type);
         /// <summary>
         /// 返回列表
         /// </summary>
@@ -82,10 +97,25 @@ namespace XiaoFeng.Model
         /// <summary>
         /// 返回列表
         /// </summary>
+        /// <param name="type">类型</param>
+        /// <param name="func">条件</param>
+        /// <returns></returns>
+        List<object> ToList(Type type, Expression<Func<T, bool>> func = null);
+        /// <summary>
+        /// 返回列表
+        /// </summary>
         /// <param name="func">条件</param>
         /// <param name="whereString">条件</param>
         /// <returns></returns>
         List<T> ToList(Expression<Func<T, bool>> func, string whereString);
+        /// <summary>
+        /// 返回列表
+        /// </summary>
+        /// <param name="func">条件</param>
+        /// <param name="whereString">条件</param>
+        /// <param name="type">类型</param>
+        /// <returns></returns>
+        List<object> ToList(Expression<Func<T, bool>> func, string whereString, Type type);
         /// <summary>
         /// 返回列表
         /// </summary>

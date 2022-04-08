@@ -94,7 +94,7 @@ namespace XiaoFeng.Web
         /// <summary>
         /// 取消标识
         /// </summary>
-        public CancellationToken Token { get; set; }
+        public CancellationTokenSource Token { get; set; }
         /// <summary>
         /// 文件格式
         /// </summary>
@@ -111,6 +111,10 @@ namespace XiaoFeng.Web
         /// 是否是日期路径
         /// </summary>
         public Boolean IsDatePath { get; set; } = true;
+        /// <summary>
+        /// 文件夹路径
+        /// </summary>
+        public string FolderPath { get; set; }
         /// <summary>
         /// 文件名
         /// </summary>
@@ -300,7 +304,7 @@ namespace XiaoFeng.Web
         /// <returns></returns>
         public async Task UploadAsync(CancellationToken token = default(CancellationToken))
         {
-            token.IfEmptyValue(this.Token);
+            var _Token = CancellationTokenSource.CreateLinkedTokenSource(this.Token.Token, token).Token;
             if (this.HttpFiles.Count == 0)
             {
                 var msg = new FileMessage { Message = "请选择要上传的文件.", State = false };
@@ -444,12 +448,12 @@ namespace XiaoFeng.Web
                     }
                     this.Result.Add(msg);
                     OnMessage?.Invoke(msg, EventArgs.Empty);
-                    await Task.Delay(1, token);
-                }, f, token));
+                    await Task.Delay(1, _Token);
+                }, f, _Token));
             });
-            Task.WaitAll(tasks.ToArray(),10000, token);
+            Task.WaitAll(tasks.ToArray(),10000, _Token);
             this.OnComplete?.Invoke(this.Result, EventArgs.Empty);
-            await Task.Delay(1, token).ConfigureAwait(false);
+            await Task.Delay(1, _Token).ConfigureAwait(false);
         }
         #endregion
 
@@ -595,7 +599,7 @@ namespace XiaoFeng.Web
         /// <returns></returns>
         public async Task UploadBase64Async(string base64String, CancellationToken token = default(CancellationToken))
         {
-            token = token.IfEmpty(this.Token);
+            var _Token = CancellationTokenSource.CreateLinkedTokenSource(this.Token.Token, token).Token;
             if (base64String.IsNullOrEmpty() || base64String.RemovePattern(@"data:[^;]+;base64,").IsNullOrEmpty())
             {
                 var msg = new FileMessage { Message = "请选择要上传的文件.", State=false };
@@ -718,8 +722,8 @@ namespace XiaoFeng.Web
                 }                
                 OnMessage?.Invoke(msg, EventArgs.Empty);
                 this.OnComplete?.Invoke(this.Result, EventArgs.Empty);
-                await Task.Delay(1, token).ConfigureAwait(false);
-            }, base64String, token);
+                await Task.Delay(1, _Token).ConfigureAwait(false);
+            }, base64String, _Token);
         }
         #endregion
 

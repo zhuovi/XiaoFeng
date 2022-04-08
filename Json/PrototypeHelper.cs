@@ -120,7 +120,12 @@ namespace XiaoFeng
                     options.Converters.Add(new JsonConverterGuid(formatting.GuidFormat));
                 options.PropertyNameCaseInsensitive = formatting.IgnoreCase;
                 options.WriteIndented = formatting.Indented;
+#if NET5_0_OR_GREATER
+                options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+#else
                 options.IgnoreNullValues = formatting.OmitEmptyNode;
+#endif
+
                 options.MaxDepth = formatting.MaxDepth;
             }
             return JsonSerializer.Serialize(o, options);

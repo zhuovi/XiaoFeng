@@ -111,7 +111,27 @@ namespace XiaoFeng.Model
         /// <summary>
         /// 基础类型
         /// </summary>
+        [JsonIgnore]
+        [XmlIgnore]
+        [FieldIgnore] 
         private Type ModelType { get; set; }
+        /// <summary>
+        /// 基础类型
+        /// </summary>
+        [JsonIgnore]
+        [XmlIgnore]
+        [FieldIgnore]
+        public Type EntityType
+        {
+            get { return this.ModelType; }
+            set
+            {
+                this.ModelType = value;
+                /*设置表名*/
+                this._Data = new DataHelperX<T>(this.Config, this.RunSqlCallBack);
+                this._Data.DataSQL.TableName = value.GetTableAttribute().Name;
+            }
+        }
         /// <summary>
         /// 当前类型对象
         /// </summary>
@@ -359,6 +379,22 @@ namespace XiaoFeng.Model
         /// <summary>
         /// 查找
         /// </summary>
+        /// <param name="func">条件</param>
+        /// <param name="type">类型</param>
+        /// <returns></returns>
+        public virtual object Find(Expression<Func<T, bool>> func, Type type)
+        {
+            var data = this.Where(func).ToEntity(type);
+            if (data != null)
+            {
+                var _data = data as IEntity;
+                _data.ClearDirty();
+            }
+            return data;
+        }
+        /// <summary>
+        /// 查找
+        /// </summary>
         /// <param name="whereString">条件</param>
         /// <returns></returns>
         public virtual T Find(string whereString)
@@ -368,6 +404,17 @@ namespace XiaoFeng.Model
             data.ClearDirty();
             data.SetSubDataBase(this.DataBaseName, this.DataBaseNum);
             if (this.TableName != data.TableName) data.TableName = this.TableName;
+            return data;
+        }/// <summary>
+         /// 查找
+         /// </summary>
+         /// <param name="whereString">条件</param>
+         /// <param name="type">类型</param>
+         /// <returns></returns>
+        public virtual object Find(string whereString,Type type)
+        {
+            var data = this.Where(whereString).ToEntity(type);
+            if (data == null) return null;
             return data;
         }
         /// <summary>
@@ -388,6 +435,19 @@ namespace XiaoFeng.Model
             return data;
         }
         /// <summary>
+        /// 查找
+        /// </summary>
+        /// <param name="func">条件</param>
+        /// <param name="whereString">条件</param>
+        /// <param name="type">类型</param>
+        /// <returns></returns>
+        public virtual object Find(Expression<Func<T, bool>> func, string whereString,Type type)
+        {
+            var data = this.Where(func).Where(whereString).ToEntity(type);
+            
+            return data;
+        }
+        /// <summary>
         /// 返回列表
         /// </summary>
         /// <param name="func">条件</param>
@@ -395,6 +455,16 @@ namespace XiaoFeng.Model
         public virtual List<T> ToList(Expression<Func<T, bool>> func = null)
         {
             return this.QueryableX.Where(func).ToList();
+        }
+        /// <summary>
+        /// 返回列表
+        /// </summary>
+        /// <param name="type">类型</param>
+        /// <param name="func">条件</param>
+        /// <returns></returns>
+        public virtual List<object> ToList(Type type, Expression<Func<T, bool>> func = null)
+        {
+            return this.QueryableX.Where(func).ToList(type);
         }
         /// <summary>
         /// 返回列表
@@ -408,12 +478,33 @@ namespace XiaoFeng.Model
         /// <summary>
         /// 返回列表
         /// </summary>
+        /// <param name="whereString">条件</param>
+        /// <param name="type">type</param>
+        /// <returns></returns>
+        public virtual List<object> ToList(string whereString,Type type)
+        {
+            return this.QueryableX.Where(whereString).ToList(type);
+        }
+        /// <summary>
+        /// 返回列表
+        /// </summary>
         /// <param name="func">条件</param>
         /// <param name="whereString">条件</param>
         /// <returns></returns>
         public virtual List<T> ToList(Expression<Func<T, bool>> func, string whereString)
         {
             return this.QueryableX.Where(func).Where(whereString).ToList();
+        }
+        /// <summary>
+        /// 返回列表
+        /// </summary>
+        /// <param name="func">条件</param>
+        /// <param name="whereString">条件</param>
+        /// <param name="type">类型</param>
+        /// <returns></returns>
+        public virtual List<object> ToList(Expression<Func<T, bool>> func, string whereString, Type type)
+        {
+            return this.QueryableX.Where(func).Where(whereString).ToList(type);
         }
         /// <summary>
         /// 返回列表

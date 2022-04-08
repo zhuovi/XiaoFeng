@@ -655,7 +655,15 @@ namespace XiaoFeng.Json
                     }
                 }
             }
-            return sb.ToString();
+            var _ = sb.ToString();
+            if (this.SerializerSetting.IsComment)
+            {
+                return _.ReplacePattern(@"/\*[\s\S]+?\*/", m =>
+                {
+                    return m.Groups[0].Value.RemovePattern(@"[\r\n]+").ReplacePattern(@"\s{2,}"," ");
+                });
+            }
+            return _;
         }
         #endregion
 

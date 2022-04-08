@@ -71,6 +71,12 @@ namespace XiaoFeng.Threading
         /// <summary>
         /// 加入任务
         /// </summary>
+        /// <param name="action">事件</param>
+        /// <param name="state">数据对象</param>
+        public async Task AddWorkItem(Action<object> action, object state) => await this.AddWorkItem(c => Task.Factory.StartNew(action, state, c));
+        /// <summary>
+        /// 加入任务
+        /// </summary>
         /// <param name="workItem">任务</param>
         public async Task AddWorkItem(Func<CancellationToken, Task> workItem)
         {

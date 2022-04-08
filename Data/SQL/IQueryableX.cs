@@ -242,6 +242,12 @@ namespace XiaoFeng.Data.SQL
         /// <summary>
         /// 返回数据实体
         /// </summary>
+        /// <param name="type">类型</param>
+        /// <returns></returns>
+        object ToEntity(Type type);
+        /// <summary>
+        /// 返回数据实体
+        /// </summary>
         /// <typeparam name="TResult">返回类型</typeparam>
         /// <returns></returns>
         TResult ToEntity<TResult>();
@@ -276,6 +282,12 @@ namespace XiaoFeng.Data.SQL
         /// <typeparam name="TResult">返回类型</typeparam>
         /// <returns></returns>
         List<TResult> ToList<TResult>();
+        /// <summary>
+        /// 返回数据实体集合
+        /// </summary>
+        /// <param name="type">类型</param>
+        /// <returns></returns>
+        List<object> ToList(Type type);
         /// <summary>
         /// 返回数据实体集合
         /// </summary>

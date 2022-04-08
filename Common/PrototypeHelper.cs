@@ -137,6 +137,7 @@ namespace XiaoFeng
                 else if (valueTypes == ValueTypes.Class || valueTypes == ValueTypes.Struct)
                 {
                     model = Activator.CreateInstance<T>();
+                    var foreignKeys = 
                     dr.Table.Columns.Each<DataColumn>(dc =>
                     {
                         object drValue = dr[dc.ColumnName];
@@ -159,6 +160,7 @@ namespace XiaoFeng
                         else
                         {
                             Type _Field = pi.PropertyType;
+
                             drValue = drValue.GetValue(_Field, out IsGeneric);
                             if (drValue != null || (drValue == null && IsGeneric))
                                 if (pi.CanWrite && !pi.IsIndexer()) pi.SetValue(model, drValue, null);
@@ -178,6 +180,120 @@ namespace XiaoFeng
                 }
             });
             return list;
+        }
+        /// <summary>
+        /// 转换成列表
+        /// </summary>
+        /// <param name="dataTable">DataTable</param>
+        /// <param name="type">类型</param>
+        /// <returns></returns>
+        public static List<object> ToList(this DataTable dataTable, Type type)
+        {
+            if (dataTable == null || dataTable.Rows.Count == 0) return null;
+            var list = new List<object>();
+            dataTable.Rows.Each<DataRow>(dr =>
+            {
+                list.Add(dr.ToEntity(type));
+            });
+            return list;
+        }
+        /// <summary>
+        /// 转换成对象
+        /// </summary>
+        /// <param name="dataTable">DataTable</param>
+        /// <param name="type">类型</param>
+        /// <returns></returns>
+        public static object ToEntity(this DataTable dataTable,Type type)
+        {
+            if(dataTable==null|| dataTable.Rows.Count == 0) return null;
+            return dataTable.Rows[0].ToEntity(type);
+        }
+        /// <summary>
+        /// 转换成对象
+        /// </summary>
+        /// <param name="dataRow">行数据</param>
+        /// <param name="type">类型</param>
+        /// <returns></returns>
+        public static object ToEntity(this DataRow dataRow, Type type)
+        {
+            if (dataRow == null || dataRow.ItemArray == null || dataRow.ItemArray.Length == 0) return null;
+
+            var valType = type.GetValueType();
+            if (valType == ValueTypes.DataTable)
+            {
+                var dt = new DataTable();
+                dt.Rows.Add(dataRow);
+                return dt;
+            }
+            if (valType == ValueTypes.Dictionary || valType == ValueTypes.IDictionary)
+            {
+                var dic = Activator.CreateInstance(type) as IDictionary<object, object>;
+                var items = dataRow.ItemArray;
+                if (items.Length == 1)
+                    dic.Add(items[0], null);
+                else
+                    dic.Add(items[0], items[1]);
+                return dic;
+            }
+            if (valType == ValueTypes.ArrayList || valType == ValueTypes.Array || valType == ValueTypes.IEnumerable || valType == ValueTypes.List)
+            {
+                return dataRow.ItemArray;
+            }
+            if (valType == ValueTypes.Enum)
+            {
+                return dataRow.ItemArray[0].ToEnum(type);
+            }
+            if (valType == ValueTypes.String || valType == ValueTypes.Value)
+                return dataRow.ItemArray[0].ToCast(type);
+            if (valType == ValueTypes.Anonymous)
+            {
+                var constructor = type.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                            .OrderBy(c => c.GetParameters().Length).First();
+                var parameters = constructor.GetParameters();
+                var values = new object[parameters.Length];
+                int index = 0;
+                parameters.Each(item => values[index++] = dataRow[item.Name].GetValue(item.ParameterType));
+                return constructor.Invoke(values);
+            }
+            if (valType == ValueTypes.Class)
+            {
+                var model = Activator.CreateInstance(type);
+                dataRow.Table.Columns.Each<DataColumn>(c =>
+                {
+                    var ColumnName = c.ColumnName;
+                    object drValue = dataRow[ColumnName];
+                    if (drValue.IsNullOrEmpty()) return;
+                    var p = type.GetProperty(ColumnName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+                    if (p == null || p.IsIndexer()) return;
+                    var vType = p.PropertyType.GetValueType();
+                    var val = drValue;
+                    var Foreign = p.GetCustomAttribute<ForeignAttribute>(false);
+
+                    if (Foreign != null || vType == ValueTypes.IEnumerable || vType == ValueTypes.List || vType == ValueTypes.ArrayList)
+                    {
+                        return;
+                    }
+                    else
+                        val = val.GetValue(p.PropertyType);
+                    p.SetValue(model, val);
+                });
+                return model;
+            }
+            if (valType == ValueTypes.Struct)
+            {
+                var model = Activator.CreateInstance(type);
+                dataRow.Table.Columns.Each<DataColumn>(c =>
+                {
+                    var ColumnName = c.ColumnName;
+                    object drValue = dataRow[ColumnName];
+                    if (drValue.IsNullOrEmpty()) return;
+                    var f = type.GetField(ColumnName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+                    if (f == null) return;
+                    f.SetValue(model, drValue.GetValue(f.FieldType));
+                });
+                return model;
+            }
+            return null;
         }
         #endregion
 

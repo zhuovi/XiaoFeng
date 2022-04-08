@@ -248,11 +248,22 @@ namespace XiaoFeng.Threading
                             job.Status = JobStatus.Runing;
                             job.LastTime = now;
                             LogHelper.Warn($"开始运行作业 {job.Name} - {this.SchedulerJobs.Count} - {job.NextTime:yyyy-MM-dd HH:mm:ss.ffff}");
+                            if (job.CompleteCallBack == null) job.Status = JobStatus.Wait;
                             if (!job.Async)
                                 Execute(job);
                             else
                             {
-                                new Task(this.Execute, job, CancellationTokenSource.CreateLinkedTokenSource(this.CancelToken.Token, job.CancelToken.Token).Token, TaskCreationOptions.LongRunning).Start();
+                                /*
+                                 * Date:2022-04-01
+                                 * 优化调度执行完成后再间隔时间
+                                 */
+                                //new Task(this.Execute, job, CancellationTokenSource.CreateLinkedTokenSource(this.CancelToken.Token, job.CancelToken.Token).Token, TaskCreationOptions.LongRunning).Start();
+                                Task.Factory.StartNew(this.Execute, job, CancellationTokenSource.CreateLinkedTokenSource(this.CancelToken.Token, job.CancelToken.Token).Token, TaskCreationOptions.LongRunning, TaskScheduler.Current).ContinueWith((t, j) =>
+                                {
+                                    var _job = (IJob)j;
+                                    if (_job.CompleteCallBack != null)
+                                        _job.Status = JobStatus.Wait;
+                                }, job, CancellationTokenSource.CreateLinkedTokenSource(this.CancelToken.Token, job.CancelToken.Token).Token);
                             }
                         }
                         else
@@ -316,8 +327,7 @@ namespace XiaoFeng.Threading
             }
             finally
             {
-                if (job.CompleteCallBack == null)
-                    job.Status = JobStatus.Wait;
+                //job.Status = JobStatus.Wait;
             }
         }
         #endregion

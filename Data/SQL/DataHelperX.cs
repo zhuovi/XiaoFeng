@@ -7,6 +7,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using XiaoFeng.Config;
 using System.Reflection;
+using XiaoFeng.Model;
+using XiaoFeng.Cache;
 /*
 ===================================================================
 Author : jacky
@@ -1431,6 +1433,8 @@ namespace XiaoFeng.Data.SQL
                 }
             }
             data = this.DataHelper.ExecuteDataTable(_SQLString.SQLFormat(this.DataHelper.ProviderType), CommandType.Text, this.GetDbParameters(SQLString)).ToEntity<TResult>();
+
+            SetForeignKey<TResult>(data);
             /*
              * 移除QueryableX中的缓存 统一用基类DataHelper中的缓存
             if (this.DataSQL.IsCache(cacheData))
@@ -1461,6 +1465,131 @@ namespace XiaoFeng.Data.SQL
             if (this.SQLCallBack != null) this.SQLCallBack.Invoke(this.DataSQL);
             this.DataSQL.Clear();
             return data;
+        }
+        /// <summary>
+        /// 返回数据实体
+        /// </summary>
+        ///<param name="type">返回类型</param>
+        /// <returns></returns>
+        public object ToEntity(Type type)
+        {
+            type = type ?? this.DataSQL.ModelType;
+            this.DataSQL.SQLType = this.DataSQL.SQLType == SQLType.NULL ? SQLType.select : this.DataSQL.SQLType;
+            string SQLString = this.DataSQL.GetSQLString();
+            CacheDataAttribute cacheData = type.GetCustomAttribute<CacheDataAttribute>();
+            object data;
+            Stopwatch sTime = new Stopwatch();
+            sTime.Start();
+
+            var _SQLString = SQLString.Trim(';');
+            if (this.DataSQL.CacheState == CacheState.Yes)
+            {
+                _SQLString += ";Cache";
+                if (this.DataSQL.CacheTimeOut.HasValue)
+                    _SQLString += "[" + this.DataSQL.CacheTimeOut.Value + "]";
+                _SQLString += ";";
+            }
+            else if (this.DataSQL.CacheState == CacheState.No)
+            {
+                _SQLString += ";NoCache;";
+            }
+            else if (this.DataSQL.CacheState == CacheState.Clear)
+            {
+                _SQLString += ";ClearCache;";
+            }
+            else
+            {
+                if (cacheData != null)
+                {
+                    if (cacheData.CacheType == CacheType.No)
+                        _SQLString += ";NoCache;";
+                    else if (cacheData.CacheType != CacheType.Default)
+                        _SQLString += ";Cache[" + cacheData.TimeOut + "];";
+                }
+            }
+            data = this.DataHelper.ExecuteDataTable(_SQLString.SQLFormat(this.DataHelper.ProviderType), CommandType.Text, this.GetDbParameters(SQLString)).ToEntity(type);
+
+            SetForeignKey(data);
+            
+            sTime.Stop();
+            this.DataSQL.RunSQLTime += sTime.ElapsedMilliseconds;
+            if (this.SQLCallBack != null) this.SQLCallBack.Invoke(this.DataSQL);
+            this.DataSQL.Clear();
+            return data;
+        }
+        /// <summary>
+        /// 设置对象有外键数据
+        /// </summary>
+        /// <typeparam name="TResult">类型</typeparam>
+        /// <param name="data">数据</param>
+        public void SetForeignKey<TResult>(TResult data)
+        {
+            if (data == null) return;
+            var ForeignList = new Dictionary<Type, List<PropertyInfo>>();
+            data.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.Instance).Each(p =>
+            {
+                var foreign = p.GetCustomAttribute<ForeignAttribute>(false);
+                if (foreign != null)
+                {
+                    if (ForeignList.ContainsKey(foreign.Type))
+                        ForeignList[foreign.Type].Add(p);
+                    else
+                        ForeignList.Add(foreign.Type, new List<PropertyInfo> { p });
+                }
+            });
+            if (ForeignList.Any())
+            {
+                ForeignList.Each(d =>
+                {
+                    var tblType = d.Key;
+                    var values = d.Value;
+                    var tblAttr = tblType.GetTableAttribute();
+                    var tblName = tblAttr == null ? tblType.Name : tblAttr.Name;
+                    var forList = from v in values select v.GetCustomAttribute<ForeignAttribute>(false);
+                    var foreignAttr = forList.FirstOrDefault(a => a.Key.IsNotNullOrEmpty() && a.Field.IsNotNullOrEmpty() && a.Format.IsNotNullOrEmpty() && a.Type != null);
+                    if (foreignAttr == null) return;
+                    var fProperty = typeof(T).GetProperty(foreignAttr.Key, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreReturn);
+                    if (fProperty == null) return;
+                    var val = fProperty.GetValue(data).GetSqlValue();
+                    if (val.IndexOf(",") > -1) val = "'" + val.Trim('\'').ReplacePattern(@",", "','") + "'";
+                    /*
+                     * 设置缓存
+                     */
+                    var SQL = $"select * from {tblName} where {foreignAttr.Format.ReplacePattern(@"\$?\{" + foreignAttr.Key + @"\}", val)}";
+                    var cacheKey = "FOREIGN-" + SQL.MD5();
+                    var cacheValue = CacheHelper.Get(cacheKey);
+                    List<object> dt;
+                    if (cacheValue != null)
+                        dt = cacheValue as List<object>;
+                    else
+                    {
+                        dt = this.DataHelper.ExecuteDataTable(SQL).ToList(tblType);
+                        if (dt == null) return;
+                        CacheHelper.Set(cacheKey, dt, TimeSpan.FromMinutes(10));
+                    }
+
+                    values.Each(f =>
+                    {
+                        var valueType = f.PropertyType.GetValueType();
+                        var foreighKey = f.GetCustomAttribute<ForeignAttribute>();
+                        if (valueType == ValueTypes.IEnumerable || valueType == ValueTypes.List)
+                        {
+                            var list = Activator.CreateInstance(f.PropertyType) as System.Collections.IList;
+                            dt.Each(a =>
+                                                {
+                                                    var model = Activator.CreateInstance(f.PropertyType.GenericTypeArguments[0]);
+                                                    model = a;
+                                                    list.Add(model);
+                                                });
+                            f.SetValue(data, list);
+                        }
+                        else if (valueType == ValueTypes.Class || valueType == ValueTypes.Struct)
+                            f.SetValue(data, dt.FirstOrDefault());
+                        else
+                            f.SetValue(data, ((IEntity)dt.FirstOrDefault())[f.Name]);
+                    });
+                });
+            }
         }
         /// <summary>
         /// 返回数据实体
@@ -1783,6 +1912,10 @@ namespace XiaoFeng.Data.SQL
                 }
             }
             data = this.DataHelper.ExecuteDataTable(_SQLString.SQLFormat(this.DataHelper.ProviderType), CommandType.Text, this.GetDbParameters(SQLString)).ToList<TResult>();
+            data.Each(a =>
+            {
+                SetForeignKey<TResult>(a);
+            });
             /*
              * 移除QueryableX中的缓存 统一用基类DataHelper中的缓存
             if (this.DataSQL.IsCache(cacheData))
@@ -1810,6 +1943,62 @@ namespace XiaoFeng.Data.SQL
                 data = this.DataHelper.ExecuteDataTable(SQLString, CommandType.Text, this.GetDbParameters()).ToList<TResult>();
             }
             */
+            sTime.Stop();
+            this.DataSQL.RunSQLTime += sTime.ElapsedMilliseconds;
+            if (this.SQLCallBack != null) this.SQLCallBack.Invoke(this.DataSQL);
+            this.DataSQL.Clear();
+            return data;
+        }
+        /// <summary>
+        /// 返回数据实体集合
+        /// </summary>
+        /// <param name="type">类型</param>
+        /// <returns></returns>
+        public List<object> ToList(Type type)
+        {
+            type = type ?? this.DataSQL.ModelType;
+            this.DataSQL.SQLType = this.DataSQL.SQLType == SQLType.NULL ? SQLType.select : this.DataSQL.SQLType;
+            if ((this.DataSQL.Columns == null || this.DataSQL.Columns.Count == 0 || (this.DataSQL.Columns.Count == 1 && this.DataSQL.Columns[0] == "*")) && (this.DataSQL.GroupByString != null && this.DataSQL.GroupByString.Count > 0))
+            {
+                this.DataSQL.SetColumns(this.DataSQL.GroupByString[0]);
+            }
+            string SQLString = this.DataSQL.GetSQLString();
+            CacheDataAttribute cacheData = type.GetCustomAttribute<CacheDataAttribute>();
+            List<object> data;
+            Stopwatch sTime = new Stopwatch();
+            sTime.Start();
+            var _SQLString = SQLString.Trim(';');
+            if (this.DataSQL.CacheState == CacheState.Yes)
+            {
+                _SQLString += ";Cache";
+                if (this.DataSQL.CacheTimeOut.HasValue)
+                    _SQLString += "[" + this.DataSQL.CacheTimeOut.Value + "]";
+                _SQLString += ";";
+            }
+            else if (this.DataSQL.CacheState == CacheState.No)
+            {
+                _SQLString += ";NoCache;";
+            }
+            else if (this.DataSQL.CacheState == CacheState.Clear)
+            {
+                _SQLString += ";ClearCache;";
+            }
+            else
+            {
+                if (cacheData != null)
+                {
+                    if (cacheData.CacheType == CacheType.No)
+                        _SQLString += ";NoCache;";
+                    else if (cacheData.CacheType != CacheType.Default)
+                        _SQLString += ";Cache[" + cacheData.TimeOut + "];";
+                }
+            }
+            data = this.DataHelper.ExecuteDataTable(_SQLString.SQLFormat(this.DataHelper.ProviderType), CommandType.Text, this.GetDbParameters(SQLString)).ToList(type);
+            data.Each(a =>
+            {
+                SetForeignKey(a);
+            });
+            
             sTime.Stop();
             this.DataSQL.RunSQLTime += sTime.ElapsedMilliseconds;
             if (this.SQLCallBack != null) this.SQLCallBack.Invoke(this.DataSQL);

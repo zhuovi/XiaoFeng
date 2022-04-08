@@ -67,7 +67,7 @@ namespace XiaoFeng.Http
         /// <summary>
         /// 连接状态
         /// </summary>
-        private WebSocketState ClientState { get; set; } = WebSocketState.None;
+        public WebSocketState ClientState { get; set; } = WebSocketState.None;
         /// <summary>
         /// 接收数据事件
         /// </summary>

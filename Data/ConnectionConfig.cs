@@ -98,12 +98,14 @@ namespace XiaoFeng.Data
         /// <summary>
         /// 缓存类型 0不缓存
         /// </summary>
-        [Description("缓存类型 -1 默认,0 不缓存,1 内存,2 磁盘,3 Redis,4 Memcache,5 MongoDB")]
+        [Description("缓存类型 Default 默认,No 不缓存,Memory 内存,Disk 磁盘,Redis,Memcache,MongoDB")]
+        [JsonConverter(typeof(StringEnumConverter))]
         public CacheType CacheType { get; set; } = 0;
         /// <summary>
         /// 事务级别
         /// </summary>
-        [Description("事务级别")]
+        [Description("事务级别 DbNull 空级别,Serializable 串行读,RepeatableRead 可重复读,ReadCommitted 提交读,ReadUncommitted 未提交读,Snapshot 隔离未提交读,Chaos 混乱读,Unspecified 未指定")]
+        [JsonConverter(typeof(StringEnumConverter))] 
         public IsolationLevel IsolationLevel { get; set; } = IsolationLevel.Unspecified;
         /// <summary>
         /// 是否启用连接池
