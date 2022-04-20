@@ -286,30 +286,6 @@ namespace XiaoFeng
     }
     #endregion
 
-    #region 错误类型
-    /// <summary>
-    /// 错误类型
-    /// </summary>
-    public enum ExceptionType
-    {
-        /// <summary>
-        /// 转向
-        /// </summary>
-        [Description("转向")]
-        Location = 0,
-        /// <summary>
-        /// 展示
-        /// </summary>
-        [Description("展示")]
-        Show = 1,
-        /// <summary>
-        /// 异常
-        /// </summary>
-        [Description("异常")]
-        Exception = 2,
-    }
-    #endregion
-
     #region 文件类型
     /// <summary>
     /// 文件类型

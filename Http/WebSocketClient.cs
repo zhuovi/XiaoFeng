@@ -92,7 +92,7 @@ namespace XiaoFeng.Http
                 /*连接*/
                 await this.Client.ConnectAsync(this.ServerUri, this.CancelToken);
                 /*接收*/
-                this.HandleMessage();
+                HandleMessage().ConfigureAwait(false).GetAwaiter();
             }
             catch (Exception ex)
             {

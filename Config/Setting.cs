@@ -34,11 +34,6 @@ namespace XiaoFeng.Config
         [Description("是否启用调试")]
         public bool Debug { get; set; } = true;
         /// <summary>
-        /// 错误信息是否展示到页面 2抛出异常 1展示 0转向
-        /// </summary>
-        [Description("错误信息是否展示到页面 2抛出异常 1展示 0转向")]
-        public ExceptionType Error { get; set; } = ExceptionType.Show;
-        /// <summary>
         /// 最大线程数量
         /// </summary>
         [Description("最大线程数量")]

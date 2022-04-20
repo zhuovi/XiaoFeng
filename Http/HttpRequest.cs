@@ -232,7 +232,7 @@ namespace XiaoFeng.Http
             GC.Collect();
             /*注册编码支持GB2312*/
 #if NETCORE
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            //Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 #endif
             if (this.FormData != null) this.Method = HttpMethod.Post;
             if (this.Method.Method.ToUpper() == "GET" && this.Data.IsNotNullOrEmpty())

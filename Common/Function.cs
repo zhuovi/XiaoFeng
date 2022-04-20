@@ -118,15 +118,5 @@ namespace XiaoFeng
         }
         #endregion        
 
-        #region 获得IP4地址
-        /// <summary>
-        /// 获得IP4地址
-        /// </summary>
-        /// <returns></returns>
-        public static string GetIP4Address()
-        {
-            return Device.Computer.GetIP4Address();
-        }
-        #endregion
     }
 }

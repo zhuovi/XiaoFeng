@@ -83,7 +83,7 @@ namespace XiaoFeng.Data.Pool
                 if (this.Config.CommandTimeOut > 0)
                     cmd.CommandTimeout = this.Config.CommandTimeOut;
                 var Dt = new DataTable();
-#if NET48 || NETSTANDARD20
+#if NETSTANDARD2_0
                 var sda = factory.CreateDataAdapter();
                 sda.SelectCommand = cmd;
                 sda.Fill(Dt);
@@ -655,7 +655,7 @@ namespace XiaoFeng.Data.Pool
                 {
                     var Cmd = this.MakeParamCommand(commandText, commandType, parameter, db);
                     if (this.Config.CommandTimeOut > 0) Cmd.CommandTimeout = this.Config.CommandTimeOut;
-#if NET48 || NETSTANDARD20
+#if NETSTANDARD2_0
                     var sda = factory.CreateDataAdapter();
                     sda.SelectCommand = Cmd;
                     sda.Fill(Dt);

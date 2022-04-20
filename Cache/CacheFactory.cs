@@ -46,7 +46,7 @@ namespace XiaoFeng.Cache
                 case CacheType.Redis:
                     return Activator.CreateInstance(typeof(RedisCache)) as IMemoryCacheX;
                 case CacheType.Memory:
-                    return Activator.CreateInstance(Platform.IsWebForm ? typeof(MemoryCacheHelper) : typeof(MemoryCacheManage)) as IMemoryCacheX;
+                    return Activator.CreateInstance(typeof(MemoryCacheX)) as IMemoryCacheX;
                 case CacheType.Default:
                 default:
                     var cType = CacheConfig.Current.CacheType;

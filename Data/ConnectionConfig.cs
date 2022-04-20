@@ -6,6 +6,7 @@ using System.Text;
 using XiaoFeng.Json;
 using XiaoFeng.IO;
 using System.Data;
+using System.Linq;
 
 namespace XiaoFeng.Data
 {
@@ -50,6 +51,19 @@ namespace XiaoFeng.Data
             this.CommandTimeOut = commandTimeOut;
             this.CacheType = CacheType.No;
             this.CacheTimeOut = 10 * 60;
+        }
+        /// <summary>
+        /// 设置连接数据库
+        /// </summary>
+        /// <param name="connectionStringKey">key</param>
+        public ConnectionConfig(string connectionStringKey)
+        {
+            if (connectionStringKey.IsNullOrEmpty()) return;
+            var db = XiaoFeng.Config.DataBase.Current.Data;
+            if (db == null) return;
+            var conns = db[connectionStringKey];
+            if (conns == null || !conns.Any()) return;
+            conns.FirstOrDefault().CopyTo(this);
         }
         #endregion
 

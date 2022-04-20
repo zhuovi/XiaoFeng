@@ -17,10 +17,6 @@ namespace XiaoFeng.Config
         /// </summary>
         bool Debug { get; set; }
         /// <summary>
-        /// 错误信息是否展示到页面 2抛出异常 1展示 0转向
-        /// </summary>
-        ExceptionType Error { get; set; }
-        /// <summary>
         /// 最大线程数量
         /// </summary>
         int MaxWorkerThreads { get; set; }

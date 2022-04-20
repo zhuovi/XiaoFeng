@@ -101,11 +101,11 @@ namespace XiaoFeng.Log
                             Console.WriteLine("".PadLeft(70, '='));
                         }
                         Console.ResetColor();
-                        if (log.DataSource.IsNotNullOrEmpty() && (this.Config.Fields == null || this.Config.Fields.Count == 0 || (this.Config.Fields != null && this.Config.Fields.Contains("DataSource")))) Console.WriteLine("数 据 源: " + log.DataSource);
-                        if (log.FunctionName.IsNotNullOrEmpty() && (this.Config.Fields == null || this.Config.Fields.Count == 0 || (this.Config.Fields != null && this.Config.Fields.Contains("FunctionName")))) Console.WriteLine("方 法 名: " + log.ClassName + "." + log.FunctionName);
-                        if (log.Message.IsNotNullOrEmpty() && (this.Config.Fields == null || this.Config.Fields.Count == 0 || (this.Config.Fields != null && this.Config.Fields.Contains("Message")))) Console.WriteLine((log.LogType == LogType.Warn ? "" : "日志信息: ") + log.Message);
-                        if (log.StackTrace.IsNotNullOrEmpty() && (this.Config.Fields == null || this.Config.Fields.Count == 0 || (this.Config.Fields != null && this.Config.Fields.Contains("StackTrace")))) Console.WriteLine("日志堆栈: " + log.StackTrace);
-                        if ((LogType.Error | LogType.Trace).HasFlag(log.LogType) && log.Tracking.IsNotNullOrEmpty() && (this.Config.Fields == null || this.Config.Fields.Count == 0 || (this.Config.Fields != null && this.Config.Fields.Contains("Tracking"))))
+                        if (log.DataSource.IsNotNullOrEmpty() && (this.Config.Fields.Length==0 || (this.Config.Fields.Length>0 && this.Config.Fields.Contains("DataSource")))) Console.WriteLine("数 据 源: " + log.DataSource);
+                        if (log.FunctionName.IsNotNullOrEmpty() && (this.Config.Fields.Length==0 || (this.Config.Fields.Length > 0 && this.Config.Fields.Contains("FunctionName")))) Console.WriteLine("方 法 名: " + log.ClassName + "." + log.FunctionName);
+                        if (log.Message.IsNotNullOrEmpty() && (this.Config.Fields.Length == 0 || (this.Config.Fields.Length > 0 && this.Config.Fields.Contains("Message")))) Console.WriteLine((log.LogType == LogType.Warn ? "" : "日志信息: ") + log.Message);
+                        if (log.StackTrace.IsNotNullOrEmpty() && (this.Config.Fields.Length == 0 || (this.Config.Fields.Length > 0 && this.Config.Fields.Contains("StackTrace")))) Console.WriteLine("日志堆栈: " + log.StackTrace);
+                        if ((LogType.Error | LogType.Trace).HasFlag(log.LogType) && log.Tracking.IsNotNullOrEmpty() && (this.Config.Fields.Length == 0 || (this.Config.Fields.Length > 0 && this.Config.Fields.Contains("Tracking"))))
                         {
                             Console.WriteLine("堆栈跟踪".PadLeft(33, '*').PadRight(66, '*'));
                             var trace = log.Tracking ?? new StackTrace();
@@ -175,11 +175,11 @@ namespace XiaoFeng.Log
                             sw.WriteLine($"{log.LogType.GetValue(this.MessageType)}".PadRight(this.MessageType == EnumValueType.Description ? 2 : 5, ' ') + (this.Config.Fields.Contains("AddTime") ? DateTime.Now.ToString(": yyyy-MM-dd HH:mm:ss.fff") : ""));
                             sw.WriteLine("".PadLeft(70, '='));
                         }
-                        if (log.DataSource.IsNotNullOrEmpty() && (this.Config.Fields == null || this.Config.Fields.Count == 0 || (this.Config.Fields != null && this.Config.Fields.Contains("StackTrace")))) sw.WriteLine("数 据 源: " + log.DataSource);
-                        if (log.FunctionName.IsNotNullOrEmpty() && (this.Config.Fields == null || this.Config.Fields.Count == 0 || (this.Config.Fields != null && this.Config.Fields.Contains("FunctionName")))) sw.WriteLine("方 法 名: " + log.ClassName + "." + log.FunctionName);
-                        if (log.Message.IsNotNullOrEmpty() && (this.Config.Fields == null || this.Config.Fields.Count == 0 || (this.Config.Fields != null && this.Config.Fields.Contains("Message")))) sw.WriteLine("日志信息: " + log.Message);
-                        if (log.StackTrace.IsNotNullOrEmpty() && (this.Config.Fields == null || this.Config.Fields.Count == 0 || (this.Config.Fields != null && this.Config.Fields.Contains("StackTrace")))) sw.WriteLine("日志堆栈: " + log.StackTrace);
-                        if ((LogType.Error | LogType.Trace).HasFlag(log.LogType) && log.Tracking.IsNotNullOrEmpty() && (this.Config.Fields == null || this.Config.Fields.Count == 0 || (this.Config.Fields != null && this.Config.Fields.Contains("Tracking"))))
+                        if (log.DataSource.IsNotNullOrEmpty() && (this.Config.Fields.Length == 0 || (this.Config.Fields.Length > 0 && this.Config.Fields.Contains("StackTrace")))) sw.WriteLine("数 据 源: " + log.DataSource);
+                        if (log.FunctionName.IsNotNullOrEmpty() && (this.Config.Fields.Length == 0 || (this.Config.Fields.Length > 0 && this.Config.Fields.Contains("FunctionName")))) sw.WriteLine("方 法 名: " + log.ClassName + "." + log.FunctionName);
+                        if (log.Message.IsNotNullOrEmpty() && (this.Config.Fields.Length == 0 || (this.Config.Fields.Length > 0 && this.Config.Fields.Contains("Message")))) sw.WriteLine("日志信息: " + log.Message);
+                        if (log.StackTrace.IsNotNullOrEmpty() && (this.Config.Fields.Length == 0 || (this.Config.Fields.Length > 0 && this.Config.Fields.Contains("StackTrace")))) sw.WriteLine("日志堆栈: " + log.StackTrace);
+                        if ((LogType.Error | LogType.Trace).HasFlag(log.LogType) && log.Tracking.IsNotNullOrEmpty() && (this.Config.Fields.Length == 0 || (this.Config.Fields.Length > 0 && this.Config.Fields.Contains("Tracking"))))
                         {
                             sw.WriteLine("堆栈跟踪".PadLeft(33, '*').PadRight(66, '*'));
                             var trace = log.Tracking ?? new StackTrace();
@@ -275,22 +275,16 @@ namespace XiaoFeng.Log
                 if (days == 0) return;
                 string FileName = "*.log";
                 var filesPath0 = Config.Path.GetBasePath();
-                string[] files0, files1;
+                string[] files0;
                 if (Directory.Exists(filesPath0))
                 {
                     files0 = Directory.GetFiles(filesPath0, FileName, SearchOption.AllDirectories);
                 }
                 else files0 = Array.Empty<String>();
-                var filesPath1 = IIS.LoggingModel.Current.LogPath.GetBasePath();
-                if (Directory.Exists(filesPath1))
-                {
-                    files1 = Directory.GetFiles(filesPath1, FileName, SearchOption.AllDirectories);
-                }
-                else files1 = Array.Empty<string>();
-                var files = new string[files0.Length + files1.Length];
+                
+                var files = new string[files0.Length];
                 if (files.Length == 0) return;
                 if (files0.Length > 0) files0.CopyTo(files, 0);
-                if (files1.Length > 0) files1.CopyTo(files, files0.Length);
                 files.Each(a =>
                 {
                     try

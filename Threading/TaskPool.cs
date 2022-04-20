@@ -133,7 +133,7 @@ namespace XiaoFeng.Threading
                 {
                     Task.Run(() =>
                     {
-                        this.Execute(task);
+                        this.Execute(task).ConfigureAwait(false);
                     });
                 }
                 else break;

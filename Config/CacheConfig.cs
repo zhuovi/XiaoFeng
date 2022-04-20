@@ -43,14 +43,10 @@ namespace XiaoFeng.Config
         [Description("缓存路径")]
         public string CachePath { get; set; } = "Cache";
         /// <summary>
-        /// 数据库配置
+        /// 数据库连接字符串KEY
         /// </summary>
-        [Description("数据库配置")]
-        public ConnectionConfig ConnectionConfig { get; set; } = new ConnectionConfig
-        {
-            ProviderType = DbProviderType.Redis,
-            ConnectionString = "server=127.0.0.1;port=6379;password=;"
-        };
+        [Description("数据库连接字符串KEY")]
+        public string ConnectionStringKey { get; set; }
         #endregion
     }
 }

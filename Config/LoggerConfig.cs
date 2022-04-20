@@ -96,16 +96,10 @@ namespace XiaoFeng.Config
         [JsonConverter(typeof(StringEnumConverter))]
         public StorageType StorageType { get; set; } = StorageType.Console | StorageType.File;
         /// <summary>
-        /// 数据库连接串
+        /// 数据库连接字符串KEY
         /// </summary>
-        [Description("数据库连接串")]
-        public ConnectionConfig ConnectionConfig { get; set; } = new ConnectionConfig
-        {
-            ProviderType = DbProviderType.SQLite,
-            ConnectionString = "",
-            CommandTimeOut = 1000,
-            CacheType = CacheType.No
-        };
+        [Description("数据库连接字符串KEY")]
+        public string ConnectionStringKey { get; set; }
         /// <summary>
         /// 插入SQL 数据标识 日志类型 {LogType} 日志消息 {Message} 日志错误ID {ErrorID}
         /// 错误堆栈 {StackTrace} 堆栈跟踪 {Tracking} 错误源 {DataSource} 类名 {ClassName} 方法名 {FunctionName} 访问地址 {RequestUrl} 日志时间 {AddTime}
@@ -116,7 +110,7 @@ namespace XiaoFeng.Config
         /// 记录信息字段 不填是记录所有 
         /// </summary>
         [Description("记录信息字段")]
-        public List<string> Fields { get; set; } = new List<string> { "LogType", "ErrorID", "FunctionName", "ClassName", "Message", "DataSource", "StackTrace", "Tracking", "RequestUrl","AddTime" };
+        public string Fields { get; set; } = "LogType,ErrorID,FunctionName,ClassName,Message,DataSource,StackTrace,Tracking,RequestUrl,AddTime";
         /// <summary>
         /// 消息类型展示
         /// </summary>

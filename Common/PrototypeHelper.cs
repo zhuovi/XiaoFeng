@@ -1266,7 +1266,7 @@ namespace XiaoFeng
         {
             if (o == null) return "";
             Type t = o.GetType();
-            if (t.IsEnum) return ((int)o).ToString();
+            if (t.IsEnum) return t.IsDefined(typeof(FlagsAttribute)) ? o.ToString() : ((int)o).ToString();
             if (t == typeof(string)) return o.ToString();
             if (t == typeof(Guid)) return new Guid(o.ToString()).ToString("N");
             if (t == typeof(DateTime)) return ((DateTime)o).ToString("yyyy-MM-dd HH:mm:ss.fff");
@@ -1283,7 +1283,7 @@ namespace XiaoFeng
             //return o.GetSqlValue();
             if (o == null) return "";
             Type t = o.GetType();
-            if (t.IsEnum) return ((int)o).ToString();
+            if (t.IsEnum) return t.IsDefined(typeof(FlagsAttribute)) ? o.ToString() : ((int)o).ToString();
             if (t == typeof(string)) return o.ToString().ReplacePattern(@"'", "''");
             if (t == typeof(Guid) || t == typeof(Guid?)) return new Guid(o.ToString()).ToString("D");
             if (t == typeof(DateTime) || t == typeof(DateTime?)) return ((DateTime)o).ToString("yyyy-MM-dd HH:mm:ss.fff");
@@ -1302,7 +1302,7 @@ namespace XiaoFeng
             Type t = _.GetType();
             if (t == typeof(Guid) || t == typeof(Guid?)) return "'{0}'".format(new Guid(_.ToString()).ToString("D"));
             if (_.IsNullOrEmpty()) return "''";
-            if (t.IsEnum) return ((int)_).ToString();
+            if (t.IsEnum) return t.IsDefined(typeof(FlagsAttribute)) ? _.ToString() : ((int)_).ToString();
             if (t == typeof(char)) return "'" + _.ToString() + "'";
             if (t == typeof(string)) return "'{0}'".format(_.ToString().ReplacePattern(@"'", "''"));
             if (t == typeof(DateTime) || t == typeof(DateTime?)) return "'{0}'".format(((DateTime)_).ToString("yyyy-MM-dd HH:mm:ss.fff"));
@@ -1355,15 +1355,16 @@ namespace XiaoFeng
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:命名样式", Justification = "<挂起>")]
         public static String format(this String _, IDictionary<String, String> d)
         {
+            var _d = new Dictionary<String, String>(d);
             var RemoveKeys = new List<string>();
-            d.Each(a =>
+            _d.Each(a =>
             {
                 if (!_.IsMatch(@"\$?{{{0}}}".format(a.Key))) RemoveKeys.Add(a.Key);
             });
-            RemoveKeys.Each(a => d.Remove(a));
+            RemoveKeys.Each(a => _d.Remove(a));
             RemoveKeys.Clear();
-            string[] keys = d.Keys.ToArray();
-            string[] values = d.Values.ToArray();
+            string[] keys = _d.Keys.ToArray();
+            string[] values = _d.Values.ToArray();
             for (int i = 0; i < keys.Length; i++)
                 _ = _.ReplacePattern(@"\$?{{{0}}}".format(keys[i]), "{" + i.ToString() + "}");
             return String.Format(_, values);
@@ -1379,15 +1380,16 @@ namespace XiaoFeng
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:命名样式", Justification = "<挂起>")]
         public static String format(this String _, IDictionary<string, object> d)
         {
+            var _d = new Dictionary<string,object>(d);
             var RemoveKeys = new List<string>();
-            d.Each(a =>
+            _d.Each(a =>
             {
                 if (!_.IsMatch(@"\$?{{{0}}}".format(a.Key))) RemoveKeys.Add(a.Key);
             });
-            RemoveKeys.Each(a => d.Remove(a));
+            RemoveKeys.Each(a => _d.Remove(a));
             RemoveKeys.Clear();
-            string[] keys = d.Keys.ToArray<string>();
-            string[] values = d.Values.ToArray<string>();
+            string[] keys = _d.Keys.ToArray<string>();
+            string[] values = _d.Values.ToArray<string>();
             for (int i = 0; i < keys.Length; i++)
                 _ = _.ReplacePattern(@"\$?{{{0}}}".format(keys[i]), "{" + i.ToString() + "}");
             return String.Format(_, values);
@@ -1730,7 +1732,7 @@ namespace XiaoFeng
                 else if (BaseTargetType == ValueTypes.String) return string.Empty;
                 else return null;
             }
-#if NETCORE
+#if false
             if (o is Microsoft.Extensions.Primitives.StringValues _o)
             {
                 if (_o.Count == 0) o = "";
@@ -2589,19 +2591,6 @@ namespace XiaoFeng
             Array.Reverse(str);
             return new string(str);
         }
-        #endregion
-
-        #region 获取当前Uri
-        /// <summary>
-        /// 获取当前Uri
-        /// </summary>
-        /// <param name="http">请求</param>
-        /// <returns></returns>
-#if NETFRAMEWORK
-        public static Uri GetUri(this System.Web.HttpRequest http) => http.Url;
-#else
-        public static Uri GetUri(this Microsoft.AspNetCore.Http.HttpRequest http) => new Uri(http.Scheme + "://" + http.Host + http.PathBase + http.Path + http.QueryString.Value);
-#endif
         #endregion
 
         #region 多元符表达式

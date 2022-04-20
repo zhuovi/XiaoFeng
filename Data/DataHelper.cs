@@ -571,12 +571,11 @@ namespace XiaoFeng.Data
                     flag = true;
                 }
                 cmd.CommandText = commandText;
-#if NET48 || NETSTANDARD20
+#if NETSTANDARD2_0
                 var sda = factory.CreateDataAdapter();
                 sda.SelectCommand = cmd;
                 sda.Fill(Dt);
 #else
-
                 if (factory.CanCreateDataAdapter)
                 {
                     var sda = factory.CreateDataAdapter();
@@ -1136,12 +1135,11 @@ namespace XiaoFeng.Data
                 if (parameter != null && parameter.Length > 0)
                     cmd.Parameters.AddRange(parameter);
 
-#if NET48 || NETSTANDARD20
+#if NETSTANDARD2_0
                 var sda = factory.CreateDataAdapter();
                 sda.SelectCommand = cmd;
                 sda.Fill(Dt);
 #else
-
                 if (factory.CanCreateDataAdapter)
                 {
                     var sda = factory.CreateDataAdapter();

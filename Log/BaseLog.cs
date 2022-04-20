@@ -37,13 +37,13 @@ namespace XiaoFeng.Log
 
             this.LogPath = this.Config.Path.IfEmpty("Log");
             this.StorageType = this.Config.StorageType;
-            this.ConnectionConfig = this.Config.ConnectionConfig;
+            this.ConnectionConfig =new ConnectionConfig(this.Config.ConnectionStringKey);
             this.MessageType = this.Config.MessageType;
             this.LogLevel = this.Config.LogLevel;
             this.ConsoleFlags = this.Config.ConsoleFlags;
             //this.Signal = new SemaphoreSlim(this.Config.MaxThreads);
             /*初始化数据*/
-            var setting = Setting.Current;
+            //var setting = Setting.Current;
             //if (setting.MaxWorkerThreads > 10)
                 //ThreadPool.SetMaxThreads(setting.MaxWorkerThreads, setting.MaxWorkerThreads);
             //ThreadPool.SetMinThreads(1, 1);
@@ -173,8 +173,8 @@ namespace XiaoFeng.Log
         /// <param name="log">日志</param>
         public virtual void Write(LogData log)
         {
-            if (log.RequestUrl.IsNotNullOrEmpty() && Web.HttpContext.Current != null && Web.HttpContext.Current.Request != null)
-                log.RequestUrl = Web.HttpContext.Current.Request.GetUri().ToString();
+            /*if (log.RequestUrl.IsNotNullOrEmpty() && Web.HttpContext.Current != null && Web.HttpContext.Current.Request != null)
+                log.RequestUrl = Web.HttpContext.Current.Request.GetUri().ToString();*/
 
             StackTrace trace = new StackTrace();
 

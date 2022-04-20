@@ -165,7 +165,7 @@ namespace XiaoFeng.Collections
                     if (flag)
                     {
                         //如果超过最大连接数 则等100毫秒后再去取
-                        Task.Delay(100).ConfigureAwait(false).GetAwaiter().GetResult();
+                        Task.Delay(100).Wait();
                     }
                 }
             } while (!OnGet(pi));

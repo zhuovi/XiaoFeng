@@ -29,7 +29,7 @@ namespace XiaoFeng.Cache
         /// </summary>
         public RedisCache() : base()
         {
-            this.Redis = new Redis.RedisClient(this.Config.ConnectionConfig);
+            this.Redis = new Redis.RedisClient(this.Config.ConnectionStringKey);
 
             /*Task.Factory.StartNew(async () =>
             {

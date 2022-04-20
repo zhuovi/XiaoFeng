@@ -5,7 +5,6 @@ using System.IO;
 using System.Security;
 using System.Security.Cryptography;
 using System.Net;
-using XiaoFeng.Web;
 namespace XiaoFeng
 {
     /// <summary>
@@ -118,65 +117,5 @@ namespace XiaoFeng
             return sb.ToString();
         }
         #endregion        
-
-        #region 获取Body数据
-        /// <summary>
-        /// 获取Body 字符串
-        /// </summary>
-        /// <param name="body">Body流</param>
-        /// <param name="encoding">编码</param>
-        /// <returns></returns>
-        public static string GetFormBodyString(Stream body, Encoding encoding) => GetFormBodyByte(body).GetString(encoding);
-        /// <summary>
-        /// 获取Body 字符串
-        /// </summary>
-        /// <param name="encoding">编码</param>
-        /// <returns></returns>
-        public static string GetFormBodyString(Encoding encoding) => GetFormBodyByte().GetString(encoding);
-        /// <summary>
-        /// 获取Body 字符串
-        /// </summary>
-        /// <param name="body">Body流</param>
-        /// <returns></returns>
-        public static string GetFormBodyString(Stream body = null) => GetFormBodyByte(body).GetString();
-        /// <summary>
-        /// 获取Body流
-        /// </summary>
-        /// <param name="body">Body流</param>
-        /// <returns></returns>
-        public static byte[] GetFormBodyByte(Stream body = null)
-        {
-            if (body == null) body = FormBody();
-            var Request = HttpContext.Current.Request;
-            var length = Request.ContentLength;
-            if (length > 0)
-            {
-                using (var memory = new MemoryStream())
-                {
-                    body.Position = 0;
-                    body.CopyTo(memory);
-                    memory.Position = 0;
-                    var bytes = new byte[(long)length];
-                    memory.Read(bytes, 0, bytes.Length);
-                    return bytes;
-                }
-            }
-            return Array.Empty<byte>();
-        }
-        /// <summary>
-        /// 获取Body流
-        /// </summary>
-        /// <returns></returns>
-        public static Stream FormBody()
-        {
-            return HttpContext.Current.Request.
-#if NETFRAMEWORK
-                InputStream
-#else
-                Body
-#endif
-                ;
-        }
-#endregion
     }
 }

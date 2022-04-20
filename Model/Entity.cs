@@ -35,7 +35,7 @@ namespace XiaoFeng.Model
                 this.DataBaseName = table.ConnName;
                 this.DataBaseNum = (uint)table.ConnIndex;
                 /*判断有无数据库映射*/
-                var DataMap = new DataMapping();
+                /*var DataMap = new DataMapping();
                 if (!DataMap.IsEmpty)
                 {
                     var item = DataMap.Get(table.ConnName, (uint)table.ConnIndex);
@@ -44,7 +44,7 @@ namespace XiaoFeng.Model
                         this.DataBaseName = item.ToName;
                         this.DataBaseNum = item.ToIndex;
                     }
-                }
+                }*/
                 
                 this.TableName = table.Name.IfEmpty(this.ModelType.Name);
                 ConnectionConfig config;
@@ -703,7 +703,7 @@ namespace XiaoFeng.Model
         /// <returns></returns>
         public T Sub()
         {
-            var SessionID = UserSession.Id;
+            /*var SessionID = UserSession.Id;
             if (SessionID.IsNotNullOrEmpty())
             {
                 var value = Cache.CacheHelper.Get(SessionID);
@@ -712,7 +712,7 @@ namespace XiaoFeng.Model
                     var val = value as SubDataBaseTable;
                     return this.SubDataBase(val.Key, val.Num.Value, val.Suffix);
                 }
-            }
+            }*/
             return (T)this;
         }
         /// <summary>
@@ -721,6 +721,7 @@ namespace XiaoFeng.Model
         /// <returns></returns>
         public T SubDataBase()
         {
+            /*
             var SessionID = UserSession.Id;
             if (SessionID.IsNotNullOrEmpty())
             {
@@ -730,7 +731,7 @@ namespace XiaoFeng.Model
                     var val = value as SubDataBaseTable;
                     return this.SubDataBase(val.Key, val.Num.Value);
                 }
-            }
+            }*/
             return (T)this;
         }
         /// <summary>
@@ -764,7 +765,7 @@ namespace XiaoFeng.Model
                 this.DataBaseName = key;
                 if (isGlobal)
                 {
-                    var SessionID = UserSession.Id;
+                   /* var SessionID = UserSession.Id;
                     if (SessionID.IsNotNullOrEmpty())
                     {
                         var value = Cache.CacheHelper.Get(SessionID);
@@ -775,7 +776,7 @@ namespace XiaoFeng.Model
                             val.Num = num;
                             Cache.CacheHelper.Set(SessionID, val);
                         }
-                    }
+                    }*/
                 }
             }
             if (this.DataBaseName.IsNullOrEmpty()) this.DataBaseName = this.TableAttr.ConnName;
@@ -803,7 +804,7 @@ namespace XiaoFeng.Model
         /// <returns></returns>
         public T SubTable()
         {
-            var SessionID = UserSession.Id;
+            /*var SessionID = UserSession.Id;
             if (SessionID.IsNotNullOrEmpty())
             {
                 var value = Cache.CacheHelper.Get(SessionID);
@@ -812,7 +813,7 @@ namespace XiaoFeng.Model
                     var val = value as SubDataBaseTable;
                     return this.SubTable(val.Suffix);
                 }
-            }
+            }*/
             return this as T;
         }
         /// <summary>
@@ -830,6 +831,7 @@ namespace XiaoFeng.Model
                 this.TableName += "_FB_" + suffix;
                 if (isGlobal)
                 {
+                    /*
                     var SessionID = UserSession.Id;
                     if (SessionID.IsNotNullOrEmpty())
                     {
@@ -840,7 +842,7 @@ namespace XiaoFeng.Model
                             val.Suffix = suffix;
                             Cache.CacheHelper.Set(SessionID, val);
                         }
-                    }
+                    }*/
                 }
             }
             this.SetDataX();
