@@ -251,6 +251,7 @@ namespace XiaoFeng.Expressions
         }
         #endregion
     }
+#if NETCOREAPP
     /// <summary>
     /// 动态创建表达式
     /// </summary>
@@ -307,4 +308,5 @@ namespace XiaoFeng.Expressions
             return keySelector;
         }
     }
+#endif
 }

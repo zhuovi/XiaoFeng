@@ -5,10 +5,10 @@
 		<Authors>Jacky</Authors>
 		<Product>基础类库 数据库中间件</Product>
 		<Description>基础类库,数据库中间件,网络通讯中间件</Description>
-		<Copyright>CopyRight @ 2008-2023 魔法精灵软件(www.fayelf.com) QQ:7092734 Email:jacky@fayelf.com</Copyright>
+		<Copyright>CopyRight @ 2008-2023 魔法精灵(www.fayelf.com) QQ:7092734 Email:jacky@fayelf.com</Copyright>
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<Company>河南魔法精灵软件科技有限公司</Company>
-		<VersionPrefix>2.2</VersionPrefix>
+		<VersionPrefix>2.3</VersionPrefix>
 		<VersionSuffix>$([System.DateTime]::Now.ToString("yyyy.MMdd"))</VersionSuffix>
 		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
 		<FileVersion>$(Version)</FileVersion>
@@ -34,14 +34,9 @@
 		<Compile Remove="Data\DataMapping.cs" />
 		<Compile Remove="Device\Computer.cs" />
 	</ItemGroup>
-	<ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0' or '$(TargetFramework)'=='netstandard2.1'">
-		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-	</ItemGroup>
-	<ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
-		<PackageReference Include="System.Memory" Version="4.5.4" />
-	</ItemGroup>
+	
 	<ItemGroup>
-	  <None Include="..\..\x.png">
+	  <None Include="..\x.png">
 	    <Pack>True</Pack>
 	    <PackagePath>\</PackagePath>
 	  </None>

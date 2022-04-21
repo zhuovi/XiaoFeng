@@ -19,7 +19,7 @@ namespace XiaoFeng
         /// <param name="value">子字符串</param>
         /// <returns></returns>
         public static int IndexOfX(this string _, string value) =>
-#if NETCORE
+#if NETSTANDARD2_1
             _.AsSpan().IndexOf(value.AsSpan());
 #else
             _.IndexOf(value);
@@ -31,7 +31,7 @@ namespace XiaoFeng
         /// <param name="value">子字符串</param>
         /// <returns></returns>
         public static int LastIndexOfX(this string _, string value) =>
-#if NETCORE
+#if NETSTANDARD2_1
             _.AsSpan().LastIndexOf(value.AsSpan());
 #else
             _.LastIndexOf(value);
@@ -47,7 +47,7 @@ namespace XiaoFeng
         {
             if (length <= 0 || length < start) return string.Empty;
             return
-#if NETCORE
+#if NETSTANDARD2_1
             _.AsSpan().Slice(start, length).ToString()
 #else
             _.Substring(start, length)
@@ -70,7 +70,7 @@ namespace XiaoFeng
         /// <returns></returns>
         public static string ReplaceX(this string _, string oldValue, string newValue)
         {
-#if NETCORE
+#if NETSTANDARD2_1
             var list = new List<string>();
             var strSpan = _.AsSpan();
             var subSpan = oldValue.AsSpan();
