@@ -26,13 +26,13 @@
 		<PackageIcon>x.png</PackageIcon>
 		<SignAssembly>False</SignAssembly>
 		<EnableNETAnalyzers>False</EnableNETAnalyzers>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 	</PropertyGroup>
 	<ItemGroup>
 		<Compile Remove="Cache\MemoryCacheManage.cs" />
 		<Compile Remove="Cache\MemoryCacheManager.cs" />
 		<Compile Remove="Common\UserSession.cs" />
 		<Compile Remove="Data\DataMapping.cs" />
-		<Compile Remove="Device\Computer.cs" />
 	</ItemGroup>
 	
 	<ItemGroup>
