@@ -19,14 +19,14 @@
 		<AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
 		<PackageTags>FAYELF</PackageTags>
 		<PackageReleaseNotes>www.fayelf.com</PackageReleaseNotes>
-	</PropertyGroup>
-	<PropertyGroup>
-		<DefineConstants Condition="'$(TargetFramework)'=='netstandard2.0'">$(DefineConstants);NETCORE;</DefineConstants>
-		<DefineConstants Condition="'$(TargetFramework)'=='netstandard2.1'">$(DefineConstants);NETCORE;</DefineConstants>
 		<PackageIcon>x.png</PackageIcon>
 		<SignAssembly>False</SignAssembly>
 		<EnableNETAnalyzers>False</EnableNETAnalyzers>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+	</PropertyGroup>
+	<PropertyGroup>
+		<DefineConstants Condition="'$(TargetFramework)'=='netstandard2.0'">$(DefineConstants);NETCORE;</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)'=='netstandard2.1'">$(DefineConstants);NETCORE;</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
 		<Compile Remove="Cache\MemoryCacheManage.cs" />

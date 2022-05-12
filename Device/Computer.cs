@@ -19,9 +19,9 @@ using System.Text;
 namespace XiaoFeng.Device
 {
     /// <summary>
-    /// Computer 类说明
+    /// 电脑设备信息
     /// </summary>
-    public static class Computer
+    public class Computer
     {
         #region 属性
 

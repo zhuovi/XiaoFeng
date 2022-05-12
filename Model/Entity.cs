@@ -35,16 +35,19 @@ namespace XiaoFeng.Model
                 this.DataBaseName = table.ConnName;
                 this.DataBaseNum = (uint)table.ConnIndex;
                 /*判断有无数据库映射*/
-                /*var DataMap = new DataMapping();
-                if (!DataMap.IsEmpty)
+                if (DataMappingType != null)
                 {
-                    var item = DataMap.Get(table.ConnName, (uint)table.ConnIndex);
-                    if (item != null)
+                    var dataMap = Activator.CreateInstance(DataMappingType) as IDataMapping;
+                    if (!dataMap.IsEmpty)
                     {
-                        this.DataBaseName = item.ToName;
-                        this.DataBaseNum = item.ToIndex;
+                        var item = dataMap.Get(table.ConnName, (uint)table.ConnIndex);
+                        if (item != null)
+                        {
+                            this.DataBaseName = item.ToName;
+                            this.DataBaseNum = item.ToIndex;
+                        }
                     }
-                }*/
+                }
                 
                 this.TableName = table.Name.IfEmpty(this.ModelType.Name);
                 ConnectionConfig config;

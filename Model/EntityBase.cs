@@ -334,6 +334,13 @@ namespace XiaoFeng
         /// <returns></returns>
         public virtual string ToXML(string encode = "UTF-8", Boolean removeNamespaces = false, Boolean removeXmlDeclaration = false) => this.EntityToXml(Encoding.GetEncoding(encode), removeXmlDeclaration);
         #endregion
+
+        #region 数据库映射属性
+        /// <summary>
+        /// 数据库映射属性
+        /// </summary>
+        public static Type DataMappingType { get; set; }
+        #endregion
     }
     #endregion
 }
