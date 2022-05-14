@@ -24,6 +24,10 @@ namespace XiaoFeng.Model
         /// </summary>
         Boolean IsEmpty { get; }
         /// <summary>
+        /// Token Key
+        /// </summary>
+        string TokenKey { get; set; }
+        /// <summary>
         /// 添加项
         /// </summary>
         /// <param name="item">项</param>
