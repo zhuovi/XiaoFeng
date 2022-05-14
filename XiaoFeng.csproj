@@ -8,7 +8,7 @@
 		<Copyright>CopyRight @ 2008-2023 魔法精灵(www.fayelf.com) QQ:7092734 Email:jacky@fayelf.com</Copyright>
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<Company>河南魔法精灵软件科技有限公司</Company>
-		<VersionPrefix>2.3</VersionPrefix>
+		<VersionPrefix>2.4</VersionPrefix>
 		<VersionSuffix>$([System.DateTime]::Now.ToString("yyyy.MMdd"))</VersionSuffix>
 		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
 		<FileVersion>$(Version)</FileVersion>
@@ -19,7 +19,6 @@
 		<AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
 		<PackageTags>FAYELF</PackageTags>
 		<PackageReleaseNotes>www.fayelf.com</PackageReleaseNotes>
-		<PackageIcon>x.png</PackageIcon>
 		<SignAssembly>False</SignAssembly>
 		<EnableNETAnalyzers>False</EnableNETAnalyzers>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
@@ -35,10 +34,5 @@
 		<Compile Remove="Data\DataMapping.cs" />
 	</ItemGroup>
 	
-	<ItemGroup>
-	  <None Include="..\x.png">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
-	</ItemGroup>
+	
 </Project>

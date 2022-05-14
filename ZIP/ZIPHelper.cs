@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO.Compression;
 using System.IO;
+using XiaoFeng.IO;
+
 namespace XiaoFeng.Zip
 {
     /*
@@ -56,7 +58,9 @@ namespace XiaoFeng.Zip
         public Boolean UNZip(string ZipPath, string rootPath, Encoding encoding = null)
         {
             if (ZipPath.IsNullOrEmpty() || rootPath.IsNullOrEmpty() || !File.Exists(ZipPath)) return false;
-            if (!Directory.Exists(rootPath)) Directory.CreateDirectory(rootPath);
+            //if (!Directory.Exists(rootPath)) Directory.CreateDirectory(rootPath);
+            if (!FileHelper.Exists(rootPath, FileAttribute.Directory)) FileHelper.CreateDirectory(rootPath);
+            rootPath = FileHelper.GetBasePath(rootPath);
             if (encoding == null)
                 ZipFile.ExtractToDirectory(ZipPath, rootPath);
             else

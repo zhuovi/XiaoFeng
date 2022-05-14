@@ -1,11 +1,6 @@
 ﻿using System;
 using XiaoFeng.Json;
-#if (NETCORE && !NETSTANDARD)
-using System.Text.Unicode;
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-#endif
+
 namespace XiaoFeng
 {
     /// <summary>
@@ -13,7 +8,7 @@ namespace XiaoFeng
     /// </summary>
     public static partial class PrototypeHelper
     {
-#region 对象转JSON串
+        #region 对象转JSON串
         /// <summary>
         /// 对象转JSON串
         /// </summary>
@@ -27,7 +22,7 @@ namespace XiaoFeng
             {
                 return JsonParser.SerializeObject(o, formatting);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 LogHelper.Error(ex);
                 return string.Empty;
@@ -43,9 +38,9 @@ namespace XiaoFeng
         {
             return o.ToJson(new JsonSerializerSetting { Indented = indented });
         }
-#endregion
+        #endregion
 
-#region JSON串转对象
+        #region JSON串转对象
         /// <summary>
         /// JSON串转对象
         /// </summary>
@@ -59,7 +54,7 @@ namespace XiaoFeng
             {
                 return JsonParser.DeserializeObject<T>(_);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 LogHelper.Error(ex, "JSON解析对象出错,JSON字符串为:" + _);
                 return default(T);
@@ -93,7 +88,7 @@ namespace XiaoFeng
         {
             return _.JsonToObject<JsonValue>();
         }
-#endregion
+        #endregion
 
     }
 }

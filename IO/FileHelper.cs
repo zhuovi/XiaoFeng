@@ -8,12 +8,15 @@ namespace XiaoFeng.IO
 {
     /// <summary>
     /// IO操作类
-    /// Version : 1.0.2
+    /// Version : 1.0.3
     /// 2020-11-25
     /// 增加文件编码判断
     /// V 1.0.2
     /// 2020-12-02
     /// 增加目录是否存在
+    /// V 1.0.3
+    /// 2022-02-14
+    /// 修复Linux下目录配置不能读取磁盘根目录的问题
     /// </summary>
     public static class FileHelper
     {
@@ -27,10 +30,10 @@ namespace XiaoFeng.IO
         public static Boolean Exists(string path, FileAttribute attribute = FileAttribute.UnKnown)
         {
             if (path.IsNullOrEmpty()) return false;
-            path = GetBasePath(path);
+            var _path = GetBasePath(path);
             if (attribute == FileAttribute.UnKnown)
-                attribute = path.HasExtension() ? FileAttribute.File : FileAttribute.Directory;
-            return attribute == FileAttribute.File ? File.Exists(path) : Directory.Exists(path);
+                attribute = _path.HasExtension() ? FileAttribute.File : FileAttribute.Directory;
+            return attribute == FileAttribute.File ? File.Exists(_path) : Directory.Exists(_path);
         }
         #endregion
 
@@ -42,17 +45,19 @@ namespace XiaoFeng.IO
         /// <param name="attribute">文件类型</param>
         public static void Create(string path, FileAttribute attribute = FileAttribute.UnKnown)
         {
-            path = GetBasePath(path);
+            var _path = GetBasePath(path);
             if (attribute == FileAttribute.UnKnown)
                 attribute = path.HasExtension() ? FileAttribute.File : FileAttribute.Directory;
             if (attribute == FileAttribute.Directory)
             {
-                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                if (!Directory.Exists(_path)) Directory.CreateDirectory(_path);
             }
             else if (attribute == FileAttribute.File)
             {
-                Create(path.GetDirectoryName(), FileAttribute.Directory);
-                if (!File.Exists(path)) using (var fs = File.Create(path)) { fs.Close();fs.Dispose(); }
+                //Create(path.GetDirectoryName(), FileAttribute.Directory);
+                var dir = _path.GetDirectoryName();
+                if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+                if (!File.Exists(_path)) using (var fs = File.Create(_path)) { fs.Close();fs.Dispose(); }
             }
         }
         /// <summary>
@@ -63,6 +68,12 @@ namespace XiaoFeng.IO
         /// <param name="encoding">文件编码</param>
         /// <returns></returns>
         public static Boolean Create(string path, string content, Encoding encoding) => WriteText(path, content, encoding);
+        /// <summary>
+        /// 创建目录
+        /// </summary>
+        /// <param name="path">路径</param>
+        /// <returns></returns>
+        public static void CreateDirectory(string path) => Create(path, FileAttribute.Directory);
         #endregion
 
         #region 删除文件或目录
@@ -74,25 +85,20 @@ namespace XiaoFeng.IO
         public static void Delete(string path, FileAttribute attribute = FileAttribute.UnKnown)
         {
             if (path.IsNullOrEmpty()) return;
-            path = path.GetBasePath();
-            var file = new FileInfo(path);
+            var _path = GetBasePath(path);
+            var file = new FileInfo(_path);
             if ((FileAttributes.ReadOnly | FileAttributes.System | FileAttributes.Offline  | FileAttributes.Device).HasFlag(file.Attributes)) return;
             if (attribute == FileAttribute.UnKnown)
-            {
-                if (file.Attributes == FileAttributes.Directory)
-                    attribute = FileAttribute.Directory;
-                else
-                    attribute = FileAttribute.File;
-            }
+                attribute = file.Attributes == FileAttributes.Directory ? FileAttribute.Directory : FileAttribute.File;
             if (attribute == FileAttribute.File)
             {
-                if (File.Exists(path))
-                    File.Delete(path);
+                if (File.Exists(_path))
+                    File.Delete(_path);
             }
             else if (attribute == FileAttribute.Directory)
             {
-                if (Directory.Exists(path))
-                    Directory.Delete(path, true);
+                if (Directory.Exists(_path))
+                    Directory.Delete(_path, true);
             }
         }
         #endregion
@@ -107,8 +113,6 @@ namespace XiaoFeng.IO
         public static string OpenText(string path, Encoding encoding = null)
         {
             if (path.IsNullOrEmpty()) return string.Empty;
-            path = GetBasePath(path);
-            if (!File.Exists(path)) return string.Empty;
             var bytes = OpenBytes(path);
             if (bytes.IsNullOrEmpty() || bytes.Length == 0) return string.Empty;
             return bytes.GetString(encoding);
@@ -121,10 +125,10 @@ namespace XiaoFeng.IO
         public static byte[] OpenBytes(string path)
         {
             if (path.IsNullOrEmpty()) return null;
-            path = GetBasePath(path);
-            if (!File.Exists(path)) return null;
+            var _path = GetBasePath(path);
+            if (!File.Exists(_path)) return null;
             byte[] bytes = Array.Empty<byte>();
-            using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (var fs = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 if (fs.Length == 0) return Array.Empty<byte>();
                 bytes = new byte[fs.Length];
@@ -171,11 +175,11 @@ namespace XiaoFeng.IO
         public static Boolean WriteBytes(string path, byte[] bytes, int offset = 0)
         {
             if (path.IsNullOrEmpty()) return false;
-            path = GetBasePath(path);
-            Create(path.GetDirectoryName(), FileAttribute.Directory);
+            var _path = GetBasePath(path);
+            Create(_path.GetDirectoryName(), FileAttribute.Directory);
             try
             {
-                using (var fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+                using (var fs = new FileStream(_path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
                 {
                     if (offset == 0)
                     {
@@ -264,17 +268,17 @@ namespace XiaoFeng.IO
         public static void DeleteDirectoryEmpty(string path, string root)
         {
             if (path.IsNullOrEmpty()) return;
-            path = path.GetBasePath();
-            if (!Directory.Exists(path)) return;
+            var _path = GetBasePath(path);
+            if (!Directory.Exists(_path)) return;
             if (root.IsNullOrEmpty())
-                Directory.Delete(path, true);
+                Directory.Delete(_path, true);
             else
             {
-                root = root.GetBasePath();
-                if (!Directory.Exists(root))
-                    Directory.Delete(path, true);
+                var _root = GetBasePath(root);
+                if (!Directory.Exists(_root))
+                    Directory.Delete(_path, true);
                 else
-                    DeleteDirectoryEmpty(new DirectoryInfo(path), root);
+                    DeleteDirectoryEmpty(new DirectoryInfo(_path), root);
             }
         }
         /// <summary>
@@ -318,8 +322,8 @@ namespace XiaoFeng.IO
         {
             if (source.IsNullOrEmpty()) return false;
             if (newName.IsNullOrEmpty()) return false;
-            source = GetBasePath(source);
-            if (!File.Exists(source)) return false;
+            var _source = GetBasePath(source);
+            if (!File.Exists(_source)) return false;
             return MoveFile(source, source.ReplacePattern(DirectorySeparatorChar + @"[\s\S]+$", DirectorySeparatorChar + newName));
         }
         #endregion
@@ -334,14 +338,14 @@ namespace XiaoFeng.IO
         public static Boolean MoveFile(string source, string dest)
         {
             if (source.IsNullOrEmpty() || dest.IsNullOrEmpty()) return false;
-            source = GetBasePath(source);
+            var _source = GetBasePath(source);
             if (!File.Exists(source)) return false;
-            dest = GetBasePath(dest);
-            Create(Path.GetDirectoryName(dest), FileAttribute.Directory);
+            var _dest = GetBasePath(dest);
+            Create(Path.GetDirectoryName(_dest), FileAttribute.Directory);
             try
             {
-                if (File.Exists(dest)) File.Delete(dest);
-                File.Move(source, dest);
+                if (File.Exists(_dest)) File.Delete(_dest);
+                File.Move(_source, _dest);
                 return true;
             }
             catch (Exception e)
@@ -361,12 +365,12 @@ namespace XiaoFeng.IO
         public static void MoveDirectory(string source, string dest)
         {
             if (source.IsNullOrEmpty()) return;
-            source = GetBasePath(source);
-            if (!Directory.Exists(source)) return;
+            var _source = GetBasePath(source);
+            if (!Directory.Exists(_source)) return;
             if (dest.IsNullOrEmpty()) return;
-            dest = GetBasePath(dest);
-            if (!Directory.Exists(dest)) Directory.CreateDirectory(Path.GetDirectoryName(dest));
-            MoveDirectory(new DirectoryInfo(source), new DirectoryInfo(dest));
+            var _dest = GetBasePath(dest);
+            if (!Directory.Exists(_dest)) Directory.CreateDirectory(Path.GetDirectoryName(_dest));
+            MoveDirectory(new DirectoryInfo(_source), new DirectoryInfo(_dest));
         }
         /// <summary>
         /// 移动目录及目录下所有文件
@@ -399,14 +403,14 @@ namespace XiaoFeng.IO
         public static Boolean CopyFile(string source, string dest)
         {
             if (source.IsNullOrEmpty() || dest.IsNullOrEmpty()) return false;
-            source = GetBasePath(source);
-            if (!FileHelper.Exists(source)) return false;
-            dest = GetBasePath(dest);
-            if (!Directory.Exists(Path.GetDirectoryName(dest))) Directory.CreateDirectory(Path.GetDirectoryName(dest));
+            var _source = GetBasePath(source);
+            if (!File.Exists(_source)) return false;
+            var _dest = GetBasePath(dest);
+            if (!Directory.Exists(Path.GetDirectoryName(_dest))) Directory.CreateDirectory(Path.GetDirectoryName(_dest));
             try
             {
-                if (File.Exists(dest)) File.Delete(dest);
-                File.Copy(source, dest);
+                if (File.Exists(_dest)) File.Delete(_dest);
+                File.Copy(_source, _dest);
                 return true;
             }
             catch (Exception e)
@@ -426,12 +430,12 @@ namespace XiaoFeng.IO
         public static void CopyDirectory(string source, string dest)
         {
             if (source.IsNullOrEmpty()) return;
-            source = GetBasePath(source);
-            if (!Directory.Exists(source)) return;
+            var _source = GetBasePath(source);
+            if (!Directory.Exists(_source)) return;
             if (dest.IsNullOrEmpty()) return;
-            dest = GetBasePath(dest);
-            if (!Directory.Exists(dest)) return;
-            CopyDirectory(new DirectoryInfo(source), new DirectoryInfo(dest));
+            var _dest = GetBasePath(dest);
+            if (!Directory.Exists(_dest)) return;
+            CopyDirectory(new DirectoryInfo(_source), new DirectoryInfo(_dest));
         }
         /// <summary>
         /// 复制目录及目录下所有文件
@@ -444,13 +448,13 @@ namespace XiaoFeng.IO
             source.GetFiles().Each(f =>
             {
                 var path = dest.FullName + FileHelper.DirectorySeparatorChar + f.Name;
-                FileHelper.DeleteFile(path);
+                DeleteFile(path);
                 f.CopyTo(path);
             });
             source.GetDirectories().Each(d =>
             {
                 var dir = dest.FullName + FileHelper.DirectorySeparatorChar + d.Name;
-                FileHelper.Create(dir, FileAttribute.Directory);
+                Create(dir, FileAttribute.Directory);
                 d.CopyTo(dir);
             });
         }
@@ -462,27 +466,12 @@ namespace XiaoFeng.IO
         /// </summary>
         /// <param name="path">路径</param>
         /// <returns></returns>
-        public static long GetFolderSize(string path)
-        {
-            //double _ = 0;
-            path = GetBasePath(path);
-            var dir = new DirectoryInfo(path);
-            return dir.GetFiles("*.*", SearchOption.AllDirectories).Select(a => a.Length).Sum();
-            /*dir.GetFiles().Each(f =>
-            {
-                _ += f.Length;
-            });
-            dir.GetDirectories().Each(d =>
-            {
-                _ += GetFolderSize(d.FullName);
-            });
-            return _;*/
-        }
+        public static long GetFolderSize(string path) => GetBasePath(path).ToDirectoryInfo().GetFiles("*.*", SearchOption.AllDirectories).Select(a => a.Length).Sum();
         #endregion
 
         #region 获取文件路径
         /// <summary>
-        /// 获取文件路径
+        /// 获取文件路径 如果是用绝对路径则前边可以加{*}则表示是绝对路径
         /// </summary>
         /// <param name="path">路径</param>
         /// <returns></returns>
@@ -502,25 +491,26 @@ namespace XiaoFeng.IO
                 }
                 path = directoryInfo.FullName + DirectorySeparatorChar + path;
             }
-            return path.ReplacePattern(@"[\/\\]+", DirectorySeparatorChar.ToString());
-            /*
-            var os = OS.Platform.GetOSPlatform();
-            if (!path.IsBasePath())
-            {
-                if (os == PlatformOS.Linux || os == PlatformOS.OSX)
-                    path = (OS.Platform.CurrentDirectory + "/" + path.ReplacePattern(@"[\\]+", "/")).Trim('/');
-                else
-                    path = (OS.Platform.CurrentDirectory + "\\" + path.ReplacePattern(@"[/]+", "\\")).Trim('\\');
-            }
             else
             {
-                if (os == PlatformOS.Linux || os == PlatformOS.OSX)
-                    path = path.ReplacePattern(@"[\\]+", "/").TrimEnd('/');
-                else
-                    path = path.ReplacePattern(@"[/]+", "\\").TrimEnd('\\');
+                if (path.StartsWith("{*}"))
+                {
+                    path = path.RemovePattern(@"^\{\*\}");
+                    var os = OS.Platform.GetOSPlatform();
+                    if (!path.IsBasePath())
+                    {
+                        if (os == PlatformOS.Windows)
+                        {
+                            path = OS.Platform.CurrentDirectory.ToDirectoryInfo().Root.FullName + path.TrimStart(new char[] { '/', '\\' });
+                        }
+                        else
+                        {
+                            path = VolumeSeparatorChar + path.TrimStart(new char[] { '/', '\\' });
+                        }
+                    }
+                }
             }
-            return path.ReplacePattern(@"[/]+", "/").ReplacePattern(@"[\\]+", "\\");
-            */
+            return path.ReplacePattern(@"[\/\\]+", DirectorySeparatorChar.ToString());
         }
         #endregion
 
@@ -631,19 +621,19 @@ namespace XiaoFeng.IO
 
         #region 分隔符
         /// <summary>
-        /// 用于在环境变量中分隔路径字符串的平台特定的分隔符 如;
+        /// 用于在环境变量中分隔路径字符串的平台特定的分隔符 如 windows是';' linux是':'
         /// </summary>
         public static char PathSeparator => Path.PathSeparator;
         /// <summary>
-        /// 提供平台特定的字符，该字符用于在反映分层文件系统组织的路径字符串中分隔目录级别。如:\
+        /// 提供平台特定的字符，该字符用于在反映分层文件系统组织的路径字符串中分隔目录级别。如:windows是'\' linux是'/'
         /// </summary>
         public static char DirectorySeparatorChar => Path.DirectorySeparatorChar;
         /// <summary>
-        /// 提供平台特定的替换字符，该替换字符用于在反映分层文件系统组织的路径字符串中分隔目录级别。如/
+        /// 提供平台特定的替换字符，该替换字符用于在反映分层文件系统组织的路径字符串中分隔目录级别。如 windows是'/' linux是'/'
         /// </summary>
         public static char AltDirectorySeparatorChar => Path.AltDirectorySeparatorChar;
         /// <summary>
-        /// 提供平台特定的卷分隔符。如:
+        /// 提供平台特定的卷分隔符。如 windows是':' linux是'/'
         /// </summary>
         public static char VolumeSeparatorChar => Path.VolumeSeparatorChar;
         /// <summary>

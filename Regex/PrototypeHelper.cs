@@ -32,25 +32,24 @@ namespace XiaoFeng
 
         #region 是否是物理路径
         /// <summary>
-        /// 是否是物理路径
+        /// 是否是物理路径 如果路径前边加{*}一定是物理路径
         /// </summary>
         /// <param name="_">字符串</param>
         /// <returns></returns>
         public static Boolean IsBasePath(this String _)
         {
+            if (_.StartsWith("{*}")) return true;
             var os = OS.Platform.GetOSPlatform();
             var root = OS.Platform.CurrentDirectory;
             if (os == PlatformOS.Linux)
             {
                 var path = _.Replace("\\", "/");
-                if (path.IsMatch(@"^" + root.ToRegexEscape())) return true;
-                else return false;
+                return path.IsMatch(@"^" + root.ToRegexEscape());
             }
             else if (os == PlatformOS.OSX)
             {
                 var path = _.Replace("\\", "/");
-                if (path.IsMatch(@"^" + root.ToRegexEscape())) return true;
-                else return false;
+                return path.IsMatch(@"^" + root.ToRegexEscape());
             }
             else
                 return _.IsMatch(RegexPattern.BasePath);
@@ -251,7 +250,7 @@ namespace XiaoFeng
         /// </summary>
         /// <param name="_">字符串</param>
         /// <returns></returns>
-        public static Boolean IsNotNullOrEmpty(this String _)=>!_.IsNullOrEmpty();
+        public static Boolean IsNotNullOrEmpty(this String _) => !_.IsNullOrEmpty();
         #endregion
 
         #region 指定字符串是否为 null、空还是仅由空白字符组成
