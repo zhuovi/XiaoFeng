@@ -16,5 +16,8 @@ using System.Threading.Tasks;
 *****************************************************************/
 namespace XiaoFeng.Model.Core
 {
+    /// <summary>
+    /// 过渡命名空间
+    /// </summary>
     public class 过渡命名空间 { }
 }

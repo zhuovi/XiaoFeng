@@ -339,7 +339,7 @@ namespace XiaoFeng.IO
         {
             if (source.IsNullOrEmpty() || dest.IsNullOrEmpty()) return false;
             var _source = GetBasePath(source);
-            if (!File.Exists(source)) return false;
+            if (!File.Exists(_source)) return false;
             var _dest = GetBasePath(dest);
             Create(Path.GetDirectoryName(_dest), FileAttribute.Directory);
             try
@@ -471,7 +471,7 @@ namespace XiaoFeng.IO
 
         #region 获取文件路径
         /// <summary>
-        /// 获取文件路径 如果是用绝对路径则前边可以加{*}则表示是绝对路径
+        /// 获取文件路径 如果是用绝对路径则前边可以加{*}或{/}则表示是绝对路径
         /// </summary>
         /// <param name="path">路径</param>
         /// <returns></returns>
@@ -493,9 +493,9 @@ namespace XiaoFeng.IO
             }
             else
             {
-                if (path.StartsWith("{*}"))
+                if (path.StartsWith("{*}") || path.StartsWith("{/}"))
                 {
-                    path = path.RemovePattern(@"^\{\*\}");
+                    path = path.RemovePattern(@"^\{(\*|\/)\}");
                     var os = OS.Platform.GetOSPlatform();
                     if (!path.IsBasePath())
                     {

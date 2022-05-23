@@ -81,7 +81,7 @@ namespace XiaoFeng.Model
         /// <param name="fromName">原节点名</param>
         /// <param name="fromIndex">原索引</param>
         /// <returns></returns>
-        bool Contains(string fromName,uint fromIndex);
+        bool Contains(string fromName, uint fromIndex);
         /// <summary>
         /// 清空
         /// </summary>

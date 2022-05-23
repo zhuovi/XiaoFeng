@@ -81,7 +81,11 @@ namespace XiaoFeng.Redis
                         }
                         break;
                     default:
-                        this.Value = msg.GetMatch(@"^\$(?<b>\d+)\r\n(?<a>[\s\S]*)\r\n$");
+                        if (msg.IsMatch(@"^\$(?<b>\d+)\r\n(?<a>[\s\S]*)\r\n"))
+                        {
+                            this.Value = msg.GetMatch(@"^\$(?<b>\d+)\r\n(?<a>[\s\S]*)\r\n$");
+                        }
+                        else this.Message = "网络不稳定";
                         break;
                 }
                 return;

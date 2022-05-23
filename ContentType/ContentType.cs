@@ -84,8 +84,8 @@ namespace XiaoFeng
             {"eot", "application/vnd.ms-fontobject" },
             /*文件*/
             {"vml", "text/xml" },
-            {"json", "application/json" },
-            {"js", "application/x-javascript" },
+            {"json", "application/json,text/json" },
+            {"js", "application/x-javascript,application/js,text/js" },
             {"txt", "text/plain" },
             {"log", "text/plain" },
             {"css", "text/css" },

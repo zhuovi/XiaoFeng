@@ -52,7 +52,7 @@ namespace XiaoFeng
         /// </summary>
         private static long MachineIdShift = SequenceBits;
         /// <summary>
-        /// 
+        /// 数据中心ID
         /// </summary>
         private static long DatacenterIdShift = SequenceBits + MachineIdBits;
         /// <summary>
@@ -171,11 +171,11 @@ namespace XiaoFeng
             {
                 long timestamp = GetTimestamp();
                 if (SnowFlake.LastTimestamp == timestamp)
-                { //同一微妙中生成ID  
+                { //同一微秒中生成ID  
                     Sequence = (Sequence + 1) & SequenceMask; //用&运算计算该微秒内产生的计数是否已经到达上限  
                     if (Sequence == 0)
                     {
-                        //一微妙内产生的ID计数已达上限，等待下一微妙  
+                        //一微秒内产生的ID计数已达上限，等待下一微妙  
                         timestamp = GetNextTimestamp(SnowFlake.LastTimestamp);
                     }
                 }

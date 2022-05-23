@@ -13,13 +13,16 @@ using XiaoFeng.Data;
 *  Email : jacky@fayelf.com                                     *
 *  Site : www.fayelf.com                                        *
 *  Create Time : 2021-08-30 14:18:13                            *
-*  Version : v 1.0.0                                            *
+*  Version : v 1.0.1                                            *
 *  CLR Version : 4.0.30319.42000                                *
 *****************************************************************/
 namespace XiaoFeng.Redis
 {
     /// <summary>
     /// Redis 连接配置
+    /// Date : 2022-05-23
+    /// v 1.0.1
+    /// 修改ToStringX中返回字符串的bug
     /// </summary>
     public class RedisConfig : ConnectionConfig
     {
@@ -145,7 +148,7 @@ namespace XiaoFeng.Redis
         /// <returns></returns>
         public string ToStringX()
         {
-            return $"host={this.Host};port={this.Port};db={this.DbNum};password={this.Password};connectiontimeout={this.ConnectionTimeout}&readtimeout={this.ReadTimeout};";
+            return $"host={this.Host};port={this.Port};db={this.DbNum};password={this.Password};connectiontimeout={this.ConnectionTimeout};readtimeout={this.ReadTimeout};";
         }
         /// <summary>
         /// 转换公共连接串
