@@ -8,11 +8,11 @@
 		<Copyright>CopyRight @ 2008-2023 魔法精灵(www.fayelf.com) QQ:7092734 Email:jacky@fayelf.com</Copyright>
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<Company>河南魔法精灵软件科技有限公司</Company>
-		<VersionPrefix>2.6</VersionPrefix>
+		<VersionPrefix>2.7</VersionPrefix>
 		<VersionSuffix>$([System.DateTime]::Now.ToString("yyyy.MMdd"))</VersionSuffix>
 		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
 		<FileVersion>$(Version)</FileVersion>
-		<AssemblyVersion>$(VersionPrefix).*</AssemblyVersion>
+		<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
 		<ProductVersion>$(VersionPrefix)</ProductVersion>
 		<Deterministic>false</Deterministic>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -26,6 +26,7 @@
 	<PropertyGroup>
 		<DefineConstants Condition="'$(TargetFramework)'=='netstandard2.0'">$(DefineConstants);NETCORE;</DefineConstants>
 		<DefineConstants Condition="'$(TargetFramework)'=='netstandard2.1'">$(DefineConstants);NETCORE;</DefineConstants>
+		<DelaySign>False</DelaySign>
 	</PropertyGroup>
 	<ItemGroup>
 		<Compile Remove="Cache\MemoryCacheManage.cs" />

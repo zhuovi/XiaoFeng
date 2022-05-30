@@ -16,7 +16,7 @@ namespace XiaoFeng.IO
     /// 增加目录是否存在
     /// V 1.0.3
     /// 2022-02-14
-    /// 修复Linux下目录配置不能读取磁盘根目录的问题
+    /// i 
     /// </summary>
     public static class FileHelper
     {
