@@ -2033,6 +2033,7 @@ namespace XiaoFeng
             double len = _.Length;
             _ = _.Replace(" ", "+");
             var mod = (int)len % 4;
+            if (mod == 1) return Array.Empty<Byte>();
             if (mod > 0)
             {
                 _ += new string('=', 4 - mod);

@@ -490,7 +490,7 @@ namespace XiaoFeng.Http
         /// <param name="cookie">cookie</param>
         public void AddCookie(Cookie cookie)
         {
-            if (cookie.Domain.IsNullOrEmpty())
+            if (cookie.Domain.IsNullOrEmpty() && this.Address.IsNotNullOrEmpty())
                 cookie.Domain = new Uri(this.Address).Host.RemovePattern(@":\d+$");
             if (this.CookieContainer == null) this.CookieContainer = new CookieContainer();
             this.CookieContainer.Add(cookie);
