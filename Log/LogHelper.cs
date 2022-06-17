@@ -76,7 +76,7 @@ namespace XiaoFeng
         /// <summary>
         /// 日志队列
         /// </summary>
-        private static readonly IBackgroundTaskQueue LogQueue = new BackgroundTaskQueue("LogTaskQueue");
+        private static IBackgroundTaskQueue LogQueue = new BackgroundTaskQueue("LogTaskQueue");
         #endregion
 
         #region 方法
@@ -88,6 +88,11 @@ namespace XiaoFeng
         /// <param name="logData">日志对象</param>
         public static void WriteLog(LogData logData)
         {
+            lock (FileLock)
+            {
+                if (LogQueue == null) LogQueue = new BackgroundTaskQueue("LogTaskQueue");
+                if (Log == null) Log = LogFactory.Create(typeof(Logger), "LogTaskQueue");
+            }
             LogQueue.AddWorkItem(() =>
             {
                 Log.Write(logData);

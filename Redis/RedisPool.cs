@@ -231,7 +231,7 @@ namespace XiaoFeng.Redis
         /// <returns>响应结果</returns>
         public CommandResult GetCommandResult(NetworkStream Stream, CommandType commandType)
         {
-            while (Stream.CanRead)
+            /*while (Stream.CanRead)
             {
                 if (Stream.DataAvailable)
                 {
@@ -247,7 +247,39 @@ namespace XiaoFeng.Redis
                     return new CommandResult(commandType, bs.ToArray());
                 }
             }
-            return null;
+            return null;*/
+            var ms = new MemoryStream();
+            var num = 0;
+            var length = 0;
+            while (Stream.CanRead)
+            {
+                if (Stream.DataAvailable)
+                {
+                    var bytes = new byte[MemorySize];
+                    do
+                    {
+                        Array.Clear(bytes, 0, MemorySize);
+                        var count = Stream.Read(bytes, 0, bytes.Length);
+                        ms.Write(bytes, 0, count);
+
+                    } while (Stream.DataAvailable);
+                    num++;
+                    if (commandType == CommandType.HGET)
+                    {
+                        if (num == 1)
+                        {
+                            var str = ms.ToArray().GetString();
+                            if (str.IsMatch(@"^\$\d+\r\n"))
+                                length = str.GetMatch(@"^\$(?<a>\d+)\r\n").ToCast<int>();
+                            else break;
+                        }
+                        if (length == ms.Length - length.ToString().Length - 5) break;
+                    }
+                    else
+                        break;
+                }
+            }
+            return new CommandResult(commandType, ms.ToArray());
         }
         #endregion
     }

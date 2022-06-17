@@ -681,7 +681,6 @@ namespace XiaoFeng.Redis
             if (key.IsNullOrEmpty()) return default(T);
             return this.Execute(CommandType.GET, dbNum, result => this.SetValue<T>(result.Value), key);
         }
-
         /// <summary>
         /// 获取字符串
         /// </summary>
@@ -701,7 +700,6 @@ namespace XiaoFeng.Redis
             if (key.IsNullOrEmpty()) return default(T);
             return await this.ExecuteAsync(CommandType.GET, dbNum, async result => await Task.FromResult(this.SetValue<T>(result.Value)), key);
         }
-
         /// <summary>
         /// 获取字符串 异步
         /// </summary>
@@ -802,7 +800,6 @@ namespace XiaoFeng.Redis
             if (args.Length == 0) return null;
             return this.Execute(CommandType.MGET, dbNum, result => (List<string>)result.Value, args);
         }
-
         /// <summary>
         /// 获取所有(一个或多个)给定key的值 异步
         /// </summary>

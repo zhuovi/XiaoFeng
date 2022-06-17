@@ -150,6 +150,8 @@ namespace XiaoFeng.Cache
                 CallBack = this.CallBack,
                 Path = path,
             };
+            //if (path.IsNotNullOrEmpty())
+            //    expiresTime = TimeSpan.FromMinutes(10);
             if (expiresTime.HasValue && expiresTime != TimeSpan.Zero)
             {
                 val.ExpiresTime = DateTime.Now.AddMilliseconds(expiresTime.GetValueOrDefault().TotalMilliseconds);

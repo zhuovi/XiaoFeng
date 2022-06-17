@@ -114,7 +114,7 @@ namespace XiaoFeng.Redis
         /// <summary>
         /// 网络流
         /// </summary>
-        private NetworkStream Stream { get; set; }
+        public NetworkStream Stream { get; set; }
         /// <summary>
         /// 套接字
         /// </summary>

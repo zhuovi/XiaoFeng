@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,13 +31,13 @@ namespace XiaoFeng.Threading
         /// </summary>
         public BackgroundTaskQueue()
         {
-            
+            this.Setting = XiaoFeng.Config.Setting.Current;
         }
         /// <summary>
         /// 设置队列名称
         /// </summary>
         /// <param name="name">队列名称</param>
-        public BackgroundTaskQueue(string name) => this.QueueName = name;
+        public BackgroundTaskQueue(string name) : this() => this.QueueName = name;
         #endregion
 
         #region 属性
@@ -60,6 +61,10 @@ namespace XiaoFeng.Threading
         /// 消费运行状态
         /// </summary>
         private Boolean ConsumeState { get; set; } = false;
+        /// <summary>
+        /// XiaoFeng 配置
+        /// </summary>
+        public ISetting Setting { get; set; }
         #endregion
 
         #region 方法
@@ -67,13 +72,28 @@ namespace XiaoFeng.Threading
         /// 加入任务
         /// </summary>
         /// <param name="action">事件</param>
-        public async Task AddWorkItem(Action action) => await this.AddWorkItem(c => Task.Factory.StartNew(action, c));
+        public async Task AddWorkItem(Action action) => await this.AddWorkItem(action, CancellationToken.None);
+        /// <summary>
+        /// 加入任务
+        /// </summary>
+        /// <param name="action">事件</param>
+        /// <param name="cancel">取消通知</param>
+        /// <param name="creationOptions">任务配置</param>
+        public async Task AddWorkItem(Action action, CancellationToken cancel, TaskCreationOptions creationOptions = TaskCreationOptions.None) => await this.AddWorkItem(c => new Task(action, cancel == CancellationToken.None ? c : CancellationTokenSource.CreateLinkedTokenSource(c, cancel).Token, creationOptions));
         /// <summary>
         /// 加入任务
         /// </summary>
         /// <param name="action">事件</param>
         /// <param name="state">数据对象</param>
-        public async Task AddWorkItem(Action<object> action, object state) => await this.AddWorkItem(c => Task.Factory.StartNew(action, state, c));
+        public async Task AddWorkItem(Action<object> action, object state) => await this.AddWorkItem(action, state, CancellationToken.None);
+        /// <summary>
+        /// 加入任务
+        /// </summary>
+        /// <param name="action">事件</param>
+        /// <param name="state">数据对象</param>
+        /// <param name="cancel">取消通知</param>
+        /// <param name="creationOptions">任务配置</param>
+        public async Task AddWorkItem(Action<object> action, object state, CancellationToken cancel, TaskCreationOptions creationOptions = TaskCreationOptions.None) => await this.AddWorkItem(c => new Task(action, state, cancel == CancellationToken.None ? c : CancellationTokenSource.CreateLinkedTokenSource(c, cancel).Token, creationOptions));
         /// <summary>
         /// 加入任务
         /// </summary>
@@ -113,8 +133,7 @@ namespace XiaoFeng.Threading
         /// </summary>
         void ConsumeTask()
         {
-            var setting = Setting.Current;
-            new Task(async () =>
+            new Task(() =>
             {
                 if (this.QueueName.IsNotNullOrEmpty())
                     Thread.CurrentThread.Name = this.QueueName;
@@ -122,10 +141,27 @@ namespace XiaoFeng.Threading
                 {
                     if (WorkItems.TryDequeue(out var workItem))
                     {
-                        //if (this.CancelToken.IsCancellationRequested) this.CancelToken = new CancellationTokenSource();
                         try
                         {
-                            await workItem.Invoke(this.CancelToken.Token);
+                            var task = workItem.Invoke(this.CancelToken.Token);
+                            if (task.Status == TaskStatus.Created)
+                            {
+                                task.Start();
+                                task.ContinueWith(t =>
+                                {
+                                    //Console.WriteLine(t.Id + "已完成.");
+                                }).Wait(TimeSpan.FromSeconds(Setting.TaskWaitTimeout));
+                            }
+                            else if (task.Status == TaskStatus.WaitingToRun || task.Status == TaskStatus.WaitingForActivation || task.Status == TaskStatus.Running)
+                            {
+                                task.ContinueWith(t =>
+                                {
+                                    //Console.WriteLine(t.Id + "已完成!");
+                                }).Wait(TimeSpan.FromSeconds(Setting.TaskWaitTimeout));
+
+                            }
+                            else
+                                continue;
                         }
                         catch (Exception ex)
                         {
@@ -135,7 +171,7 @@ namespace XiaoFeng.Threading
                     else
                     {
                         Manual.Reset();
-                        Manual.Wait(TimeSpan.FromSeconds(setting.IdleSeconds <= 0 ? 0 : setting.IdleSeconds));
+                        Manual.Wait(TimeSpan.FromSeconds(Setting.IdleSeconds <= 0 ? 0 : Setting.IdleSeconds));
                         if (WorkItems.IsEmpty)
                         {
                             Synchronized.Run(() =>
@@ -143,7 +179,7 @@ namespace XiaoFeng.Threading
                                 //等待时长超过消费等待时长限制 终止当前消费任务.
                                 Console.ForegroundColor = ConsoleColor.Magenta;
                                 Console.WriteLine("".PadLeft(70, '='));
-                                Console.WriteLine($"-- 等待时长超过消费等待时长 {setting.IdleSeconds}S 限制,终止当前消费任务[{this.QueueName}] - {DateTime.Now:yyyy-MM-dd HH:mm:ss.ffff} --");
+                                Console.WriteLine($"-- 等待时长超过消费等待时长 {Setting.IdleSeconds}S 限制,终止当前消费任务[{this.QueueName}] - {DateTime.Now:yyyy-MM-dd HH:mm:ss.ffff} --");
                                 Console.WriteLine("".PadLeft(70, '='));
                                 Console.ResetColor();
                                 this.CancelToken.Cancel();

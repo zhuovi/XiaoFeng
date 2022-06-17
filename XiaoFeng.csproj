@@ -9,7 +9,7 @@
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<Company>河南魔法精灵软件科技有限公司</Company>
 		<VersionPrefix>2.8</VersionPrefix>
-		<VersionSuffix>2</VersionSuffix>
+		<VersionSuffix>3</VersionSuffix>
 		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
 		<FileVersion>$(Version)</FileVersion>
 		<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
@@ -28,4 +28,10 @@
 		<DefineConstants Condition="'$(TargetFramework)'=='netstandard2.1'">$(DefineConstants);NETCORE;</DefineConstants>
 		<DelaySign>False</DelaySign>
 	</PropertyGroup>
+	<ItemGroup>
+		<Compile Remove="Cache\MemoryCacheManage.cs" />
+		<Compile Remove="Cache\MemoryCacheManager.cs" />
+		<Compile Remove="Common\UserSession.cs" />
+		<Compile Remove="Data\DataMapping.cs" />
+	</ItemGroup>
 </Project>

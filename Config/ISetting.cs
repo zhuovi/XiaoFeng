@@ -21,6 +21,14 @@ namespace XiaoFeng.Config
         /// </summary>
         int MaxWorkerThreads { get; set; }
         /// <summary>
+        /// 消费日志空闲时长
+        /// </summary>
+        int IdleSeconds { get; set; }
+        /// <summary>
+        /// 任务队列执行任务超时时间
+        /// </summary>
+        int TaskWaitTimeout { get; set; }
+        /// <summary>
         /// 是否启用数据加密
         /// </summary>
         bool DataEncrypt { get; set; }

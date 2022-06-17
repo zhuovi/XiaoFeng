@@ -44,6 +44,26 @@ namespace XiaoFeng.Config
         [Description("消费日志空闲时长")]
         public int IdleSeconds { get; set; } = 60;
         /// <summary>
+        /// 任务队列执行任务超时时间
+        /// </summary>
+        private int _TaskWaitTimeout = 5 * 60;
+        /// <summary>
+        /// 任务队列执行任务超时时间
+        /// </summary>
+        [Description("任务队列执行任务超时时间")]
+        public int TaskWaitTimeout {
+            get
+            {
+                if (this._TaskWaitTimeout  == 0)
+                    this._TaskWaitTimeout  = 10 * 1000;
+                return this._TaskWaitTimeout ;
+            }
+            set
+            {
+                this._TaskWaitTimeout  = value;
+            }
+        }
+        /// <summary>
         /// 是否启用数据加密
         /// </summary>
         [Description("是否启用数据加密")]

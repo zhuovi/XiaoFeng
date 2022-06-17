@@ -95,7 +95,7 @@ namespace XiaoFeng.Cache
             get { return this._Path; }
             set
             {
-                this._Path = value;
+                this._Path = value; 
                 if (value.IsNotNullOrEmpty())
                 {
                     this.Provider = new FileProvider(this.Name);

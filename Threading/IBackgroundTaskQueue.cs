@@ -28,15 +28,36 @@ namespace XiaoFeng.Threading
 
         #region 方法
         /// <summary>
-        /// 添加任务
-        /// </summary>
-        /// <param name="workItem">任务</param>
-        Task AddWorkItem(Func<CancellationToken, Task> workItem);
-        /// <summary>
         /// 加入任务
         /// </summary>
         /// <param name="action">事件</param>
         Task AddWorkItem(Action action);
+        /// <summary>
+        /// 加入任务
+        /// </summary>
+        /// <param name="action">事件</param>
+        /// <param name="cancel">取消通知</param>
+        /// <param name="creationOptions">任务配置</param>
+        Task AddWorkItem(Action action, CancellationToken cancel, TaskCreationOptions creationOptions = TaskCreationOptions.None);
+        /// <summary>
+        /// 加入任务
+        /// </summary>
+        /// <param name="action">事件</param>
+        /// <param name="state">数据对象</param>
+        Task AddWorkItem(Action<object> action, object state);
+        /// <summary>
+        /// 加入任务
+        /// </summary>
+        /// <param name="action">事件</param>
+        /// <param name="state">数据对象</param>
+        /// <param name="cancel">取消通知</param>
+        /// <param name="creationOptions">任务配置</param>
+        Task AddWorkItem(Action<object> action, object state, CancellationToken cancel, TaskCreationOptions creationOptions = TaskCreationOptions.None);
+        /// <summary>
+        /// 加入任务
+        /// </summary>
+        /// <param name="workItem">任务</param>
+        Task AddWorkItem(Func<CancellationToken, Task> workItem);
         /// <summary>
         /// 停止消费任务
         /// </summary>

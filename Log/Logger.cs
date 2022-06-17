@@ -140,11 +140,10 @@ namespace XiaoFeng.Log
 
                     string FilePath = (logPath + FileHelper.AltDirectorySeparatorChar + DateTime.Now.ToString("yyyy-MM-dd") + ".log").GetBasePath();
                     int i = 1;
-                    while (true)
+                    while (File.Exists(FilePath))
                     {
-                        if (!FileHelper.Exists(FilePath, FileAttribute.File)) break;
                         string _FilePath = FilePath.ReplacePattern(@"(_\d+)?.log$", "_" + i.ToString() + ".log");
-                        if (!FileHelper.Exists(_FilePath, FileAttribute.File))
+                        if (!File.Exists(_FilePath))
                         {
                             var bytes = FileHelper.OpenBytes(FilePath);
                             if (bytes.Length > this.Config.FileLength)

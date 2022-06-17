@@ -23,6 +23,10 @@ namespace XiaoFeng.Redis
     {
         #region 构造器
         /// <summary>
+        /// 无参构造器
+        /// </summary>
+        public CommandResult() { }
+        /// <summary>
         /// 设置结果行
         /// </summary>
         /// <param name="commandType">命令</param>
@@ -170,6 +174,12 @@ namespace XiaoFeng.Redis
                         //_val.GetMatches(@"\$(?<a>-?\d+)\r\n(?<b>[a-z0-9_-]*)\r\n\$(?<c>-?\d+)\r\n(?<d>[\s\S]*?)").Each(a => dict.Add(a["b"], a["d"]));
                         this.GetString(_val, ref dict);
                         this.Value = dict;
+                        break;
+                    case "SUBSCRIBE":
+                        /*
+                         *  *3\r\n$9\r\nsubscribe\r\n$5\r\nmyfay\r\n:1\r\n
+                         */
+                        this.Value = _val.GetMatch(@"\:(?<a>\d+)\r\n$").ToCast<int>();
                         break;
                 }
             }

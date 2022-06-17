@@ -50,9 +50,9 @@ namespace XiaoFeng.Redis
         public RedisConfig(string connectionString) : this()
         {
             if (connectionString.IsNullOrEmpty()) return;
-            if (connectionString.IsMatch(@"^redis://([a-z0-9]+@)?[^:]+:\d+(\/\d+)?"))
+            if (connectionString.IsMatch(@"^redis://([a-z0-9]+@)?[^:/]+(:\d+)?(\/\d+)?"))
             {
-                var dict = connectionString.GetMatchs(@"^redis://((?<pwd>[a-z0-9]+)@)?(?<host>[^:]+):(?<port>\d+)(\/(?<db>\d+))?\/?\??(?<option>[\s\S]*)$");
+                var dict = connectionString.GetMatchs(@"^redis://((?<pwd>[a-z0-9]+)@)?(?<host>[^:/]+)(:(?<port>\d+))?(\/(?<db>\d+))?(\/?\?(?<option>[\s\S]*))?$");
                 this.Host = dict["host"];
                 this.Port = dict["port"].ToCast(6379);
                 this.DbNum = dict["db"].ToCast<int>();

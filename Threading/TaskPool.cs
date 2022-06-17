@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using XiaoFeng.Config;
 
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
@@ -29,13 +30,13 @@ namespace XiaoFeng.Threading
         /// </summary>
         public TaskPool()
         {
-
+            this.Setting = XiaoFeng.Config.Setting.Current;
         }
         /// <summary>
         /// 设置最大线程数
         /// </summary>
         /// <param name="MaxCount">最大线程数</param>
-        public TaskPool(int MaxCount)
+        public TaskPool(int MaxCount) : this()
         {
             MaxCount = MaxCount <= 0 ? 1 : MaxCount;
             this.MaxTaskCount = MaxCount;
@@ -84,6 +85,10 @@ namespace XiaoFeng.Threading
         /// 线程同步信号
         /// </summary>
         private SemaphoreSlim Manual = new SemaphoreSlim(1, 3);
+        /// <summary>
+        /// XiaoFeng 配置
+        /// </summary>
+        public ISetting Setting { get; set; }
         #endregion
 
         #region 方法
@@ -151,7 +156,16 @@ namespace XiaoFeng.Threading
         {
             Manual.Wait(this.CancelToken.Token);
             var _task = task.Invoke(this.CancelToken.Token);
-            Task.WaitAll(_task);
+            if (_task.Status == TaskStatus.Created)
+            {
+                _task.Start();
+                _task.Wait(TimeSpan.FromSeconds(Setting.TaskWaitTimeout));
+            }
+            else if (_task.Status == TaskStatus.WaitingToRun)
+            {
+                _task.Wait(TimeSpan.FromSeconds(Setting.TaskWaitTimeout));
+            }
+            //Task.WaitAll(_task);
             Interlocked.Increment(ref this._CompletedWorkItemCount);
             Manual.Release();
             await Task.CompletedTask;
