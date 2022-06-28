@@ -107,6 +107,7 @@ namespace XiaoFeng.IO
         public static string ReadToEnd(this Stream stream, Encoding encoding = null)
         {
             var content = string.Empty;
+            if (stream == null || !stream.CanRead) return content;
             stream.Position = 0;
             using (var reader = new StreamReader(stream, encoding ?? Encoding.UTF8))
             {
@@ -125,6 +126,7 @@ namespace XiaoFeng.IO
         public static async Task<string> ReadToEndAsync(this Stream stream, Encoding encoding = null)
         {
             var content = string.Empty;
+            if (stream == null || !stream.CanRead) return content;
             using (var reader = new StreamReader(stream, encoding ?? Encoding.UTF8))
             {
                 content = await reader.ReadToEndAsync();
@@ -140,5 +142,37 @@ namespace XiaoFeng.IO
         /// <param name="param">路径串</param>
         /// <returns>路径</returns>
         public static string Combine(this String _, params String[] param) => Path.Combine(new string[] { _ }.Concat(param).ToArray());
+        /// <summary>
+        /// 写字符串
+        /// </summary>
+        /// <param name="fileStream">文件流</param>
+        /// <param name="msg">字符串</param>
+        public static void Write(this FileStream fileStream, string msg)
+        {
+            if (msg.IsNullOrEmpty()) return;
+            fileStream.Write(msg.GetBytes());
+        }
+        /// <summary>
+        /// 写字符串最后加回车
+        /// </summary>
+        /// <param name="fileStream">文件流</param>
+        /// <param name="msg">字符串</param>
+        public static void WriteLine(this FileStream fileStream, string msg)
+        {
+            fileStream.Write((msg + Environment.NewLine).GetBytes());
+        }
+        /// <summary>
+        /// 写字节
+        /// </summary>
+        /// <param name="fileStream">文件流</param>
+        /// <param name="bytes">字节</param>
+        public static void Write(this FileStream fileStream, byte[] bytes)
+        {
+            if (fileStream != null)
+            {
+                if (bytes.IsNullOrEmpty()) return;
+                fileStream.Write(bytes, 0, bytes.Length);
+            }
+        }
     }
 }

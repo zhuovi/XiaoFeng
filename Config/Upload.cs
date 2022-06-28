@@ -57,7 +57,7 @@ namespace XiaoFeng.Config
         /// 上传目录
         /// </summary>
         [Description("上传目录")]
-        public string UploadPath { get; set; } = "UpLoadFiles";
+        public string UploadPath { get; set; } = "UploadFiles";
         /// <summary>
         /// 默认上传类型配置
         /// </summary>

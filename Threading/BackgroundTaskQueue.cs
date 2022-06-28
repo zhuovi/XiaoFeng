@@ -144,21 +144,21 @@ namespace XiaoFeng.Threading
                         try
                         {
                             var task = workItem.Invoke(this.CancelToken.Token);
+                            //Console.WriteLine($"任务-{task.Id}-开始-{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ffffff")}");
                             if (task.Status == TaskStatus.Created)
                             {
                                 task.Start();
                                 task.ContinueWith(t =>
                                 {
-                                    //Console.WriteLine(t.Id + "已完成.");
+                                    //Console.WriteLine($"任务-{task.Id}-已完成-{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ffffff")}");
                                 }).Wait(TimeSpan.FromSeconds(Setting.TaskWaitTimeout));
                             }
                             else if (task.Status == TaskStatus.WaitingToRun || task.Status == TaskStatus.WaitingForActivation || task.Status == TaskStatus.Running)
                             {
                                 task.ContinueWith(t =>
                                 {
-                                    //Console.WriteLine(t.Id + "已完成!");
+                                    //Console.WriteLine($"任务-{task.Id}-已完成-{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ffffff")}");
                                 }).Wait(TimeSpan.FromSeconds(Setting.TaskWaitTimeout));
-
                             }
                             else
                                 continue;

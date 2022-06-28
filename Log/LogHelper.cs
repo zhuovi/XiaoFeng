@@ -88,10 +88,10 @@ namespace XiaoFeng
         /// <param name="logData">日志对象</param>
         public static void WriteLog(LogData logData)
         {
-            lock (FileLock)
+            //lock (FileLock)
             {
-                if (LogQueue == null) LogQueue = new BackgroundTaskQueue("LogTaskQueue");
-                if (Log == null) Log = LogFactory.Create(typeof(Logger), "LogTaskQueue");
+                //if (LogQueue == null) LogQueue = new BackgroundTaskQueue("LogTaskQueue");
+                //if (Log == null) Log = LogFactory.Create(typeof(Logger), "LogTaskQueue");
             }
             LogQueue.AddWorkItem(() =>
             {
@@ -203,6 +203,19 @@ namespace XiaoFeng
             Message = Message,
             LogType = logType
         });
+        #endregion
+
+        #region 
+        /// <summary>
+        /// 设置日志目录
+        /// </summary>
+        /// <param name="path">目录</param>
+        public static void SetLogPath(string path)
+        {
+            if (Log == null)
+                Log = LogFactory.Create(typeof(Logger), "LogTaskQueue");
+            Log.LogPath = path;
+        }
         #endregion
 
         #endregion

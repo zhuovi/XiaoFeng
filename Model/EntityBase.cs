@@ -203,7 +203,7 @@ namespace XiaoFeng
                     if (ms == null || ms.Length == 0) return null;
                     ms.Each(m =>
                     {
-                        if (m.Name.IsMatch(@"(AllKeys|AllKeys)")) return;
+                        if (m.Name.IsMatch(@"(AllKeys|AllKeys)") || m.IsDefined(typeof(FieldIgnoreAttribute))) return;
                         if (m.MemberType == MemberTypes.Property || m.MemberType == MemberTypes.Field)
                         {
                             if (m.MemberType == MemberTypes.Property)

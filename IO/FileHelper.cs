@@ -128,7 +128,7 @@ namespace XiaoFeng.IO
             var _path = GetBasePath(path);
             if (!File.Exists(_path)) return null;
             byte[] bytes = Array.Empty<byte>();
-            using (var fs = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (var fs = new FileStream(_path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
             {
                 if (fs.Length == 0) return Array.Empty<byte>();
                 bytes = new byte[fs.Length];

@@ -2814,5 +2814,72 @@ namespace XiaoFeng
         /// <returns></returns>
         public static byte[] Write(this byte[] data, byte[] source) => data.Write(0, source);
         #endregion
+
+        #region 加密函数[对应javascript里面的escape]
+        /// <summary>
+        /// 加密函数[对应javascript里面的escape]
+        /// </summary>
+        /// <param name="s">要加密的字符串</param>
+        /// <returns>返回加过密的字符串</returns>
+        public static string Escape(this string s)
+        {
+            StringBuilder sb = new StringBuilder();
+            byte[] ba = Encoding.Unicode.GetBytes(s);
+            for (int i = 0; i < ba.Length; i += 2)
+            {
+                sb.Append("%u");
+                sb.Append(ba[i + 1].ToString("X2"));
+                sb.Append(ba[i].ToString("X2"));
+            }
+            return sb.ToString();
+        }
+        #endregion
+
+        #region 字节转相应单位
+        /// <summary>
+        /// 字节转相应单位
+        /// </summary>
+        /// <param name="size">字节数</param>
+        /// <param name="digits">小数点位数</param>
+        /// <returns></returns>
+        public static string ByteToKMGTP(this long size, int digits = 2) => size.ToCast<double>().ByteToKMGTP(digits);
+        /// <summary>
+        /// 字节转相应单位
+        /// </summary>
+        /// <param name="size">字节数</param>
+        /// <param name="digits">小数点位数</param>
+        /// <returns></returns>
+        public static string ByteToKMGTP(this double size, int digits = 2)
+        {
+            var Units = new string[] { "B", "K", "M", "G", "T", "P" };
+            var mod = 1024;
+            var i = 0;
+            while (size >= mod)
+            {
+                size %= mod;
+                i++;
+            }
+            return Math.Round(size, digits) + Units[i];
+        }
+        #endregion
+
+        #region 相应单位转换字节
+        /// <summary>
+        /// 相应单位转换字节
+        /// </summary>
+        /// <param name="str">字符串</param>
+        /// <returns></returns>
+        public static double KMGTPToByte(this string str)
+        {
+            if (str.IsNullOrEmpty()) return 0;
+            var Units = new string[] { "B", "K", "M", "G", "T", "P" };
+            var matchs = str.GetMatchs($@"^(?<a>\d+)\s*(?<b>({Units.Join("|")}))\s*$");
+            if (!matchs.ContainsKey("a") || !matchs.ContainsKey("b")) return 0;
+            var unit = matchs["b"];
+            var val = matchs["a"].ToDouble();
+            var index = Array.IndexOf(Units, unit);
+            return val * Math.Pow(1024, index);
+        }
+        #endregion
     }
 }

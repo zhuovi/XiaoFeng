@@ -135,10 +135,10 @@ namespace {namespace}
             get {{ return this._{Name}; }}
             set
             {{
-                if (!this._{Name}.EqualsIgnoreCase(value{State}))
+                if ({Equals})
                 {{
                     var val = this._{Name};
-                    this._{Name} = value;
+                    this._{Name} = value{State};
                     this.AddDirty(""{Name}"", val, value);
                 }}
             }}
@@ -214,6 +214,15 @@ namespace {namespace}
                     dic.Add("getType", _type + (_type.ToLower() != "string" ? "?" : ""));
                     dic["Type"] = c.Type;
                     dic["State"] = _type.EqualsIgnoreCase("string") ? " ?? string.Empty" : "";
+                    //dic["Equals"] = _type.EqualsIgnoreCase("string") ? "Equals" : "EqualsIgnoreCase";
+                    if (_type.EqualsIgnoreCase("string"))
+                    {
+                        dic["Equals"] = $"this._{dic["Name"]} != value";
+                    }
+                    else
+                    {
+                        dic["Equals"] = $"!this._{dic["Name"]}.EqualsIgnoreCase(value)";
+                    }
                     var dValue = c.DefaultValue;
                     while (dValue.IsMatch(@"^\(.*?\)$"))
                     {

@@ -25,7 +25,7 @@ namespace XiaoFeng.Log
     /// <summary>
     /// 日志基础类
     /// </summary>
-    public abstract class BaseLog : ILog
+    public abstract class BaseLog : Disposable,ILog
     {
         #region 构造器
         /// <summary>

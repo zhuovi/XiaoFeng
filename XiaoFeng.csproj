@@ -9,7 +9,7 @@
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<Company>河南魔法精灵软件科技有限公司</Company>
 		<VersionPrefix>2.8</VersionPrefix>
-		<VersionSuffix>3</VersionSuffix>
+		<VersionSuffix>5</VersionSuffix>
 		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
 		<FileVersion>$(Version)</FileVersion>
 		<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
@@ -31,7 +31,10 @@
 	<ItemGroup>
 		<Compile Remove="Cache\MemoryCacheManage.cs" />
 		<Compile Remove="Cache\MemoryCacheManager.cs" />
+		<Compile Remove="Common\Common.cs" />
+		<Compile Remove="Common\Function.cs" />
 		<Compile Remove="Common\UserSession.cs" />
 		<Compile Remove="Data\DataMapping.cs" />
+		<Compile Remove="Log\Logger - 复制.cs" />
 	</ItemGroup>
 </Project>

@@ -137,7 +137,7 @@ namespace XiaoFeng.Collections
         /// <returns></returns>
         public virtual PoolItem<T> Get()
         {
-            LogHelper.Debug($"空闲数:{this.FreeItems.Count},繁忙数:{this.BusyItems.Count}");
+            //LogHelper.Debug($"空闲数:{this.FreeItems.Count},繁忙数:{this.BusyItems.Count}");
             Interlocked.Increment(ref this._TotalCount);
             PoolItem<T> pi = null;
             do
