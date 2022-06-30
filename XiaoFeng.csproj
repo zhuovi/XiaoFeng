@@ -9,7 +9,7 @@
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<Company>河南魔法精灵软件科技有限公司</Company>
 		<VersionPrefix>2.8</VersionPrefix>
-		<VersionSuffix>5</VersionSuffix>
+		<VersionSuffix>6</VersionSuffix>
 		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
 		<FileVersion>$(Version)</FileVersion>
 		<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>

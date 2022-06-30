@@ -148,8 +148,8 @@ namespace XiaoFeng.Device
                         UseShellExecute = false,
                         CreateNoWindow = true,
                         RedirectStandardError = true,
-                        StandardErrorEncoding = Encoding.UTF8,
-                        StandardOutputEncoding = Encoding.UTF8
+                        //StandardErrorEncoding = Encoding.UTF8,
+                        //StandardOutputEncoding = Encoding.UTF8
                     };
                     process.Start();
                     process.StandardInput.AutoFlush = true;

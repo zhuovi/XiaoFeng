@@ -65,14 +65,7 @@ namespace XiaoFeng.OS
         /// <summary>
         /// 当前项目目录
         /// </summary>
-        public static string CurrentDirectory =>
-        //Directory.GetCurrentDirectory();        
-#if NETFRAMEWORK
-            AppDomain.CurrentDomain.BaseDirectory;
-#else
-        //AppDomain.CurrentDomain.BaseDirectory.RemovePattern(@"\\bin\\Debug[\s\S]*$");
-        Directory.GetCurrentDirectory(); 
-#endif
+        public static string CurrentDirectory { get; set; } = Directory.GetCurrentDirectory();
         /// <summary>
         /// 系统目录
         /// </summary>
