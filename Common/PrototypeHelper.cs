@@ -347,7 +347,7 @@ namespace XiaoFeng
         /// <param name="values">数组对象</param>
         /// <param name="separator">连接字符串中间的字符</param>
         /// <returns></returns>
-        public static String Join<T>(this IEnumerable<T> values, String separator) => string.Join(separator, values);
+        public static String Join<T>(this IEnumerable<T> values, String separator = "") => string.Join(separator, values);
         #endregion
 
         #region 键值对转换成对象

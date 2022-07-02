@@ -42,7 +42,7 @@ namespace XiaoFeng.Xml
         /// <summary>
         /// 读数据
         /// </summary>
-        /// <param name="reader"></param>
+        /// <param name="reader">读</param>
         public void ReadXml(System.Xml.XmlReader reader)
         {
             //this._Value = reader.ReadElementContentAsString();
@@ -58,7 +58,7 @@ namespace XiaoFeng.Xml
         /// <summary>
         /// 写数据
         /// </summary>
-        /// <param name="writer"></param>
+        /// <param name="writer">写</param>
         public void WriteXml(System.Xml.XmlWriter writer) => writer.WriteCData(this.Value);
         /// <summary>
         /// 获取Schema
@@ -73,22 +73,22 @@ namespace XiaoFeng.Xml
         /// <summary>
         /// 强转字符串
         /// </summary>
-        /// <param name="element"></param>
+        /// <param name="element">节点</param>
         public static implicit operator string(CData element) => element?.Value;
         /// <summary>
         /// 强转 int
         /// </summary>
-        /// <param name="element"></param>
+        /// <param name="element">节点</param>
         public static implicit operator int(CData element) => (int)element?.Value.ToInt32();
         /// <summary>
         /// 强转 long
         /// </summary>
-        /// <param name="element"></param>
+        /// <param name="element">节点</param>
         public static implicit operator long(CData element) => (long)element?.Value.ToLong();
         /// <summary>
         /// 强转 long
         /// </summary>
-        /// <param name="element"></param>
+        /// <param name="element">节点</param>
         public static implicit operator Guid(CData element) => (Guid)element?.Value.ToGUID();
         /// <summary>
         /// 强转CDATA

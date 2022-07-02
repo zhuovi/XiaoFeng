@@ -54,13 +54,13 @@ namespace XiaoFeng.IO
         /// </summary>
         /// <param name="_">文件地址</param>
         /// <returns></returns>
-        public static FileInfo ToFileInfo(this String _) => new FileInfo(_);
+        public static FileInfo ToFileInfo(this String _) => _.IsNullOrEmpty() ? null : new FileInfo(_.GetBasePath());
         /// <summary>
         /// 转换为目录对象
         /// </summary>
         /// <param name="_">目录地址</param>
         /// <returns></returns>
-        public static DirectoryInfo ToDirectoryInfo(this String _) => new DirectoryInfo(_);
+        public static DirectoryInfo ToDirectoryInfo(this String _) => _.IsNullOrEmpty() ? null : new DirectoryInfo(_.GetBasePath());
         /// <summary>
         /// 返回指定路径字符串目录信息
         /// </summary>
