@@ -34,7 +34,7 @@ namespace XiaoFeng
         /// <summary>
         /// 物理路径
         /// </summary>
-        public const string BasePath = @"^[a-z]+:\\";
+        public const string BasePath = @"^[a-z]+:(\\|\/)";
         /// <summary>
         /// 汉字格式
         /// </summary>
