@@ -996,14 +996,43 @@ namespace XiaoFeng.Data.SQL
 
         #region 扩展SQL COUNT
         /// <summary>
-        /// 条数
+        /// 条数 运用 explain来读取总条数
         /// </summary>
         /// <returns></returns>
         public int CountX()
         {
             if (this.DataSQL.Columns != null) this.DataSQL.Columns.Clear();
-            this.DataSQL.SetColumns("count(0)");
-            return 0;
+            string SQLString = String.Empty;
+            if (this.DataSQL.Columns != null && this.DataSQL.Columns.Count == 0)
+            {
+                this.DataSQL.SetColumns("count(0)");
+                SQLString = this.DataSQL.GetSQLString();
+            }
+            else
+            {
+                SQLString = $"select count(0) from ({this.DataSQL.GetSQLString()}) as AAAA";
+            }
+            int _CountX = 0;
+            Stopwatch sTime = new Stopwatch();
+            sTime.Start();
+            if ((DbProviderType.MySql | DbProviderType.Oracle | DbProviderType.Dameng).HasFlag(this.DataHelper.ProviderType))
+            {
+                SQLString = "EXPLAIN " + SQLString;
+                var dt = this.DataHelper.ExecuteDataTable(SQLString.SQLFormat(this.DataHelper.ProviderType), CommandType.Text, this.GetDbParameters(SQLString));
+                if (dt.Rows.Count > 0)
+                {
+                    _CountX = dt.Rows[0]["Rows"].ToCast<int>();
+                }
+            }
+            else
+            {
+                _CountX = this.DataHelper.ExecuteScalar(SQLString.SQLFormat(this.DataHelper.ProviderType), CommandType.Text, this.GetDbParameters(SQLString)).ToCast<int>();
+            }
+            sTime.Stop();
+            this.DataSQL.RunSQLTime += sTime.ElapsedMilliseconds;
+            if (this.SQLCallBack != null) this.SQLCallBack.Invoke(this.DataSQL);
+            this.DataSQL.Clear();
+            return _CountX;
         }
         /// <summary>
         /// 扩展SQL COUNT

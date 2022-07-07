@@ -39,6 +39,7 @@ namespace XiaoFeng.Log
         /// 计时器
         /// </summary>
         private static int Count = 0;
+        public static ReaderWriterLockSlim readerWriterLock = new ReaderWriterLockSlim();
         #endregion
 
         #region 方法
@@ -193,11 +194,13 @@ namespace XiaoFeng.Log
                         else
                             FilePath = file.FullName;
                     }
+                    readerWriterLock.EnterWriteLock();
                     var fs = new FileStream(FilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite);
                     fs.Seek(0, SeekOrigin.End);
                     fs.WriteLine(sb.ToString());
                     fs.Close();
                     fs.Dispose();
+                    readerWriterLock.ExitWriteLock();
                 }
                 catch (Exception ex)
                 {
