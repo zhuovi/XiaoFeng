@@ -89,7 +89,7 @@ namespace XiaoFeng.Data
                 if (this._ConnectionString.IsNullOrEmpty()) return string.Empty;
                 this._ConnectionString = Encrypt.get(this._ConnectionString);
                 return this._ConnectionString.IsMatch(@"(\{|\[)\s*(Root|RootPath|/)\s*(\}|\])") ?
-                    this._ConnectionString.ReplacePattern(@"(\{|\[)\s*(Root|RootPath|/)\s*(\}|\])", OS.Platform.CurrentDirectory) :
+                    this._ConnectionString.ReplacePattern(@"(\{|\[)\s*(Root|RootPath|/)\s*(\}|\])", FileHelper.GetCurrentDirectory()) :
                     this._ConnectionString;
             }
             set { this._ConnectionString = value; }

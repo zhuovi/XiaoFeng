@@ -65,7 +65,15 @@ namespace XiaoFeng.OS
         /// <summary>
         /// 当前项目目录
         /// </summary>
-        public static string CurrentDirectory { get; set; } = Directory.GetCurrentDirectory();
+        private static string _CurrentDirectory = Directory.GetCurrentDirectory();
+        /// <summary>
+        /// 当前项目目录
+        /// </summary>
+        internal static string CurrentDirectory
+        {
+            get { return _CurrentDirectory; }
+            set { if (value.IsNotNullOrEmpty()) _CurrentDirectory = value; }
+        }
         /// <summary>
         /// 系统目录
         /// </summary>
@@ -80,7 +88,7 @@ namespace XiaoFeng.OS
         /// <summary>
         /// 是WebForm还是WinForm
         /// </summary>
-        public static Boolean IsWebForm =>  /*XiaoFeng.Web.HttpContext.Current != null*/(bool)(_IsWebForm ?? (_IsWebForm = !AppDomain.CurrentDomain.GetAssemblies().Where(a => a.GetName().Name == "System.Windows.Forms").Any()));
+        internal static Boolean IsWebForm =>  /*XiaoFeng.Web.HttpContext.Current != null*/(bool)(_IsWebForm ?? (_IsWebForm = !AppDomain.CurrentDomain.GetAssemblies().Where(a => a.GetName().Name == "System.Windows.Forms").Any()));
         #endregion
     }
 }

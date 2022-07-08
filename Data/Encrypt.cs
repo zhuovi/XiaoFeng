@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using XiaoFeng;
 using XiaoFeng.Config;
+using XiaoFeng.IO;
 namespace XiaoFeng.Data
 {
     /// <summary>
@@ -98,7 +99,7 @@ namespace XiaoFeng.Data
                     return data;
                 }
             return data.IsMatch(@"\{\s*RootPath\s*\}") ?
-                    data.ReplacePattern(@"\{\s*RootPath\s*\}", OS.Platform.CurrentDirectory) :
+                    data.ReplacePattern(@"\{\s*RootPath\s*\}", FileHelper.GetCurrentDirectory()) :
                     data;
         }
         #endregion

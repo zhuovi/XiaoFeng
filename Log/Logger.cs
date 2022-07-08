@@ -39,6 +39,9 @@ namespace XiaoFeng.Log
         /// 计时器
         /// </summary>
         private static int Count = 0;
+        /// <summary>
+        /// 文件读写锁
+        /// </summary>
         public static ReaderWriterLockSlim readerWriterLock = new ReaderWriterLockSlim();
         #endregion
 

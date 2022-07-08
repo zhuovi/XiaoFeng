@@ -549,12 +549,12 @@ MIDI (mid)，文件头：4D546864
         /// <returns></returns>
         public static string GetBasePath(string path)
         {
-            if (path.IsNullOrEmpty()) return OS.Platform.CurrentDirectory;
+            if (path.IsNullOrEmpty()) return GetCurrentDirectory();
             
             path = path.TrimEnd(new char[] { '\\', '/' });
             if (!path.IsBasePath())
             {
-                DirectoryInfo directoryInfo = OS.Platform.CurrentDirectory.ToDirectoryInfo();
+                DirectoryInfo directoryInfo = GetCurrentDirectory().ToDirectoryInfo();
                 path = path.RemovePattern(@"^\.\/");
                 while (path.IsMatch(@"^\.\.\/"))
                 {
@@ -573,7 +573,7 @@ MIDI (mid)，文件头：4D546864
                     {
                         if (os == PlatformOS.Windows)
                         {
-                            path = OS.Platform.CurrentDirectory.ToDirectoryInfo().Root.FullName + path.TrimStart(new char[] { '/', '\\' });
+                            path = GetCurrentDirectory().ToDirectoryInfo().Root.FullName + path.TrimStart(new char[] { '/', '\\' });
                         }
                         else
                         {
@@ -626,7 +626,7 @@ MIDI (mid)，文件头：4D546864
         /// <summary>
         /// 获取项目目录
         /// </summary>
-        public static string CurrentDirectory => OS.Platform.CurrentDirectory;
+        public static string CurrentDirectory => GetCurrentDirectory();
         #endregion
 
         #region 文件编码
@@ -752,6 +752,22 @@ MIDI (mid)，文件头：4D546864
         /// <param name="path">路径</param>
         /// <returns>目录信息</returns>
         public static string GetDirectoryName(string path) => path.GetDirectoryName();
+        #endregion
+
+        #region 设置当前目录
+        /// <summary>
+        /// 设置当前目录
+        /// </summary>
+        /// <param name="path">目录</param>
+        public static void SetCurrentDirectory(string path) => OS.Platform.CurrentDirectory = path;
+        #endregion
+
+        #region 获取当前目录
+        /// <summary>
+        /// 获取当前目录
+        /// </summary>
+        /// <returns></returns>
+        public static string GetCurrentDirectory() => OS.Platform.CurrentDirectory;
         #endregion
     }
 }

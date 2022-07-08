@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using XiaoFeng.Config;
-
+using XiaoFeng.IO;
 namespace XiaoFeng
 {
     /*
@@ -40,7 +40,7 @@ namespace XiaoFeng
         {
             if (_.StartsWith("{*}")) return true;
             var os = OS.Platform.GetOSPlatform();
-            var root = OS.Platform.CurrentDirectory;
+            var root = FileHelper.GetCurrentDirectory();
             if (os == PlatformOS.Linux)
             {
                 var path = _.Replace("\\", "/");
