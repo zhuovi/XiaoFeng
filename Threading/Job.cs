@@ -9,7 +9,7 @@ namespace XiaoFeng.Threading
 {
     /// <summary>
     /// 作业操作类
-    /// Version : 1.1
+    /// Version : 2.1
     /// </summary>
     [Serializable]
     public class Job : Disposable, IJob
@@ -144,11 +144,11 @@ namespace XiaoFeng.Threading
         /// </summary>
         public Time Time { get; set; } = null;
         /// <summary>
-        /// 是几号还是周几
+        /// 几点，几号，周几（周日为一周的第一天）,可用负数，-1代表一天中最后一小时即23点，一周内最后一天即周六，一月内最后一天
         /// </summary>
         private int[] _DayOrWeekOrHour;
         /// <summary>
-        /// 是几号还是周几
+        /// 几点，几号，周几（周日为一周的第一天）,可用负数，-1代表一天中最后一小时即23点，一周内最后一天即周六，一月内最后一天
         /// </summary>
         public int[] DayOrWeekOrHour
         {

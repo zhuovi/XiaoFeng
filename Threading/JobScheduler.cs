@@ -10,7 +10,7 @@ namespace XiaoFeng.Threading
 {
     /// <summary>
     /// 作业调度器
-    /// Version : 1.0
+    /// Version : 2.0
     /// </summary>
     public class JobScheduler : Disposable, IJobScheduler
     {
@@ -451,7 +451,7 @@ namespace XiaoFeng.Threading
                 }
                 else
                 {
-                    var index = this.GetIndex(job.DayOrWeekOrHour, _now.Hour);
+                    var index = this.GetIndex(job.DayOrWeekOrHour, _now.Hour, TimerType.Day);
                     if (index >= 0)
                     {
                         var Hour = job.DayOrWeekOrHour[index];
@@ -494,7 +494,7 @@ namespace XiaoFeng.Threading
                 }
                 else
                 {
-                    var index = this.GetIndex(job.DayOrWeekOrHour, CurrentWeek);
+                    var index = this.GetIndex(job.DayOrWeekOrHour, CurrentWeek, TimerType.Week);
                     if (index >= 0)
                     {
                         var Week = job.DayOrWeekOrHour[index];
@@ -549,16 +549,17 @@ namespace XiaoFeng.Threading
                 }
                 else
                 {
-                    var index = this.GetIndex(job.DayOrWeekOrHour, now.Day);
+                    var index = this.GetIndex(job.DayOrWeekOrHour, now.Day, TimerType.Month);
                     if (index >= 0)
                     {
                         //var Hour = job.DayOrWeekOrHour[index];
                         var TimeStamp = (int)(now.AddDays(index - now.Day) - "{0} {1}".format(now.ToString("yyyy-MM-dd"), job.Time.ToString()).ToCast<DateTime>()).TotalSeconds;
+                        var DaysInMonth = DateTime.DaysInMonth(now.Year, now.Month);
                         if (TimeStamp < 0)
                         {
                             TimeStamp += 24 * 60 * 60;
                         }
-                        else if (TimeStamp <= DateTime.DaysInMonth(now.Year, now.Month))
+                        else if (TimeStamp <= DaysInMonth)
                         {
                             if (index < job.DayOrWeekOrHour.Length - 1)
                                 index++;
@@ -569,7 +570,7 @@ namespace XiaoFeng.Threading
                             }
                             var day = job.DayOrWeekOrHour[index];
                             if (day == 0) day = 1;
-                            else if (day == -1) day = DateTime.DaysInMonth(now.Year, now.Month);
+                            else if (day == -1) day = DaysInMonth;
                             job.NextTime = "{0}{1} {2}".format(now.ToString("yyyy-MM-"), day, job.Time.ToString()).ToCast<DateTime>();
                             job.Period = (int)(job.NextTime.Value - now).TotalMilliseconds;
                             return true;
@@ -595,20 +596,49 @@ namespace XiaoFeng.Threading
         /// </summary>
         /// <param name="arr">数组</param>
         /// <param name="val">值</param>
+        /// <param name="timerType">类型</param>
         /// <returns></returns>
-        private int GetIndex(int[] arr, int val)
+        private int GetIndex(int[] arr, int val, TimerType timerType)
         {
             int Index = -1, Val = -1;
             if (arr == null || arr.Length == 0) return Index;
             for (int i = 0; i < arr.Length; i++)
             {
-                var v = arr[i] - val;
+                var ArrValue = arr[i];
+                if (ArrValue < 0)
+                    ArrValue = GetMaxValue(timerType, ArrValue);
+                var v = ArrValue - val;
                 if (v >= 0 && v <= Val)
                 {
                     Index = i; Val = v;
                 }
             }
             return Index == -1 ? 0 : Index;
+        }
+        #endregion
+
+        #region 获取最大值
+        /// <summary>
+        /// 获取最大值
+        /// </summary>
+        /// <param name="timerType">定时器类型</param>
+        /// <param name="addValue">添加值</param>
+        /// <returns></returns>
+        public int GetMaxValue(TimerType timerType, int addValue)
+        {
+            if (addValue > -1) return addValue;
+            addValue++;
+            if (timerType == TimerType.Day)
+                return 23 + addValue % 24;
+            else if (timerType == TimerType.Week)
+                return 6 + addValue % 7;
+            else if (timerType == TimerType.Month)
+            {
+                var now = DateTime.Now;
+                var MaxDays = DateTime.DaysInMonth(now.Year, now.Month);
+                return MaxDays + addValue % MaxDays;
+            }
+            else return Math.Abs(--addValue);
         }
         #endregion
 

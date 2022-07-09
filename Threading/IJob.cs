@@ -110,7 +110,7 @@ namespace XiaoFeng.Threading
         /// </summary>
         int Period { get; set; }
         /// <summary>
-        /// 是几号还是周几
+        /// 几点，几号，周几（周日为一周的第一天）,可用负数，-1代表一天中最后一小时即23点，一周内最后一天即周六，一月内最后一天
         /// </summary>
         int[] DayOrWeekOrHour { get; set; }
         #endregion
