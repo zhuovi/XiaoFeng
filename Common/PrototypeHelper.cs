@@ -34,6 +34,8 @@ namespace XiaoFeng
     /// v 1.1.9 2020-05-13
     /// 1.优化Enum转换
     /// 2.增加Enum 复合枚举转换
+    /// v 1.2.0 2022-07-11
+    /// 1.增加数组扩展方法 IndexOf Find FindAll FindIndex LastIndexOf FindLast FindLastIndex
     /// </summary>
     public static partial class PrototypeHelper
     {
@@ -2880,6 +2882,117 @@ namespace XiaoFeng
             var index = Array.IndexOf(Units, unit);
             return val * Math.Pow(1024, index);
         }
+        #endregion
+
+        #region 扩展数组属性
+        /// <summary>
+        /// 查找数组中的位置
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="array">数组</param>
+        /// <param name="value">值</param>
+        /// <param name="startIndex">查找索引</param>
+        /// <param name="count">查找元素个数</param>
+        /// <returns></returns>
+        public static int IndexOf<T>(this T[] array, T value, int startIndex = 0, int count = 0)
+        {
+            var length = array.Length;
+            var _count = count == 0 ? (length - startIndex) : (count + startIndex) > length ? (length - startIndex) : count;
+            return Array.IndexOf(array, value, startIndex, _count);
+        }
+        /// <summary>
+        /// 查找数组中的位置
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="array">数组</param>
+        /// <param name="value">值</param>
+        /// <param name="startIndex">查找索引</param>
+        /// <param name="count">查找元素个数</param>
+        /// <returns></returns>
+        public static int LastIndexOf<T>(this T[] array,T value,int startIndex=0,int count = 0)
+        {
+            var length = array.Length;
+            var _count = count == 0 ? (length - startIndex) : (count + startIndex) > length ? (length - startIndex) : count;
+            return Array.LastIndexOf(array, value, startIndex, _count);
+        }
+        /// <summary>
+        /// 查找数组中数据
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="array">数组</param>
+        /// <param name="match">要搜索的元素的条件</param>
+        /// <returns></returns>
+        public static T Find<T>(this T[] array, Predicate<T> match) => Array.Find(array, match);
+        /// <summary>
+        /// 查找数组中的位置
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="array">数组</param>
+        /// <param name="match">要搜索的元素的条件</param>
+        /// <returns></returns>
+        public static int FindIndex<T>(this T[] array, Predicate<T> match) => Array.FindIndex(array, match);
+        /// <summary>
+        /// 查找数组中的位置
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="array">数组</param>
+        /// <param name="startIndex">开始查找位置</param>
+        /// <param name="match">要搜索的元素的条件</param>
+        /// <returns></returns>
+        public static int FindIndex<T>(this T[] array, int startIndex, Predicate<T> match) => Array.FindIndex(array, startIndex, match);
+        /// <summary>
+        /// 查找数组中的位置
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="array">数组</param>
+        /// <param name="startIndex">开始查找位置</param>
+        /// <param name="count">查找元素个数</param>
+        /// <param name="match">要搜索的元素的条件</param>
+        /// <returns></returns>
+        public static int FindIndex<T>(this T[] array, int startIndex,int count, Predicate<T> match) => Array.FindIndex(array, startIndex,count, match);
+        /// <summary>
+        /// 查找数组中数据
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="array">数组</param>
+        /// <param name="match">要搜索的元素的条件</param>
+        /// <returns></returns>
+        public static T FindLast<T>(this T[] array, Predicate<T> match) => Array.FindLast(array, match);
+        /// <summary>
+        /// 查找数组中的位置
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="array">数组</param>
+        /// <param name="match">要搜索的元素的条件</param>
+        /// <returns></returns>
+        public static int FindLastIndex<T>(this T[] array, Predicate<T> match) => Array.FindLastIndex(array, match);
+        /// <summary>
+        /// 查找数组中的位置
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="array">数组</param>
+        /// <param name="startIndex">开始查找位置</param>
+        /// <param name="match">要搜索的元素的条件</param>
+        /// <returns></returns>
+        public static int FindLastIndex<T>(this T[] array, int startIndex, Predicate<T> match) => Array.FindLastIndex(array, startIndex, match);
+        /// <summary>
+        /// 查找数组中的位置
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="array">数组</param>
+        /// <param name="startIndex">开始查找位置</param>
+        /// <param name="count">查找元素个数</param>
+        /// <param name="match">要搜索的元素的条件</param>
+        /// <returns></returns>
+        public static int FindLastIndex<T>(this T[] array, int startIndex, int count, Predicate<T> match) => Array.FindLastIndex(array, startIndex, count, match);
+        /// <summary>
+        /// 查找元素
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="array">数组</param>
+        /// <param name="match">要搜索的元素的条件</param>
+        /// <returns></returns>
+        public static T[] FindAll<T>(this T[] array, Predicate<T> match) => Array.FindAll(array, match);
         #endregion
     }
 }

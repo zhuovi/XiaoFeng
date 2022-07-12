@@ -9,7 +9,7 @@
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<Company>河南魔法精灵软件科技有限公司</Company>
 		<VersionPrefix>2.9</VersionPrefix>
-		<VersionSuffix>4</VersionSuffix>
+		<VersionSuffix>5</VersionSuffix>
 		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
 		<FileVersion>$(Version)</FileVersion>
 		<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
@@ -27,6 +27,9 @@
 		<DefineConstants Condition="'$(TargetFramework)'=='netstandard2.0'">$(DefineConstants);NETCORE;</DefineConstants>
 		<DefineConstants Condition="'$(TargetFramework)'=='netstandard2.1'">$(DefineConstants);NETCORE;</DefineConstants>
 		<DelaySign>False</DelaySign>
+		<PackageProjectUrl>https://www.yuque.com/fayelf/xiaofeng</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/zhuovi/XiaoFeng</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
 	</PropertyGroup>
 	<ItemGroup>
 		<Compile Remove="Cache\MemoryCacheManage.cs" />
