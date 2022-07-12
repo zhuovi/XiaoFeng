@@ -21,4 +21,10 @@ namespace XiaoFeng.Event
     /// <param name="Message">消息</param>
     /// <param name="e">错误信息</param>
     public delegate void MessageEventHandler(string Message, EventArgs e);
+    /// <summary>
+    /// 委托事件
+    /// </summary>
+    /// <param name="bytes">字节组</param>
+    /// <param name="e">错误信息</param>
+    public delegate void MessageByteEventHandler(byte[] bytes, EventArgs e);
 }
