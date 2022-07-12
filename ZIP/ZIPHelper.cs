@@ -59,8 +59,8 @@ namespace XiaoFeng.Zip
         {
             if (ZipPath.IsNullOrEmpty() || rootPath.IsNullOrEmpty() || !File.Exists(ZipPath)) return false;
             //if (!Directory.Exists(rootPath)) Directory.CreateDirectory(rootPath);
+            rootPath = rootPath.GetBasePath();
             if (!FileHelper.Exists(rootPath, FileAttribute.Directory)) FileHelper.CreateDirectory(rootPath);
-            rootPath = FileHelper.GetBasePath(rootPath);
             if (encoding == null)
                 ZipFile.ExtractToDirectory(ZipPath, rootPath);
             else
@@ -76,10 +76,13 @@ namespace XiaoFeng.Zip
         /// <param name="zipPath">压缩包路径</param>
         /// <param name="encoding">编码</param>
         /// <returns></returns>
-        public List<string> GetList(string zipPath,Encoding encoding)
+        public List<string> GetList(string zipPath, Encoding encoding)
         {
             List<string> list = new List<string>();
-            if (zipPath.IsNullOrEmpty() || !File.Exists(zipPath)) return list;
+
+            if (zipPath.IsNullOrEmpty()) return list;
+            zipPath = zipPath.GetBasePath();
+            if (!File.Exists(zipPath)) return list;
             using (FileStream zipFileToOpen = new FileStream(zipPath, FileMode.Open))
             {
                 using (ZipArchive archive = encoding == null ? new ZipArchive(zipFileToOpen, ZipArchiveMode.Read) : new ZipArchive(zipFileToOpen, ZipArchiveMode.Read, false, encoding))

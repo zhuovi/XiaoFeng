@@ -12,7 +12,7 @@ namespace XiaoFeng.Config
     /// <summary>
     /// XiaoFeng总配置
     /// </summary>
-    [ConfigFile("/Config/XiaoFeng.json", 0, "FAYELF-CONFIG-XIAOFENG", ConfigFormat.Json)]
+    [ConfigFile("Config/XiaoFeng.json", 0, "FAYELF-CONFIG-XIAOFENG", ConfigFormat.Json)]
     public class Setting : ConfigSet<Setting>, ISetting
     {
         #region 构造器

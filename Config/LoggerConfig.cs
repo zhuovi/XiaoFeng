@@ -23,7 +23,7 @@ namespace XiaoFeng.Config
     /// <summary>
     /// 日志配置
     /// </summary>
-    [ConfigFile("/Config/Logger.json", 0, "FAYELF-CONFIG-LOGGER", ConfigFormat.Json)]
+    [ConfigFile("Config/Logger.json", 0, "FAYELF-CONFIG-LOGGER", ConfigFormat.Json)]
     public class LoggerConfig : ConfigSet<LoggerConfig>
     {
         #region 构造器

@@ -22,7 +22,7 @@ namespace XiaoFeng.Config
     /// <summary>
     /// 缓存配置
     /// </summary>
-    [ConfigFile("/Config/Cache.json", 0, "FAYELF-CONFIG-CACHE", ConfigFormat.Json)]
+    [ConfigFile("Config/Cache.json", 0, "FAYELF-CONFIG-CACHE", ConfigFormat.Json)]
     public class CacheConfig : ConfigSet<CacheConfig>
     {
         #region 属性

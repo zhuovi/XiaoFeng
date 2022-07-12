@@ -77,7 +77,7 @@ namespace XiaoFeng.Config
             get
             {
                 if (this._fileName.IsNullOrEmpty()) return "";
-                return this._fileName = this._fileName.GetBasePath();
+                return this._fileName.TrimStart('/').GetBasePath();
             }
             set { this._fileName = value; }
         }

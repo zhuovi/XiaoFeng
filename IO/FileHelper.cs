@@ -543,16 +543,37 @@ MIDI (mid)，文件头：4D546864
 
         #region 获取文件路径
         /// <summary>
-        /// 获取文件路径 如果是用绝对路径则前边可以加{*}或{/}则表示是绝对路径
+        /// 获取文件路径 如果是用绝对路径则前边可以加{*}或/则表示是根目录路径
         /// </summary>
         /// <param name="path">路径</param>
         /// <returns></returns>
         public static string GetBasePath(string path)
         {
             if (path.IsNullOrEmpty()) return GetCurrentDirectory();
-            
-            path = path.TrimEnd(new char[] { '\\', '/' });
-            if (!path.IsBasePath())
+            if (path.IsBasePath())
+            {
+                var _path = Path.GetFullPath(path.StartsWith("{*}") ? path.ReplacePattern(@"\{\*\}", "/") : path);
+                return OS.Platform.GetOSPlatform() == PlatformOS.Windows ? _path : _path.ReplacePattern(@"(\\|\/)+", DirectorySeparatorChar.ToString());
+            }
+            /*
+             * 根目录路径
+             */
+            if (path.StartsWith("{*}"))
+            {
+                path = "/" + path.SubstringX(3);
+            }
+            /*
+             * 家目录路径
+             */
+            if(path.StartsWith("{Root}",StringComparison.OrdinalIgnoreCase) || path.StartsWith("{/}") || path.StartsWith("{RootPath}", StringComparison.OrdinalIgnoreCase))
+            {
+                path = path.RemovePattern(@"\{(Root|RootPath|\/)\}");
+            }
+            var _ = Path.GetFullPath(path);
+            return OS.Platform.GetOSPlatform() == PlatformOS.Windows ? _ : _.ReplacePattern(@"(\\|\/)+", DirectorySeparatorChar.ToString());
+            /*
+                path = path.TrimEnd(new char[] { '\\', '/' });
+                if (!path.IsBasePath())
             {
                 DirectoryInfo directoryInfo = GetCurrentDirectory().ToDirectoryInfo();
                 path = path.RemovePattern(@"^\.\/");
@@ -582,7 +603,7 @@ MIDI (mid)，文件头：4D546864
                     }
                 }
             }
-            return path.ReplacePattern(@"[\/\\]+", DirectorySeparatorChar.ToString());
+            return path.ReplacePattern(@"[\/\\]+", DirectorySeparatorChar.ToString());*/
         }
         #endregion
 

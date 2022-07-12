@@ -20,7 +20,7 @@ namespace XiaoFeng.Config
     /// <summary>
     /// 文件MIME
     /// </summary>
-    [ConfigFile("/Config/ContentTypeMapping.xml", 0, "FAYELF-CONFIG-CONTENTTYPE-MAPPING", ConfigFormat.Xml)]
+    [ConfigFile("Config/ContentTypeMapping.xml", 0, "FAYELF-CONFIG-CONTENTTYPE-MAPPING", ConfigFormat.Xml)]
     [XmlRoot("Root")]
     public class ContentTypeMapping : ConfigSet<ContentTypeMapping>
     {

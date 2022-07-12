@@ -19,7 +19,7 @@ namespace XiaoFeng.Data
     /// <summary>
     /// 分表配置
     /// </summary>
-    [ConfigFile("/Config/SubTables.json", 0, "FAYELF-CONFIG-SUBTABLES", ConfigFormat.Json)]
+    [ConfigFile("Config/SubTables.json", 0, "FAYELF-CONFIG-SUBTABLES", ConfigFormat.Json)]
     public class SubTableConfig : ConfigSets<SubTableConfig>
     {
         #region 属性

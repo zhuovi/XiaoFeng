@@ -12,7 +12,7 @@ namespace XiaoFeng.Config
     /// <summary>
     /// 数据库配置
     /// </summary>
-    [ConfigFile("/Config/DataBase.json", 0, "FAYELF-CONFIG-DATABASES", ConfigFormat.Json)]
+    [ConfigFile("Config/DataBase.json", 0, "FAYELF-CONFIG-DATABASES", ConfigFormat.Json)]
     [EncryptFile]
     public class DataBase : ConfigSet<DataBase>
     {

@@ -12,7 +12,7 @@ namespace XiaoFeng.Config
     /// <summary>
     /// 上传配置
     /// </summary>
-    [ConfigFile("/Config/Upload.json", 0, "FAYELF-CONFIG-UPLOAD", ConfigFormat.Json)]
+    [ConfigFile("Config/Upload.json", 0, "FAYELF-CONFIG-UPLOAD", ConfigFormat.Json)]
     public class Upload : ConfigSet<Upload>, IUpload
     {
         #region 构造器

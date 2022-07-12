@@ -40,19 +40,20 @@ namespace XiaoFeng
         {
             if (_.StartsWith("{*}")) return true;
             var os = OS.Platform.GetOSPlatform();
-            var root = FileHelper.GetCurrentDirectory();
+            //var root = FileHelper.GetCurrentDirectory();
             if (os == PlatformOS.Linux)
             {
-                var path = _.Replace("\\", "/");
-                return path.IsMatch(@"^" + root.ToRegexEscape());
+                return _.StartsWith("/");
+                //var path = _.Replace("\\", "/");
+                //return path.IsMatch(@"^" + root.ToRegexEscape());
             }
-            else if (os == PlatformOS.OSX)
+            if (os == PlatformOS.OSX)
             {
-                var path = _.Replace("\\", "/");
-                return path.IsMatch(@"^" + root.ToRegexEscape());
+                return _.StartsWith("/");
+                //var path = _.Replace("\\", "/");
+                //return path.IsMatch(@"^" + root.ToRegexEscape());
             }
-            else
-                return _.IsMatch(RegexPattern.BasePath);
+            return _.IsMatch(RegexPattern.BasePath);
         }
         #endregion
 

@@ -1,41 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-
+using System.ComponentModel;
 /****************************************************************
-*  Copyright © (2021) www.fayelf.com All Rights Reserved.       *
+*  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
 *  QQ : 7092734                                                 *
 *  Email : jacky@fayelf.com                                     *
 *  Site : www.fayelf.com                                        *
-*  Create Time : 2021/12/7 18:50:48                             *
+*  Create Time : 2022-07-12 20:28:29                            *
 *  Version : v 1.0.0                                            *
 *  CLR Version : 4.0.30319.42000                                *
 *****************************************************************/
-namespace XiaoFeng.Cryptography
+namespace XiaoFeng.IO
 {
     /// <summary>
-    /// 加密类型
+    /// 目录类型
     /// </summary>
-    public enum SymmetricAlgorithmType
+    public enum DirectoryType
     {
         /// <summary>
-        /// AES
+        /// 未知
         /// </summary>
-        [Description("AES")]
-        AES = 0,
+        [Description("未知")] 
+        UNKNOW = 0,
         /// <summary>
-        /// DES
+        /// 家目录
         /// </summary>
-        [Description("DES")]
-        DES = 1,
+        [Description("家目录")]
+        HOME = 1,
         /// <summary>
-        /// 3DES
+        /// 根目录
         /// </summary>
-        [Description("3DES")]
-        DES3 = 2
+        [Description("根目录")]
+        ROOT = 2
     }
 }
