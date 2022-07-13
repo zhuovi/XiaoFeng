@@ -613,18 +613,7 @@ MIDI (mid)，文件头：4D546864
         /// </summary>
         /// <param name="size">大小</param>
         /// <returns></returns>
-        public static string ConvertByte(double size)
-        {
-            var Units = new string[] { "B", "K", "M", "G", "T", "P" };
-            double mod = 1024.0000;
-            int i = 0;
-            while (size >= mod)
-            {
-                size /= mod;
-                i++;
-            }
-            return Math.Round(size, 4) + Units[i];
-        }
+        public static string ConvertByte(double size) => size.ByteToKMGTP(4);
         #endregion
 
         #region 获取根目录

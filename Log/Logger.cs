@@ -198,11 +198,15 @@ namespace XiaoFeng.Log
                             FilePath = file.FullName;
                     }
                     readerWriterLock.EnterWriteLock();
-                    var fs = new FileStream(FilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite);
-                    fs.Seek(0, SeekOrigin.End);
-                    fs.WriteLine(sb.ToString());
-                    fs.Close();
-                    fs.Dispose();
+                    using (var fs = new FileStream(FilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite))
+                    {
+                        fs.Seek(0, SeekOrigin.End);
+                        fs.WriteLine(sb.ToString());
+                        fs.Flush();
+                        fs.Close();
+                        fs.Dispose();
+                    }
+                    
                     readerWriterLock.ExitWriteLock();
                 }
                 catch (Exception ex)
