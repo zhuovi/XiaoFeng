@@ -39,7 +39,7 @@ namespace XiaoFeng.Resource
                 root = root.ReplacePattern(@"(\\|\/)+", "/");
             this.ResourcePath = "/" + root.Trim(new char[] { '/', '\\' });
 
-            this.Key = assemblyName + "." + root.ReplacePattern(@"(\\|\/)+", ".");
+            this.Key = assemblyName + "." + root.TrimStart('/').ReplacePattern(@"(\\|\/)+", ".");
         }
         #endregion
 

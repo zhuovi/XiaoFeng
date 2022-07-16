@@ -164,8 +164,9 @@ namespace XiaoFeng
         /// <returns></returns>
         public static string GetDefaultValue(this MemberInfo m, bool inherit = true)
         {
+            if(m == null || !m.IsDefined(typeof(DefaultValueAttribute), inherit)) return String.Empty;
             object val = m.GetCustomAttributeValue<DefaultValueAttribute>(a => a.Value, inherit);
-            return val == null ? "" : val.ToString();
+            return val == null ? String.Empty : val.ToString();
         }
         /// <summary>
         /// 获取指定属性的DefaultValue
@@ -195,8 +196,9 @@ namespace XiaoFeng
         /// <returns></returns>
         public static string GetDescription(this MemberInfo m, bool inherit = true)
         {
+            if (m == null || !m.IsDefined(typeof(DescriptionAttribute))) return String.Empty;
             object val = m.GetCustomAttributeValue<DescriptionAttribute>(a => a.Description, inherit);
-            return val == null ? "" : val.ToString();
+            return val == null ? String.Empty : val.ToString();
         }
         /// <summary>
         /// 获取指定属性或事件的枚举名称

@@ -46,7 +46,7 @@ namespace XiaoFeng.Resource
                 path = path.ReplacePattern(@"(\\|\/)+", "/");
             this.ResourcePath = "/" + path.Trim(new char[] { '/', '\\' }) + this.Extension;
 
-            this.Key = assemblyName + "." + path.ReplacePattern(@"(\\|\/)+", ".") + this.Extension;
+            this.Key = assemblyName + "." + path.TrimStart('/').ReplacePattern(@"(\\|\/)+", ".") + this.Extension;
             this.Name = path.GetFileName()+ this.Extension;
         }
         #endregion
