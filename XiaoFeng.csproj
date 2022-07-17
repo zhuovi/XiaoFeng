@@ -8,7 +8,7 @@
 		<Copyright>CopyRight @ 2008-2023 魔法精灵(www.fayelf.com) QQ:7092734 Email:jacky@fayelf.com</Copyright>
 		<Company>河南魔法精灵软件科技有限公司</Company>
 		<VersionPrefix>2.10</VersionPrefix>
-		<VersionSuffix>0</VersionSuffix>
+		<VersionSuffix>1</VersionSuffix>
 		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
 		<FileVersion>$(Version)</FileVersion>
 		<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
@@ -19,18 +19,20 @@
 		<SignAssembly>False</SignAssembly>
 		<EnableNETAnalyzers>False</EnableNETAnalyzers>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<RepositoryUrl>https://github.com/zhuovi/XiaoFeng</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>FAYELF</PackageTags>
-		<PackageLicenseUrl>https://raw.githubusercontent.com/zhuovi/XiaoFeng/master/LICENSE</PackageLicenseUrl>
-		<PackageReleaseNotes>更新GetBasePath()linux下会偶尔出会问题</PackageReleaseNotes>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageReleaseNotes>更新GetBasePath(),linux下会偶尔出会问题,增加对内嵌资源的读取</PackageReleaseNotes>
+		<DelaySign>False</DelaySign>
+		<IsPackable>true</IsPackable>
+		<PackageProjectUrl>https://www.yuque.com/fayelf/xiaofeng</PackageProjectUrl>
+		<Title>XiaoFeng</Title>
 	</PropertyGroup>
 	<PropertyGroup>
 		<DefineConstants Condition="'$(TargetFramework)'=='netstandard2.0'">$(DefineConstants);NETCORE;</DefineConstants>
 		<DefineConstants Condition="'$(TargetFramework)'=='netstandard2.1'">$(DefineConstants);NETCORE;</DefineConstants>
-		<DelaySign>False</DelaySign>
-		<PackageProjectUrl>https://www.yuque.com/fayelf/xiaofeng</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/zhuovi/XiaoFeng</RepositoryUrl>
-		<RepositoryType>git</RepositoryType>
 	</PropertyGroup>
 	<ItemGroup>
 		<Compile Remove="Cache\MemoryCacheManage.cs" />
