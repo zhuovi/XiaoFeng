@@ -180,7 +180,7 @@ namespace XiaoFeng.Xml
                         XmlWriter.WriteString(EncodeString(data.ToString()));
                     XmlWriter.WriteEndElement();
                 }
-                else if (BaseType == ValueTypes.Class || BaseType == ValueTypes.Struct)
+                else if (BaseType == ValueTypes.Class || BaseType == ValueTypes.Struct || BaseType == ValueTypes.Anonymous)
                 {
                     if (tagName.IsNotNullOrEmpty())
                         XmlWriter.WriteStartElement(tagName);
@@ -233,6 +233,10 @@ namespace XiaoFeng.Xml
                           var ItemName = "";
                           var ArrayName = "";
                           if (m.IsDefined(typeof(XmlIgnoreAttribute), false) || !(m.MemberType == MemberTypes.Property || m.MemberType == MemberTypes.Field)) return;
+                          var value = m.MemberType == MemberTypes.Property ? (m as PropertyInfo).GetValue(data) : (m as FieldInfo).GetValue(data);
+                          /*属性是否有忽略属性*/
+                          var FieldOmitEmptyNode = m.IsDefined(typeof(OmitEmptyNodeAttribute), false);
+                          if (value.IsNullOrEmpty() && (this.SerializerSetting.OmitEmptyNode || ClassOmitEmptyNode || FieldOmitEmptyNode)) return;
                           /*写注释*/
                           if (!this.SerializerSetting.OmitComment && m.IsDefined(typeof(DescriptionAttribute), false))
                           {
@@ -255,7 +259,7 @@ namespace XiaoFeng.Xml
                               ItemName = m.GetCustomAttribute<XmlArrayItemAttribute>().ElementName.IfEmpty(FieldName);
                               //if (ArrayName.IsNullOrEmpty()) ArrayName = FieldName;
                           }
-                          var value = m.MemberType == MemberTypes.Property ? (m as PropertyInfo).GetValue(data) : (m as FieldInfo).GetValue(data);
+                          
                           if (_BaseType == ValueTypes.Anonymous || _BaseType == ValueTypes.Dictionary || _BaseType == ValueTypes.IDictionary)
                           {
                               XmlWriter.WriteStartElement(FieldName);
@@ -322,9 +326,6 @@ namespace XiaoFeng.Xml
                               {
                                   
                               }
-                              /*属性是否有忽略属性*/
-                              var FieldOmitEmptyNode = m.IsDefined(typeof(OmitEmptyNodeAttribute), false);
-                              if (value.IsNullOrEmpty() && (this.SerializerSetting.OmitEmptyNode || ClassOmitEmptyNode || FieldOmitEmptyNode)) return;
                               WriteValue(value, m.IsDefined(typeof(XmlCDataAttribute), false), m.IsDefined(typeof(XmlTextAttribute), false) ? "" : ItemName.IfEmpty(FieldName));
                           }
                       });

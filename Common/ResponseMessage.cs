@@ -110,7 +110,7 @@ namespace XiaoFeng
         [JsonElement("counts")]
         [XmlElement("counts")]
         [Description("条数")]
-        public int Counts { get; set; } = -1;
+        public int? Counts { get; set; }
         /// <summary>
         /// 时间
         /// </summary>
