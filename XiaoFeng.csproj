@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;netstandard2.1;</TargetFrameworks>
+		<TargetFrameworks>.netstandard2.0;.netstandard2.1;</TargetFrameworks>
 		<OutputType>Library</OutputType>
 		<Authors>Jacky</Authors>
 		<Product>基础类库 数据库中间件</Product>
 		<Description>基础类库、数据库中间件、网络通讯中间件、Redis、Socket、HttpHelper、QueryableX、Cache、FTP、JSON、XML、IO、配置、各种加密码算法、作业调度、正则、通用数据库操作，支持10多种数据库</Description>
 		<Copyright>CopyRight @ 2008-2023 魔法精灵(www.fayelf.com) QQ:7092734 Email:jacky@fayelf.com</Copyright>
 		<Company>河南魔法精灵软件科技有限公司</Company>
-		<VersionPrefix>2.10</VersionPrefix>
+		<VersionPrefix>2.11</VersionPrefix>
 		<VersionSuffix>1</VersionSuffix>
 		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
 		<FileVersion>$(Version)</FileVersion>
@@ -24,7 +24,7 @@
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>FAYELF</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageReleaseNotes>更新GetBasePath(),linux下会偶尔出会问题,增加对内嵌资源的读取</PackageReleaseNotes>
+		<PackageReleaseNotes>更新XML序列化时 匿名对象 不序列化的bug</PackageReleaseNotes>
 		<DelaySign>False</DelaySign>
 		<IsPackable>true</IsPackable>
 		<PackageProjectUrl>https://www.yuque.com/fayelf/xiaofeng</PackageProjectUrl>

@@ -26,8 +26,10 @@ namespace XiaoFeng.Xml
         public override void Load(string fileName)
         {
             if (fileName.IsNullOrEmpty()) return;
-            fileName = fileName.GetBasePath();
+           
             if (!FileHelper.Exists(fileName, FileAttribute.File)) return;
+            //2022-07-12 为了兼容linux中{*}根目录，改到下面 赋值
+            fileName = fileName.GetBasePath();
             base.Load(fileName);
         }
         /// <summary>

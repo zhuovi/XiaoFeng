@@ -32,7 +32,7 @@ namespace XiaoFeng
         /// </summary>
         static LogHelper()
         {
-            Log = LogFactory.Create(typeof(Logger), "LogTaskQueue");
+            Log = LogFactory.Create(typeof(Logger), "LogTask");
             /*初始化数据*/
             //ThreadPool.SetMaxThreads(30, 30);
             //ThreadPool.SetMinThreads(1, 1);
@@ -76,7 +76,8 @@ namespace XiaoFeng
         /// <summary>
         /// 日志队列
         /// </summary>
-        private static IBackgroundTaskQueue LogQueue = new BackgroundTaskQueue("LogTaskQueue");
+        //private static IBackgroundTaskQueue LogQueue = new BackgroundTaskQueue("LogTaskQueue");
+        private static ITaskServiceQueue<LogData> LogTaskQueue = new LogTaskQueue();
         #endregion
 
         #region 方法
@@ -93,10 +94,11 @@ namespace XiaoFeng
                 //if (LogQueue == null) LogQueue = new BackgroundTaskQueue("LogTaskQueue");
                 //if (Log == null) Log = LogFactory.Create(typeof(Logger), "LogTaskQueue");
             }
-            LogQueue.AddWorkItem(() =>
-            {
-                Log.Write(logData);
-            });
+            //LogQueue.AddWorkItem(() =>
+            //{
+            //Log.Write(logData);
+            //});
+            LogTaskQueue.AddWorkItem(logData);
         }
         /// <summary>
         /// 记录日志
@@ -213,7 +215,7 @@ namespace XiaoFeng
         public static void SetLogPath(string path)
         {
             if (Log == null)
-                Log = LogFactory.Create(typeof(Logger), "LogTaskQueue");
+                Log = LogFactory.Create(typeof(Logger), "LogTask");
             Log.LogPath = path;
         }
         #endregion
