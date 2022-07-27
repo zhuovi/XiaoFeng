@@ -131,6 +131,7 @@ namespace XiaoFeng.Log
             if (this.StorageType.HasFlag(StorageType.File) || log.LogType == LogType.Error)
             {
                 var sb = new StringBuilder();
+                //sb.AppendLine($"线程ID:{System.Threading.Tasks.Task.CurrentId.GetValueOrDefault()}");
                 try
                 {
                     if (log.IsRecord)
@@ -197,21 +198,24 @@ namespace XiaoFeng.Log
                         else
                             FilePath = file.FullName;
                     }
-                    readerWriterLock.EnterWriteLock();
-                    using (var fs = new FileStream(FilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite))
-                    {
-                        fs.Seek(0, SeekOrigin.End);
-                        fs.WriteLine(sb.ToString());
-                        fs.Flush();
-                        fs.Close();
-                        fs.Dispose();
-                    }
+                    //readerWriterLock.EnterWriteLock();
                     
-                    readerWriterLock.ExitWriteLock();
+                    //lock (FileLock)
+                    {
+                        using (var fs = new FileStream(FilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite))
+                        {
+                            fs.Seek(0, SeekOrigin.End);
+                            fs.WriteLine(sb.ToString());
+                            fs.Flush();
+                            fs.Close();
+                            fs.Dispose();
+                        }
+                    }
+                    //readerWriterLock.ExitWriteLock();
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"写日志出错:{ex.Message}-{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ffffff")}");
+                    Console.WriteLine($"写日志出错:{ex.Message}- {sb} - {DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ffffff")}");
                     //if (Interlocked.Increment(ref Count) == 3)
                     //{
                     //    Count = 0;

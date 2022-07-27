@@ -530,6 +530,27 @@ MIDI (mid)，文件头：4D546864
                 d.CopyTo(dir);
             });
         }
+        /// <summary>
+        /// 复制目录及目录下所有文件
+        /// </summary>
+        /// <param name="source">源目录</param>
+        /// <param name="dest">目的目录</param>
+        public static void CopyDirectoryLinux(DirectoryInfo source, DirectoryInfo dest)
+        {
+            if (!dest.Exists) dest.Create();
+            source.GetFiles().Each(f =>
+            {
+                var path = dest.FullName + FileHelper.DirectorySeparatorChar + f.Name;
+                DeleteFile("{*}/"+path);
+                f.CopyTo(path);
+            });
+            source.GetDirectories().Each(d =>
+            {
+                var dir = dest.FullName + FileHelper.DirectorySeparatorChar + d.Name;
+                Create("{*}/"+dir, FileAttribute.Directory);
+                d.CopyTo(dir);
+            });
+        }
         #endregion
 
         #region 计算文件夹大小
@@ -552,7 +573,7 @@ MIDI (mid)，文件头：4D546864
             if (path.IsNullOrEmpty()) return GetCurrentDirectory();
             if (path.IsBasePath())
             {
-                var _path = Path.GetFullPath(path.StartsWith("{*}") ? path.ReplacePattern(@"\{\*\}", "/") : path);
+                var _path = Path.GetFullPath(path.StartsWith("{*}") ? ("/" + path.RemovePattern(@"\{\*\}").TrimStart(new char[] { '/', '\\' })) : path);
                 return OS.Platform.GetOSPlatform() == PlatformOS.Windows ? _path : _path.ReplacePattern(@"(\\|\/)+", DirectorySeparatorChar.ToString());
             }
             /*
@@ -560,14 +581,14 @@ MIDI (mid)，文件头：4D546864
              */
             if (path.StartsWith("{*}"))
             {
-                path = "/" + path.SubstringX(3);
+                path = "/" + path.SubstringX(3).TrimStart(new char[] { '/', '\\' });
             }
             /*
              * 家目录路径
              */
             if(path.StartsWith("{Root}",StringComparison.OrdinalIgnoreCase) || path.StartsWith("{/}") || path.StartsWith("{RootPath}", StringComparison.OrdinalIgnoreCase))
             {
-                path = path.RemovePattern(@"\{(Root|RootPath|\/)\}");
+                path = path.RemovePattern(@"\{(Root|RootPath|\/)\}[\\/]*");
             }
             var _ = Path.GetFullPath(path);
             return OS.Platform.GetOSPlatform() == PlatformOS.Windows ? _ : _.ReplacePattern(@"(\\|\/)+", DirectorySeparatorChar.ToString());

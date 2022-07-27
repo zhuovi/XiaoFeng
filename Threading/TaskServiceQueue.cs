@@ -27,7 +27,7 @@ namespace XiaoFeng.Threading
         /// <summary>
         /// 无参构造器
         /// </summary>
-        public TaskServiceQueue() { this.QueueName = $"TaskServiceQueue[{typeof(T).Name}]"; }
+        public TaskServiceQueue() { this.QueueName = $"TaskServiceQueue<{typeof(T).Name}>"; }
         /// <summary>
         /// 设置取消指令
         /// </summary>
@@ -222,7 +222,7 @@ namespace XiaoFeng.Threading
         {
             Console.ForegroundColor = ConsoleColor.Magenta;
             Console.WriteLine("".PadLeft(70, '='));
-            Console.WriteLine($"-- {msg} - [{this.QueueName}] - {DateTime.Now:yyyy-MM-dd HH:mm:ss.ffff} --");
+            Console.WriteLine($"-- {msg} - {this.QueueName} - {DateTime.Now:yyyy-MM-dd HH:mm:ss.ffff} --");
             Console.WriteLine("".PadLeft(70, '='));
             Console.ResetColor();
         }

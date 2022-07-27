@@ -31,6 +31,12 @@ namespace XiaoFeng.IO
         /// <param name="destDirName">目标目录</param>
         public static void CopyTo(this DirectoryInfo _, string destDirName) => FileHelper.CopyDirectory(_, new DirectoryInfo(destDirName.GetBasePath()));
         /// <summary>
+        /// 复制目录到另一个目录
+        /// </summary>
+        /// <param name="_">源目录</param>
+        /// <param name="destDirName">目标目录</param>
+        public static void CopyToLinux(this DirectoryInfo _, string destDirName) => FileHelper.CopyDirectoryLinux(_, new DirectoryInfo(destDirName.GetBasePath()));
+        /// <summary>
         /// 移除目录
         /// </summary>
         /// <param name="_">目标目录</param>
