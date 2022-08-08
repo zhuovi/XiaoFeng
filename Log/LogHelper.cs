@@ -207,7 +207,7 @@ namespace XiaoFeng
         });
         #endregion
 
-        #region 
+        #region 设置日志目录
         /// <summary>
         /// 设置日志目录
         /// </summary>

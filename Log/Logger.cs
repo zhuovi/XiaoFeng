@@ -52,6 +52,7 @@ namespace XiaoFeng.Log
         public override void Run(LogData log)
         {
             if (log.LogType < this.LogLevel) return;
+            var sbr = new StringBuilder();
             /*控制台*/
             if (this.StorageType.HasFlag(StorageType.Console) && this.ConsoleFlags.HasFlag(log.LogType))
             {
@@ -92,8 +93,10 @@ namespace XiaoFeng.Log
                         if (log.Message.IsNotNullOrEmpty())
                         {
                             Console.WriteLine($"{log.LogType.GetValue(this.MessageType)}".PadRight(this.MessageType == EnumValueType.Description ? 2 : 5, ' ') + (this.Config.Fields.Contains("AddTime") ? DateTime.Now.ToString(": yyyy-MM-dd HH:mm:ss.fff") : ""));
+                            sbr.AppendLine($"{log.LogType.GetValue(this.MessageType)}".PadRight(this.MessageType == EnumValueType.Description ? 2 : 5, ' ') + (this.Config.Fields.Contains("AddTime") ? DateTime.Now.ToString(": yyyy-MM-dd HH:mm:ss.fff") : ""));
                             Console.ResetColor();
                             Console.WriteLine(log.Message);
+                            sbr.AppendLine(log.Message);
                         }
                     }
                     else
@@ -101,17 +104,37 @@ namespace XiaoFeng.Log
                         if (this.Config.Fields.Contains("LogType"))
                         {
                             Console.WriteLine("".PadLeft(70, '='));
+                            sbr.AppendLine("".PadLeft(70, '='));
                             Console.WriteLine($"{log.LogType.GetValue(this.MessageType)}".PadRight(this.MessageType == EnumValueType.Description ? 2 : 5, ' ') + (this.Config.Fields.Contains("AddTime") ? DateTime.Now.ToString(": yyyy-MM-dd HH:mm:ss.fff") : ""));
+                            sbr.AppendLine($"{log.LogType.GetValue(this.MessageType)}".PadRight(this.MessageType == EnumValueType.Description ? 2 : 5, ' ') + (this.Config.Fields.Contains("AddTime") ? DateTime.Now.ToString(": yyyy-MM-dd HH:mm:ss.fff") : ""));
                             Console.WriteLine("".PadLeft(70, '='));
+                            sbr.AppendLine("".PadLeft(70, '='));
                         }
                         Console.ResetColor();
-                        if (log.DataSource.IsNotNullOrEmpty() && (this.Config.Fields.Length == 0 || (this.Config.Fields.Length > 0 && this.Config.Fields.Contains("DataSource")))) Console.WriteLine("数 据 源: " + log.DataSource);
-                        if (log.FunctionName.IsNotNullOrEmpty() && (this.Config.Fields.Length == 0 || (this.Config.Fields.Length > 0 && this.Config.Fields.Contains("FunctionName")))) Console.WriteLine("方 法 名: " + log.ClassName + "." + log.FunctionName);
-                        if (log.Message.IsNotNullOrEmpty() && (this.Config.Fields.Length == 0 || (this.Config.Fields.Length > 0 && this.Config.Fields.Contains("Message")))) Console.WriteLine((log.LogType == LogType.Warn ? "" : "日志信息: ") + log.Message);
-                        if (log.StackTrace.IsNotNullOrEmpty() && (this.Config.Fields.Length == 0 || (this.Config.Fields.Length > 0 && this.Config.Fields.Contains("StackTrace")))) Console.WriteLine("日志堆栈: " + log.StackTrace);
+                        if (log.DataSource.IsNotNullOrEmpty() && (this.Config.Fields.Length == 0 || (this.Config.Fields.Length > 0 && this.Config.Fields.Contains("DataSource"))))
+                        {
+                            Console.WriteLine("数 据 源: " + log.DataSource);
+                            sbr.AppendLine("数 据 源: " + log.DataSource);
+                        }
+                        if (log.FunctionName.IsNotNullOrEmpty() && (this.Config.Fields.Length == 0 || (this.Config.Fields.Length > 0 && this.Config.Fields.Contains("FunctionName"))))
+                        {
+                            Console.WriteLine("方 法 名: " + log.ClassName + "." + log.FunctionName);
+                            sbr.AppendLine("方 法 名: " + log.ClassName + "." + log.FunctionName);
+                        }
+                        if (log.Message.IsNotNullOrEmpty() && (this.Config.Fields.Length == 0 || (this.Config.Fields.Length > 0 && this.Config.Fields.Contains("Message"))))
+                        {
+                            Console.WriteLine((log.LogType == LogType.Warn ? "" : "日志信息: ") + log.Message);
+                            sbr.AppendLine((log.LogType == LogType.Warn ? "" : "日志信息: ") + log.Message);
+                        }
+                        if (log.StackTrace.IsNotNullOrEmpty() && (this.Config.Fields.Length == 0 || (this.Config.Fields.Length > 0 && this.Config.Fields.Contains("StackTrace"))))
+                        {
+                            Console.WriteLine("日志堆栈: " + log.StackTrace);
+                            sbr.AppendLine("日志堆栈: " + log.StackTrace);
+                        }
                         if ((LogType.Error | LogType.Trace).HasFlag(log.LogType) && log.Tracking.IsNotNullOrEmpty() && (this.Config.Fields.Length == 0 || (this.Config.Fields.Length > 0 && this.Config.Fields.Contains("Tracking"))))
                         {
                             Console.WriteLine("堆栈跟踪".PadLeft(33, '*').PadRight(66, '*'));
+                            sbr.AppendLine("堆栈跟踪".PadLeft(33, '*').PadRight(66, '*'));
                             var trace = log.Tracking ?? new StackTrace();
                             trace.GetFrames().Each(frame =>
                             {
@@ -119,9 +142,11 @@ namespace XiaoFeng.Log
                                 if (method == null || method.DeclaringType?.FullName.IndexOf("LogHelper") > -1) return;
                                 var _ = "{0}.{1}({2});".format(method.DeclaringType?.FullName, method.Name, method.GetParameters().Join(","));
                                 Console.WriteLine(_);
+                                sbr.AppendLine(_);
                                 return;
                             });
                             Console.WriteLine("".PadLeft(70, '*'));
+                            sbr.AppendLine("".PadLeft(70, '*'));
                         }
                     }
                 }
