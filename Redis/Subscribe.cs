@@ -57,6 +57,22 @@ namespace XiaoFeng.Redis
         #endregion
 
         #region 方法
+
+        #region 订阅一个或多个符合给定模式的频道
+        /// <summary>
+        /// 订阅一个或多个符合给定模式的频道
+        /// </summary>
+        /// <param name="dbNum">库索引</param>
+        /// <param name="patterns">频道名称</param>
+        /// <returns>返回订阅过的频道</returns>
+        public List<string> Psubscribe(int? dbNum, params string[] patterns)
+        {
+            if (patterns.Length == 0) return null;
+            return Redis.Psubscribe(dbNum, patterns);
+        }
+        #endregion
+
+        #region 订阅频道
         /// <summary>
         /// 订阅频道
         /// </summary>
@@ -105,6 +121,9 @@ namespace XiaoFeng.Redis
                 this.OnError?.Invoke(channel.Join(","), ex.Message);
             }
         }
+        #endregion
+
+        #region 取消订阅频道
         /// <summary>
         /// 取消订阅频道
         /// </summary>
@@ -125,6 +144,9 @@ namespace XiaoFeng.Redis
             else
                 OnError?.Invoke(channel.Join(","), "取消订阅频道[" + channel.Join(",") + "]失败.");
         }
+        #endregion
+
+        #region 将信息发送到指定的频道
         /// <summary>
         /// 将信息发送到指定的频道
         /// </summary>
@@ -145,6 +167,9 @@ namespace XiaoFeng.Redis
             else
                 OnError?.Invoke(channel, "发送频道[" + channel + "]信息失败.");
         }
+        #endregion
+
+        #region 查看订阅与发布系统状态
         /// <summary>
         /// 查看订阅与发布系统状态
         /// </summary>
@@ -162,6 +187,8 @@ namespace XiaoFeng.Redis
                 return result.OK ? (List<string>)result.Value : null;
             }, channel);
         }
+        #endregion
+
         #endregion
     }
 }

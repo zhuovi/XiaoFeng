@@ -53,7 +53,7 @@ namespace XiaoFeng.Data
                         {"NotInSQL","{0} NOT IN ({1})"},
                         {"IndexOf","CHARINDEX({1},{0})"},
                         {"CharIndexSQL","CHARINDEX({1},{0})"},
-                        {"PatindexSQL","PATINDEX({0},{1})"},
+                        {"PatindexSQL","PATINDEX({1},{0})"},
                         {"DateAddSQL","DATEADD({2},{1},{0})"},
                         {"DateDiffSQL","DATEDIFF({2},{0},{1})"},
                         {"DatePartSQL","DATEPART({1},{0})"},
@@ -85,7 +85,8 @@ namespace XiaoFeng.Data
                         {"MultiplySQL","{0} * {1}"},
                         {"DivideSQL","{0} / {1}"},
                         {"BetweenSQL","{0} BETWEEN {1} AND {2}"},
-                        {"AvgSQL","AVG({0})" }
+                        {"AvgSQL","AVG({0})" },
+                        {"CastSQL","CAST({0} as {1})" }
                     };
                 }
                 return this._MsSqlFun;
@@ -127,7 +128,7 @@ namespace XiaoFeng.Data
                         {"NotInSQL","{0} IN ({1})"},
                         {"IndexOf","CHARINDEX({1},{0})"},
                         {"CharIndexSQL","CHARINDEX({1},{0})"},
-                        {"PatindexSQL","PATINDEX({0},{1})"},
+                        {"PatindexSQL","PATINDEX({1},{0})"},
                         {"DateAddSQL","DATEADD({2},{1},{0})"},
                         {"DateDiffSQL","DATEDIFF({2},{0},{1})"},
                         {"DatePartSQL","DATEPART({1},{0})"},
@@ -159,7 +160,8 @@ namespace XiaoFeng.Data
                         {"MultiplySQL","{0} * {1}"},
                         {"DivideSQL","{0} / {1}"},
                         {"BetweenSQL","{0} BETWEEN {1} AND {2}"},
-                        {"AvgSQL","AVG({0})" }
+                        {"AvgSQL","AVG({0})" },
+                        {"CastSQL","CAST({0} as {1})" }
                     };
                 }
                 return this._MsSqlUnFun;
@@ -204,7 +206,7 @@ namespace XiaoFeng.Data
                         {"NotInSQL","{0} NOT IN ({1})"},
                         {"IndexOf","INSTR({0},{1})"},
                         {"CharIndexSQL","INSTR({0},{1})"},
-                        {"PatindexSQL","PATINDEX({0},{1})"},
+                        {"PatindexSQL","PATINDEX({1},{0})"},
                         {"DateAddSQL","DATETIME({0},'localtime','{1} {2}')"},
                         {"DateDiffSQL","ROUND((julianday({1}) - julianday({0})){2})"},
                         {"DatePartSQL","STRFTIME({1},{0})"},
@@ -236,7 +238,8 @@ namespace XiaoFeng.Data
                         {"MultiplySQL","{0} * {1}"},
                         {"DivideSQL","{0} / {1}"},
                         {"BetweenSQL","{0} BETWEEN {1} AND {2}"},
-                        {"AvgSQL","AVG({0})" }
+                        {"AvgSQL","AVG({0})" },
+                        {"CastSQL","CAST({0} as {1})" }
                     };
                 }
                 return this._SQLiteFun;
@@ -278,7 +281,7 @@ namespace XiaoFeng.Data
                         {"NotInSQL","{0} IN ({1})"},
                         {"IndexOf","INSTR({0},{1})"},
                         {"CharIndexSQL","INSTR({0},{1})"},
-                        {"PatindexSQL","PATINDEX({0},{1})"},
+                        {"PatindexSQL","PATINDEX({1},{0})"},
                         {"DateAddSQL","DATETIME({0},'localtime','{1} {2}')"},
                         {"DateDiffSQL","ROUND((julianday({1}) - julianday({0})){2})"},
                         {"DatePartSQL","DATEPART({1},{0})"},
@@ -310,7 +313,8 @@ namespace XiaoFeng.Data
                         {"MultiplySQL","{0} * {1}"},
                         {"DivideSQL","{0} / {1}"},
                         {"BetweenSQL","{0} BETWEEN {1} AND {2}"},
-                        {"AvgSQL","AVG({0})" }
+                        {"AvgSQL","AVG({0})" },
+                        {"CastSQL","CAST({0} as {1})" }
                     };
                 }
                 return this._SQLiteUnFun;
@@ -353,8 +357,8 @@ namespace XiaoFeng.Data
                         {"NotLikeSQLX","{0} NOT LIKE {1}"},
                         {"InSQL","{0} IN ({1})"},
                         {"NotInSQL","{0} NOT IN ({1})"},
-                        {"IndexOf","INSTR({1},{0})"},
-                        {"CharIndexSQL","INSTR({1},{0})"},
+                        {"IndexOf","INSTR({0},{1})"},
+                        {"CharIndexSQL","INSTR({0},{1})"},
                         {"PatindexSQL","{0} REGEXP {1}"},
                         {"DateAddSQL","DATE_ADD({0},INTERVAL {1} {2})"},
                         {"DateDiffSQL","TIMESTAMPDIFF({2},{0},{1})"},
@@ -387,7 +391,8 @@ namespace XiaoFeng.Data
                         {"MultiplySQL","{0} * {1}"},
                         {"DivideSQL","{0} / {1}"},
                         {"BetweenSQL","{0} BETWEEN {1} AND {2}"},
-                        {"AvgSQL","AVG({0})" }
+                        {"AvgSQL","AVG({0})" },
+                        {"CastSQL","CAST({0} as {1})" }
                     };
                 }
                 return this._MySqlFun;
@@ -427,8 +432,8 @@ namespace XiaoFeng.Data
                         {"NotLikeSQLX","{0} LIKE {1}"},
                         {"InSQL","{0} NOT IN ({1})"},
                         {"NotInSQL","{0} IN ({1})"},
-                        {"IndexOf","INSTR({1},{0})"},
-                        {"CharIndexSQL","INSTR({1},{0})"},
+                        {"IndexOf","INSTR({0},{1})"},
+                        {"CharIndexSQL","INSTR({0},{1})"},
                         {"PatindexSQL","{0} REGEXP {1}"},
                         {"DateAddSQL","DATE_ADD({0},INTERVAL {1} {2})"},
                         {"DateDiffSQL","TIMESTAMPDIFF({2},{0},{1})"},
@@ -461,7 +466,8 @@ namespace XiaoFeng.Data
                         {"MultiplySQL","{0} * {1}"},
                         {"DivideSQL","{0} / {1}"},
                         {"BetweenSQL","{0} BETWEEN {1} AND {2}"},
-                        {"AvgSQL","AVG({0})" }
+                        {"AvgSQL","AVG({0})" },
+                        {"CastSQL","CAST({0} as {1})" }
                     };
                 }
                 return this._MySqlUnFun;
@@ -506,7 +512,7 @@ namespace XiaoFeng.Data
                         {"NotInSQL","{0} NOT IN ({1})"},
                         {"IndexOf","CHARINDEX({1},{0})"},
                         {"CharIndexSQL","CHARINDEX({1},{0})"},
-                        {"PatindexSQL","PATINDEX({0},{1})"},
+                        {"PatindexSQL","PATINDEX({1},{0})"},
                         {"DateAddSQL","{0} + INTERVAL {1} {2}"},
                         {"DateDiffSQL","DATEDIFF({2},{0},{1})"},
                         {"DatePartSQL","DATEPART({0},{1})"},
@@ -538,7 +544,8 @@ namespace XiaoFeng.Data
                         {"MultiplySQL","{0} * {1}"},
                         {"DivideSQL","{0} / {1}"},
                         {"BetweenSQL","{0} BETWEEN {1} AND {2}"},
-                        {"AvgSQL","AVG({0})" }
+                        {"AvgSQL","AVG({0})" },
+                        {"CastSQL","CAST({0} as {1})" }
                     };
                 }
                 return this._OracleFun;
@@ -580,7 +587,7 @@ namespace XiaoFeng.Data
                         {"NotInSQL","{0} IN ({1})"},
                         {"IndexOf","CHARINDEX({1},{0})"},
                         {"CharIndexSQL","CHARINDEX({1},{0})"},
-                        {"PatindexSQL","PATINDEX({0},{1})"},
+                        {"PatindexSQL","PATINDEX({1},{0})"},
                         {"DateAddSQL","{0} + INTERVAL {1} {2}"},
                         {"DateDiffSQL","DATEDIFF({2},{0},{1})"},
                         {"DatePartSQL","DATEPART({1},{0})"},
@@ -612,7 +619,8 @@ namespace XiaoFeng.Data
                         {"MultiplySQL","{0} * {1}"},
                         {"DivideSQL","{0} / {1}"},
                         {"BetweenSQL","{0} BETWEEN {1} AND {2}"},
-                        {"AvgSQL","AVG({0})" }
+                        {"AvgSQL","AVG({0})" },
+                        {"CastSQL","CAST({0} as {1})" }
                     };
                 }
                 return this._OracleUnFun;
@@ -689,7 +697,8 @@ namespace XiaoFeng.Data
                         {"MultiplySQL","{0} * {1}"},
                         {"DivideSQL","{0} / {1}"},
                         {"BetweenSQL","{0} BETWEEN {1} AND {2}"},
-                        {"AvgSQL","AVG({0})" }
+                        {"AvgSQL","AVG({0})" },
+                        {"CastSQL","CAST({0} as {1})" }
                     };
                 }
                 return this._OledbFun;
@@ -763,7 +772,8 @@ namespace XiaoFeng.Data
                         {"MultiplySQL","{0} * {1}"},
                         {"DivideSQL","{0} / {1}"},
                         {"BetweenSQL","{0} BETWEEN {1} AND {2}"},
-                        {"AvgSQL","AVG({0})" }
+                        {"AvgSQL","AVG({0})" },
+                        {"CastSQL","CAST({0} as {1})" }
                     };
                 }
                 return this._OledbUnFun;
@@ -808,7 +818,7 @@ namespace XiaoFeng.Data
                         {"NotInSQL","{0} NOT IN ({1})"},
                         {"IndexOf","POSITION({1},{0})"},
                         {"CharIndexSQL","POSITION({1},{0})"},
-                        {"PatindexSQL","POSITION({0},{1})"},
+                        {"PatindexSQL","POSITION({1},{0})"},
                         {"DateAddSQL","DATEADD({2},{1},{0})"},
                         {"DateDiffSQL","DATEDIFF({2},{0},{1})"},
                         {"DatePartSQL","DATEPART({0},{1})"},
@@ -840,7 +850,8 @@ namespace XiaoFeng.Data
                         {"MultiplySQL","{0} * {1}"},
                         {"DivideSQL","{0} / {1}"},
                         {"BetweenSQL","{0} BETWEEN {1} AND {2}"},
-                        {"AvgSQL","AVG({0})" }
+                        {"AvgSQL","AVG({0})" },
+                        {"CastSQL","CAST({0} as {1})" }
                     };
                 }
                 return this._DamengFun;
@@ -882,7 +893,7 @@ namespace XiaoFeng.Data
                         {"NotInSQL","{0} IN ({1})"},
                         {"IndexOf","POSITION({1},{0})"},
                         {"CharIndexSQL","POSITION({1},{0})"},
-                        {"PatindexSQL","POSITION({0},{1})"},
+                        {"PatindexSQL","POSITION({1},{0})"},
                         {"DateAddSQL","DATEADD({2},{1},{0})"},
                         {"DateDiffSQL","DATEDIFF({2},{0},{1})"},
                         {"DatePartSQL","DATEPART({1},{0})"},
@@ -904,8 +915,8 @@ namespace XiaoFeng.Data
                         {"RTrimSQL","RTRIM({0})"},
                         {"UpperSQL","UPPER({0})"},
                         {"LowerSQL","LOWER({0})"},
-                        {"CountSQL","COUNT({0})"},
-                        {"MaxSQL","MAX({0})"},
+                        {"CoMaxSQL","MAX({0})"},
+                        {"untSQL","COUNT({0})"},
                         {"MinSQL","MIN({0})"},
                         {"SumSQL","SUM({0})"},
                         {"IsNullSQL","IFNULL({0},{1})"},
@@ -914,7 +925,8 @@ namespace XiaoFeng.Data
                         {"MultiplySQL","{0} * {1}"},
                         {"DivideSQL","{0} / {1}"},
                         {"BetweenSQL","{0} BETWEEN {1} AND {2}"},
-                        {"AvgSQL","AVG({0})" }
+                        {"AvgSQL","AVG({0})" },
+                        {"CastSQL","CAST({0} as {1})" }
                     };
                 }
                 return this._DamengUnFun;

@@ -25,7 +25,7 @@ namespace XiaoFeng.Redis
         /// <param name="dbNum">库索引</param>
         /// <param name="patterns">频道名称</param>
         /// <returns></returns>
-        public List<string> Psubscribe(int? dbNum,params string[] patterns)
+        public List<string> Psubscribe(int? dbNum, params string[] patterns)
         {
             if (patterns.Length == 0) return null;
             return this.Execute(CommandType.PSUBSCRIBE, dbNum, result => (List<string>)result.Value, patterns);

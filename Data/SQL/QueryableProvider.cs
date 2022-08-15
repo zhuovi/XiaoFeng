@@ -186,26 +186,29 @@ namespace XiaoFeng.Data.SQL
             string OrderByString = "";
             if (func.Body is NewExpression ex)
             {
-                ex.Members.Each(a =>
+                var list = (from a in ex.Members select a.Name).ToList();
+                OrderByString += list.Join(",") + " " + orderType;
+                /*ex.Members.Each(a =>
                 {
                     OrderByString += a.Name + " {0},".format(orderType);
-                });
+                });*/
             }
             else if (func.Body is MemberExpression mex)
             {
-                OrderByString += mex.Member.Name + " {0}".format(orderType);
+                OrderByString += mex.Member.Name + " " + orderType;
             }
             else if (func.Body is BinaryExpression bex)
             {
-                OrderByString += this.ExpressionRouter(bex).ReplacePattern(@"(,|$)", " {0}$1".format(orderType));
+                OrderByString += this.ExpressionRouter(bex) + " " + orderType;
             }
             else if (func.Body is NewArrayExpression naex)
             {
-                OrderByString += this.ExpressionRouter(naex).ReplacePattern(@"(,|$)", " {0}$1".format(orderType));
+                OrderByString += this.ExpressionRouter(naex) + " " + orderType;
             }
             else if (func.Body is MethodCallExpression mce)
             {
-                OrderByString += this.ExpressionRouter(mce).ReplacePattern(@"(,|$)", " {0}$1".format(orderType));
+                //OrderByString += this.ExpressionRouter(mce).ReplacePattern(@"(,|$)", " {0}$1".format(orderType));
+                OrderByString += this.ExpressionRouter(mce) + " " + orderType;
             }
             if (OrderByString.IsNullOrEmpty()) return "";
             return OrderByString;
@@ -756,6 +759,13 @@ namespace XiaoFeng.Data.SQL
                             args[0] = _val;
                         }
                     }
+                    else if (SqlFun.IsMatch(@"CAST\("))
+                    {
+                        var b = args.Last();
+                        args.RemoveAt(args.Count - 1);
+                        args.Add(this.GetParamValue(b).ToString());
+                        this.RemoveParam(b);
+                    }
                     if ((DbProviderType.Dameng).HasFlag(this.DataHelper.ProviderType))
                     {
                         args.Each(a =>
@@ -998,6 +1008,13 @@ namespace XiaoFeng.Data.SQL
                             _val = _val.ReplacePattern(@"(@ParamName\d+)", "{$1}").format(this.GetParameters());
                             args[0] = _val;
                         }
+                    }
+                    else if (SqlFun.IsMatch(@"CAST\("))
+                    {
+                        var b = args.Last();
+                        args.RemoveAt(args.Count - 1);
+                        args.Add(this.GetParamValue(b).ToString());
+                        this.RemoveParam(b);
                     }
                     if ((DbProviderType.Dameng).HasFlag(this.DataHelper.ProviderType))
                     {
@@ -1250,6 +1267,13 @@ namespace XiaoFeng.Data.SQL
                             _val = _val.ReplacePattern(@"(@ParamName\d+)", "{$1}").format(this.GetParameters());
                             args[0] = _val;
                         }
+                    }
+                    else if (SqlFun.IsMatch(@"CAST\("))
+                    {
+                        var b = args.Last();
+                        args.RemoveAt(args.Count - 1);
+                        args.Add(this.GetParamValue(b).ToString());
+                        this.RemoveParam(b);
                     }
                     if ((DbProviderType.Dameng).HasFlag(this.DataHelper.ProviderType))
                     {

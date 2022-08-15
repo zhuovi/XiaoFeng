@@ -1,41 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-
+using System.ComponentModel;
 /****************************************************************
-*  Copyright © (2021) www.fayelf.com All Rights Reserved.       *
+*  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
 *  QQ : 7092734                                                 *
 *  Email : jacky@fayelf.com                                     *
 *  Site : www.fayelf.com                                        *
-*  Create Time : 2021-06-20 上午 02:46:50                       *
+*  Create Time : 2022-08-12 16:33:36                            *
 *  Version : v 1.0.0                                            *
 *  CLR Version : 4.0.30319.42000                                *
 *****************************************************************/
 namespace XiaoFeng.Redis
 {
     /// <summary>
-    /// 单位类型
+    /// 结果类型
     /// </summary>
-    public enum UnitType
+    public enum ResultType
     {
         /// <summary>
-        /// 米
+        /// 未知
         /// </summary>
-        M = 0,
+        [Description("未知")] 
+        Unknow = 0,
         /// <summary>
-        /// 千米
+        /// 错误消息
         /// </summary>
-        KM = 1,
+        [Description("错误消息")]
+        Error = '-',
         /// <summary>
-        /// 英尺
+        /// 状态消息
         /// </summary>
-        FT = 2,
+        [Description("状态消息")] 
+        Status = '+',
         /// <summary>
-        /// 英里
+        /// 单条消息
         /// </summary>
-        MI = 3
+        [Description("单条消息")] 
+        Bulk = '$',
+        /// <summary>
+        /// 多条消息
+        /// </summary>
+        [Description("多条消息")] 
+        MultiBulk = '*',
+        /// <summary>
+        /// 整型消息
+        /// </summary>
+        [Description("整型消息")] 
+        Int = ':'
     }
 }

@@ -738,6 +738,17 @@ namespace XiaoFeng.Data.SQL
         public static T As<T>(this T obj, string ColumnName) { return obj; }
         #endregion
 
+        #region 转换类型
+        /// <summary>
+        /// 转换类型
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="obj">对象</param>
+        /// <param name="dataType">目标类型</param>
+        /// <returns></returns>
+        public static T CastSQL<T>(this T obj,string dataType) { return obj; }
+        #endregion
+
         #region SQL参数化调整
         /// <summary>
         /// SQL参数化调整

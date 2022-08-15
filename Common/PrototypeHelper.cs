@@ -856,16 +856,7 @@ namespace XiaoFeng
         /// <param name="_">对象</param>
         /// <param name="value">值</param>
         /// <returns></returns>
-        public static Boolean ContainsValue<TKey, TValue>(this IDictionary<TKey, TValue> _, TValue value = default(TValue))
-        {
-            Boolean _f = false;
-            _.Each(kv =>
-            {
-                if (kv.Value.Equals(value)) { _f = true; return false; }
-                return true;
-            });
-            return _f;
-        }
+        public static Boolean ContainsValue<TKey, TValue>(this IDictionary<TKey, TValue> _, TValue value = default(TValue)) => _.Values.Contains(value);
         /// <summary>
         /// 获取Dictionary值 Value
         /// </summary>
@@ -875,10 +866,7 @@ namespace XiaoFeng
         /// <param name="key">Key 值</param>
         /// <param name="defaultValue">默认值</param>
         /// <returns></returns>
-        public static TValue Value<TKey, TValue>(this IDictionary<TKey, TValue> _, TKey key, TValue defaultValue = default(TValue))
-        {
-            return _.TryGetValue(key, out var val) ? val : defaultValue;
-        }
+        public static TValue Value<TKey, TValue>(this IDictionary<TKey, TValue> _, TKey key, TValue defaultValue = default(TValue)) => _.TryGetValue(key, out var val) ? val : defaultValue;
         /// <summary>
         /// 获取Dictionary值 Key
         /// </summary>
@@ -888,10 +876,7 @@ namespace XiaoFeng
         /// <param name="value">Value</param>
         /// <param name="defaultValue">默认值</param>
         /// <returns></returns>
-        public static TKey GetKey<TKey, TValue>(this IDictionary<TKey, TValue> _, TValue value, TKey defaultValue = default(TKey))
-        {
-            return _.ContainsValue(value) ? _.FindByValue<TKey, TValue>(value).Key : defaultValue;
-        }
+        public static TKey GetKey<TKey, TValue>(this IDictionary<TKey, TValue> _, TValue value, TKey defaultValue = default(TKey)) => _.ContainsValue(value) ? _.FindByValue(value).Key : defaultValue;
         /// <summary>
         /// 获取Dictionary值 Key
         /// </summary>
@@ -899,10 +884,7 @@ namespace XiaoFeng
         /// <param name="_">Dictionary对象</param>
         /// <param name="value">Value</param>
         /// <returns></returns>
-        public static T GetKey<T>(this IDictionary<T, T> _, T value)
-        {
-            return _.GetKey<T, T>(value, value);
-        }
+        public static T GetKey<T>(this IDictionary<T, T> _, T value) => _.GetKey(value, value);
         /// <summary>
         /// 获取Dictionary值 KeyValuePair
         /// </summary>
@@ -932,9 +914,9 @@ namespace XiaoFeng
         public static string ToQuery<TKey, TValue>(this IDictionary<TKey, TValue> _)
         {
             if (_ == null || _.Count == 0) return String.Empty;
-            string __ = "";
-            _.Each(KValue => __ += "{0}={1}&".format(KValue.Key, KValue.Value));
-            return __.Trim('&');
+            var list = new List<string>();
+            _.Each(KValue => list.Add($"{KValue.Key}={KValue.Value}"));
+            return list.Join("&");
         }
         #endregion
 

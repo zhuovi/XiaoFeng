@@ -25,7 +25,7 @@ namespace XiaoFeng.Redis
     /// $第N个参数字节长度 CR LF
     /// 第N个参数数据 CR LF
     /// </summary>
-    public class CommandType:IEquatable<CommandType>
+    public class CommandType : IEquatable<CommandType>
     {
         #region 构造器
         /// <summary>
@@ -664,11 +664,11 @@ namespace XiaoFeng.Redis
         /// <summary>
         /// 创建消费者组
         /// </summary>
-        public static CommandType XGROUPCREATE => new CommandType("XGROUP CREATE", "XGROUP [CREATE key groupname id-or-$] [SETID key groupname id-or-$] [DESTROY key groupname] [DELCONSUMER key groupname consumername]",new string[] { "XGROUP", "CREATE" });
+        public static CommandType XGROUPCREATE => new CommandType("XGROUP CREATE", "XGROUP [CREATE key groupname id-or-$] [SETID key groupname id-or-$] [DESTROY key groupname] [DELCONSUMER key groupname consumername]", new string[] { "XGROUP", "CREATE" });
         /// <summary>
         /// 读取消费者组中的消息
         /// </summary>
-        public static CommandType XREADGROUPGROUP => new CommandType("XREADGROUP GROUP", "XREADGROUP GROUP group consumer [COUNT count] [BLOCK milliseconds] [NOACK] STREAMS key [key ...] ID [ID ...]",new string[] { "XREADGROUP", "GROUP" });
+        public static CommandType XREADGROUPGROUP => new CommandType("XREADGROUP GROUP", "XREADGROUP GROUP group consumer [COUNT count] [BLOCK milliseconds] [NOACK] STREAMS key [key ...] ID [ID ...]", new string[] { "XREADGROUP", "GROUP" });
         /// <summary>
         /// 将消息标记为"已处理"
         /// </summary>
@@ -694,7 +694,7 @@ namespace XiaoFeng.Redis
         /// </summary>
         public static CommandType XCLAIM => new CommandType("XCLAIM", "");
         /// <summary>
-        /// 查看流和消费者组的相关信息；
+        /// 查看流和消费者组的相关信息
         /// </summary>
         public static CommandType XINFO => new CommandType("XINFO", "");
         /// <summary>
@@ -803,7 +803,7 @@ namespace XiaoFeng.Redis
         /// 隐式转换
         /// </summary>
         /// <param name="method">请求类型</param>
-        public static implicit operator CommandType(string method) => new CommandType(method,"");
+        public static implicit operator CommandType(string method) => new CommandType(method, "");
         /// <summary>
         /// 是否相等
         /// </summary>
