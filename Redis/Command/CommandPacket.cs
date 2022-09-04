@@ -20,7 +20,7 @@ namespace XiaoFeng.Redis
     /// <summary>
     /// 命令请求类
     /// </summary>
-    public class Command
+    public class CommandPacket
     {
         #region 构造器
         /// <summary>
@@ -28,7 +28,7 @@ namespace XiaoFeng.Redis
         /// </summary>
         /// <param name="commandType">命令类型</param>
         /// <param name="datas">参数集</param>
-        public Command(CommandType commandType, params object[] datas)
+        public CommandPacket(CommandType commandType, params object[] datas)
         {
             this.CommandType = commandType;
             this.Datas = datas;
@@ -57,9 +57,10 @@ namespace XiaoFeng.Redis
         /// <returns></returns>
         public override string ToString()
         {
-            var line = $"*{this.Datas.Length + (this.CommandType.Commands != null && this.CommandType.Commands.Length > 0 ? this.CommandType.Commands.Length : 1)}\r\n";
-            if(this.CommandType.Commands != null && this.CommandType.Commands.Length > 0)
-                this.CommandType.Commands.Each(a => line += $"${a.Length}\r\n{a}\r\n");
+            var SubCommands = this.CommandType.Commands;
+            var line = $"*{this.Datas.Length + (SubCommands != null && SubCommands.Length > 0 ? SubCommands.Length : 1)}\r\n";
+            if(SubCommands != null && SubCommands.Length > 0)
+                SubCommands.Each(a => line += $"${a.Length}\r\n{a}\r\n");
             else
                 line += $"${this.CommandType.ToString().Length}\r\n{this.CommandType}\r\n";
             this.Datas.Each(d => line += $"${Encoding.UTF8.GetByteCount(d.ToString())}\r\n{d}\r\n");
@@ -69,6 +70,28 @@ namespace XiaoFeng.Redis
         /// 命令行字节组
         /// </summary>
         public byte[] ToBytes() => this.ToString().GetBytes();
+        /// <summary>
+        /// 发送命令
+        /// </summary>
+        /// <param name="stream">流</param>
+        public void SendCommand(NetworkStream stream)
+        {
+            if (stream == null || !stream.CanWrite) return;
+            var lines = this.ToBytes();
+            stream.Write(lines, 0, lines.Length);
+            stream.Flush();
+        }
+        /// <summary>
+        /// 发送命令
+        /// </summary>
+        /// <param name="stream">流</param>
+        public async Task SendCommandAsync(NetworkStream stream)
+        {
+            if (stream == null || !stream.CanWrite) return;
+            var lines = this.ToBytes();
+            await stream.WriteAsync(lines, 0, lines.Length).ConfigureAwait(false);
+            await stream.FlushAsync().ConfigureAwait(false);
+        }
         #endregion
     }
 }

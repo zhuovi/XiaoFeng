@@ -132,8 +132,8 @@ namespace XiaoFeng.Collections
                 new Task(s =>
                 {
                     var stm = s as NetworkStream;
-                    while (true)
-                    {
+                    //while (true)
+                    //{
                         if (stream.DataAvailable)
                         {
                             var bs = new MemoryStream();
@@ -146,9 +146,9 @@ namespace XiaoFeng.Collections
                                 count = stream.DataAvailable ? stream.Read(bytes, 0, bytes.Length) : 0;
                             }
                             callback.Invoke(bs.ToArray());
-                            break;
+                            //break;
                         }
-                    }
+                    //}
                 }, stream).Start();
             }
             catch (Exception ex)
