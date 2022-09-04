@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using XiaoFeng.Json;
 
 /****************************************************************
 *  Copyright © (2021) www.fayelf.com All Rights Reserved.       *
@@ -25,7 +26,7 @@ namespace XiaoFeng.Redis
     /// $第N个参数字节长度 CR LF
     /// 第N个参数数据 CR LF
     /// </summary>
-    public class CommandType : IEquatable<CommandType>
+    public class CommandType : IEquatable<CommandType>, IComparable,IComparable<CommandType>, IFormattable
     {
         #region 构造器
         /// <summary>
@@ -569,7 +570,7 @@ namespace XiaoFeng.Redis
         public static CommandType WATCH => new CommandType("WATCH", "WATCH key [key ...]");
         #endregion
 
-        #region GEO
+        #region GEO 地理空间位置
         /// <summary>
         /// 用于存储指定的地理空间位置，可以将一个或多个经度(longitude)、纬度(latitude)、位置名称(member)添加到指定的 key 中
         /// </summary>
@@ -627,7 +628,7 @@ namespace XiaoFeng.Redis
         public static CommandType SELECT => new CommandType("SELECT", "SELECT index");
         #endregion
 
-        #region Redis Stream
+        #region Redis 消息队列
 
         #region 消息队列相关命令
         /// <summary>
@@ -672,39 +673,39 @@ namespace XiaoFeng.Redis
         /// <summary>
         /// 将消息标记为"已处理"
         /// </summary>
-        public static CommandType XACK => new CommandType("XACK", "");
+        public static CommandType XACK => new CommandType("XACK", "XACK key group id [id ...]");
         /// <summary>
         /// 为消费者组设置新的最后递送消息ID
         /// </summary>
-        public static CommandType XGROUPSETID => new CommandType("XGROUP SETID", "", new string[] { "XGROUP", "SETID" });
+        public static CommandType XGROUPSETID => new CommandType("XGROUP SETID", "XGROUP SETID key groupname id-or-$", new string[] { "XGROUP", "SETID" });
         /// <summary>
         /// 删除消费者
         /// </summary>
-        public static CommandType XGROUPDELCONSUMER => new CommandType("XGROUP DELCONSUMER", "", new string[] { "XGROUP", "DELCONSUMER" });
+        public static CommandType XGROUPDELCONSUMER => new CommandType("XGROUP DELCONSUMER", "XGROUP DELCONSUMER key groupname consumername", new string[] { "XGROUP", "DELCONSUMER" });
         /// <summary>
         /// 删除消费者组
         /// </summary>
-        public static CommandType XGROUPDESTROY => new CommandType("XGROUP DESTROY", "", new string[] { "XGROUP", "DESTROY" });
+        public static CommandType XGROUPDESTROY => new CommandType("XGROUP DESTROY", "XGROUP DESTROY key groupname", new string[] { "XGROUP", "DESTROY" });
         /// <summary>
         /// 显示待处理消息的相关信息
         /// </summary>
-        public static CommandType XPENDING => new CommandType("XPENDING", "");
+        public static CommandType XPENDING => new CommandType("XPENDING", "XPENDING key group [[IDLE min-idle-time] start end count [consumer]]");
         /// <summary>
         /// 转移消息的归属权
         /// </summary>
-        public static CommandType XCLAIM => new CommandType("XCLAIM", "");
+        public static CommandType XCLAIM => new CommandType("XCLAIM", "XCLAIM key group consumer min-idle-time id [id ...] [IDLE ms] [TIME unix-time-milliseconds] [RETRYCOUNT count] [FORCE] [JUSTID]");
         /// <summary>
         /// 查看流和消费者组的相关信息
         /// </summary>
-        public static CommandType XINFO => new CommandType("XINFO", "");
+        public static CommandType XINFOCONSUMERS => new CommandType("XINFO CONSUMERS", "XINFO CONSUMERS key groupname", new string[] { "XINFO", "CONSUMERS" });
         /// <summary>
         /// 打印消费者组的信息
         /// </summary>
-        public static CommandType XINFOGROUPS => new CommandType("XINFO GROUPS", "", new string[] { "XINFO", "GROUPS" });
+        public static CommandType XINFOGROUPS => new CommandType("XINFO GROUPS", "XINFO GROUPS key", new string[] { "XINFO", "GROUPS" });
         /// <summary>
         /// 打印流信息
         /// </summary>
-        public static CommandType XINFOSTREAM => new CommandType("XINFO STREAM", "", new string[] { "XINFO", "STREAM" });
+        public static CommandType XINFOSTREAM => new CommandType("XINFO STREAM", "XINFO STREAM key [FULL [COUNT count]]", new string[] { "XINFO", "STREAM" });
         #endregion
 
         #endregion
@@ -825,6 +826,48 @@ namespace XiaoFeng.Redis
         /// </summary>
         /// <returns></returns>
         public override string ToString() => this.Name;
+        /// <summary>
+        /// 比较器
+        /// </summary>
+        /// <param name="obj">对象</param>
+        /// <returns></returns>
+        public int CompareTo(object obj)
+        {
+            if (obj == null) return 1;
+            if (obj is CommandType ct && this.Name == ct.Name && this.Format == ct.Format && this.Commands== ct.Commands) return 0;
+            return -1;
+        }
+        /// <summary>
+        /// 比较器
+        /// </summary>
+        /// <param name="other">对象</param>
+        /// <returns></returns>
+        public int CompareTo(CommandType other)
+        {
+            if (other == null) return 1;
+            if (this.Name == other.Name && this.Format == other.Format && this.Commands == other.Commands) return 0;
+            return -1;
+        }
+        /// <summary>
+        /// 转换成字符串
+        /// </summary>
+        /// <param name="format">格式</param>
+        /// <param name="formatProvider">格式驱动</param>
+        /// <returns></returns>
+        public string ToString(string format, IFormatProvider formatProvider)
+        {
+            if (format.IsNullOrEmpty()) return this.ToString();
+            var val = this.Name.ToString(formatProvider);
+            switch (format.ToUpper())
+            {
+                case "UPPER":
+                    return val.ToUpper();
+                case "LOWER":
+                    return val.ToLower();
+                default:
+                    return val;
+            }
+        }
         #endregion
     }
 }

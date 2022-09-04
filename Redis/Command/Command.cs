@@ -57,11 +57,12 @@ namespace XiaoFeng.Redis
         /// <returns></returns>
         public override string ToString()
         {
-            var line = $"*{this.Datas.Length + 1}\r\n${this.CommandType.ToString().Length}\r\n{this.CommandType}\r\n";
-            this.Datas.Each(d =>
-            {
-                line += $"${Encoding.UTF8.GetByteCount(d.ToString())}\r\n{d}\r\n";
-            });
+            var line = $"*{this.Datas.Length + (this.CommandType.Commands != null && this.CommandType.Commands.Length > 0 ? this.CommandType.Commands.Length : 1)}\r\n";
+            if(this.CommandType.Commands != null && this.CommandType.Commands.Length > 0)
+                this.CommandType.Commands.Each(a => line += $"${a.Length}\r\n{a}\r\n");
+            else
+                line += $"${this.CommandType.ToString().Length}\r\n{this.CommandType}\r\n";
+            this.Datas.Each(d => line += $"${Encoding.UTF8.GetByteCount(d.ToString())}\r\n{d}\r\n");
             return line;
         }
         /// <summary>

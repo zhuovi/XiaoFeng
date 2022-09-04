@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using XiaoFeng.Redis;
@@ -58,20 +59,6 @@ namespace XiaoFeng.Redis
 
         #region 方法
 
-        #region 订阅一个或多个符合给定模式的频道
-        /// <summary>
-        /// 订阅一个或多个符合给定模式的频道
-        /// </summary>
-        /// <param name="dbNum">库索引</param>
-        /// <param name="patterns">频道名称</param>
-        /// <returns>返回订阅过的频道</returns>
-        public List<string> Psubscribe(int? dbNum, params string[] patterns)
-        {
-            if (patterns.Length == 0) return null;
-            return Redis.Psubscribe(dbNum, patterns);
-        }
-        #endregion
-
         #region 订阅频道
         /// <summary>
         /// 订阅频道
@@ -108,9 +95,8 @@ namespace XiaoFeng.Redis
                                 var count = await Redis.Stream.ReadAsync(bytes, 0, bytes.Length);
                                 ms.Write(bytes, 0, count);
                             } while (Redis.Stream.DataAvailable);
-                            var msg = ms.ToArray().GetString();
-
-                            this.OnMessage?.Invoke(channel.Join(","), ms.ToArray().GetString());
+                            var reader = new RedisReader(CommandType.SUBSCRIBE, ms.ToArray());
+                            this.OnMessage?.Invoke(channel.Join(","), reader.OK ? reader.Value : new RedisValue());
                         }
                        await Task.Delay(1000);
                     }
@@ -173,19 +159,46 @@ namespace XiaoFeng.Redis
         /// <summary>
         /// 查看订阅与发布系统状态
         /// </summary>
+        /// <param name="cmd">子命令</param>
         /// <param name="channel">频道</param>
         /// <returns></returns>
-        public List<string> PubSub(params string[] channel)
+        public RedisReader PubSub(PubSubCommand cmd, params string[] channel)
         {
             if (channel.IsNullOrEmpty())
             {
                 this.OnError.Invoke(channel.Join(","), "频道信息出错.");
                 return null;
             }
-            return Redis.Execute(CommandType.PUBSUB, null, result =>
-            {
-                return result.OK ? (List<string>)result.Value : null;
-            }, channel);
+            return Redis.Execute(CommandType.PUBSUB, null, result => result, new object[] { cmd.ToString() }.Concat(channel).ToArray());
+        }
+        /// <summary>
+        /// 查询系统中符合模式的频道信息，pattern为空，则查询系统中所有存在的频道
+        /// </summary>
+        /// <param name="pattern">模式</param>
+        /// <returns></returns>
+        public List<string> PubsubChannels(params string[] pattern)
+        {
+            var reader = this.PubSub(PubSubCommand.CHANNELS, pattern);
+            return reader.OK ? reader.Value.ToList<string>() : null;
+        }
+        /// <summary>
+        /// 查询一个或多个频道的订阅数
+        /// </summary>
+        /// <param name="channels">频道</param>
+        /// <returns></returns>
+        public Dictionary<string,int> PubsubNum(params string[] channels)
+        {
+            var reader = this.PubSub(PubSubCommand.NUMSUB, channels);
+            return reader.OK ? reader.Value.ToDictionary<string, int>() : new Dictionary<string, int>();
+        }
+        /// <summary>
+        /// 查询当前客户端订阅了多少频道
+        /// </summary>
+        /// <returns></returns>
+        public List<string> PubsubPats()
+        {
+            var reader = this.PubSub(PubSubCommand.NUMPAT);
+            return reader.OK ? reader.Value.ToList<string>() : null;
         }
         #endregion
 

@@ -28,11 +28,11 @@ namespace XiaoFeng.Redis
         /// <param name="key">key</param>
         /// <param name="dbNum">库索引</param>
         /// <param name="elements">元素</param>
-        /// <returns></returns>
+        /// <returns>成功状态</returns>
         public Boolean SetHyperLogLog(string key, int? dbNum, params object[] elements)
         {
             if (key.IsNullOrEmpty()) return false;
-            return this.Execute(CommandType.PFADD, dbNum, result => result.OK && result.Value.ToString() == "1", new object[] { key }.Concat(elements).ToArray());
+            return this.Execute(CommandType.PFADD, dbNum, result => result.Value.ToInt() > 0, new object[] { key }.Concat(elements).ToArray());
         }
         /// <summary>
         /// 添加指定元素到 HyperLogLog 中 异步
@@ -40,32 +40,32 @@ namespace XiaoFeng.Redis
         /// <param name="key">key</param>
         /// <param name="dbNum">库索引</param>
         /// <param name="elements">元素</param>
-        /// <returns></returns>
+        /// <returns>成功状态</returns>
         public async Task<Boolean> SetHyperLogLogAsync(string key, int? dbNum, params object[] elements)
         {
             if (key.IsNullOrEmpty()) return false;
-            return await this.ExecuteAsync(CommandType.PFADD, dbNum, async result => await Task.FromResult(result.OK && result.Value.ToString() == "1"), new object[] { key }.Concat(elements).ToArray());
+            return await this.ExecuteAsync(CommandType.PFADD, dbNum, async result => await Task.FromResult(result.Value.ToInt() > 0), new object[] { key }.Concat(elements).ToArray());
         }
         /// <summary>
         /// 添加指定元素到 HyperLogLog 中
         /// </summary>
         /// <param name="key">key</param>
         /// <param name="elements">元素</param>
-        /// <returns></returns>
+        /// <returns>成功状态</returns>
         public Boolean SetHyperLogLog(string key, params object[] elements) => this.SetHyperLogLog(key, null, elements);
         /// <summary>
         /// 添加指定元素到 HyperLogLog 中 异步
         /// </summary>
         /// <param name="key">key</param>
         /// <param name="elements">元素</param>
-        /// <returns></returns>
+        /// <returns>成功状态</returns>
         public async Task<Boolean> SetHyperLogLogAsync(string key, params object[] elements) => await this.SetHyperLogLogAsync(key, null, elements);
         /// <summary>
         /// 获取基数估算值
         /// </summary>
         /// <param name="key">key</param>
         /// <param name="dbNum">库索引</param>
-        /// <returns></returns>
+        /// <returns>估算值</returns>
         public int GetHyperLogLog(string key, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return -1;
@@ -76,7 +76,7 @@ namespace XiaoFeng.Redis
         /// </summary>
         /// <param name="key">key</param>
         /// <param name="dbNum">库索引</param>
-        /// <returns></returns>
+        /// <returns>估算值</returns>
         public async Task<int> GetHyperLogLogAsync(string key, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return -1;
@@ -88,20 +88,19 @@ namespace XiaoFeng.Redis
         /// <param name="destKey">目的key</param>
         /// <param name="dbNum">库索引</param>
         /// <param name="sourceKey">源key</param>
-        /// <returns></returns>
+        /// <returns>成功状态</returns>
         public Boolean MergeHyperLogLog(string destKey, int? dbNum, params object[] sourceKey)
         {
             if (destKey.IsNullOrEmpty()) return false;
             return this.Execute(CommandType.PFMERGE, dbNum, result => result.OK, new object[] { destKey }.Concat(sourceKey).ToArray());
         }
-
         /// <summary>
         /// 将多个 HyperLogLog 合并为一个 HyperLogLog 异步
         /// </summary>
         /// <param name="destKey">目的key</param>
         /// <param name="dbNum">库索引</param>
         /// <param name="sourceKey">源key</param>
-        /// <returns></returns>
+        /// <returns>成功状态</returns>
         public async Task<Boolean> MergeHyperLogLogAsync(string destKey, int? dbNum, params object[] sourceKey)
         {
             if (destKey.IsNullOrEmpty()) return false;
@@ -112,14 +111,14 @@ namespace XiaoFeng.Redis
         /// </summary>
         /// <param name="destKey">目的key</param>
         /// <param name="sourceKey">源key</param>
-        /// <returns></returns>
+        /// <returns>成功状态</returns>
         public Boolean MergeHyperLogLog(string destKey, params object[] sourceKey) => this.MergeHyperLogLog(destKey, null, sourceKey);
         /// <summary>
         /// 将多个 HyperLogLog 合并为一个 HyperLogLog 异步
         /// </summary>
         /// <param name="destKey">目的key</param>
         /// <param name="sourceKey">源key</param>
-        /// <returns></returns>
+        /// <returns>成功状态</returns>
         public async Task<Boolean> MergeHyperLogLogAsync(string destKey, params object[] sourceKey) => await this.MergeHyperLogLogAsync(destKey, null, sourceKey);
         #endregion
     }

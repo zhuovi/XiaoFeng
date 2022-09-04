@@ -85,8 +85,8 @@ namespace XiaoFeng.Redis
                 this.MaxPool = connectionString.GetMatch(@"(^|;)\s*(pool)\s*=\s*(?<a>[^;]+)\s*(;|$)").ToCast<int>();
                 if (this.MaxPool > 0) this.IsPool = true;
                 this.ConnectionTimeout = connectionString.GetMatch(@"(^|;)\s*(connectiontimeout)\s*=\s*(?<a>[^;]+)\s*(;|$)").ToCast<int>();
-                this.ReadTimeout = connectionString.GetMatch(@"(^|;)\s*(readtimeout)\s*=\s*(?<a>[^;]+)\s*(;|$)").ToCast<int>();
-                this.CommandTimeOut = connectionString.GetMatch(@"(^|;)\s*(commandtimeout)\s*=\s*(?<a>[^;]+)\s*(;|$)").ToCast<int>();
+                this.ReadTimeout = connectionString.GetMatch(@"(^|;)\s*(readtimeout)\s*=\s*(?<a>[^;]+)\s*(;|$)").ToCast<int>(10000);
+                this.CommandTimeOut = connectionString.GetMatch(@"(^|;)\s*(commandtimeout)\s*=\s*(?<a>[^;]+)\s*(;|$)").ToCast<int>(10000);
             }
             else
             {
@@ -105,12 +105,12 @@ namespace XiaoFeng.Redis
         /// 主机
         /// </summary>
         [Description("主机")]
-        public string Host { get; set; }
+        public string Host { get; set; } = "127.0.0.1";
         /// <summary>
         /// 端口
         /// </summary>
         [Description("端口")]
-        public int Port { get; set; }
+        public int Port { get; set; } = 6379;
         /// <summary>
         /// 密码
         /// </summary>
@@ -124,13 +124,13 @@ namespace XiaoFeng.Redis
         /// <summary>
         /// 连接超时时间
         /// </summary>
-        [Description("连接超时时间")] 
-        public int ConnectionTimeout { get; set; }
+        [Description("连接超时时间")]
+        public int ConnectionTimeout { get; set; } = 10000;
         /// <summary>
         /// 读取数据超时时间
         /// </summary>
         [Description("读取数据超时时间")] 
-        public int ReadTimeout { get; set; }
+        public int ReadTimeout { get; set; } = 10000;
         #endregion
 
         #region 方法

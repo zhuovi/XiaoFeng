@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using XiaoFeng.Data;
 
@@ -153,6 +156,24 @@ namespace XiaoFeng.Redis
                 });
             }
         }
+        private Subscribe _PubSub;
+        /// <summary>
+        /// 订阅
+        /// </summary>
+        public Subscribe PubSub
+        {
+            get
+            {
+                if (_PubSub == null)
+                    _PubSub = new Subscribe(this);
+                return _PubSub;
+            }
+            set => _PubSub = value;
+        }
+        /// <summary>
+        /// 线程同步信号
+        /// </summary>
+        private ManualResetEventSlim Manual = new ManualResetEventSlim(true);
         #endregion
 
         #region 方法
@@ -162,12 +183,12 @@ namespace XiaoFeng.Redis
         /// 创建连接
         /// </summary>
         /// <returns></returns>
-        public Boolean CreateConn()
+        public NetworkStream CreateConn()
         {
-           //return XiaoFeng.Threading.Synchronized.Run(() =>
+            //return XiaoFeng.Threading.Synchronized.Run(() =>
             {
-                if (SocketClient != null && SocketClient.Connected) return true;
-                SocketClient = new Socket(this.AddressFamily, this.SocketType, this.ProtocolType)
+                //if (SocketClient != null && SocketClient.Connected) return true;
+                var socket = new Socket(this.AddressFamily, this.SocketType, this.ProtocolType)
                 {
                     SendTimeout = this.SendTimeout,
                     ReceiveTimeout = this.ReceiveTimeout
@@ -176,19 +197,29 @@ namespace XiaoFeng.Redis
                 if (this.ConnConfig.Port == 0) this.ConnConfig.Port = 6379;
                 try
                 {
-                    SocketClient.Connect(this.ConnConfig.Host, this.ConnConfig.Port);
-                    Stream = new NetworkStream(SocketClient)
+                    socket.Connect(this.ConnConfig.Host, this.ConnConfig.Port);
+                    var stream = new NetworkStream(socket)
                     {
                         ReadTimeout = this.ReceiveTimeout,
                         WriteTimeout = this.SendTimeout
                     };
                     this.IsConnected = true;
-                    return (Boolean)(this.IsConnected = this.ConnConfig.Password.IsNullOrEmpty() || this.Auth(this.ConnConfig.Password));
+                    if (this.ConnConfig.Password.IsNotNullOrEmpty())
+                    {
+                        //this.Auth(this.ConnConfig.Password);
+                        var line = new Command(CommandType.AUTH, this.ConnConfig.Password).ToBytes();
+                        stream.Write(line, 0, line.Length);
+                        stream.Flush();
+                        var result = this.GetRedisResult(CommandType.AUTH, stream, new object[] { this.ConnConfig.Password });
+                        if (!result.OK)
+                            throw new Exception("密码错误.");
+                    }
+                    return stream;
                 }
                 catch (SocketException ex)
                 {
                     LogHelper.Error(ex, "SOCKET创建失败.");
-                    return (Boolean)(this.IsConnected = false);
+                    return null;
                 }
             }//);
         }
@@ -196,12 +227,12 @@ namespace XiaoFeng.Redis
         /// 创建连接
         /// </summary>
         /// <returns></returns>
-        public async Task<Boolean> CreateConnAsync()
+        public async Task<NetworkStream> CreateConnAsync()
         {
             //return XiaoFeng.Threading.Synchronized.Run(() =>
             {
-                if (SocketClient != null && SocketClient.Connected) return true;
-                SocketClient = new Socket(this.AddressFamily, this.SocketType, this.ProtocolType)
+                //if (SocketClient != null && SocketClient.Connected) return true;
+                var socket = new Socket(this.AddressFamily, this.SocketType, this.ProtocolType)
                 {
                     SendTimeout = this.SendTimeout,
                     ReceiveTimeout = this.ReceiveTimeout
@@ -210,19 +241,25 @@ namespace XiaoFeng.Redis
                 if (this.ConnConfig.Port == 0) this.ConnConfig.Port = 6379;
                 try
                 {
-                   await  SocketClient.ConnectAsync(this.ConnConfig.Host, this.ConnConfig.Port);
-                    Stream = new NetworkStream(SocketClient)
-                    {
-                        ReadTimeout = this.ReceiveTimeout,
-                        WriteTimeout = this.SendTimeout
-                    };
+                    await SocketClient.ConnectAsync(this.ConnConfig.Host, this.ConnConfig.Port);
+                    var stream = new NetworkStream(socket);
                     this.IsConnected = true;
-                    return (Boolean)(this.IsConnected = this.ConnConfig.Password.IsNullOrEmpty() || this.Auth(this.ConnConfig.Password));
+                    if (this.ConnConfig.Password.IsNotNullOrEmpty())
+                    {
+                        //this.Auth(this.ConnConfig.Password);
+                        var line = new Command(CommandType.AUTH, this.ConnConfig.Password).ToBytes();
+                        await stream.WriteAsync(line, 0, line.Length);
+                        await stream.FlushAsync();
+                        var result = this.GetRedisResult(CommandType.AUTH, stream, new object[] { this.ConnConfig.Password });
+                        if (!result.OK)
+                            throw new Exception("密码错误.");
+                    }
+                    return stream;
                 }
                 catch (SocketException ex)
                 {
                     LogHelper.Error(ex, "SOCKET创建失败.");
-                    return (Boolean)(this.IsConnected = false);
+                    return null;
                 }
             }//);
         }
@@ -258,25 +295,27 @@ namespace XiaoFeng.Redis
         /// 获取响应
         /// </summary>
         /// <param name="commandType">命令</param>
+        /// <param name="stream">网络流</param>
+        /// <param name="args">参数</param>
         /// <returns>响应结果</returns>
-        public CommandResult GetCommandResult(CommandType commandType)
+        public RedisReader GetRedisResult(CommandType commandType,NetworkStream stream, object[] args=null)
         {
             var ms = new MemoryStream();
             var num = 0;
             var length = 0;
-            while (this.IsConnected.HasValue && this.IsConnected.Value)
+            //while (this.IsConnected.HasValue && this.IsConnected.Value)
             {
-                if (Stream.DataAvailable)
+                if (stream.DataAvailable)
                 {
                     var bytes = new byte[MemorySize];
                     do
                     {
                         Array.Clear(bytes, 0, MemorySize);
-                        var count = Stream.Read(bytes, 0, bytes.Length);
+                        var count = stream.Read(bytes, 0, bytes.Length);
                         ms.Write(bytes, 0, count);
 
-                    } while (Stream.DataAvailable);
-                    num++;
+                    } while (stream.DataAvailable);
+                    /*num++;
                     if (commandType == CommandType.HGET)
                     {
                         if (num == 1)
@@ -287,11 +326,14 @@ namespace XiaoFeng.Redis
                             else break;
                         }
                         if (length == ms.Length - length.ToString().Length - 5) break;
-                    }else
-                        break;
+                    }
+                    else
+                        break;*/
                 }
+                //else
+                    //break;
             }
-            return new CommandResult(commandType, ms.ToArray());
+            return new RedisReader(commandType, ms.ToArray(), args);
         }
         #endregion
 
@@ -305,21 +347,35 @@ namespace XiaoFeng.Redis
         /// <param name="func">回调方法</param>
         /// <param name="args">参数集</param>
         /// <returns>执行结果</returns>
-        public T Execute<T>(CommandType commandType, int? dbNum, Func<CommandResult, T> func, params object[] args)
+        public T Execute<T>(CommandType commandType, int? dbNum, Func<RedisReader, T> func, params object[] args)
         {
             if (this.ConnConfig.IsPool)
             {
-                return _Pool.Execute(commandType, dbNum, func, args);
+                var result = _Pool.Execute(commandType, dbNum, func, args);
+                Manual.Set();
+                return result;
             }
             else
             {
-                if (!this.IsConnected.HasValue || !this.IsConnected.Value) this.CreateConn();
+                //if (!this.IsConnected.HasValue || !this.IsConnected.Value) this.CreateConn();
+                var stream = this.CreateConn();
                 if (!this.IsConnected.Value) return default(T);
-                if (dbNum.HasValue && dbNum.Value > -1) this.Select(dbNum.Value);
+                if (dbNum.HasValue && dbNum.Value > -1)
+                {
+                    //this.Select(dbNum.Value);
+                    var lines = new Command(CommandType.SELECT, dbNum.Value).ToBytes();
+                    stream.Write(lines, 0, lines.Length);
+                    stream.Flush();
+                    var results = this.GetRedisResult(CommandType.AUTH, stream, new object[] { dbNum.Value });
+                    if (!results.OK)
+                        throw new Exception("选库出错.");
+                }
                 var line = new Command(commandType, args).ToBytes();
-                Stream.Write(line, 0, line.Length);
-                Stream.Flush();
-                return func.Invoke(this.GetCommandResult(commandType));
+                stream.Write(line, 0, line.Length);
+                stream.Flush();
+                var result = func.Invoke(this.GetRedisResult(commandType,stream, args));
+                stream.Close();
+                return result;
             }
         }
         /// <summary>
@@ -331,7 +387,7 @@ namespace XiaoFeng.Redis
         /// <param name="func">回调方法</param>
         /// <param name="args">参数集</param>
         /// <returns>执行结果</returns>
-        public async Task<T> ExecuteAsync<T>(CommandType commandType, int? dbNum, Func<CommandResult, Task<T>> func, params object[] args)
+        public async Task<T> ExecuteAsync<T>(CommandType commandType, int? dbNum, Func<RedisReader, Task<T>> func, params object[] args)
         {
             if (this.ConnConfig.IsPool)
             {
@@ -339,13 +395,22 @@ namespace XiaoFeng.Redis
             }
             else
             {
-                if (!this.IsConnected.HasValue) await this.CreateConnAsync();
+                var stream = await this.CreateConnAsync();
                 if (!this.IsConnected.Value) return default(T);
-                if (dbNum.HasValue && dbNum.Value > -1) await this.SelectAsync(dbNum.Value);
+                if (dbNum.HasValue && dbNum.Value > -1)
+                {
+                    //this.Select(dbNum.Value);
+                    var lines = new Command(CommandType.SELECT, dbNum.Value).ToBytes();
+                    await stream.WriteAsync(lines, 0, lines.Length);
+                    await stream.FlushAsync();
+                    var results = this.GetRedisResult(CommandType.AUTH, stream, new object[] { dbNum.Value });
+                    if (!results.OK)
+                        throw new Exception("选库出错.");
+                }
                 var line = new Command(commandType, args).ToBytes();
                 await Stream.WriteAsync(line, 0, line.Length).ConfigureAwait(false);
                 await Stream.FlushAsync().ConfigureAwait(false);
-                return await func.Invoke(this.GetCommandResult(commandType));
+                return await func.Invoke(this.GetRedisResult(commandType,null, args));
             }
         }
         #endregion
@@ -440,14 +505,6 @@ namespace XiaoFeng.Redis
         public async Task<Boolean> SelectAsync(int dbNum = 0) => await this.ExecuteAsync(CommandType.SELECT, null, result => Task.FromResult(result.OK), Math.Abs(dbNum));
         #endregion
 
-        #endregion
-
-        #region 订阅发布
-
-        #endregion
-
-        #region Stream
-        
         #endregion
 
         #region 获取值

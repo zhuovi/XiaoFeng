@@ -1726,7 +1726,11 @@ namespace XiaoFeng
 #endif
             else if (o is Json.JsonValue JValue)
             {
-                return JValue.GetValue(targetType);
+                return JValue.ToObject(targetType);
+            }
+            else if(o is Redis.RedisValue RValue)
+            {
+                return RValue.ToObject(targetType);
             }
             else if (o is Xml.XmlValue XValue)
             {

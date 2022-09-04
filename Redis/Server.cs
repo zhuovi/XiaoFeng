@@ -25,35 +25,33 @@ namespace XiaoFeng.Redis
         /// <summary>
         /// 异步执行一个 AOF（AppendOnly File） 文件重写操作。
         /// </summary>
-        public void BackgroundRewriteAOF() => this.Execute(CommandType.BGREWRITEAOF, null, result => result.OK);
+        public Boolean BackgroundRewriteAOF() => this.Execute(CommandType.BGREWRITEAOF, null, result => result.OK);
         /// <summary>
         /// 后台异步保存当前数据库的数据到磁盘。
         /// </summary>
         /// <param name="dbNum">库索引</param>
-        public void BackgroundSave(int? dbNum = null) => this.Execute(CommandType.BGSAVE, dbNum, result => result.OK);
+        public Boolean BackgroundSave(int? dbNum = null) => this.Execute(CommandType.BGSAVE, dbNum, result => result.OK);
         /// <summary>
         /// 客户端命令
         /// </summary>
-        /// <typeparam name="T">类型</typeparam>
         /// <param name="key">key</param>
         /// <param name="values">参数</param>
         /// <returns></returns>
-        public T Client<T>(string key, params object[] values)
+        public RedisReader Client(string key, params object[] values)
         {
-            if (key.IsNullOrEmpty()) return default(T);
-            return this.Execute(CommandType.CLIENT, null, result => typeof(T) == typeof(Boolean) ? result.OK.ToCast<T>() : result.OK ? result.Value.ToCast<T>() : default(T), new object[] { key }.Concat(values).ToArray());
+            if (key.IsNullOrEmpty()) return default(RedisReader);
+            return this.Execute(CommandType.CLIENT, null, result => result, new object[] { key }.Concat(values).ToArray());
         }
         /// <summary>
         /// 客户端命令 异步
         /// </summary>
-        /// <typeparam name="T">类型</typeparam>
         /// <param name="key">key</param>
         /// <param name="values">参数</param>
         /// <returns></returns>
-        public async Task<T> ClientAsync<T>(string key, params object[] values)
+        public async Task<RedisReader> ClientAsync(string key, params object[] values)
         {
-            if (key.IsNullOrEmpty()) return default(T);
-            return await this.ExecuteAsync(CommandType.CLIENT, null, async result => await Task.FromResult(typeof(T) == typeof(Boolean) ? result.OK.ToCast<T>() : result.OK ? result.Value.ToCast<T>() : default(T)), new object[] { key }.Concat(values).ToArray());
+            if (key.IsNullOrEmpty()) return default(RedisReader);
+            return await this.ExecuteAsync(CommandType.CLIENT, null, async result => await Task.FromResult(result), new object[] { key }.Concat(values).ToArray());
         }
         /// <summary>
         /// 杀死客户端
@@ -61,36 +59,44 @@ namespace XiaoFeng.Redis
         /// <param name="host">ip</param>
         /// <param name="port">端口</param>
         /// <returns></returns>
-        public Boolean ClientKill(string host, int port) => this.Client<Boolean>("KILL", host.IfEmpty("127.0.0.1"), Math.Abs(port));
+        public Boolean ClientKill(string host, int port) => this.Client("KILL", host.IfEmpty("127.0.0.1"), Math.Abs(port)).OK;
         /// <summary>
         /// 杀死客户端 异步
         /// </summary>
         /// <param name="host">ip</param>
         /// <param name="port">端口</param>
         /// <returns></returns>
-        public async Task<Boolean> ClientKillAsync(string host, int port) => await this.ClientAsync<Boolean>("KILL", host.IfEmpty("127.0.0.1"), Math.Abs(port));
+        public async Task<Boolean> ClientKillAsync(string host, int port) => (await this.ClientAsync("KILL", host.IfEmpty("127.0.0.1"), Math.Abs(port))).OK;
         /// <summary>
         /// 在指定时间内终止运行来自客户端的命令
         /// </summary>
         /// <param name="timeout">时间 单位为毫秒</param>
         /// <returns></returns>
-        public Boolean ClientPause(long timeout) => this.Client<Boolean>("PAUSE", timeout);
+        public Boolean ClientPause(long timeout) => this.Client("PAUSE", timeout).OK;
         /// <summary>
         /// 在指定时间内终止运行来自客户端的命令 异步
         /// </summary>
         /// <param name="timeout">时间 单位为毫秒</param>
         /// <returns></returns>
-        public async Task<Boolean> ClientPauseAsync(long timeout) => await this.ClientAsync<Boolean>("PAUSE", timeout);
+        public async Task<Boolean> ClientPauseAsync(long timeout) => (await this.ClientAsync("PAUSE", timeout)).OK;
         /// <summary>
         /// 客户端列表
         /// </summary>
         /// <returns></returns>
-        public List<ClientInfo> ClientList() => this.Client<List<ClientInfo>>("LIST");
+        public List<ClientInfo> ClientList()
+        {
+            var reader = this.Client("LIST");
+            return reader.OK ? (List<ClientInfo>)reader.Value.Value : null;
+        }
         /// <summary>
         /// 客户端列表 异步
         /// </summary>
         /// <returns></returns>
-        public async Task<List<ClientInfo>> ClientListAsync() => await this.ClientAsync<List<ClientInfo>>("LIST");
+        public async Task<List<ClientInfo>> ClientListAsync()
+        {
+           var reader =  await this.ClientAsync("LIST");
+            return reader.OK ? (List<ClientInfo>)reader.Value.Value : null;
+        }
         /// <summary>
         /// 设置客户端名称
         /// </summary>
@@ -99,7 +105,7 @@ namespace XiaoFeng.Redis
         public Boolean ClientSetName(string name)
         {
             if (name.IsNullOrEmpty()) return false;
-            return this.Client<Boolean>("SETNAME", name);
+            return this.Client("SETNAME", name).OK;
         }
         /// <summary>
         /// 设置客户端名称 异步
@@ -109,18 +115,18 @@ namespace XiaoFeng.Redis
         public async Task<Boolean> ClientSetNameAsync(string name)
         {
             if (name.IsNullOrEmpty()) return false;
-            return await this.ClientAsync<Boolean>("SETNAME", name);
+            return (await this.ClientAsync("SETNAME", name)).OK;
         }
         /// <summary>
         /// 获取客户端名称
         /// </summary>
         /// <returns></returns>
-        public string ClientGetName() => this.Client<string>("GETNAME");
+        public string ClientGetName() => this.Client("GETNAME")?.Value.ToString();
         /// <summary>
         /// 获取客户端名称 异步
         /// </summary>
         /// <returns></returns>
-        public async Task<string> ClientGetNameAsync() => await this.ClientAsync<string>("GETNAME");
+        public async Task<string> ClientGetNameAsync() => (await this.ClientAsync("GETNAME")).Value?.ToString();
         /// <summary>
         /// 将当前服务器转变为指定服务器的从属服务器(slave server)
         /// </summary>
@@ -161,24 +167,24 @@ namespace XiaoFeng.Redis
         /// 查看主从实例所属的角色，角色有master, slave, sentinel。
         /// </summary>
         /// <returns></returns>
-        public string Role() => this.Execute(CommandType.ROLE, null, result => result.OK ? result.Value.ToString() : "");
+        public RedisValue Role() => this.Execute(CommandType.ROLE, null, result => result.OK ? result.Value : null);
         /// <summary>
         /// 查看主从实例所属的角色，角色有master, slave, sentinel。 异步
         /// </summary>
         /// <returns></returns>
-        public async Task<string> RoleAsync() => await this.ExecuteAsync(CommandType.ROLE, null, async result => await Task.FromResult(result.OK ? result.Value.ToString() : ""));
+        public async Task<RedisValue> RolesAsync() => await this.ExecuteAsync(CommandType.ROLE, null, async result => await Task.FromResult(result.OK ? result.Value : null));
         /// <summary>
         /// 返回当前数据库的 key 的数量
         /// </summary>
         /// <param name="dbNum">库索引</param>
         /// <returns></returns>
-        public int GetDbKeySize(int? dbNum = null) => this.Execute(CommandType.DBSIZE, dbNum, result => result.OK ? result.Value.ToCast<int>() : -1);
+        public int GetDbKeySize(int? dbNum = null) => this.Execute(CommandType.DBSIZE, dbNum, result => result.OK ? result.Value.ToInt() : -1);
         /// <summary>
         /// 返回当前数据库的 key 的数量 异步
         /// </summary>
         /// <param name="dbNum">库索引</param>
         /// <returns></returns>
-        public async Task<int> GetDbKeySizeAsync(int? dbNum = null) => await this.ExecuteAsync(CommandType.DBSIZE, dbNum, async result => await Task.FromResult(result.OK ? result.Value.ToCast<int>() : -1));
+        public async Task<int> GetDbKeySizeAsync(int? dbNum = null) => await this.ExecuteAsync(CommandType.DBSIZE, dbNum, async result => await Task.FromResult(result.OK ? result.Value.ToInt() : -1));
         /// <summary>
         /// 删除当前数据库的所有key
         /// </summary>
@@ -204,39 +210,46 @@ namespace XiaoFeng.Redis
         /// <summary>
         /// 服务器配置命令
         /// </summary>
-        /// <typeparam name="T">类型</typeparam>
         /// <param name="key">key</param>
         /// <param name="values">参数</param>
         /// <returns></returns>
-        public T Config<T>(string key, params object[] values)
+        public RedisReader Config(string key, params object[] values)
         {
-            if (key.IsNullOrEmpty()) return default(T);
-            return this.Execute(CommandType.CONFIG, null, result => typeof(T) == typeof(Boolean) ? result.OK.ToCast<T>() : result.OK ? result.Value.ToCast<T>() : default(T), new object[] { key }.Concat(values).ToArray());
+            if (key.IsNullOrEmpty()) return default(RedisReader);
+            return this.Execute(CommandType.CONFIG, null, result => result, new object[] { key }.Concat(values).ToArray());
         }
         /// <summary>
         /// 服务器配置命令 异步
         /// </summary>
-        /// <typeparam name="T">类型</typeparam>
         /// <param name="key">key</param>
         /// <param name="values">参数</param>
         /// <returns></returns>
-        public async Task<T> ConfigAsync<T>(string key, params object[] values)
+        public async Task<RedisReader> ConfigAsync(string key, params object[] values)
         {
-            if (key.IsNullOrEmpty()) return default(T);
-            return await this.ExecuteAsync(CommandType.CONFIG, null, async result => await Task.FromResult(typeof(T) == typeof(Boolean) ? result.OK.ToCast<T>() : result.OK ? result.Value.ToCast<T>() : default(T)), new object[] { key }.Concat(values).ToArray());
+            if (key.IsNullOrEmpty()) return default(RedisReader);
+            return await this.ExecuteAsync(CommandType.CONFIG, null, async result => await Task.FromResult(result), new object[] { key }.Concat(values).ToArray());
         }
         /// <summary>
         /// 获取配置
         /// </summary>
         /// <param name="key">配置名称</param>
         /// <returns></returns>
-        public Dictionary<string,string> GetConfig(string key = "*") => this.Config<Dictionary<string, string>>("GET", key);
+        public Dictionary<string, string> GetConfig(string key = "*")
+        {
+            var reader = this.Config("GET", key);
+            if (reader == null) return new Dictionary<string, string>();
+            return reader.OK ? reader.Value.ToDictionary<string, string>() : new Dictionary<string, string>();
+        }
         /// <summary>
         /// 获取配置 异步
         /// </summary>
         /// <param name="key">配置名称</param>
         /// <returns></returns>
-        public async Task<Dictionary<string, string>> GetConfigAsync(string key = "*") => await this.ConfigAsync<Dictionary<string, string>>("GET", key);
+        public async Task<Dictionary<string, string>> GetConfigAsync(string key = "*")
+        {
+            var reader = await this.ConfigAsync("GET", key);
+            return reader.OK ? reader.Value.ToDictionary<string, string>() : new Dictionary<string, string>();
+        }
         /// <summary>
         /// 设置配置
         /// </summary>
@@ -246,7 +259,7 @@ namespace XiaoFeng.Redis
         public Boolean SetConfig(string key, string value)
         {
             if (key.IsNullOrEmpty()) return false;
-            return this.Config<Boolean>("SET", key, value);
+            return this.Config("SET", key, value).OK;
         }
         /// <summary>
         /// 设置配置 异步
@@ -257,18 +270,18 @@ namespace XiaoFeng.Redis
         public async Task<Boolean> SetConfigAsync(string key, string value)
         {
             if (key.IsNullOrEmpty()) return false;
-            return await this.ConfigAsync<Boolean>("SET", key, value);
+            return (await this.ConfigAsync("SET", key, value)).OK;
         }
         /// <summary>
         /// 对启动 Redis 服务器时所指定的 redis.conf 配置文件进行改写
         /// </summary>
         /// <returns></returns>
-        public Boolean ConfigRewrite() => this.Config<Boolean>("REWRITE");
+        public Boolean ConfigRewrite() => this.Config("REWRITE").OK;
         /// <summary>
         /// 对启动 Redis 服务器时所指定的 redis.conf 配置文件进行改写 异步
         /// </summary>
         /// <returns></returns>
-        public async Task<Boolean> ConfigRewriteAsync() => await this.ConfigAsync<Boolean>("REWRITE");
+        public async Task<Boolean> ConfigRewriteAsync() => (await this.ConfigAsync("REWRITE")).OK;
         #endregion
     }
 }

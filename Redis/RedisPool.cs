@@ -20,7 +20,7 @@ using XiaoFeng.Collections;
 namespace XiaoFeng.Redis
 {
     /// <summary>
-    /// RedisPool 类说明
+    /// Redis线程池
     /// </summary>
     public class RedisPool : ObjectPool<Socket>
     {
@@ -75,27 +75,23 @@ namespace XiaoFeng.Redis
         ///<inheritdoc/>
         protected override Socket OnCreate()
         {
-            var SocketClient = new Socket(this.AddressFamily, this.SocketType, this.ProtocolType)
-            {
-                SendTimeout = this.SendTimeout,
-                ReceiveTimeout = this.ReceiveTimeout
-            };
+            var SocketClient = new Socket(this.AddressFamily, this.SocketType, this.ProtocolType);
+            if (this.ReceiveTimeout > 0)
+                SocketClient.ReceiveTimeout = this.ReceiveTimeout;
+            if (this.SendTimeout > 0)
+                SocketClient.SendTimeout = this.SendTimeout;
             if (this.Host.IsNullOrEmpty()) this.Host = "127.0.0.1";
             if (this.Port == 0) this.Port = 6379;
             try
             {
                 SocketClient.Connect(this.Host, this.Port);
-                var Stream = new NetworkStream(SocketClient)
-                {
-                    ReadTimeout = this.ReceiveTimeout,
-                    WriteTimeout = this.SendTimeout
-                };
+                var Stream = new NetworkStream(SocketClient);
                 if (this.Password.IsNotNullOrEmpty())
                 {
                     var line = new Command(CommandType.AUTH, this.Password).ToBytes();
                     Stream.Write(line, 0, line.Length);
                     Stream.Flush();
-                    return this.GetCommandResult(Stream, CommandType.AUTH).OK ? SocketClient : null;
+                    return this.GetRedisResult(Stream, CommandType.AUTH).OK ? SocketClient : null;
                 }
                 return SocketClient;
             }
@@ -129,7 +125,7 @@ namespace XiaoFeng.Redis
 
             if (obj.Connected)
             {
-                //socket.Disconnect(true);
+                //obj.Disconnect(true);
             }
         }
         ///<inheritdoc/>
@@ -153,29 +149,29 @@ namespace XiaoFeng.Redis
         /// <param name="func">回调方法</param>
         /// <param name="args">参数集</param>
         /// <returns>执行结果</returns>
-        public T Execute<T>(CommandType commandType, int? dbNum, Func<CommandResult, T> func, params object[] args)
+        public T Execute<T>(CommandType commandType, int? dbNum, Func<RedisReader, T> func, params object[] args)
         {
             var item = base.Get();
             if (item.Value == null || !item.Value.Connected) return default(T);
-            var Stream = new NetworkStream(item.Value)
-            {
-                ReadTimeout = this.ReceiveTimeout,
-                WriteTimeout = this.SendTimeout
-            };
+            var Stream = new NetworkStream(item.Value);
+            if (this.ReceiveTimeout > 0)
+                Stream.ReadTimeout = this.ReceiveTimeout;
+            if (this.SendTimeout > 0)
+                Stream.WriteTimeout = this.SendTimeout;
             byte[] line;
             if (dbNum.HasValue && dbNum.Value > -1)
             {
                 line = new Command(CommandType.SELECT, dbNum).ToBytes();
                 Stream.Write(line, 0, line.Length);
                 Stream.Flush();
-                if (!this.GetCommandResult(Stream, CommandType.SELECT).OK) return default(T);
+                if (!this.GetRedisResult(Stream, CommandType.SELECT, args).OK) return default(T);
             }
             line = new Command(commandType, args).ToBytes();
             Stream.Write(line, 0, line.Length);
             Stream.Flush();
             try
             {
-                return func.Invoke(this.GetCommandResult(Stream, commandType));
+                return func.Invoke(this.GetRedisResult(Stream, commandType, args));
             }
             finally
             {
@@ -191,7 +187,7 @@ namespace XiaoFeng.Redis
         /// <param name="func">回调方法</param>
         /// <param name="args">参数集</param>
         /// <returns>执行结果</returns>
-        public async Task<T> ExecuteAsync<T>(CommandType commandType, int? dbNum, Func<CommandResult, Task<T>> func, params object[] args)
+        public async Task<T> ExecuteAsync<T>(CommandType commandType, int? dbNum, Func<RedisReader, Task<T>> func, params object[] args)
         {
             var item = base.Get();
             if (item.Value == null || !item.Value.Connected) return default(T);
@@ -206,14 +202,14 @@ namespace XiaoFeng.Redis
                 line = new Command(CommandType.SELECT, dbNum).ToBytes();
                 await Stream.WriteAsync(line, 0, line.Length).ConfigureAwait(false);
                 await Stream.FlushAsync().ConfigureAwait(false); ;
-                if (!this.GetCommandResult(Stream, CommandType.SELECT).OK) return default(T);
+                if (!this.GetRedisResult(Stream, CommandType.SELECT).OK) return default(T);
             }
             line = new Command(commandType, args).ToBytes();
             await Stream.WriteAsync(line, 0, line.Length).ConfigureAwait(false);
             await Stream.FlushAsync().ConfigureAwait(false);
             try
             {
-                return await func.Invoke(this.GetCommandResult(Stream, commandType));
+                return await func.Invoke(this.GetRedisResult(Stream, commandType, args));
             }
             finally
             {
@@ -280,6 +276,51 @@ namespace XiaoFeng.Redis
                 }
             }
             return new CommandResult(commandType, ms.ToArray());
+        }
+        #endregion
+
+        #region 获取响应
+        /// <summary>
+        /// 获取响应
+        /// </summary>
+        /// <param name="Stream">网络流</param>
+        /// <param name="commandType">命令</param>
+        /// <param name="args">参数</param>
+        /// <returns>响应结果</returns>
+        public RedisReader GetRedisResult(NetworkStream Stream, CommandType commandType,object[] args = null)
+        {
+            var ms = new MemoryStream();
+            var num = 0;
+            var length = 0;
+            while (Stream.CanRead)
+            {
+                if (Stream.DataAvailable)
+                {
+                    var bytes = new byte[MemorySize];
+                    do
+                    {
+                        Array.Clear(bytes, 0, MemorySize);
+                        var count = Stream.Read(bytes, 0, bytes.Length);
+                        ms.Write(bytes, 0, count);
+
+                    } while (Stream.DataAvailable);
+                    num++;
+                    if (commandType == CommandType.HGET)
+                    {
+                        if (num == 1)
+                        {
+                            var str = ms.ToArray().GetString();
+                            if (str.IsMatch(@"^\$\d+\r\n"))
+                                length = str.GetMatch(@"^\$(?<a>\d+)\r\n").ToCast<int>();
+                            else break;
+                        }
+                        if (length == ms.Length - length.ToString().Length - 5) break;
+                    }
+                    else
+                        break;
+                }
+            }
+            return new RedisReader(commandType, ms.ToArray(), args);
         }
         #endregion
     }

@@ -10,7 +10,7 @@ namespace XiaoFeng.Redis
     /// </summary>
     /// <param name="channel">频道</param>
     /// <param name="message">消息</param>
-    public delegate void OnMessageEventHandler(string channel, string message);
+    public delegate void OnMessageEventHandler(string channel, RedisValue message);
     /// <summary>
     /// 订阅频道
     /// </summary>

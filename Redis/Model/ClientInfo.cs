@@ -75,6 +75,7 @@ namespace XiaoFeng.Redis
         /// <summary>
         ///  查询缓冲区剩余空间的长度（字节为单位， 0 表示没有剩余空间）
         /// </summary>
+        [Json.JsonElement("qbuf-free")]
         public string qbuffree { get; set; }
         /// <summary>
         ///  输出缓冲区的长度（字节为单位， 0 表示没有分配输出缓冲区）

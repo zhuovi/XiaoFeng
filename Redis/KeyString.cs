@@ -29,20 +29,20 @@ namespace XiaoFeng.Redis
         /// </summary>
         /// <param name="dbNum">库索引</param>
         /// <param name="keys">key集合</param>
-        /// <returns>是否删除成功</returns>
-        public Boolean DelKey(int? dbNum, params string[] keys)
+        /// <returns>删除成功的数量</returns>
+        public int DelKey(int? dbNum, params string[] keys)
         {
-            if (keys.Length == 0) return false;
-            return this.Execute(CommandType.DEL, dbNum, result => result.OK, keys);
+            if (keys.Length == 0) return -1;
+            return this.Execute(CommandType.DEL, dbNum, result => result.OK ? result.Value.ToInt() : -1, keys);
         }
         /// <summary>
         /// 删除key
         /// </summary>
         /// <param name="keys">key集合</param>
-        /// <returns>是否删除成功</returns>
-        public Boolean DelKey(params string[] keys)
+        /// <returns>删除成功的数量</returns>
+        public int DelKey(params string[] keys)
         {
-            if (keys.Length == 0) return false;
+            if (keys.Length == 0) return -1;
             return this.DelKey(null, keys);
         }
         /// <summary>
@@ -50,20 +50,20 @@ namespace XiaoFeng.Redis
         /// </summary>
         /// <param name="dbNum">库索引</param>
         /// <param name="keys">key集合</param>
-        /// <returns>是否删除成功</returns>
-        public async Task<Boolean> DelKeyAsync(int? dbNum, params string[] keys)
+        /// <returns>删除成功的数量</returns>
+        public async Task<int> DelKeyAsync(int? dbNum, params string[] keys)
         {
-            if (keys.Length == 0) return false;
-            return await this.ExecuteAsync(CommandType.DEL, dbNum, async result => await Task.FromResult(result.OK), keys);
+            if (keys.Length == 0) return -1;
+            return await this.ExecuteAsync(CommandType.DEL, dbNum, async result => await Task.FromResult(result.OK?result.Value.ToInt():-1), keys);
         }
         /// <summary>
         /// 删除key 异步
         /// </summary>
         /// <param name="keys">key集合</param>
-        /// <returns>是否删除成功</returns>
-        public async Task<Boolean> DelKeyAsync(params string[] keys)
+        /// <returns>删除成功的数量</returns>
+        public async Task<int> DelKeyAsync(params string[] keys)
         {
-            if (keys.Length == 0) return false;
+            if (keys.Length == 0) return -1;
             return await this.DelKeyAsync(null, keys);
         }
         /// <summary>
@@ -77,7 +77,6 @@ namespace XiaoFeng.Redis
             if (key.IsNullOrEmpty()) return string.Empty;
             return this.Execute(CommandType.GETDEL, dbNum, result => result.Value.ToString(), key);
         }
-
         /// <summary>
         /// 获取key值 并删除 6.2.0后可用 异步
         /// </summary>
@@ -98,10 +97,10 @@ namespace XiaoFeng.Redis
         /// <param name="key">key</param>
         /// <param name="dbNum">库索引</param>
         /// <returns></returns>
-        public Boolean DumpKey(string key, int? dbNum)
+        public String DumpKey(string key, int? dbNum = null)
         {
-            if (key.IsNullOrEmpty()) return false;
-            return this.Execute(CommandType.DUMP, dbNum, result => result.OK, key);
+            if (key.IsNullOrEmpty()) return String.Empty;
+            return this.Execute(CommandType.DUMP, dbNum, result => (string)result.Value, key);
         }
         /// <summary>
         /// 序列化key 异步
@@ -109,10 +108,10 @@ namespace XiaoFeng.Redis
         /// <param name="key">key</param>
         /// <param name="dbNum">库索引</param>
         /// <returns></returns>
-        public async Task<Boolean> DumpKeyAsync(string key, int? dbNum)
+        public async Task<String> DumpKeyAsync(string key, int? dbNum = null)
         {
-            if (key.IsNullOrEmpty()) return false;
-            return await this.ExecuteAsync(CommandType.DUMP, dbNum, async result => await Task.FromResult(result.OK), key);
+            if (key.IsNullOrEmpty()) return String.Empty;
+            return await this.ExecuteAsync(CommandType.DUMP, dbNum, async result => await Task.FromResult((string)result.Value), key);
         }
         #endregion
 
@@ -126,9 +125,8 @@ namespace XiaoFeng.Redis
         public Boolean ExistsKey(string key, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return false;
-            return this.Execute(CommandType.EXISTS, dbNum, result => result.OK, key);
+            return this.Execute(CommandType.EXISTS, dbNum, result => result.Value.ToInt() > 0, key);
         }
-
         /// <summary>
         /// 是否存在key 异步
         /// </summary>
@@ -138,7 +136,7 @@ namespace XiaoFeng.Redis
         public async Task<Boolean> ExistsKeyAsync(string key, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return false;
-            return await this.ExecuteAsync(CommandType.EXISTS, dbNum, async result => await Task.FromResult(result.OK), key);
+            return await this.ExecuteAsync(CommandType.EXISTS, dbNum, async result => await Task.FromResult(result.Value.ToInt() > 0), key);
         }
         #endregion
 
@@ -149,100 +147,95 @@ namespace XiaoFeng.Redis
         /// <param name="key">key</param>
         /// <param name="seconds">过期时长 单位为秒</param>
         /// <param name="dbNum">库索引</param>
-        /// <returns>是否设置成功</returns>
-        public Boolean SetKeyExpireSeconds(string key, int seconds, int? dbNum = null)
+        /// <returns>设置成功数量 0是不存在 1是设置成功</returns>
+        public int SetKeyExpireSeconds(string key, int seconds, int? dbNum = null)
         {
-            if (key.IsNullOrEmpty()) return false;
-            return this.Execute(CommandType.EXPIRE, dbNum, result => result.OK, key, seconds);
+            if (key.IsNullOrEmpty()) return -1;
+            return this.Execute(CommandType.EXPIRE, dbNum, result => result.Value.ToInt(), key, seconds);
         }
-
         /// <summary>
         /// 设置过期时间 异步
         /// </summary>
         /// <param name="key">key</param>
         /// <param name="seconds">过期时长 单位为秒</param>
         /// <param name="dbNum">库索引</param>
-        /// <returns></returns>
-        public async Task<Boolean> SetKeyExpireSecondsAsync(string key, int seconds, int? dbNum = null)
+        /// <returns>设置成功数量 0是不存在 1是设置成功</returns>
+        public async Task<int> SetKeyExpireSecondsAsync(string key, int seconds, int? dbNum = null)
         {
-            if (key.IsNullOrEmpty()) return false;
-            return await this.ExecuteAsync(CommandType.EXPIRE, dbNum, result => Task.FromResult(result.OK), key, seconds);
+            if (key.IsNullOrEmpty()) return -1;
+            return await this.ExecuteAsync(CommandType.EXPIRE, dbNum, result => Task.FromResult(result.Value.ToInt()), key, seconds);
         }
-
         /// <summary>
         /// 设置过期时间
         /// </summary>
         /// <param name="key">key</param>
-        /// <param name="seconds">过期时长 单位为毫秒</param>
+        /// <param name="milliseconds">过期时长 单位为毫秒</param>
         /// <param name="dbNum">库索引</param>
-        /// <returns>是否设置成功</returns>
-        public Boolean SetKeyExpireMilliseconds(string key, long seconds, int? dbNum = null)
+        /// <returns>设置成功数量 0是不存在 1是设置成功</returns>
+        public int SetKeyExpireMilliseconds(string key, long milliseconds, int? dbNum = null)
         {
-            if (key.IsNullOrEmpty()) return false;
-            return this.Execute(CommandType.PEXPIRE, dbNum, result => result.OK, key, seconds);
+            if (key.IsNullOrEmpty()) return -1;
+            return this.Execute(CommandType.PEXPIRE, dbNum, result => result.Value.ToInt(), key, milliseconds);
         }
-
         /// <summary>
         /// 设置过期时间 异步
         /// </summary>
         /// <param name="key">key</param>
-        /// <param name="seconds">过期时长 单位为毫秒</param>
+        /// <param name="milliseconds">过期时长 单位为毫秒</param>
         /// <param name="dbNum">库索引</param>
-        /// <returns></returns>
-        public async Task<Boolean> SetKeyExpireMillisecondsAsync(string key, long seconds, int? dbNum = null)
+        /// <returns>设置成功数量 0是不存在 1是设置成功</returns>
+        public async Task<int> SetKeyExpireMillisecondsAsync(string key, long milliseconds, int? dbNum = null)
         {
-            if (key.IsNullOrEmpty()) return false;
-            return await this.ExecuteAsync(CommandType.PEXPIRE, dbNum, result => Task.FromResult(result.OK), key, seconds);
+            if (key.IsNullOrEmpty()) return -1;
+            return await this.ExecuteAsync(CommandType.PEXPIRE, dbNum, result => Task.FromResult(result.Value.ToInt()), key, milliseconds);
         }
-
         /// <summary>
         /// 设置过期时间
         /// </summary>
         /// <param name="key">key</param>
         /// <param name="timestamp">过期时长 秒时间戳</param>
         /// <param name="dbNum">库索引</param>
-        /// <returns>是否设置成功</returns>
-        public Boolean SetKeyExpireSecondsTimestamp(string key, int timestamp, int? dbNum = null)
+        /// <returns>设置成功数量 0是不存在 1是设置成功</returns>
+        public int SetKeyExpireSecondsTimestamp(string key, int timestamp, int? dbNum = null)
         {
-            if (key.IsNullOrEmpty()) return false;
-            return this.Execute(CommandType.EXPIREAT, dbNum, result => result.OK, key, timestamp);
+            if (key.IsNullOrEmpty()) return -1;
+            return this.Execute(CommandType.EXPIREAT, dbNum, result => result.Value.ToInt(), key, timestamp);
         }
-
         /// <summary>
         /// 设置过期时间 异步
         /// </summary>
         /// <param name="key">key</param>
         /// <param name="timestamp">过期时长 秒时间戳</param>
         /// <param name="dbNum">库索引</param>
-        /// <returns></returns>
-        public async Task<Boolean> SetKeyExpireSecondsTimestampAsync(string key, int timestamp, int? dbNum = null)
+        /// <returns>设置成功数量 0是不存在 1是设置成功</returns>
+        public async Task<int> SetKeyExpireSecondsTimestampAsync(string key, int timestamp, int? dbNum = null)
         {
-            if (key.IsNullOrEmpty()) return false;
-            return await this.ExecuteAsync(CommandType.EXPIREAT, dbNum, result => Task.FromResult(result.OK), key, timestamp);
+            if (key.IsNullOrEmpty()) return -1;
+            return await this.ExecuteAsync(CommandType.EXPIREAT, dbNum, result => Task.FromResult(result.Value.ToInt()), key, timestamp);
         }
         /// <summary>
         /// 设置过期时间
         /// </summary>
         /// <param name="key">key</param>
-        /// <param name="timestamp">过期时长 毫秒时间戳</param>
+        /// <param name="timestamps">过期时长 毫秒时间戳</param>
         /// <param name="dbNum">库索引</param>
-        /// <returns>是否设置成功</returns>
-        public Boolean SetKeyExpireMillisecondsTimestamp(string key, long timestamp, int? dbNum = null)
+        /// <returns>设置成功数量 0是不存在 1是设置成功</returns>
+        public int SetKeyExpireMillisecondsTimestamp(string key, long timestamps, int? dbNum = null)
         {
-            if (key.IsNullOrEmpty()) return false;
-            return this.Execute(CommandType.PEXPIREAT, dbNum, result => result.OK, key, timestamp);
+            if (key.IsNullOrEmpty()) return -1;
+            return this.Execute(CommandType.PEXPIREAT, dbNum, result => result.Value.ToInt(), key, timestamps);
         }
         /// <summary>
         /// 设置过期时间 异步
         /// </summary>
         /// <param name="key">key</param>
-        /// <param name="timestamp">过期时长 毫秒时间戳</param>
+        /// <param name="timestamps">过期时长 毫秒时间戳</param>
         /// <param name="dbNum">库索引</param>
-        /// <returns></returns>
-        public async Task<Boolean> SetKeyExpireMillisecondsTimestampAsync(string key, long timestamp, int? dbNum = null)
+        /// <returns>设置成功数量 0是不存在 1是设置成功</returns>
+        public async Task<int> SetKeyExpireMillisecondsTimestampAsync(string key, long timestamps, int? dbNum = null)
         {
-            if (key.IsNullOrEmpty()) return false;
-            return await this.ExecuteAsync(CommandType.PEXPIREAT, dbNum, result => Task.FromResult(result.OK), key, timestamp);
+            if (key.IsNullOrEmpty()) return -1;
+            return await this.ExecuteAsync(CommandType.PEXPIREAT, dbNum, result => Task.FromResult(result.Value.ToInt()), key, timestamps);
         }
         #endregion
 
@@ -253,47 +246,44 @@ namespace XiaoFeng.Redis
         /// <param name="key">key</param>
         /// <param name="newKey">新key</param>
         /// <param name="dbNum">库索引</param>
-        /// <returns></returns>
-        public Boolean ReNameKey(string key, string newKey, int? dbNum = null)
+        /// <returns>返回成功状态</returns>
+        public Boolean RenameKey(string key, string newKey, int? dbNum = null)
         {
             if (key.IsNullOrEmpty() || newKey.IsNullOrEmpty()) return false;
             return this.Execute(CommandType.RENAME, dbNum, result => result.OK, key, newKey);
         }
-
         /// <summary>
         /// 重命名key 异步
         /// </summary>
         /// <param name="key">key</param>
         /// <param name="newKey">新key</param>
         /// <param name="dbNum">库索引</param>
-        /// <returns></returns>
-        public async Task<Boolean> ReNameKeyAsync(string key, string newKey, int? dbNum = null)
+        /// <returns>返回成功状态</returns>
+        public async Task<Boolean> RenameKeyAsync(string key, string newKey, int? dbNum = null)
         {
             if (key.IsNullOrEmpty() || newKey.IsNullOrEmpty()) return false;
             return await this.ExecuteAsync(CommandType.RENAME, dbNum, async result => await Task.FromResult(result.OK), key, newKey);
         }
-
         /// <summary>
         /// 重命名key 当新key不存在时
         /// </summary>
         /// <param name="key">key</param>
         /// <param name="newKey">新key</param>
         /// <param name="dbNum">库索引</param>
-        /// <returns></returns>
-        public Boolean ReNameKeyNoExists(string key, string newKey, int? dbNum = null)
+        /// <returns>返回成功状态</returns>
+        public Boolean RenameKeyNoExists(string key, string newKey, int? dbNum = null)
         {
             if (key.IsNullOrEmpty() || newKey.IsNullOrEmpty()) return false;
             return this.Execute(CommandType.RENAMENX, dbNum, result => result.OK, key, newKey);
         }
-
         /// <summary>
         /// 重命名key 当新key不存在时 异步
         /// </summary>
         /// <param name="key">key</param>
         /// <param name="newKey">新key</param>
         /// <param name="dbNum">库索引</param>
-        /// <returns></returns>
-        public async Task<Boolean> ReNameKeyNoExistsAsync(string key, string newKey, int? dbNum = null)
+        /// <returns>返回成功状态</returns>
+        public async Task<Boolean> RenameKeyNoExistsAsync(string key, string newKey, int? dbNum = null)
         {
             if (key.IsNullOrEmpty() || newKey.IsNullOrEmpty()) return false;
             return await this.ExecuteAsync(CommandType.RENAMENX, dbNum, async result => await Task.FromResult(result.OK), key, newKey);
@@ -307,23 +297,26 @@ namespace XiaoFeng.Redis
         /// <param name="key">key</param>
         /// <param name="destDbNum">目标库索引</param>
         /// <param name="dbNum">库索引</param>
-        /// <returns></returns>
+        /// <returns>返回成功状态</returns>
         public Boolean MoveKey(string key, int destDbNum, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return false;
+            if (destDbNum < 0) destDbNum = 0;
+            if (dbNum.HasValue && dbNum.Value == destDbNum) return false;
             return this.Execute(CommandType.MOVE, dbNum, result => result.OK, key, destDbNum);
         }
-
         /// <summary>
         /// 将当前数据库的 key 移动到给定的数据库 db 当中 异步
         /// </summary>
         /// <param name="key">key</param>
         /// <param name="destDbNum">目标库索引</param>
         /// <param name="dbNum">库索引</param>
-        /// <returns></returns>
+        /// <returns>返回成功状态</returns>
         public async Task<Boolean> MoveKeyAsync(string key, int destDbNum, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return false;
+            if (destDbNum < 0) destDbNum = 0;
+            if (dbNum.HasValue && dbNum.Value == destDbNum) return false;
             return await this.ExecuteAsync(CommandType.MOVE, dbNum, async result => await Task.FromResult(result.OK), key, destDbNum);
         }
         #endregion
@@ -334,20 +327,19 @@ namespace XiaoFeng.Redis
         /// </summary>
         /// <param name="key">key</param>
         /// <param name="dbNum">库索引</param>
-        /// <returns></returns>
-        public Boolean RemoveKeyExpire(string key, int? dbNum)
+        /// <returns>返回成功状态</returns>
+        public Boolean RemoveKeyExpire(string key, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return false;
             return this.Execute(CommandType.PERSIST, dbNum, result => result.OK, key);
         }
-
         /// <summary>
         /// 移除 key 的过期时间，key 将持久保持 异步
         /// </summary>
         /// <param name="key">key</param>
         /// <param name="dbNum">库索引</param>
-        /// <returns></returns>
-        public async Task<Boolean> RemoveKeyExpireAsync(string key, int? dbNum)
+        /// <returns>返回成功状态</returns>
+        public async Task<Boolean> RemoveKeyExpireAsync(string key, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return false;
             return await this.ExecuteAsync(CommandType.PERSIST, dbNum, async result => await Task.FromResult(result.OK), key);
@@ -360,44 +352,41 @@ namespace XiaoFeng.Redis
         /// </summary>
         /// <param name="key">key</param>
         /// <param name="dbNum">库索引</param>
-        /// <returns></returns>
-        public int GetKeyExpireSeconds(string key, int? dbNum)
+        /// <returns>返回剩余时间</returns>
+        public int GetKeyExpireSeconds(string key, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return -1;
             return this.Execute(CommandType.TTL, dbNum, result => result.OK ? (int)result.Value : -1, key);
         }
-
         /// <summary>
         /// 以秒为单位，返回给定 key 的剩余生存时间 异步
         /// </summary>
         /// <param name="key">key</param>
         /// <param name="dbNum">库索引</param>
-        /// <returns></returns>
-        public async Task<int> GetKeyExpireSecondsAsync(string key, int? dbNum)
+        /// <returns>返回剩余时间</returns>
+        public async Task<int> GetKeyExpireSecondsAsync(string key, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return -1;
             return await this.ExecuteAsync(CommandType.TTL, dbNum, async result => await Task.FromResult(result.OK ? (int)result.Value : -1), key);
         }
-
         /// <summary>
         /// 以毫秒为单位，返回给定 key 的剩余生存时间
         /// </summary>
         /// <param name="key">key</param>
         /// <param name="dbNum">库索引</param>
-        /// <returns></returns>
-        public int GetKeyExpireMilliseconds(string key, int? dbNum)
+        /// <returns>返回剩余时间</returns>
+        public int GetKeyExpireMilliseconds(string key, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return -1;
             return this.Execute(CommandType.PTTL, dbNum, result => result.OK ? (int)result.Value : -1, key);
         }
-
         /// <summary>
         /// 以毫秒为单位，返回给定 key 的剩余生存时间 异步
         /// </summary>
         /// <param name="key">key</param>
         /// <param name="dbNum">库索引</param>
-        /// <returns></returns>
-        public async Task<int> GetKeyExpireMillisecondsAsync(string key, int? dbNum)
+        /// <returns>返回剩余时间</returns>
+        public async Task<int> GetKeyExpireMillisecondsAsync(string key, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return -1;
             return await this.ExecuteAsync(CommandType.PTTL, dbNum, async result => await Task.FromResult(result.OK ? (int)result.Value : -1), key);
@@ -409,13 +398,13 @@ namespace XiaoFeng.Redis
         /// 从当前数据库中随机返回一个 key
         /// </summary>
         /// <param name="dbNum">库索引</param>
-        /// <returns></returns>
-        public string GetKeyRandom(int? dbNum) => this.Execute(CommandType.RANDOMKEY, dbNum, result => result.Value.ToString());
+        /// <returns>返回KEY</returns>
+        public string GetKeyRandom(int? dbNum = null) => this.Execute(CommandType.RANDOMKEY, dbNum, result => result.Value.ToString());
         /// <summary>
         /// 从当前数据库中随机返回一个 key
         /// </summary>
         /// <param name="dbNum">库索引</param>
-        /// <returns></returns>
+        /// <returns>返回KEY</returns>
         public async Task<string> GetKeyRandomAsync(int? dbNum) => await this.ExecuteAsync(CommandType.RANDOMKEY, dbNum, async result => await Task.FromResult(result.Value.ToString()));
         #endregion
 
@@ -425,23 +414,22 @@ namespace XiaoFeng.Redis
         /// </summary>
         /// <param name="key">key</param>
         /// <param name="dbNum">库索引</param>
-        /// <returns></returns>
-        public string GetKeyType(string key, int? dbNum)
+        /// <returns>返回数据类型</returns>
+        public RedisKeyType GetKeyType(string key, int? dbNum = null)
         {
-            if (key.IsNullOrEmpty()) return string.Empty;
-            return this.Execute(CommandType.TYPE, dbNum, result => result.Value.ToString(), key);
+            if (key.IsNullOrEmpty()) return RedisKeyType.Error;
+            return this.Execute(CommandType.TYPE, dbNum, result => (RedisKeyType)result.Value, key);
         }
-
         /// <summary>
         /// 返回 key 所储存的值的类型
         /// </summary>
         /// <param name="key">key</param>
         /// <param name="dbNum">库索引</param>
-        /// <returns></returns>
-        public async Task<string> GetKeyTypeAsync(string key, int? dbNum)
+        /// <returns>返回数据类型</returns>
+        public async Task<RedisKeyType> GetKeyTypeAsync(string key, int? dbNum = null)
         {
-            if (key.IsNullOrEmpty()) return string.Empty;
-            return await this.ExecuteAsync(CommandType.TYPE, dbNum, async result => await Task.FromResult(result.Value.ToString()), key);
+            if (key.IsNullOrEmpty()) return RedisKeyType.Error;
+            return await this.ExecuteAsync(CommandType.TYPE, dbNum, async result => await Task.FromResult((RedisKeyType)result.Value), key);
         }
         #endregion
 
@@ -454,7 +442,7 @@ namespace XiaoFeng.Redis
         /// <param name="count">返回条数</param>
         /// <param name="dbNum">库索引</param>
         /// <returns></returns>
-        public List<string> GetKeys(string pattern, int start = 0, int count = 10, int? dbNum = null) => this.Execute(CommandType.SCAN, dbNum, result => (List<string>)result.Value, start, "MATCH", pattern, "COUNT", count);
+        public List<string> GetKeys(string pattern, int start = 0, int count = 10, int? dbNum = null) => this.Execute(CommandType.SCAN, dbNum, result => result.Value.ToList<string>(), start, "MATCH", pattern, "COUNT", count);
         /// <summary>
         /// 查找数据库中的数据库键 异步
         /// </summary>
@@ -463,21 +451,66 @@ namespace XiaoFeng.Redis
         /// <param name="count">遍历条数</param>
         /// <param name="dbNum">库索引</param>
         /// <returns></returns>
-        public async Task<List<string>> GetKeysAsync(string pattern, int start = 0, int count = 10, int? dbNum = null) => await this.ExecuteAsync(CommandType.SCAN, dbNum, async result => await Task.FromResult((List<string>)result.Value), start, "MATCH", pattern, "COUNT", count);
+        public async Task<List<string>> GetKeysAsync(string pattern, int start = 0, int count = 10, int? dbNum = null) => await this.ExecuteAsync(CommandType.SCAN, dbNum, async result => await Task.FromResult(result.Value.ToList<string>()), start, "MATCH", pattern, "COUNT", count);
         /// <summary>
-        /// 查找所有符合给定模式( pattern)的 key
+        /// 查找所有符合给定模式(pattern)的 key
         /// </summary>
         /// <param name="pattern">模式 支持*和?</param>
         /// <param name="dbNum">库索引</param>
         /// <returns></returns>
-        public List<string> SearchKeys(string pattern, int? dbNum = null) => this.Execute(CommandType.KEYS, dbNum, result => (List<string>)result.Value, pattern);
+        public List<string> SearchKeys(string pattern, int? dbNum = null) => this.Execute(CommandType.KEYS, dbNum, result => result.Value.ToList<string>(), pattern);
         /// <summary>
-        /// 查找所有符合给定模式( pattern)的 key 异步
+        /// 查找所有符合给定模式(pattern)的 key 异步
         /// </summary>
         /// <param name="pattern">模式 支持*和?</param>
         /// <param name="dbNum">库索引</param>
         /// <returns></returns>
-        public async Task<List<string>> SearchKeysAsync(string pattern, int? dbNum = null) => await this.ExecuteAsync(CommandType.KEYS, dbNum, async result => await Task.FromResult((List<string>)result.Value), pattern);
+        public async Task<List<string>> SearchKeysAsync(string pattern, int? dbNum = null) => await this.ExecuteAsync(CommandType.KEYS, dbNum, async result => await Task.FromResult(result.Value.ToList<string>()), pattern);
+        #endregion
+
+        #region 复制 Key
+        /// <summary>
+        /// 复制 Key 6.2.0版本
+        /// </summary>
+        /// <param name="key">源 key</param>
+        /// <param name="destKey">目标 key</param>
+        /// <param name="isReplace">存在是否替换</param>
+        /// <param name="destDbNum">目标库索引</param>
+        /// <param name="dbNum">库索引</param>
+        /// <returns></returns>
+        public Boolean CopyKey(string key, string destKey, Boolean isReplace = false, int? destDbNum = null, int? dbNum = null)
+        {
+            if (key.IsNullOrEmpty() || destKey.IsNullOrEmpty()) return false;
+            var list = new List<object>() { key, destKey };
+            if (destDbNum.HasValue && destDbNum.Value > 0)
+            {
+                list.Add("DB");
+                list.Add(destDbNum.Value);
+            }
+            if (isReplace) list.Add("REPLACE");
+            return this.Execute(CommandType.COPY, dbNum, result => result.OK, list.ToArray());
+        }
+        /// <summary>
+        /// 复制 Key 异步 6.2.0版本
+        /// </summary>
+        /// <param name="key">源 key</param>
+        /// <param name="destKey">目标 key</param>
+        /// <param name="isReplace">存在是否替换</param>
+        /// <param name="destDbNum">目标库索引</param>
+        /// <param name="dbNum">库索引</param>
+        /// <returns></returns>
+        public async Task<Boolean> CopyKeyAsync(string key, string destKey, Boolean isReplace = false, int? destDbNum = null, int? dbNum = null)
+        {
+            if (key.IsNullOrEmpty() || destKey.IsNullOrEmpty()) return false;
+            var list = new List<object>() { key, destKey };
+            if (destDbNum.HasValue && destDbNum.Value > 0)
+            {
+                list.Add("DB");
+                list.Add(destDbNum.Value);
+            }
+            if (isReplace) list.Add("REPLACE");
+            return await this.ExecuteAsync(CommandType.COPY, dbNum, async result => await Task.FromResult(result.OK), list.ToArray());
+        }
         #endregion
 
         #endregion
@@ -562,9 +595,8 @@ namespace XiaoFeng.Redis
         public Boolean SetStringNoExists<T>(string key, T value, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return false;
-            return this.Execute(CommandType.SETNX, dbNum, result => result.OK, key, this.GetValue(value));
+            return this.Execute(CommandType.SETNX, dbNum, result => result.OK && result.Value.ToInt() > 0, key, this.GetValue(value));
         }
-
         /// <summary>
         /// 设置字符串 key不存在时 异步
         /// </summary>
@@ -576,9 +608,8 @@ namespace XiaoFeng.Redis
         public async Task<Boolean> SetStringNoExistsAsync<T>(string key, T value, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return false;
-            return await this.ExecuteAsync(CommandType.SETNX, dbNum, async result => await Task.FromResult(result.OK), key, this.GetValue(value));
+            return await this.ExecuteAsync(CommandType.SETNX, dbNum, async result => await Task.FromResult(result.OK && result.Value.ToInt() > 0), key, this.GetValue(value));
         }
-
         /// <summary>
         /// 批量设置值 key不存在时
         /// </summary>
@@ -594,7 +625,7 @@ namespace XiaoFeng.Redis
                 list.Add(v.Key);
                 list.Add(this.GetValue(v.Value));
             });
-            return this.Execute(CommandType.MSETNX, dbNum, result => result.OK, list.ToArray());
+            return this.Execute(CommandType.MSETNX, dbNum, result => result.OK && result.Value.ToInt() > 0, list.ToArray());
         }
         /// <summary>
         /// 批量设置值 key不存在时 异步
@@ -611,7 +642,7 @@ namespace XiaoFeng.Redis
                 list.Add(v.Key);
                 list.Add(this.GetValue(v.Value));
             });
-            return await this.ExecuteAsync(CommandType.MSETNX, dbNum, async result => await Task.FromResult(result.OK), list.ToArray());
+            return await this.ExecuteAsync(CommandType.MSETNX, dbNum, async result => await Task.FromResult(result.OK && result.Value.ToInt() > 0), list.ToArray());
         }
         /// <summary>
         /// 设置字符串 覆盖给定 key 所储存的字符串值，覆盖的位置从偏移量 offset 开始
@@ -626,7 +657,6 @@ namespace XiaoFeng.Redis
             if (key.IsNullOrEmpty()) return false;
             return this.Execute(CommandType.SETRANGE, dbNum, result => result.OK, key, offset, value);
         }
-
         /// <summary>
         /// 设置字符串 覆盖给定 key 所储存的字符串值，覆盖的位置从偏移量 offset 开始 异步
         /// </summary>
@@ -640,7 +670,6 @@ namespace XiaoFeng.Redis
             if (key.IsNullOrEmpty()) return false;
             return await this.ExecuteAsync(CommandType.SETRANGE, dbNum, async result => await Task.FromResult(result.OK), key, offset, value);
         }
-
         /// <summary>
         /// 给指定的key值附加到原来值的尾部
         /// </summary>
@@ -653,7 +682,6 @@ namespace XiaoFeng.Redis
             if (key.IsNullOrEmpty()) return false;
             return this.Execute(CommandType.APPEND, dbNum, result => result.OK, key, value);
         }
-
         /// <summary>
         /// 给指定的key值附加到原来值的尾部 异步
         /// </summary>
@@ -679,7 +707,7 @@ namespace XiaoFeng.Redis
         public T GetString<T>(string key, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return default(T);
-            return this.Execute(CommandType.GET, dbNum, result => this.SetValue<T>(result.Value), key);
+            return this.Execute(CommandType.GET, dbNum, result => this.SetValue<T>(result.Value.ToString()), key);
         }
         /// <summary>
         /// 获取字符串
@@ -698,7 +726,7 @@ namespace XiaoFeng.Redis
         public async Task<T> GetStringAsync<T>(string key, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return default(T);
-            return await this.ExecuteAsync(CommandType.GET, dbNum, async result => await Task.FromResult(this.SetValue<T>(result.Value)), key);
+            return await this.ExecuteAsync(CommandType.GET, dbNum, async result => await Task.FromResult(this.SetValue<T>(result.Value.ToString())), key);
         }
         /// <summary>
         /// 获取字符串 异步
@@ -720,7 +748,6 @@ namespace XiaoFeng.Redis
             if (key.IsNullOrEmpty()) return string.Empty;
             return this.Execute(CommandType.GETRANGE, dbNum, result => result.Value.ToString(), key, start, end);
         }
-
         /// <summary>
         /// 获取字符串 异步
         /// </summary>
@@ -734,7 +761,6 @@ namespace XiaoFeng.Redis
             if (key.IsNullOrEmpty()) return string.Empty;
             return await this.ExecuteAsync(CommandType.GETRANGE, dbNum, result => Task.FromResult(result.Value.ToString()), key, start, end);
         }
-
         /// <summary>
         /// 获取 key 值的长度
         /// </summary>
@@ -744,9 +770,8 @@ namespace XiaoFeng.Redis
         public int GetStringLength(string key, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return -1;
-            return this.Execute(CommandType.STRLEN, dbNum, result => (int)result.Value, key);
+            return this.Execute(CommandType.STRLEN, dbNum, result => result.Value.ToInt(), key);
         }
-
         /// <summary>
         /// 获取 key 值的长度 异步
         /// </summary>
@@ -756,7 +781,7 @@ namespace XiaoFeng.Redis
         public async Task<int> GetStringLengthAsync(string key, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return -1;
-            return await this.ExecuteAsync(CommandType.STRLEN, dbNum, async result => await Task.FromResult((int)result.Value), key);
+            return await this.ExecuteAsync(CommandType.STRLEN, dbNum, async result => await Task.FromResult(result.Value.ToInt()), key);
         }
         #endregion
 
@@ -771,9 +796,8 @@ namespace XiaoFeng.Redis
         public T GetSetString<T>(string key, T value, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return default(T);
-            return this.Execute(CommandType.GETSET, dbNum, result => this.SetValue<T>(result.Value), key, this.GetValue(value));
+            return this.Execute(CommandType.GETSET, dbNum, result => this.SetValue<T>(result.Value.ToString()), key, this.GetValue(value));
         }
-
         /// <summary>
         /// 设置key的新值并返回key旧值 异步
         /// </summary>
@@ -784,7 +808,7 @@ namespace XiaoFeng.Redis
         public async Task<T> GetSetStringAsync<T>(string key, T value, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return default(T);
-            return await this.ExecuteAsync(CommandType.GETSET, dbNum, async result => await Task.FromResult(this.SetValue<T>(result.Value)), key, this.GetValue(value));
+            return await this.ExecuteAsync(CommandType.GETSET, dbNum, async result => await Task.FromResult(this.SetValue<T>(result.Value.ToString())), key, this.GetValue(value));
         }
         #endregion
 
@@ -798,7 +822,7 @@ namespace XiaoFeng.Redis
         public List<string> GetString(int? dbNum, params object[] args)
         {
             if (args.Length == 0) return null;
-            return this.Execute(CommandType.MGET, dbNum, result => (List<string>)result.Value, args);
+            return this.Execute(CommandType.MGET, dbNum, result => result.Value.ToList<string>(), args);
         }
         /// <summary>
         /// 获取所有(一个或多个)给定key的值 异步
@@ -809,9 +833,8 @@ namespace XiaoFeng.Redis
         public async Task<List<string>> GetStringAsync(int? dbNum, params object[] args)
         {
             if (args.Length == 0) return null;
-            return await this.ExecuteAsync(CommandType.MGET, dbNum, result => Task.FromResult((List<string>)result.Value), args);
+            return await this.ExecuteAsync(CommandType.MGET, dbNum, result => Task.FromResult(result.Value.ToList<string>()), args);
         }
-
         /// <summary>
         /// 获取所有(一个或多个)给定key的值
         /// </summary>
@@ -830,31 +853,67 @@ namespace XiaoFeng.Redis
         /// <summary>
         /// 将 key 所储存的值加上给定的增量值（increment）
         /// </summary>
-        /// <typeparam name="T">类型</typeparam>
         /// <param name="key">key</param>
         /// <param name="increment">增量值</param>
         /// <param name="dbNum">库索引</param>
         /// <returns></returns>
-        public T StringIncrement<T>(string key, T increment, int? dbNum = null)
-        {
-            if (key.IsNullOrEmpty()) return default(T);
-            return this.Execute(typeof(T) == typeof(double) ? CommandType.INCRBYFLOAT : CommandType.INCRBY, dbNum, result => result.Value.ToCast<T>(), key, increment);
-        }
-
+        public double StringIncrement(string key, double increment, int? dbNum = null) => StringIncrement(key, (float)increment, dbNum);
         /// <summary>
         /// 将 key 所储存的值加上给定的增量值（increment） 异步
         /// </summary>
-        /// <typeparam name="T">类型</typeparam>
         /// <param name="key">key</param>
         /// <param name="increment">增量值</param>
         /// <param name="dbNum">库索引</param>
         /// <returns></returns>
-        public async Task<T> StringIncrementAsync<T>(string key, T increment, int? dbNum = null)
+        public async Task<double> StringIncrementAsync(string key, double increment, int? dbNum = null) => await StringIncrementAsync(key, (float)increment, dbNum);
+        /// <summary>
+        /// 将 key 所储存的值加上给定的增量值（increment）
+        /// </summary>
+        /// <param name="key">key</param>
+        /// <param name="increment">增量值</param>
+        /// <param name="dbNum">库索引</param>
+        /// <returns></returns>
+        public float StringIncrement(string key, float increment, int? dbNum = null)
         {
-            if (key.IsNullOrEmpty()) return default(T);
-            return await this.ExecuteAsync(typeof(T) == typeof(double) ? CommandType.INCRBYFLOAT : CommandType.INCRBY, dbNum, async result => await Task.FromResult(result.Value.ToCast<T>()), key, increment);
+            if (key.IsNullOrEmpty()) return -1;
+            return this.Execute(CommandType.INCRBYFLOAT, dbNum, result => result.OK ? result.Value.ToCast<float>() : -1, key, increment);
         }
-
+        /// <summary>
+        /// 将 key 所储存的值加上给定的增量值（increment） 异步
+        /// </summary>
+        /// <param name="key">key</param>
+        /// <param name="increment">增量值</param>
+        /// <param name="dbNum">库索引</param>
+        /// <returns></returns>
+        public async Task<float> StringIncrementAsync(string key, float increment, int? dbNum = null)
+        {
+            if (key.IsNullOrEmpty()) return -1;
+            return await this.ExecuteAsync(CommandType.INCRBYFLOAT, dbNum, async result => await Task.FromResult(result.OK ? result.Value.ToCast<float>() : -1), key, increment);
+        }
+        /// <summary>
+        /// 将 key 所储存的值加上给定的增量值（increment）
+        /// </summary>
+        /// <param name="key">key</param>
+        /// <param name="increment">增量值</param>
+        /// <param name="dbNum">库索引</param>
+        /// <returns></returns>
+        public long StringIncrement(string key, long increment, int? dbNum = null)
+        {
+            if (key.IsNullOrEmpty()) return -1;
+            return this.Execute(CommandType.INCRBY, dbNum, result => result.OK ? result.Value.ToCast <long>() : -1, key, increment);
+        }
+        /// <summary>
+        /// 将 key 所储存的值加上给定的增量值（increment） 异步
+        /// </summary>
+        /// <param name="key">key</param>
+        /// <param name="increment">增量值</param>
+        /// <param name="dbNum">库索引</param>
+        /// <returns></returns>
+        public async Task<long> StringIncrementAsync(string key, long increment, int? dbNum = null)
+        {
+            if (key.IsNullOrEmpty()) return -1;
+            return await this.ExecuteAsync(CommandType.INCRBY, dbNum, async result => await Task.FromResult(result.OK ? result.Value.ToCast<long>() : -1), key, increment);
+        }
         /// <summary>
         /// 将 key 中储存的数字值增一
         /// </summary>
@@ -864,9 +923,8 @@ namespace XiaoFeng.Redis
         public int StringIncrement(string key, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return -1;
-            return this.Execute(CommandType.INCR, dbNum, result => result.Value.ToCast<int>(), key);
+            return this.Execute(CommandType.INCR, dbNum, result => result.OK ? result.Value.ToInt() : -1, key);
         }
-
         /// <summary>
         /// 将 key 中储存的数字值增一 异步
         /// </summary>
@@ -876,37 +934,32 @@ namespace XiaoFeng.Redis
         public async Task<int> StringIncrementAsync(string key, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return -1;
-            return await this.ExecuteAsync(CommandType.INCR, dbNum, async result => await Task.FromResult(result.Value.ToCast<int>()), key);
+            return await this.ExecuteAsync(CommandType.INCR, dbNum, async result => await Task.FromResult(result.OK ? result.Value.ToInt() : -1), key);
         }
-
         /// <summary>
         /// key 所储存的值减去给定的减量值（decrement）
         /// </summary>
-        /// <typeparam name="T">类型</typeparam>
         /// <param name="key">key</param>
         /// <param name="decrement">减量值</param>
         /// <param name="dbNum">库索引</param>
         /// <returns></returns>
-        public T StringDecrement<T>(string key, T decrement, int? dbNum = null)
+        public long StringDecrement(string key, long decrement, int? dbNum = null)
         {
-            if (key.IsNullOrEmpty()) return default(T);
-            return this.Execute(CommandType.DECRBY, dbNum, result => result.Value.ToCast<T>(), key, decrement);
+            if (key.IsNullOrEmpty()) return -1;
+            return this.Execute(CommandType.DECRBY, dbNum, result => result.OK ? (long)result.Value : -1, key, decrement);
         }
-
         /// <summary>
         /// key 所储存的值减去给定的减量值（decrement） 异步
         /// </summary>
-        /// <typeparam name="T">类型</typeparam>
         /// <param name="key">key</param>
         /// <param name="decrement">减量值</param>
         /// <param name="dbNum">库索引</param>
         /// <returns></returns>
-        public async Task<T> StringDecrementAsync<T>(string key, T decrement, int? dbNum = null)
+        public async Task<long> StringDecrementAsync(string key, long decrement, int? dbNum = null)
         {
-            if (key.IsNullOrEmpty()) return default(T);
-            return await this.ExecuteAsync(CommandType.DECRBY, dbNum, async result => await Task.FromResult(result.Value.ToCast<T>()), key, decrement);
+            if (key.IsNullOrEmpty()) return -1;
+            return await this.ExecuteAsync(CommandType.DECRBY, dbNum, async result => await Task.FromResult(result.OK ? (long)result.Value : -1), key, decrement);
         }
-
         /// <summary>
         /// 将 key 中储存的数字值减一
         /// </summary>
@@ -916,9 +969,8 @@ namespace XiaoFeng.Redis
         public int StringDecrement(string key, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return -1;
-            return this.Execute(CommandType.DECR, dbNum, result => result.Value.ToCast<int>(), key);
+            return this.Execute(CommandType.DECR, dbNum, result => result.OK ? result.Value.ToInt() : -1, key);
         }
-
         /// <summary>
         /// 将 key 中储存的数字值减一 异步
         /// </summary>
@@ -928,55 +980,37 @@ namespace XiaoFeng.Redis
         public async Task<int> StringDecrementAsync(string key, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return -1;
-            return await this.ExecuteAsync(CommandType.DECR, dbNum, async result => await Task.FromResult(result.Value.ToCast<int>()), key);
+            return await this.ExecuteAsync(CommandType.DECR, dbNum, async result => await Task.FromResult(result.OK ? result.Value.ToInt() : -1), key);
         }
         #endregion
 
-        #region 复制 Key
-        /// <summary>
-        /// 复制 Key 6.2.0版本
-        /// </summary>
-        /// <param name="key">源 key</param>
-        /// <param name="destKey">目标 key</param>
-        /// <param name="isReplace">存在是否替换</param>
-        /// <param name="destDbNum">目标库索引</param>
-        /// <param name="dbNum">库索引</param>
-        /// <returns></returns>
-        public Boolean CopyKey(string key, string destKey, Boolean isReplace = false, int? destDbNum = null, int? dbNum = null)
-        {
-            if (key.IsNullOrEmpty() || destKey.IsNullOrEmpty()) return false;
-            var list = new List<object>() { key, destKey };
-            if (destDbNum.HasValue && destDbNum.Value > 0)
-            {
-                list.Add("DB");
-                list.Add(destDbNum.Value);
-            }
-            if (isReplace) list.Add("REPLACE");
-            return this.Execute(CommandType.COPY, dbNum, result => result.OK, list.ToArray());
-        }
-        /// <summary>
-        /// 复制 Key 异步 6.2.0版本
-        /// </summary>
-        /// <param name="key">源 key</param>
-        /// <param name="destKey">目标 key</param>
-        /// <param name="isReplace">存在是否替换</param>
-        /// <param name="destDbNum">目标库索引</param>
-        /// <param name="dbNum">库索引</param>
-        /// <returns></returns>
-        public async Task<Boolean> CopyKeyAsync(string key, string destKey, Boolean isReplace = false, int? destDbNum = null, int? dbNum = null)
-        {
-            if (key.IsNullOrEmpty() || destKey.IsNullOrEmpty()) return false;
-            var list = new List<object>() { key, destKey };
-            if (destDbNum.HasValue && destDbNum.Value > 0)
-            {
-                list.Add("DB");
-                list.Add(destDbNum.Value);
-            }
-            if (isReplace) list.Add("REPLACE");
-            return await this.ExecuteAsync(CommandType.COPY, dbNum, async result => await Task.FromResult(result.OK), list.ToArray());
-        }
         #endregion
 
+        #region 排序
+        /// <summary>
+        /// 排序
+        /// </summary>
+        /// <param name="key">key</param>
+        /// <param name="options">排序选项</param>
+        /// <param name="dbNum">库索引</param>
+        /// <returns></returns>
+        public List<string> Sort(string key, SortOptions options, int? dbNum = null)
+        {
+            if (key.IsNullOrEmpty()) return null;
+            return this.Execute(CommandType.SORT, dbNum, result => options.Store.IsNullOrEmpty() ? result.Value.ToList<string>() : new List<string> { result.Value.ToString() }, new object[] { key }.Concat(options.ToArgments()).ToArray());
+        }
+        /// <summary>
+        /// 排序 异步 List,Set,SortedSet
+        /// </summary>
+        /// <param name="key">key</param>
+        /// <param name="options">排序选项</param>
+        /// <param name="dbNum">库索引</param>
+        /// <returns></returns>
+        public async Task<List<string>> SortAsync(string key, SortOptions options, int? dbNum = null)
+        {
+            if (key.IsNullOrEmpty()) return null;
+            return await this.ExecuteAsync(CommandType.SORT, dbNum, async result => await Task.FromResult(result.Value.ToList<string>()), new object[] { key }.Concat(options.ToArgments()).ToArray());
+        }
         #endregion
     }
 }
