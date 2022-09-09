@@ -15,9 +15,9 @@ using System.IO;
 namespace XiaoFeng.IO
 {
     /// <summary>
-    /// CSVStreamWriter 类说明
+    /// CSV写流器
     /// </summary>
-    public class CsvStreamWriter:Disposable
+    public class CsvStreamWriter : Disposable
     {
         #region 构造器
         /// <summary>
@@ -41,7 +41,7 @@ namespace XiaoFeng.IO
         /// </summary>
         /// <param name="stream">文件流</param>
         /// <param name="encoding">编码</param>
-        public CsvStreamWriter(Stream stream,Encoding encoding)
+        public CsvStreamWriter(Stream stream, Encoding encoding)
         {
             this.Writer = new StreamWriter(stream, encoding);
             this.Encoding = encoding;
@@ -52,7 +52,7 @@ namespace XiaoFeng.IO
         /// <param name="path">文件路径</param>
         /// <param name="append">是否附加</param>
         /// <param name="encoding">编码</param>
-        public CsvStreamWriter(string path,Boolean append,Encoding encoding)
+        public CsvStreamWriter(string path, Boolean append, Encoding encoding)
         {
             this.Writer = new StreamWriter(path, append, encoding);
             this.Encoding = encoding;

@@ -16,7 +16,7 @@ using System.Linq;
 namespace XiaoFeng.IO
 {
     /// <summary>
-    /// CSV读取
+    /// CSV读流器
     /// </summary>
     public class CsvStreamReader : Disposable
     {
