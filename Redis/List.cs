@@ -545,7 +545,6 @@ namespace XiaoFeng.Redis
         /// <summary>
         /// 获取列表中指定区间内的元素
         /// </summary>
-        /// <typeparam name="T">类型</typeparam>
         /// <param name="key">key</param>
         /// <param name="start">开始索引 可以用负数 如 -1代表最后一个</param>
         /// <param name="stop">结束索引</param>

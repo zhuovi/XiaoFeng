@@ -284,10 +284,7 @@ namespace XiaoFeng
         /// </summary>
         /// <param name="_">字符串</param>
         /// <returns></returns>
-        public static Boolean IsIdentityCard(this String _)
-        {
-            return IdentityCard.Create.IsCardNumber(_) == "success";
-        }
+        public static Boolean IsIdentityCard(this String _) => new CardInfo().Valid(_);
         #endregion
 
         #region 防止SQL注入
@@ -351,6 +348,26 @@ namespace XiaoFeng
         /// <param name="_">字符串</param>
         /// <returns></returns>
         public static Boolean IsBankCardNo(this String _) => BankInfo.CheckBankCardNO(_);
+        #endregion
+
+        #region 获取字符串强度
+        /// <summary>
+        /// 获取字符串强度
+        /// </summary>
+        /// <param name="str">字符串</param>
+        /// <param name="IsChinese">是否验证汉字</param>
+        /// <returns>强度值 0 长度少于6位 1 包含数字，字符，小写字母，大写字母，汉字中的一种，2是包含两种 3是包含三种 4是包含四种 5是包含五种</returns>
+        public static int GetStringStrength(this string str, Boolean IsChinese = true)
+        {
+            var matchs = new List<string> { @"\d", @"[a-z]", @"[A-Z]" };
+            if (IsChinese)
+                matchs.Add(@"[~!@#$%^&\*\(\)_\+\-=\[\]\{\}:;'"",.\/<>?\|\\`]");
+            if (str.Length <= 5)
+                return 0;
+            var i = 0;
+            matchs.Each(m => { if (new Regex(m).IsMatch(str)) i++; });
+            return i;
+        }
         #endregion
 
         #endregion

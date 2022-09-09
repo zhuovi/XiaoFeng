@@ -89,7 +89,6 @@ namespace XiaoFeng.Redis
         /// <summary>
         /// 将 member 元素从 source 集合移动到 destination 集合
         /// </summary>
-        /// <typeparam name="T">类型</typeparam>
         /// <param name="key">源key</param>
         /// <param name="destKey">目标key</param>
         /// <param name="value">元素</param>
@@ -99,7 +98,6 @@ namespace XiaoFeng.Redis
         /// <summary>
         /// 将 member 元素从 source 集合移动到 destination 集合 异步
         /// </summary>
-        /// <typeparam name="T">类型</typeparam>
         /// <param name="key">源key</param>
         /// <param name="destKey">目标key</param>
         /// <param name="value">元素</param>
