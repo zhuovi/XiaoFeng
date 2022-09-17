@@ -2787,10 +2787,10 @@ namespace XiaoFeng.Data.SQL
                                         ColumnAttribute column = p.GetCustomAttribute<ColumnAttribute>();
                                         if (column != null && (column.PrimaryKey || column.AutoIncrement))
                                         {
-                                            Where += " and {0} = '{1}'".format(FieldFormat(column.Name), value == null ? "null" : value.GetSqlValue());
+                                            Where += " and {0} = {1}".format(FieldFormat(column.Name), value == null ? "null" : value.GetSqlValue());
                                         }
                                         else
-                                            Columns += ",{0} = '{1}'".format(FieldFormat(p.Name), value == null ? "null" : value.GetSqlValue());
+                                            Columns += ",{0} = {1}".format(FieldFormat(p.Name), value == null ? "null" : value.GetSqlValue());
                                     }
                                 }
                             });
@@ -2807,7 +2807,7 @@ namespace XiaoFeng.Data.SQL
                                         if (p != null && p.CanRead && p.CanWrite)
                                         {
                                             var val = p.GetValue(model, null);
-                                            Where = "{0} = '{1}'".format(FieldFormat(PrimaryKey), val == null ? "null" : val.GetSqlValue());
+                                            Where = "{0} = {1}".format(FieldFormat(PrimaryKey), val == null ? "null" : val.GetSqlValue());
                                         }
                                     }
                                 }

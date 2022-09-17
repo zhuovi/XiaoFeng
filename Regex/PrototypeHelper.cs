@@ -360,12 +360,11 @@ namespace XiaoFeng
         public static int GetStringStrength(this string str, Boolean IsChinese = true)
         {
             var matchs = new List<string> { @"\d", @"[a-z]", @"[A-Z]" };
-            if (IsChinese)
-                matchs.Add(@"[~!@#$%^&\*\(\)_\+\-=\[\]\{\}:;'"",.\/<>?\|\\`]");
-            if (str.Length <= 5)
-                return 0;
+            if (IsChinese) matchs.Add(@"[~!@#$%^&\*\(\)_\+\-=\[\]\{\}:;'"",.\/<>?\|\\`]");
+            if (str.Length <= 5) return 0;
             var i = 0;
             matchs.Each(m => { if (new Regex(m).IsMatch(str)) i++; });
+            if (i >= 4 && str.Length < 13) i--;
             return i;
         }
         #endregion
