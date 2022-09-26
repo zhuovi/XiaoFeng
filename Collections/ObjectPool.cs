@@ -266,7 +266,7 @@ namespace XiaoFeng.Collections
         public override void Dispose()
         {
             base.Dispose();
-            if (Job.Status == JobStatus.Wait) Job.Stop();
+            if (Job.Status == JobStatus.Waiting) Job.Stop();
             Job.TryDispose();
         }
         #endregion

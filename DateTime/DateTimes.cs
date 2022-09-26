@@ -253,7 +253,7 @@ namespace XiaoFeng
         /// 是否为空
         /// </summary>
         /// <returns></returns>
-        public Boolean IsEmpty() => this.Start == null && this.End == null;
+        public Boolean IsEmpty() => this.Start == null || this.End == null;
         #endregion
         #endregion
     }

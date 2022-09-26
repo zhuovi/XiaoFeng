@@ -8,7 +8,7 @@
 		<Copyright>CopyRight @ 2008-2023 魔法精灵(www.fayelf.com) QQ:7092734 Email:jacky@fayelf.com</Copyright>
 		<Company>河南魔法精灵软件科技有限公司</Company>
 		<VersionPrefix>3.0</VersionPrefix>
-		<VersionSuffix>5</VersionSuffix>
+		<VersionSuffix>6</VersionSuffix>
 		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
 		<FileVersion>$(Version)</FileVersion>
 		<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
@@ -24,7 +24,7 @@
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>FAYELF</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageReleaseNotes>增加判断密码强度函数,增加CSV文件的读写器,增加密码强度函数GetStringStrength(String str,bool isChinese);</PackageReleaseNotes>
+		<PackageReleaseNotes>增加判断密码强度函数,增加CSV文件的读写器,增加密码强度函数GetStringStrength(String str,bool isChinese);优化DateTimeHelper;增加作业状态 未入队列;</PackageReleaseNotes>
 		<DelaySign>False</DelaySign>
 		<IsPackable>true</IsPackable>
 		<PackageProjectUrl>https://www.yuque.com/fayelf/xiaofeng</PackageProjectUrl>
@@ -35,12 +35,6 @@
 		<DefineConstants Condition="'$(TargetFramework)'=='netstandard2.1'">$(DefineConstants);NETCORE;</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
-		<Compile Remove="Cache\MemoryCacheManage.cs" />
-		<Compile Remove="Cache\MemoryCacheManager.cs" />
-		<Compile Remove="Common\Common.cs" />
-		<Compile Remove="Common\Function.cs" />
-		<Compile Remove="Common\UserSession.cs" />
-		<Compile Remove="Data\DataMapping.cs" />
-		<Compile Remove="Log\Logger - 复制.cs" />
+	  <Compile Remove="Data\DataMapping.cs" />
 	</ItemGroup>
 </Project>

@@ -111,7 +111,7 @@ namespace XiaoFeng.Threading
             if (job == null || this.SchedulerJobs.ContainsKey(job.ID)) return;
             var j = this.SchedulerJobs.Values.Where(a => a.Name == job.Name);
             //如果作业中有正在等待的作业并且名和要加入的作业名称一样的情况下则不再添加作业
-            if (j.Any() && j != null && j.First().Status == JobStatus.Wait)
+            if (j.Any() && j != null && j.First().Status == JobStatus.Waiting)
             {
                 return;
             }
@@ -125,6 +125,7 @@ namespace XiaoFeng.Threading
                     job.StartTime = null;
                 }
             }
+            job.Status = JobStatus.Waiting;
             this.SchedulerJobs.TryAdd(job.ID, job);
             this.Wake();
             await Task.CompletedTask;
@@ -238,7 +239,7 @@ namespace XiaoFeng.Threading
                     this.SchedulerJobs.Values.Each(job =>
                     {
                         int period = 0;
-                        if (job.Status == JobStatus.Wait && this.CheckTime(job, now, out period))
+                        if (job.Status == JobStatus.Waiting && this.CheckTime(job, now, out period))
                         {
                             if (job.TimerType != TimerType.Once)
                                 Synchronized.Run(() =>
@@ -248,7 +249,7 @@ namespace XiaoFeng.Threading
                             job.Status = JobStatus.Runing;
                             job.LastTime = now;
                             LogHelper.Warn($"开始运行作业 {job.Name} - {this.SchedulerJobs.Count} - {job.NextTime:yyyy-MM-dd HH:mm:ss.ffff}");
-                            if (job.CompleteCallBack == null) job.Status = JobStatus.Wait;
+                            if (job.CompleteCallBack == null) job.Status = JobStatus.Waiting;
                             if (!job.Async)
                                 Execute(job);
                             else
@@ -262,7 +263,7 @@ namespace XiaoFeng.Threading
                                 {
                                     var _job = (IJob)j;
                                     if (_job.CompleteCallBack != null)
-                                        _job.Status = JobStatus.Wait;
+                                        _job.Status = JobStatus.Waiting;
                                 }, job, CancellationTokenSource.CreateLinkedTokenSource(this.CancelToken.Token, job.CancelToken.Token).Token);
                             }
                         }
@@ -304,26 +305,26 @@ namespace XiaoFeng.Threading
                     else
                         job.SuccessCallBack = j => j.CompleteCallBack?.Invoke(j);
                 }
-                this.Success(job);
                 job.SuccessCallBack?.Invoke(job);
+                this.Success(job);
             }
             catch (ThreadAbortException ex)
             {
                 LogHelper.Error(ex, "任务终止");
-                this.Failure(job);
                 job.FailureCallBack?.Invoke(job, ex);
+                this.Failure(job);
             }
             catch (ThreadInterruptedException ex)
             {
                 LogHelper.Error(ex, "任务中断");
-                this.Failure(job);
                 job.FailureCallBack?.Invoke(job, ex);
+                this.Failure(job);
             }
             catch (Exception ex)
             {
                 LogHelper.Error(ex);
-                this.Failure(job);
                 job.FailureCallBack?.Invoke(job, ex);
+                this.Failure(job);
             }
             finally
             {

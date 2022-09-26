@@ -172,10 +172,14 @@ namespace XiaoFeng.Threading
                     {
                         try
                         {
-                            await Task.WhenAny(this.ExecuteAsync(workItem, this.CancelToken.Token)).ConfigureAwait(false);
+                            var task = this.ExecuteAsync(workItem, this.CancelToken.Token);
+                            if (task.Status == TaskStatus.Created)
+                                task.Start();
+                            await Task.WhenAny(task).ConfigureAwait(false);
                         }
                         catch (Exception ex)
                         {
+                            this.ConsoleWrite($"执行任务队列出错.{Environment.NewLine}{ex.Message}");
                             LogHelper.Error(ex, "执行任务队列出错.");
                         }
                     }

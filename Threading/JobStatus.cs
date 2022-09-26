@@ -23,19 +23,24 @@ namespace XiaoFeng.Threading
     public enum JobStatus
     {
         /// <summary>
-        /// 等待
+        /// 未入队列
+        /// </summary>
+        [Description("未入队列")]
+        NotQueued = 0,
+        /// <summary>
+        /// 等待中
         /// </summary>
         [Description("等待中")]
-        Wait = 0,
+        Waiting = 1,
         /// <summary>
         /// 运行中
         /// </summary>
         [Description("运行中")]
-        Runing = 1,
+        Runing = 2,
         /// <summary>
         /// 停止中
         /// </summary>
         [Description("停止中")]
-        Stoping = 2
+        Stoping = 3
     }
 }
