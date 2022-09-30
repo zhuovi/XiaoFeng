@@ -35,7 +35,7 @@ namespace XiaoFeng.IO
         /// <param name="path">文件路径</param>
         public CsvStreamReader(string path)
         {
-            this.Reader = new StreamReader(path);
+            this.Reader = new StreamReader(new MemoryStream(FileHelper.OpenBytes(path)));
         }
         /// <summary>
         /// 设置文件路径
@@ -45,6 +45,7 @@ namespace XiaoFeng.IO
         public CsvStreamReader(string path, Encoding encoding)
         {
             this.Reader = new StreamReader(path, encoding);
+            this.Encoding = encoding;
         }
         #endregion
 
@@ -61,6 +62,10 @@ namespace XiaoFeng.IO
         /// 列分隔符
         /// </summary>
         public Char Separator { get; set; } = ',';
+        /// <summary>
+        /// 编码
+        /// </summary>
+        public Encoding Encoding { get; set; } = Encoding.UTF8;
         #endregion
 
         #region 方法
@@ -91,9 +96,9 @@ namespace XiaoFeng.IO
                     /*一行结束*/
                     if (!ClosureQuotes)
                     {
-                        if (bytes.Last() == '"')
+                        if (bytes.Count > 0 && bytes.Last() == '"')
                             bytes.RemoveAt(bytes.Count - 1);
-                        list.Add(bytes.ToArray().GetString());
+                        list.Add(bytes.ToArray().GetString(this.Encoding));
                         break;
                     }
                     else
@@ -121,9 +126,9 @@ namespace XiaoFeng.IO
                         {
                             if (!ClosureQuotes)
                             {
-                                if (bytes.Last() == '"')
+                                if (bytes.Count > 0 && bytes.Last() == '"')
                                     bytes.RemoveAt(bytes.Count - 1);
-                                list.Add(bytes.ToArray().GetString().ReplacePattern(@"""{2}",@""""));
+                                list.Add(bytes.ToArray().GetString(this.Encoding).ReplacePattern(@"""{2}", @""""));
                                 bytes = new List<byte>();
                                 FirstQuotes = false;
                             }
@@ -134,7 +139,7 @@ namespace XiaoFeng.IO
                         }
                         else
                         {
-                            list.Add(bytes.ToArray().GetString());
+                            list.Add(bytes.ToArray().GetString(this.Encoding));
                             bytes = new List<byte>();
                         }
                     }
