@@ -24,35 +24,35 @@ namespace XiaoFeng.Http
 
         #region 属性
         /// <summary>
-        /// Get
+        /// GET 从指定的资源请求数据。获取数据时使用
         /// </summary>
         public static HttpMethod Get { get { return new HttpMethod("Get"); } }
         /// <summary>
-        /// Post
+        /// POST 向指定的资源提交要被处理的数据。提交数据时使用
         /// </summary>
         public static HttpMethod Post { get { return new HttpMethod("Post"); } }
         /// <summary>
-        /// Head
+        /// HEAD 向服务器索要与GET请求相一致的响应，只不过响应体将不会被返回。获取内容头时使用
         /// </summary>
         public static HttpMethod Head { get { return new HttpMethod("Head"); } }
         /// <summary>
-        /// Options
+        /// OPTIONS  返回服务器针对特定资源所支持的HTTP请求方法。获取服务器所支持的请求类型时使用
         /// </summary>
         public static HttpMethod Options { get { return new HttpMethod("Options"); } }
         /// <summary>
-        /// Delete
+        /// DELETE   请求服务器删除Request-URI所标识的资源。删除数据时使用
         /// </summary>
         public static HttpMethod Delete { get { return new HttpMethod("Delete"); } }
         /// <summary>
-        /// Patch
+        /// PATCH    实体中包含一个表，表中说明与该URI所表示的原内容的区别。验证数据差异时使用
         /// </summary>
         public static HttpMethod Patch { get { return new HttpMethod("Patch"); } }
         /// <summary>
-        /// Put
+        /// PUT  向指定资源位置上传其最新内容。更新数据时使用
         /// </summary>
         public static HttpMethod Put { get { return new HttpMethod("Put"); } }
         /// <summary>
-        /// Trace
+        /// TRACE    回显服务器收到的请求，主要用于测试或诊断。测试服务器性能时使用
         /// </summary>
         public static HttpMethod Trace { get { return new HttpMethod("Trace"); } }
         /// <summary>
@@ -93,6 +93,16 @@ namespace XiaoFeng.Http
         /// </summary>
         /// <param name="method">请求类型</param>
         public static implicit operator HttpMethod(string method) => new HttpMethod(method);
+        /// <summary>
+        /// 显示转换
+        /// </summary>
+        /// <param name="method">请求类型</param>
+        public static explicit operator System.Net.Http.HttpMethod(HttpMethod method) =>new System.Net.Http.HttpMethod(method.Method);
+        /// <summary>
+        /// 隐式转换
+        /// </summary>
+        /// <param name="method">请求类型</param>
+        public static implicit operator HttpMethod(System.Net.Http.HttpMethod method) => new HttpMethod(method.Method);
         /// <summary>
         /// 是否相等
         /// </summary>

@@ -40,7 +40,7 @@ namespace XiaoFeng.Threading
         {
             MaxCount = MaxCount <= 0 ? 1 : MaxCount;
             this.MaxTaskCount = MaxCount;
-            this.Manual = new SemaphoreSlim(MaxCount, MaxCount);
+            this.Slim = new SemaphoreSlim(MaxCount, MaxCount);
         }
         #endregion
 
@@ -64,7 +64,7 @@ namespace XiaoFeng.Threading
         /// <summary>
         /// 正在运行的任务数
         /// </summary>
-        public int TaskingCount { get { return this.Manual.CurrentCount; } }
+        public int TaskingCount { get { return this.Slim.CurrentCount; } }
         /// <summary>
         /// 任务队列
         /// </summary>
@@ -84,7 +84,7 @@ namespace XiaoFeng.Threading
         /// <summary>
         /// 线程同步信号
         /// </summary>
-        private SemaphoreSlim Manual = new SemaphoreSlim(1, 3);
+        private SemaphoreSlim Slim = new SemaphoreSlim(1, 3);
         /// <summary>
         /// XiaoFeng 配置
         /// </summary>
@@ -132,13 +132,13 @@ namespace XiaoFeng.Threading
         /// </summary>
         public Task Wake()
         {
-            while (true)
+            while (!this.CancelToken.Token.IsCancellationRequested)
             {
                 if (this.TaskQueue.TryDequeue(out var task))
                 {
                     Task.Run(() =>
                     {
-                        this.Execute(task).ConfigureAwait(false);
+                        this.ExecuteAsync(task).ConfigureAwait(false);
                     });
                 }
                 else break;
@@ -152,9 +152,9 @@ namespace XiaoFeng.Threading
         /// 执行任务
         /// </summary>
         /// <param name="task">任务</param>
-        public async Task Execute(Func<CancellationToken, Task> task)
+        public async Task ExecuteAsync(Func<CancellationToken, Task> task)
         {
-            Manual.Wait(this.CancelToken.Token);
+            Slim.Wait(this.CancelToken.Token);
             var _task = task.Invoke(this.CancelToken.Token);
             if (_task.Status == TaskStatus.Created)
             {
@@ -167,7 +167,7 @@ namespace XiaoFeng.Threading
             }
             //Task.WaitAll(_task);
             Interlocked.Increment(ref this._CompletedWorkItemCount);
-            Manual.Release();
+            Slim.Release();
             await Task.CompletedTask;
         }
         #endregion
