@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using XiaoFeng.Xml;
+using System.Xml.Linq;
 namespace XiaoFeng
 {
     /// <summary>
@@ -79,6 +80,68 @@ namespace XiaoFeng
         /// <param name="type">类型</param>
         /// <returns></returns>
         public static object XmlToEntity(this String xml, Type type = null) => XmlSerializer.Deserialize(xml, type);
+        #endregion
+
+        #region 获取节点
+        /// <summary>
+        /// 获取节点
+        /// </summary>
+        /// <param name="xElement">节点</param>
+        /// <param name="elementName">节点名称</param>
+        /// <returns></returns>
+        public static XElement GetXElement(this XElement xElement,string elementName)
+        {
+            if (!xElement.HasElements) return null;
+            var name = xElement.GetDefaultNamespace();
+            return xElement.Element((name.IsNullOrEmpty() ? "" : name) + elementName);
+        }
+        /// <summary>
+        /// 获取节点下子节点集
+        /// </summary>
+        /// <param name="xElement">节点</param>
+        /// <param name="elementName">节点名称</param>
+        /// <returns></returns>
+        public static IEnumerable<XElement> GetXElements(this XElement xElement, string elementName)
+        {
+            if (!xElement.HasElements) return null;
+            var name = xElement.GetDefaultNamespace();
+            return xElement.Elements((name.IsNullOrEmpty() ? "" : name) + elementName);
+        }
+        /// <summary>
+        /// 获取节点下所有节点
+        /// </summary>
+        /// <param name="xElement">节点</param>
+        /// <param name="elementName">节点名称</param>
+        /// <returns></returns>
+        public static IEnumerable<XElement> GetXDescendants(this XElement xElement,string elementName)
+        {
+            if (!xElement.HasElements) return null;
+            var name = xElement.GetDefaultNamespace();
+            return xElement.Descendants((name.IsNullOrEmpty() ? "" : name) + elementName);
+        }
+        /// <summary>
+        /// 获取节点属性
+        /// </summary>
+        /// <param name="xElement">节点</param>
+        /// <param name="attributeName">属性名称</param>
+        /// <returns></returns>
+        public static XAttribute GetXAttribute(this XElement xElement, string attributeName)
+        {
+            if (!xElement.HasAttributes) return null;
+            if (attributeName.IndexOf(":") > -1)
+            {
+                var rs = attributeName.Split(':');
+                var rName = rs[0];
+                var rValue = rs[1];
+                if (rName.IsNotNullOrEmpty())
+                {
+                    XNamespace xRName = xElement.GetNamespaceOfPrefix(rName);
+                    if (xRName.NamespaceName.IsNullOrEmpty()) return null;
+                    return xElement.Attribute(xRName + rValue);
+                }
+            }
+            return xElement.Attribute(attributeName);
+        }
         #endregion
     }
 }

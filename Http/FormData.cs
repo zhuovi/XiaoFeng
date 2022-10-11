@@ -25,9 +25,18 @@ namespace XiaoFeng.Http
         /// <summary>
         /// 无参构造器
         /// </summary>
-        public FormData()
+        public FormData() { }
+        /// <summary>
+        /// 设置数据
+        /// </summary>
+        /// <param name="name">名称</param>
+        /// <param name="value">值</param>
+        /// <param name="formType">类型</param>
+        public FormData(string name, string value, FormType formType)
         {
-
+            Name = name;
+            Value = value;
+            FormType = formType;
         }
         #endregion
 

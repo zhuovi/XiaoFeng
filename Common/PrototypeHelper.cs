@@ -1746,6 +1746,8 @@ namespace XiaoFeng
             {
                 if (targetType == typeof(string))
                     return o.ToString();
+                else if (targetType.IsEnum)
+                    return Enum.Parse(targetType, o.ToString(), true);
                 else return Convert.ChangeType(o, targetType);
             }
             if (targetType.IsEnum) return o.ToEnum(targetType);

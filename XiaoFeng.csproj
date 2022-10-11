@@ -36,5 +36,6 @@
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="Data\DataMapping.cs" />
+	  <Compile Remove="Log\Logger - 复制.cs" />
 	</ItemGroup>
 </Project>

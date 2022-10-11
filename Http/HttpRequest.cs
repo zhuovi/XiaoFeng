@@ -18,7 +18,7 @@ using XiaoFeng.IO;
 *  Email : jacky@fayelf.com                                     *
 *  Site : www.fayelf.com                                        *
 *  Create Time : 2021-05-25 18:36:04                            *
-*  Version : v 1.0.0                                            *
+*  Version : v 2.0.0                                            *
 *  CLR Version : 4.0.30319.42000                                *
 *****************************************************************/
 namespace XiaoFeng.Http
@@ -26,32 +26,23 @@ namespace XiaoFeng.Http
     /// <summary>
     /// 请求对象
     /// </summary>
-    public class HttpRequest : HttpBase,IHttpRequest
+    public class HttpRequest : HttpBase, IHttpRequest
     {
         #region 构造器
         /// <summary>
         /// 无参构造器
         /// </summary>
-        public HttpRequest()
-        {
-            
-        }
+        public HttpRequest() { }
         /// <summary>
         /// 设置请求对象
         /// </summary>
         /// <param name="httpClient">请求对象</param>
-        public HttpRequest(HttpClient httpClient) : this(httpClient, null)
-        {
-
-        }
+        public HttpRequest(HttpClient httpClient) : this(httpClient, null) { }
         /// <summary>
         /// 设置请求对象
         /// </summary>
         /// <param name="source">信号源</param>
-        public HttpRequest(CancellationTokenSource source) : this(null, source)
-        {
-
-        }
+        public HttpRequest(CancellationTokenSource source) : this(null, source) { }
         /// <summary>
         /// 设置请求对象
         /// </summary>
@@ -63,6 +54,24 @@ namespace XiaoFeng.Http
                 this.Client = httpClient;
             if (source != null)
                 this.CancelToken = source;
+        }
+        /// <summary>
+        /// 设置网址
+        /// </summary>
+        /// <param name="url">网址</param>
+        /// <param name="method">请求类型</param>
+        public HttpRequest(string url, HttpMethod method)
+        {
+            this.Address = url;
+            this.Method = method;
+        }
+        /// <summary>
+        /// 设置网址
+        /// </summary>
+        /// <param name="url">网址</param>
+        public HttpRequest(string url)
+        {
+            this.Address = url;
         }
         #endregion
 
@@ -158,7 +167,7 @@ namespace XiaoFeng.Http
         /// <summary>
         /// 获取或设置请求的身份验证信息。
         /// </summary>
-        public ICredentials ICredentials { get; set; }
+        public ICredentials Credentials { get; set; }
         /// <summary>
         /// 指定 Schannel 安全包支持的安全协议
         /// </summary>
@@ -194,7 +203,7 @@ namespace XiaoFeng.Http
         /// <summary>
         /// 数据
         /// </summary>
-        public Dictionary<string,string> Data { get; set; }
+        public Dictionary<string, string> Data { get; set; }
         /// <summary>
         /// Body请求数据
         /// </summary>
@@ -210,7 +219,7 @@ namespace XiaoFeng.Http
         /// <summary>
         /// 请求消息
         /// </summary>
-        public HttpRequestMessage Request { get; set; }
+        public HttpRequestMessage Request { get;private set; }
         /// <summary>
         /// 压缩方式
         /// </summary>
@@ -321,7 +330,7 @@ namespace XiaoFeng.Http
             /*Accept*/
             if (this.Accept.IsNotNullOrWhiteSpace())
                 this.Request.Headers.Accept.ParseAdd(this.Accept);
-            
+
             /*UserAgent客户端的访问类型，包括浏览器版本和操作系统信息*/
             this.Request.Headers.UserAgent.Clear();
             this.Request.Headers.UserAgent.ParseAdd(this.UserAgent);
@@ -330,7 +339,7 @@ namespace XiaoFeng.Http
             this.Request.Headers.AcceptEncoding.ParseAdd(this.Encoding.WebName);
             this.Request.Headers.AcceptCharset.ParseAdd(this.Encoding.WebName);
             /*设置安全凭证*/
-            this.ClientHandler.Credentials = this.ICredentials;
+            this.ClientHandler.Credentials = this.Credentials;
             /*设置Cookie*/
             if (this.CookieContainer != null)
             {
@@ -351,7 +360,7 @@ namespace XiaoFeng.Http
             {
                 this.ClientHandler.AutomaticDecompression = this.DecompressionMethod;
             }
-            
+
             if (this.Client == null)
             {
                 this.Client = new HttpClient(this.ClientHandler, true);
@@ -384,7 +393,7 @@ namespace XiaoFeng.Http
                 }
                 return Response;
             }
-            catch(TaskCanceledException ex)
+            catch (TaskCanceledException ex)
             {
                 using (Response.Response = new HttpResponseMessage() { Content = new StringContent(ex.Message), RequestMessage = this.Request, StatusCode = HttpStatusCode.RequestTimeout, Version = this.ProtocolVersion, ReasonPhrase = ex.Message })
                 {
@@ -396,7 +405,7 @@ namespace XiaoFeng.Http
                 }
                 return Response;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 using (Response.Response = new HttpResponseMessage() { Content = new StringContent(ex.Message), RequestMessage = this.Request, StatusCode = HttpStatusCode.InternalServerError, Version = this.ProtocolVersion, ReasonPhrase = ex.Message })
                 {
@@ -432,6 +441,11 @@ namespace XiaoFeng.Http
                 }
             }
         }
+        /// <summary>
+        /// 获取响应数据
+        /// </summary>
+        /// <returns></returns>
+        public HttpResponse GetResponse() => this.GetResponseAsync().ConfigureAwait(false).GetAwaiter().GetResult();
         #endregion
 
         #region 取消请求
@@ -483,26 +497,151 @@ namespace XiaoFeng.Http
         /// </summary>
         /// <param name="name">名称</param>
         /// <param name="value">值</param>
-        public void AddCookie(string name, string value) => this.AddCookie(new Cookie(name, value));
+        /// <returns></returns>
+        public IHttpRequest AddCookie(string name, string value) => this.AddCookie(new Cookie(name, value));
         /// <summary>
         /// 添加Cookie
         /// </summary>
         /// <param name="cookie">cookie</param>
-        public void AddCookie(Cookie cookie)
+        /// <returns></returns>
+        public IHttpRequest AddCookie(Cookie cookie)
         {
             if (cookie.Domain.IsNullOrEmpty() && this.Address.IsNotNullOrEmpty())
                 cookie.Domain = new Uri(this.Address).Host.RemovePattern(@":\d+$");
             if (this.CookieContainer == null) this.CookieContainer = new CookieContainer();
             this.CookieContainer.Add(cookie);
+            return this;
         }
         /// <summary>
         /// 添加Cookie
         /// </summary>
         /// <param name="collection">cookie集</param>
-        public void AddCookie(CookieCollection collection)
+        /// <returns></returns>
+        public IHttpRequest AddCookie(CookieCollection collection)
         {
             if (this.CookieContainer == null) this.CookieContainer = new CookieContainer();
             this.CookieContainer.Add(collection);
+            return this;
+        }
+        #endregion
+
+        #region 添加参数
+        /// <summary>
+        /// 添加参数
+        /// </summary>
+        /// <param name="key">key</param>
+        /// <param name="value">值</param>
+        /// <returns></returns>
+        public IHttpRequest AddParameter(string key, string value)
+        {
+            if (this.Data == null) this.Data = new Dictionary<string, string>();
+            if (this.Data.ContainsKey(key))
+                this.Data[key] = value;
+            else
+                this.Data.Add(key, value);
+            return this;
+        }
+        /// <summary>
+        /// 添加参数
+        /// </summary>
+        /// <param name="data">数据</param>
+        /// <returns></returns>
+        public IHttpRequest AddParameter(Dictionary<string, string> data)
+        {
+            if (this.Data == null) { this.Data = data; return this; }
+            data.Each(d =>
+            {
+                if (this.Data.ContainsKey(d.Key))
+                    this.Data[d.Key] = d.Value;
+                else
+                    this.Data.Add(d.Key, d.Value);
+            });
+            return this;
+        }
+        #endregion
+
+        #region 添加formdata
+        /// <summary>
+        /// 添加formdata
+        /// </summary>
+        /// <param name="formData">formdata</param>
+        /// <returns></returns>
+        public IHttpRequest AddFormData(FormData formData)
+        {
+            if (this.FormData == null) this.FormData = new List<FormData>();
+            var index = this.FormData.FindIndex(a => a.Name == formData.Name);
+            if (index == -1)
+                this.FormData.Add(formData);
+            else
+                this.FormData[index] = formData;
+            return this;
+        }
+        /// <summary>
+        /// 添加formdata
+        /// </summary>
+        /// <param name="key">名称</param>
+        /// <param name="value">值</param>
+        /// <param name="formType">类型</param>
+        /// <returns></returns>
+        public IHttpRequest AddFormData(string key, string value, FormType formType)
+        {
+            return this.AddFormData(new Http.FormData(key, value, formType));
+        }
+        /// <summary>
+        /// 添加formdata
+        /// </summary>
+        /// <param name="forms">formdata集合</param>
+        /// <returns></returns>
+        public IHttpRequest AddFormData(List<FormData> forms)
+        {
+            forms.Each(f =>
+            {
+                var index = this.FormData.FindIndex(a => a.Name == f.Name);
+                if (index == -1)
+                    this.FormData.Add(f);
+                else
+                    this.FormData[index] = f;
+            });
+            return this;
+        }
+        #endregion
+
+        #region 设置请求类型
+        /// <summary>
+        /// 设置请求类型
+        /// </summary>
+        /// <param name="method">请求类型</param>
+        /// <returns></returns>
+        public IHttpRequest SetMethod(HttpMethod method)
+        {
+            this.Method = method;
+            return this;
+        }
+        #endregion
+
+        #region 设置编码
+        /// <summary>
+        /// 设置编码
+        /// </summary>
+        /// <param name="encoding">编码</param>
+        /// <returns></returns>
+        public IHttpRequest SetEncoding(Encoding encoding)
+        {
+            this.Encoding = encoding;
+            return this;
+        }
+        #endregion
+
+        #region 设置请求内容
+        /// <summary>
+        /// 设置请求内容
+        /// </summary>
+        /// <param name="httpContent">请求内容</param>
+        /// <returns></returns>
+        public IHttpRequest SetHttpContent(HttpContent httpContent)
+        {
+            this.HttpContent = httpContent;
+            return this;
         }
         #endregion
 
@@ -516,6 +655,166 @@ namespace XiaoFeng.Http
         /// <param name="errors">SslPolicyErrors</param>
         /// <returns>bool</returns>
         private bool CheckValidationResult(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors) { return true; }
+        #endregion
+
+        #region 设置超时
+        /// <summary>
+        /// 设置超时
+        /// </summary>
+        /// <param name="timeout">超时时间 单位为毫秒</param>
+        /// <returns></returns>
+        public IHttpRequest SetTimeout(int timeout)
+        {
+            this.Timeout = timeout;
+            return this;
+        }
+        #endregion
+
+        #region 设置代理
+        /// <summary>
+        /// 设置代理
+        /// </summary>
+        /// <param name="proxy">代理</param>
+        /// <returns></returns>
+        public IHttpRequest SetWebProxy(WebProxy proxy)
+        {
+            this.WebProxy = proxy;
+            return this;
+        }
+        /// <summary>
+        /// 设置代理
+        /// </summary>
+        /// <param name="host">主机</param>
+        /// <param name="port">端口</param>
+        /// <returns></returns>
+        public IHttpRequest SetWebProxy(string host, int port) => this.SetWebProxy(new WebProxy(host, port));
+        #endregion
+
+        #region 设置请求将跟随的重定向的最大数目
+        /// <summary>
+        /// 设置请求将跟随的重定向的最大数目
+        /// </summary>
+        /// <param name="count">数目</param>
+        /// <returns></returns>
+        public IHttpRequest SetMaximumAutomaticRedirections(int count)
+        {
+            if (count <= 0)
+                this.AllowAutoRedirect = false;
+            else
+            {
+                this.AllowAutoRedirect = true;
+                this.MaximumAutomaticRedirections = count;
+            }
+            return this;
+        }
+        #endregion
+
+        #region 设置请求标头
+        /// <summary>
+        /// 设置请求标头
+        /// </summary>
+        /// <param name="accept">请求标头</param>
+        /// <returns></returns>
+        public IHttpRequest SetAccept(string accept)
+        {
+            this.Accept = accept;
+            return this;
+        }
+        #endregion
+
+        #region 设置地址
+        /// <summary>
+        /// 设置地址
+        /// </summary>
+        /// <param name="url">地址</param>
+        /// <returns></returns>
+        public IHttpRequest SetAddress(string url)
+        {
+            this.Address = url;
+            return this;
+        }
+        /// <summary>
+        /// 设置地址
+        /// </summary>
+        /// <param name="url">地址</param>
+        /// <param name="method">请求类型</param>
+        /// <returns></returns>
+        public IHttpRequest SetAddress(string url, HttpMethod method)
+        {
+            this.Address = url;
+            this.Method = method;
+            return this;
+        }
+        #endregion
+
+        #region 设置Body数据
+        /// <summary>
+        /// 设置Body数据
+        /// </summary>
+        /// <param name="data">数据</param>
+        /// <param name="contentType">内容类型</param>
+        /// <returns></returns>
+        public IHttpRequest SetBodyData(string data, string contentType = "application/json")
+        {
+            this.Method = HttpMethod.Post;
+            this.ContentType = contentType;
+            this.BodyData = data;
+            return this;
+        }
+        #endregion
+
+        #region 设置 User-agent HTTP 标头的值
+        /// <summary>
+        /// 设置 User-agent HTTP 标头的值
+        /// </summary>
+        /// <param name="userAgent">User-agent HTTP 标头的值</param>
+        /// <returns></returns>
+        public IHttpRequest SetUserAgent(string userAgent)
+        {
+            this.UserAgent = userAgent;
+            return this;
+        }
+        #endregion
+
+        #region 设置请求的身份验证信息
+        /// <summary>
+        /// 设置请求的身份验证信息
+        /// </summary>
+        /// <param name="credentials">请求的身份验证信息</param>
+        /// <returns></returns>
+        public IHttpRequest SetCredentials(ICredentials credentials)
+        {
+            this.Credentials = credentials;
+            return this;
+        }
+        #endregion
+
+        #region 设置 Referer HTTP 标头的值
+        /// <summary>
+        /// 设置 Referer HTTP 标头的值
+        /// </summary>
+        /// <param name="referer">Referer HTTP 标头的值</param>
+        /// <returns></returns>
+        public IHttpRequest SetReferer(string referer)
+        {
+            this.Referer = referer;
+            return this;
+        }
+        #endregion
+
+        #region 设置请求证书
+        /// <summary>
+        /// 设置请求证书
+        /// </summary>
+        /// <param name="path">证书路径</param>
+        /// <param name="password">证书密码</param>
+        /// <returns></returns>
+        public IHttpRequest SetCert(string path,string password)
+        {
+            this.CertPath = path;
+            this.CertPassWord = password;
+            return this;
+        }
         #endregion
 
         #endregion

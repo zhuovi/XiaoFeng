@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 *  Email : jacky@fayelf.com                                     *
 *  Site : www.fayelf.com                                        *
 *  Create Time : 2021-05-26 18:11:49                            *
-*  Version : v 1.0.2                                            *
+*  Version : v 1.0.3                                            *
 *  CLR Version : 4.0.30319.42000                                *
 *****************************************************************/
 namespace XiaoFeng.Http

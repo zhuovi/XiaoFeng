@@ -90,7 +90,7 @@ namespace XiaoFeng.IO
                         a = "\"" + a.Replace("\"", "\"\"") + "\"";
                     vals.Add(a);
                 });
-                var bytes = vals.Join(",").GetBytes();
+                var bytes = vals.Join(",").GetBytes(this.Encoding);
                 this.BaseStream.Write(bytes, 0, bytes.Length);
                 this.BaseStream.WriteByte((byte)'\r');
                 this.BaseStream.WriteByte((byte)'\n');
