@@ -376,8 +376,10 @@ namespace XiaoFeng.Http
                 });
             try
             {
+                this.BeginTime = DateTime.Now;
                 /*请求数据*/
                 Response.Response = await this.Client.SendAsync(this.Request, CompletionOption, this.CancelToken.Token).ConfigureAwait(false);
+                this.EndTime = DateTime.Now;
                 await Response.InitAsync();
                 return Response;
             }

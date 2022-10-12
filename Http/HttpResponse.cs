@@ -222,20 +222,27 @@ namespace XiaoFeng.Http
         }
         #endregion
 
+        #region 设置结束时间
+        /// <summary>
+        /// 设置结束时间
+        /// </summary>
+        public void SetEndTime() => this.EndTime = DateTime.Now;
+        #endregion
+
         #region 下载文件
         /// <summary>
         /// 下载文件
         /// </summary>
         /// <param name="path">文件保存路径</param>
-        /// <returns></returns>
-        public async Task DownFileAsync(string path)
+        /// <returns>运行时长</returns>
+        public async Task<long> DownFileAsync(string path)
         {
             path = path.GetBasePath();
             FileHelper.DeleteFile(path);
             using (var file = File.Create(path))
-            {
                 await file.WriteAsync(this.Data, 0, this.Data.Length).ConfigureAwait(false);
-            }
+            this.EndTime = DateTime.Now;
+            return this.RunTime;
         }
         #endregion
 

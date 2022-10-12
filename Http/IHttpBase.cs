@@ -38,5 +38,17 @@ namespace XiaoFeng.Http
         /// 请求或响应内容类型
         /// </summary>
         string ContentType { get; set; }
+        /// <summary>
+        /// 开始请求时间
+        /// </summary>
+        DateTime BeginTime { get; }
+        /// <summary>
+        /// 请求结束时间
+        /// </summary>
+        DateTime EndTime { get; }
+        /// <summary>
+        /// 运行总毫秒数
+        /// </summary>
+        long RunTime { get; }
     }
 }

@@ -50,6 +50,18 @@ namespace XiaoFeng.Http
         /// 请求或响应内容类型
         /// </summary>
         public string ContentType { get; set; }
+        /// <summary>
+        /// 开始请求时间
+        /// </summary>
+        public DateTime BeginTime { get; protected set; }
+        /// <summary>
+        /// 请求结束时间
+        /// </summary>
+        public DateTime EndTime { get; protected set; }
+        /// <summary>
+        /// 运行总毫秒数
+        /// </summary>
+        public long RunTime => (long)(EndTime - BeginTime).TotalMilliseconds;
         #endregion
 
         #region 方法

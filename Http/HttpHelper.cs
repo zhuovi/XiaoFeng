@@ -93,27 +93,22 @@ namespace XiaoFeng.Http
         /// </summary>
         /// <param name="request">请求对象</param>
         /// <param name="localPath">保存地址</param>
-        /// <param name="action">下载完后回调</param>
         /// <returns></returns>
-        public async Task DownFileAsync(HttpRequest request, string localPath, Action<IHttpRequest, string, long> action = null)
+        public async Task<long> DownFileAsync(HttpRequest request, string localPath)
         {
-            var s = System.Diagnostics.Stopwatch.StartNew();
             var response = await this.GetResponseAsync(request).ConfigureAwait(false);
-            await response.DownFileAsync(localPath).ConfigureAwait(false);
-            s.Stop();
-            action?.Invoke(request, localPath, s.ElapsedMilliseconds);
+            return await response.DownFileAsync(localPath).ConfigureAwait(false);
         }
         /// <summary>
         /// 下载文件
         /// </summary>
         /// <param name="url">远程地址</param>
         /// <param name="localPath">保存地址</param>
-        /// <param name="action">下载完后回调</param>
         /// <returns></returns>
-        public async Task DownFileAsync(string url, string localPath, Action<IHttpRequest, string, long> action = null) => await this.DownFileAsync(new HttpRequest
+        public async Task<long> DownFileAsync(string url, string localPath) => await this.DownFileAsync(new HttpRequest
         {
             Address = url
-        }, localPath, action);
+        }, localPath);
         /// <summary>
         /// CURL请求
         /// </summary>

@@ -15,7 +15,6 @@ namespace XiaoFeng
         /// </summary>
         /// <param name="text">编码为UTF8的文本</param>
         /// <returns>返回中文对应的拼音首字母</returns>
-
         public static string GetFirstLetter(string text)
         {
             text = text.Trim();
@@ -121,7 +120,6 @@ namespace XiaoFeng
             }
             return ch.ToString();
         }
-
         /// <summary>
         /// 返回单个字符的汉字拼音
         /// </summary>
@@ -133,7 +131,6 @@ namespace XiaoFeng
             ch = ConvertEncoding(ch.ToString(), encoding, Encoding.UTF8)[0];
             return ConvertEncoding(GetPinyin(ch), Encoding.UTF8, encoding);
         }
-
         /// <summary>
         /// 转换编码 
         /// </summary>
@@ -174,7 +171,7 @@ namespace XiaoFeng
                         { "重庆", "chong qing" },
                         { "银行", "yin hang" },
                         { "了解", "liao jie" },
-                        {"行家","hang jia" },
+                        { "行家","hang jia" },
                         { "便宜", "pian yi" },
                         { "提防", "di fang" },
                         { "人参", "ren shen" },
