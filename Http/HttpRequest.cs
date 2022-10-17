@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -10,6 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using XiaoFeng.IO;
+using XiaoFeng.Resource;
 
 /****************************************************************
 *  Copyright © (2021) www.fayelf.com All Rights Reserved.       *
@@ -18,7 +20,7 @@ using XiaoFeng.IO;
 *  Email : jacky@fayelf.com                                     *
 *  Site : www.fayelf.com                                        *
 *  Create Time : 2021-05-25 18:36:04                            *
-*  Version : v 2.0.0                                            *
+*  Version : v 3.0.0                                            *
 *  CLR Version : 4.0.30319.42000                                *
 *****************************************************************/
 namespace XiaoFeng.Http
@@ -32,7 +34,7 @@ namespace XiaoFeng.Http
         /// <summary>
         /// 无参构造器
         /// </summary>
-        public HttpRequest() { this.HttpCore = HttpCore.HttpClient; }
+        public HttpRequest() { base.HttpCore = HttpCore.HttpClient; }
         /// <summary>
         /// 设置请求对象
         /// </summary>
@@ -54,7 +56,7 @@ namespace XiaoFeng.Http
                 this.Client = httpClient;
             if (source != null)
                 this.CancelToken = source;
-            this.HttpCore = HttpCore.HttpClient;
+            base.HttpCore = HttpCore.HttpClient;
         }
         /// <summary>
         /// 设置网址
@@ -64,7 +66,7 @@ namespace XiaoFeng.Http
         /// <param name="httpCore">请求内核</param>
         public HttpRequest(string url, HttpMethod method, HttpCore httpCore = HttpCore.HttpClient)
         {
-            this.HttpCore = httpCore;
+            base.HttpCore = httpCore;
             this.Address = url;
             this.Method = method;
         }
@@ -75,16 +77,12 @@ namespace XiaoFeng.Http
         /// <param name="httpCore">请求内核</param>
         public HttpRequest(string url, HttpCore httpCore = HttpCore.HttpClient)
         {
-            this.HttpCore = httpCore;
+            base.HttpCore = httpCore;
             this.Address = url;
         }
         #endregion
 
         #region 属性
-        /// <summary>
-        /// 请求内核
-        /// </summary>
-        public HttpCore HttpCore { get; set; }
         /// <summary>
         /// 取消状态
         /// </summary>
@@ -233,6 +231,10 @@ namespace XiaoFeng.Http
         /// 压缩方式
         /// </summary>
         public DecompressionMethods DecompressionMethod { get; set; } = DecompressionMethods.None;
+        /// <summary>
+        /// 请求
+        /// </summary>
+        public HttpWebRequest RequestHttp { get; private set; }
         #endregion
 
         #region 方法
@@ -245,6 +247,8 @@ namespace XiaoFeng.Http
         public async Task<HttpResponse> GetResponseAsync()
         {
             if (this.Address.IsNullOrEmpty() || !this.Address.IsSite()) return null;
+            if (this.HttpCore == HttpCore.HttpWebRequest)
+                return await this.GetHttpResponseAsync();
             var Response = new HttpResponse();
             /*回收*/
             GC.Collect();
@@ -328,10 +332,10 @@ namespace XiaoFeng.Http
             }
             /*设置Http版本*/
             if (this.ProtocolVersion != null) this.Request.Version = this.ProtocolVersion;
-
+            
             this.Request.Headers.ExpectContinue = this.Expect100Continue;
             this.ClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, error) => true;
-
+            
             if (this.Host.IsNotNullOrWhiteSpace()) this.Request.Headers.Host = this.Host;
             else this.Request.Headers.Host = this.Request.RequestUri.Host;
             if (this.IfModifiedSince != null) this.Request.Headers.IfModifiedSince = this.IfModifiedSince.Value;
@@ -383,12 +387,19 @@ namespace XiaoFeng.Http
                 {
                     this.Request.Headers.TryAddWithoutValidation(kv.Key, kv.Value);
                 });
+            if (this.IPEndPoint != null)
+            {
+                var ServicePoint = ServicePointManager.FindServicePoint(this.Request.RequestUri);
+                ServicePoint.BindIPEndPointDelegate = (sp, remote, retryCount) => this.IPEndPoint;
+            }
             try
             {
                 this.BeginTime = DateTime.Now;
                 /*请求数据*/
                 Response.Response = await this.Client.SendAsync(this.Request, CompletionOption, this.CancelToken.Token).ConfigureAwait(false);
                 this.EndTime = DateTime.Now;
+                Response.HttpCore = this.HttpCore;
+                Response.SetBeginAndEndTime(this.BeginTime, this.EndTime);
                 await Response.InitAsync();
                 return Response;
             }
@@ -433,7 +444,6 @@ namespace XiaoFeng.Http
                 if (this.IsReset)
                 {
                     /*释放http连接*/
-                    // if (this.Request != null && Request.ServicePoint != null) this.ReleaseServicePoint(Request.ServicePoint);
                     this.Request.Dispose();
                     this.Request = null;
                     this.Client.Dispose();
@@ -459,13 +469,245 @@ namespace XiaoFeng.Http
         public HttpResponse GetResponse() => this.GetResponseAsync().ConfigureAwait(false).GetAwaiter().GetResult();
         #endregion
 
+        #region 获取响应数据
+        /// <summary>
+        /// 获取响应数据
+        /// </summary>
+        /// <returns></returns>
+        private async Task<HttpResponse> GetHttpResponseAsync()
+        {
+            var Response = new HttpResponse();
+            /*回收*/
+            GC.Collect();
+            /*注册编码支持GB2312*/
+#if NETCORE
+            //Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+#endif
+            if (this.Method.Method.ToUpper() == "GET" && this.Data.IsNotNullOrEmpty())
+                this.Address += (this.Address.IndexOf("?") == -1 ? "?" : "&") + this.Data.ToQuery();
+            //初始化对像，并设置请求的URL地址
+            this.RequestHttp = WebRequest.CreateHttp(this.Address);
+            /*设置证书*/
+            this.SetCerList();
+            /*设置本地的出口ip和端口*/
+            if (this.IPEndPoint != null) this.RequestHttp.ServicePoint.BindIPEndPointDelegate = new BindIPEndPoint(BindIPEndPointCallback);
+            /*设置Header参数*/
+            if (this.Headers == null) this.Headers = new Dictionary<string, string>();
+            this.Headers.Each(k => this.RequestHttp.Headers.Add(k.Key, k.Value));
+            /*设置HTTP代理*/
+            if (this.WebProxy != null)
+                this.RequestHttp.Proxy = this.WebProxy;
+            /*设置Http版本*/
+            if (this.ProtocolVersion != null) this.RequestHttp.ProtocolVersion = this.ProtocolVersion;
+            byte[] RequestData = Array.Empty<byte>();
+            if (",POST,GET,DELETE,PUT,".IndexOf("," + this.Method.Method.ToUpper() + ",", StringComparison.OrdinalIgnoreCase) > -1)
+            {
+                if (this.ContentType.IsNullOrEmpty())
+                    this.ContentType = "application/x-www-form-urlencoded";
+                if (this.FormData == null)
+                {
+                    if (this.Data != null && this.Data.Any())
+                    {
+                        if (this.Method == "POST")
+                            RequestData = this.Data.ToQuery().GetBytes(this.Encoding);
+                    }
+                    else if (this.BodyData.IsNotNullOrEmpty())
+                    {
+                        this.Method = HttpMethod.Post;
+                        if (this.ContentType.IsNullOrEmpty())
+                            this.ContentType = "application/json";
+                        RequestData = this.BodyData.GetBytes(this.Encoding);
+                    }
+                    if (this.ContentType.IsNotNullOrEmpty())
+                        this.RequestHttp.ContentType = this.ContentType;
+                }
+                else
+                {
+                    this.Method = HttpMethod.Post;
+                    if (this.Data.IsNotNullOrEmpty())
+                    {
+                        this.Data.Each(kv =>
+                        {
+                            this.FormData.Add(new FormData(kv.Key, kv.Value, FormType.Text));
+                        });
+                    }
+                    var boundary = this.GetBoundary();
+                    this.ContentType = "multipart/form-data; boundary=" + boundary;
+                    RequestData = this.GetBytes(boundary);
+                }
+                /*设置请求数据*/
+                if (RequestData != null && RequestData.Length > 0)
+                {
+                    this.RequestHttp.ContentLength = RequestData.Length;
+                    this.RequestHttp.GetRequestStream().Write(RequestData, 0, RequestData.Length);
+                }
+            }
+            this.RequestHttp.ServicePoint.Expect100Continue = this.Expect100Continue;
+            this.RequestHttp.Method = this.Method.Method;
+            this.RequestHttp.Timeout = this.Timeout;
+            this.RequestHttp.KeepAlive = this.KeepAlive;
+            this.RequestHttp.ReadWriteTimeout = this.ReadWriteTimeout;
+            if (this.Host.IsNotNullOrWhiteSpace()) this.RequestHttp.Host = this.Host;
+            if (this.IfModifiedSince != null) this.RequestHttp.IfModifiedSince = this.IfModifiedSince.Value;
+            /*Accept*/
+            if (this.Accept.IsNotNullOrWhiteSpace())
+                this.RequestHttp.Accept = this.Accept;
+            
+            if (this.ContentType.IsNullOrEmpty())
+                this.ContentType = "text/html";
+            /*请求内容类型*/
+            this.RequestHttp.ContentType = this.ContentType;
+            /*UserAgent客户端的访问类型，包括浏览器版本和操作系统信息*/
+            if (this.UserAgent.IsNotNullOrEmpty())
+                this.RequestHttp.UserAgent = this.UserAgent;
+            /*编码*/
+            //encoding = Encoding.GetEncoding(this.Encoding);
+            /*设置安全凭证*/
+            if (this.Credentials != null)
+                this.RequestHttp.Credentials = this.Credentials;
+            /*设置Cookie*/
+            if (this.CookieContainer != null) this.RequestHttp.CookieContainer = this.CookieContainer;
+            /*来源地址*/
+            if(this.Referer.IsNotNullOrEmpty())
+            this.RequestHttp.Referer = this.Referer;
+            /*是否执行跳转功能*/
+            this.RequestHttp.AllowAutoRedirect = this.AllowAutoRedirect;
+            if (this.MaximumAutomaticRedirections > 0) this.RequestHttp.MaximumAutomaticRedirections = this.MaximumAutomaticRedirections;
+            /*设置最大连接*/
+            if (this.Connectionlimit > 0) this.RequestHttp.ServicePoint.ConnectionLimit = this.Connectionlimit;
+            try
+            {
+                this.BeginTime = DateTime.Now;
+                /*请求数据*/
+                Response.ResponseHttp = await this.RequestHttp.GetResponseAsync() as HttpWebResponse;
+                this.EndTime = DateTime.Now;
+                Response.HttpCore = this.HttpCore;
+                Response.SetBeginAndEndTime(this.BeginTime, this.EndTime);
+                await Response.InitHttpAsync();
+            }
+            catch (WebException ex)
+            {
+                if (ex.Response != null)
+                    using (Response.ResponseHttp = (HttpWebResponse)ex.Response) await Response.InitHttpAsync();
+                else
+                {
+                    Response.StatusCode = HttpStatusCode.BadRequest;
+                    Response.StatusDescription = ex.Message;
+                }
+            }
+            finally
+            {
+                if (this.IsReset)
+                {
+                    /*释放http连接*/
+                    if (this.RequestHttp != null && RequestHttp.ServicePoint != null) this.ReleaseServicePoint(RequestHttp.ServicePoint);
+                    this.Request = null;
+                    if (Response.Response != null)
+                    {
+                        try
+                        {
+                            Response.ResponseHttp.Close();
+                            Response.ResponseHttp.Dispose();
+                            Response.Response = null;
+                        }
+                        catch { }
+                    }
+                }
+            }
+            return Response;
+        }
+        #endregion
+
+        #region 通过设置这个属性，可以在发出连接的时候绑定客户端发出连接所使用的IP地址。
+        /// <summary>
+        /// 通过设置这个属性，可以在发出连接的时候绑定客户端发出连接所使用的IP地址。 
+        /// </summary>
+        /// <param name="servicePoint"></param>
+        /// <param name="remoteEndPoint"></param>
+        /// <param name="retryCount"></param>
+        /// <returns></returns>
+        private IPEndPoint BindIPEndPointCallback(ServicePoint servicePoint, IPEndPoint remoteEndPoint, int retryCount)
+        {
+            return this.IPEndPoint;
+        }
+        #endregion
+
+        #region 释放证书
+        /// <summary>
+        /// 释放证书
+        /// </summary>
+        /// <param name="servicePoint">Http连接管理</param>
+        private void ReleaseServicePoint(ServicePoint servicePoint)
+        {
+            return;
+            /*var m = typeof(ServicePointManager);
+            var f = m.GetMethod("IdleServicePointTimeoutCallback", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+            f.Invoke(null, new object[] { null, 0, servicePoint });*/
+        }
+        #endregion
+
+        #region 分界线
+        /// <summary>
+        /// 分界线
+        /// </summary>
+        public string GetBoundary()
+        {
+            var Boundary =
+#if NETCORE
+            new string('-', 4) + "FayElfWebFormBoundary"
+#else
+            new string('-', 15)
+#endif
+            + DateTime.Now.Ticks.ToString("x");
+            return Boundary;
+        }
+        #endregion
+
+        #region 获取字节
+        /// <summary>
+        /// 获取字节
+        /// </summary>
+        /// <param name="boundary">分界线</param>
+        /// <returns></returns>
+        public byte[] GetBytes(string boundary)
+        {
+            if (this.FormData == null || this.FormData.Count == 0) return null;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                this.FormData.Each(item =>
+                {
+                    if (item.FormType == FormType.Text)
+                    {
+                        var _bytes = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}\r\n".format(boundary, item.Name, item.Value).GetBytes();
+                        ms.Write(_bytes, 0, _bytes.Length);
+                    }
+                    else if (item.FormType == FormType.File)
+                    {
+                        var _bytes = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"; filename=\"{2}\"\r\nContent-Type: application/octet-stream\r\n\r\n".format(boundary, item.Name, item.Value.GetFileName()).GetBytes();
+                        ms.Write(_bytes, 0, _bytes.Length);
+                        _bytes = FileHelper.OpenBytes(item.Value);
+                        ms.Write(_bytes, 0, _bytes.Length);
+                        _bytes = "\r\n".GetBytes();
+                        ms.Write(_bytes, 0, _bytes.Length);
+                    }
+                });
+                var footData = ("\r\n--" + boundary + "--\r\n").GetBytes();
+                ms.Write(footData, 0, footData.Length);
+                return ms.ToArray();
+            }
+        }
+        #endregion
+
         #region 取消请求
         /// <summary>
         /// 取消请求
         /// </summary>
         public void Abort()
         {
-            this.CancelToken.Cancel();
+            if (this.HttpCore == HttpCore.HttpClient)
+                this.CancelToken.Cancel();
+            else
+                this.RequestHttp?.Abort();
         }
         #endregion
 
@@ -475,10 +717,11 @@ namespace XiaoFeng.Http
         /// </summary>
         private void SetCerList()
         {
+            var ClientCerts = this.HttpCore == HttpCore.HttpClient ? this.ClientHandler.ClientCertificates : this.RequestHttp.ClientCertificates;
             if (this.ClentCertificates != null && this.ClentCertificates.Count > 0)
             {
                 foreach (X509Certificate2 c in this.ClentCertificates)
-                    this.ClientHandler.ClientCertificates.Add(c);
+                    ClientCerts.Add(c);
             }
             if (this.Address.IsMatch(@"^https://"))
             {
@@ -490,7 +733,7 @@ namespace XiaoFeng.Http
                     ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(CheckValidationResult);
                     /*将证书添加到请求里*/
                     var cert = this.CertPath.GetBasePath();
-                    this.ClientHandler.ClientCertificates.Add(this.CertPassWord.IsNullOrEmpty() ? new X509Certificate2(cert) : new X509Certificate2(cert, this.CertPassWord));
+                    ClientCerts.Add(this.CertPassWord.IsNullOrEmpty() ? new X509Certificate2(cert) : new X509Certificate2(cert, this.CertPassWord));
                 }
                 else
                 {

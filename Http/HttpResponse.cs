@@ -42,6 +42,10 @@ namespace XiaoFeng.Http
         /// </summary>
         public HttpResponseMessage Response { get; set; }
         /// <summary>
+        /// 响应对象
+        /// </summary>
+        public HttpWebResponse ResponseHttp { get; set; }
+        /// <summary>
         /// 获取响应请求的 Internet 资源的 URI。
         /// </summary>
         public Uri ResponseUri { get; set; }
@@ -176,8 +180,46 @@ namespace XiaoFeng.Http
             /*读取数据*/
             this.Data = await this.GetBytesAsync();
         }
+        /// <summary>
+        /// 初始化数据
+        /// </summary>
+        public async Task InitHttpAsync()
+        {
+            if (this.ResponseHttp == null) return;
+            //获取StatusCode
+            this.StatusCode = this.ResponseHttp.StatusCode;
+            //获取StatusDescription
+            this.StatusDescription = this.ResponseHttp.StatusDescription;
+            //获取Headers
+            this.Headers = new Dictionary<string, string>();
+            this.ResponseHttp.Headers.AllKeys.Each(k =>
+            {
+                this.Headers.Add(k, this.ResponseHttp.Headers[k]);
+            });
+            //获取最后访问的URl
+            var location = this.ResponseHttp.Headers.Get(HttpRequestHeader.ContentLocation.ToString());
+            if (location.IsNotNullOrEmpty())
+            this.ResponseUri = new Uri(location);
+            this.ProtocolVersion = this.ResponseHttp.ProtocolVersion;
+            this.ContentEncoding = this.ResponseHttp.ContentEncoding;
+            this.ContentLength = this.ResponseHttp.ContentLength;
+            this.ContentType = this.ResponseHttp.ContentType;
+            this.CharacterSet = this.ResponseHttp.CharacterSet;
+            this.Server = this.ResponseHttp.Server;
+            this.Method = this.ResponseHttp.Method.ToEnum<HttpMethod>();
+            this.LastModified = this.ResponseHttp.LastModified;
+            //获取CookieCollection
+            if (this.CookieContainer == null) this.CookieContainer = new CookieContainer();
+            if (this.ResponseHttp.Cookies!=null && this.ResponseHttp.Cookies.Count>0)
+            {
+                if (this.CookieContainer == null) this.CookieContainer = new CookieContainer();
+                this.CookieContainer.Add(this.ResponseHttp.Cookies);
+            }
+            /*读取数据*/
+            this.Data = await this.GetBytesAsync();
+        }
         #endregion
-        
+
         #region 提取网页Byte
         /// <summary>
         /// 提取网页Byte
@@ -189,7 +231,7 @@ namespace XiaoFeng.Http
             using (MemoryStream _stream = new MemoryStream())
             {
                 var ContentEncoding = this.ContentEncoding;
-                var stream = await this.Response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                var stream = this.HttpCore== HttpCore.HttpClient? await this.Response.Content.ReadAsStreamAsync().ConfigureAwait(false):this.ResponseHttp.GetResponseStream();
                 /*GZIP处理*/
                 if (ContentEncoding.IsNotNullOrEmpty())
                 {
@@ -227,6 +269,16 @@ namespace XiaoFeng.Http
         /// 设置结束时间
         /// </summary>
         public void SetEndTime() => this.EndTime = DateTime.Now;
+        /// <summary>
+        /// 设置开始结束时间
+        /// </summary>
+        /// <param name="begin">开始时间</param>
+        /// <param name="end">结束时间</param>
+        public void SetBeginAndEndTime(DateTime begin,DateTime end)
+        {
+            this.BeginTime = begin;
+            this.EndTime = end;
+        }
         #endregion
 
         #region 下载文件

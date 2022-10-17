@@ -35,6 +35,10 @@ namespace XiaoFeng.Http
 
         #region 属性
         /// <summary>
+        /// 请求内核
+        /// </summary>
+        public HttpCore HttpCore { get; set; }
+        /// <summary>
         /// 获取或设置与此响应关联的 Cookie
         /// </summary>
         public CookieContainer CookieContainer { get; set; }

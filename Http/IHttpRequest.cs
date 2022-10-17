@@ -26,10 +26,6 @@ namespace XiaoFeng.Http
     public interface IHttpRequest : IHttpBase
     {
         /// <summary>
-        /// 请求内核
-        /// </summary>
-        HttpCore HttpCore { get; set; }
-        /// <summary>
         /// 操作是在响应可利用时立即视为已完成，还是在读取包含上下文的整个答案信息之后才视为已完成。
         /// </summary>
         HttpCompletionOption CompletionOption { get; set; }

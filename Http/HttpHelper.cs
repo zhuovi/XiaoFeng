@@ -82,11 +82,13 @@ namespace XiaoFeng.Http
         /// 获取Http内容
         /// </summary>
         /// <param name="url">网址</param>
+        /// <param name="httpCore">请求内核</param>
         /// <returns></returns>
-        public async Task<HttpResponse> GetResponseAsync(string url) => await this.GetResponseAsync(new HttpRequest
+        public async Task<HttpResponse> GetResponseAsync(string url, HttpCore httpCore = HttpCore.HttpClient) => await this.GetResponseAsync(new HttpRequest
         {
             Method = "GET",
-            Address = url
+            Address = url,
+            HttpCore = httpCore
         }).ConfigureAwait(false);
         /// <summary>
         /// 下载文件
@@ -104,22 +106,26 @@ namespace XiaoFeng.Http
         /// </summary>
         /// <param name="url">远程地址</param>
         /// <param name="localPath">保存地址</param>
+        /// <param name="httpCore">请求内核</param>
         /// <returns></returns>
-        public async Task<long> DownFileAsync(string url, string localPath) => await this.DownFileAsync(new HttpRequest
+        public async Task<long> DownFileAsync(string url, string localPath, HttpCore httpCore = HttpCore.HttpClient) => await this.DownFileAsync(new HttpRequest
         {
-            Address = url
+            Address = url,
+            HttpCore = httpCore
         }, localPath);
         /// <summary>
         /// CURL请求
         /// </summary>
         /// <param name="url">地址</param>
         /// <param name="formData">formdata</param>
+        /// <param name="httpCore">请求内核</param>
         /// <returns></returns>
-        public async Task<HttpResponse> CURLAsync(string url, List<FormData> formData) => await new HttpRequest
+        public async Task<HttpResponse> CURLAsync(string url, List<FormData> formData, HttpCore httpCore = HttpCore.HttpClient) => await new HttpRequest
         {
             Address = url,
             Method = HttpMethod.Post,
-            FormData = formData
+            FormData = formData,
+            HttpCore = httpCore
         }.GetResponseAsync().ConfigureAwait(false);
         /// <summary>
         /// 获取Http内容
@@ -132,7 +138,7 @@ namespace XiaoFeng.Http
         /// </summary>
         /// <param name="url">网址</param>
         /// <returns></returns>
-        public HttpResponse GetResponse(string url) => this.GetResponseAsync(url).ConfigureAwait(false).GetAwaiter().GetResult();
+        public HttpResponse GetResponse(string url, HttpCore httpCore = HttpCore.HttpClient) => this.GetResponseAsync(url, httpCore).ConfigureAwait(false).GetAwaiter().GetResult();
         /// <summary>
         /// 下载文件
         /// </summary>
@@ -148,18 +154,21 @@ namespace XiaoFeng.Http
         /// </summary>
         /// <param name="url">远程地址</param>
         /// <param name="localPath">保存地址</param>
+        /// <param name="httpCore">请求内核</param>
         /// <returns></returns>
-        public void DownFile(string url, string localPath) => this.DownFile(new HttpRequest
+        public void DownFile(string url, string localPath, HttpCore httpCore = HttpCore.HttpClient) => this.DownFile(new HttpRequest
         {
-            Address = url
+            Address = url,
+            HttpCore = httpCore
         }, localPath);
         /// <summary>
         /// CURL请求
         /// </summary>
         /// <param name="url">地址</param>
         /// <param name="formData">formdata</param>
+        /// <param name="httpCore">请求内核</param>
         /// <returns></returns>
-        public HttpResponse CURL(string url, List<FormData> formData) => CURLAsync(url, formData).Result;
+        public HttpResponse CURL(string url, List<FormData> formData, HttpCore httpCore = HttpCore.HttpClient) => CURLAsync(url, formData, httpCore).Result;
         #endregion
 
         #region 静态方法
@@ -192,8 +201,9 @@ namespace XiaoFeng.Http
         /// 获取Http内容
         /// </summary>
         /// <param name="url">网址</param>
+        /// <param name="httpCore">请求内核</param>
         /// <returns></returns>
-        public static async Task<HttpResponse> GetHtmlAsync(string url) => await Instance.GetResponseAsync(url).ConfigureAwait(false);
+        public static async Task<HttpResponse> GetHtmlAsync(string url, HttpCore httpCore = HttpCore.HttpClient) => await Instance.GetResponseAsync(url, httpCore).ConfigureAwait(false);
         /// <summary>
         /// 获取Http内容
         /// </summary>
@@ -204,8 +214,9 @@ namespace XiaoFeng.Http
         /// 获取Http内容
         /// </summary>
         /// <param name="url">网址</param>
+        /// <param name="httpCore">请求内核</param>
         /// <returns></returns>
-        public static HttpResponse GetHtml(string url) => Instance.GetResponse(url);
+        public static HttpResponse GetHtml(string url, HttpCore httpCore = HttpCore.HttpClient) => Instance.GetResponse(url, httpCore);
         #endregion
     }
 }

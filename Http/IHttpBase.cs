@@ -23,6 +23,10 @@ namespace XiaoFeng.Http
     public interface IHttpBase
     {
         /// <summary>
+        /// 请求内核
+        /// </summary>
+        HttpCore HttpCore { get; set; }
+        /// <summary>
         /// 获取或设置与此响应关联的 Cookie
         /// </summary>
         CookieContainer CookieContainer { get; set; }
