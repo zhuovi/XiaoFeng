@@ -242,7 +242,7 @@ namespace XiaoFeng.Redis
                 if (this.ConnConfig.Port == 0) this.ConnConfig.Port = 6379;
                 try
                 {
-                    await SocketClient.ConnectAsync(this.ConnConfig.Host, this.ConnConfig.Port);
+                    await socket.ConnectAsync(this.ConnConfig.Host, this.ConnConfig.Port);
                     var stream = new NetworkStream(socket);
                     this.IsConnected = true;
                     if (this.ConnConfig.Password.IsNotNullOrEmpty())

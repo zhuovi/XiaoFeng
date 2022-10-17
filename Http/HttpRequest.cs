@@ -160,7 +160,7 @@ namespace XiaoFeng.Http
         /// <summary>
         /// 获取或设置一个值，该值指示是否与 Internet 资源建立持久性连接。
         /// </summary>
-        public Boolean KeepAlive { get; set; } = true;
+        public Boolean KeepAlive { get; set; } = false;
         /// <summary>
         /// 设置509证书集合
         /// </summary>
