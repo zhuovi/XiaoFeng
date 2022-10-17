@@ -423,7 +423,7 @@ namespace XiaoFeng.Redis
                 //await Stream.WriteAsync(line, 0, line.Length).ConfigureAwait(false);
                 //await Stream.FlushAsync().ConfigureAwait(false);
                 await new CommandPacket(commandType, args).SendCommandAsync(stream);
-                return await func.Invoke(this.GetReplyResult(commandType, null, args));
+                return await func.Invoke(this.GetReplyResult(commandType, stream, args));
             }
         }
         #endregion
