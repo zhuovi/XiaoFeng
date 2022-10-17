@@ -32,7 +32,7 @@ namespace XiaoFeng.Http
         /// <summary>
         /// 无参构造器
         /// </summary>
-        public HttpRequest() { }
+        public HttpRequest() { this.HttpCore = HttpCore.HttpClient; }
         /// <summary>
         /// 设置请求对象
         /// </summary>
@@ -54,14 +54,17 @@ namespace XiaoFeng.Http
                 this.Client = httpClient;
             if (source != null)
                 this.CancelToken = source;
+            this.HttpCore = HttpCore.HttpClient;
         }
         /// <summary>
         /// 设置网址
         /// </summary>
         /// <param name="url">网址</param>
         /// <param name="method">请求类型</param>
-        public HttpRequest(string url, HttpMethod method)
+        /// <param name="httpCore">请求内核</param>
+        public HttpRequest(string url, HttpMethod method, HttpCore httpCore = HttpCore.HttpClient)
         {
+            this.HttpCore = httpCore;
             this.Address = url;
             this.Method = method;
         }
@@ -69,13 +72,19 @@ namespace XiaoFeng.Http
         /// 设置网址
         /// </summary>
         /// <param name="url">网址</param>
-        public HttpRequest(string url)
+        /// <param name="httpCore">请求内核</param>
+        public HttpRequest(string url, HttpCore httpCore = HttpCore.HttpClient)
         {
+            this.HttpCore = httpCore;
             this.Address = url;
         }
         #endregion
 
         #region 属性
+        /// <summary>
+        /// 请求内核
+        /// </summary>
+        public HttpCore HttpCore { get; set; }
         /// <summary>
         /// 取消状态
         /// </summary>
@@ -219,7 +228,7 @@ namespace XiaoFeng.Http
         /// <summary>
         /// 请求消息
         /// </summary>
-        public HttpRequestMessage Request { get;private set; }
+        public HttpRequestMessage Request { get; private set; }
         /// <summary>
         /// 压缩方式
         /// </summary>
@@ -647,6 +656,19 @@ namespace XiaoFeng.Http
         }
         #endregion
 
+        #region 设置内容类型
+        /// <summary>
+        /// 设置内容类型
+        /// </summary>
+        /// <param name="contentType">内容类型</param>
+        /// <returns></returns>
+        public IHttpRequest SetContentType(string contentType)
+        {
+            this.ContentType = contentType;
+            return this;
+        }
+        #endregion
+
         #region 回调验证证书问题
         /// <summary>
         /// 回调验证证书问题
@@ -811,7 +833,7 @@ namespace XiaoFeng.Http
         /// <param name="path">证书路径</param>
         /// <param name="password">证书密码</param>
         /// <returns></returns>
-        public IHttpRequest SetCert(string path,string password)
+        public IHttpRequest SetCert(string path, string password)
         {
             this.CertPath = path;
             this.CertPassWord = password;

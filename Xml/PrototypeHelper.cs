@@ -142,6 +142,19 @@ namespace XiaoFeng
             }
             return xElement.Attribute(attributeName);
         }
+        /// <summary>
+        /// 获取属性值
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="xElement">节点</param>
+        /// <param name="attributeName">属性名称</param>
+        /// <param name="defaultValue">默认值</param>
+        /// <returns>属性值</returns>
+        public static T GetXAttribute<T>(this XElement xElement, string attributeName, T defaultValue = default(T))
+        {
+            var attr = xElement.GetXAttribute(attributeName);
+            return attr == null ? defaultValue : attr.Value.ToCast<T>();
+        }
         #endregion
     }
 }

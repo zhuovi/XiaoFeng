@@ -22,7 +22,7 @@
 		<RepositoryUrl>https://github.com/zhuovi/XiaoFeng</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
-		<PackageTags>FAYELF</PackageTags>
+		<PackageTags>XiaoFeng;FAYELF;</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReleaseNotes>增加判断密码强度函数,增加CSV文件的读写器,增加密码强度函数GetStringStrength(String str,bool isChinese);优化DateTimeHelper;增加作业状态 未入队列;</PackageReleaseNotes>
 		<DelaySign>False</DelaySign>
