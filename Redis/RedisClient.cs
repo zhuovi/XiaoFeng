@@ -368,6 +368,7 @@ namespace XiaoFeng.Redis
             {
                 //if (!this.IsConnected.HasValue || !this.IsConnected.Value) this.CreateConn();
                 var stream = this.CreateConn();
+                if (stream == null) throw new Exception("Redis主机无响应.");
                 if (!this.IsConnected.Value) return default(T);
                 if (dbNum.HasValue && dbNum.Value > -1)
                 {
@@ -407,6 +408,7 @@ namespace XiaoFeng.Redis
             else
             {
                 var stream = await this.CreateConnAsync();
+                if (stream == null) throw new Exception("Redis主机无响应.");
                 if (!this.IsConnected.Value) return default(T);
                 if (dbNum.HasValue && dbNum.Value > -1)
                 {
