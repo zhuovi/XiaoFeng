@@ -264,8 +264,7 @@ namespace XiaoFeng.Http
             {
                 RequestUri = new Uri(this.Address)
             };
-            /*设置证书*/
-            this.SetCerList();
+            
             if (",POST,GET,DELETE,PUT,".IndexOf("," + this.Method.Method.ToUpper() + ",", StringComparison.OrdinalIgnoreCase) > -1 && this.HttpContent == null)
             {
                 if (this.FormData == null)
@@ -317,13 +316,15 @@ namespace XiaoFeng.Http
             if (this.ClientHandler == null) this.ClientHandler = new HttpClientHandler()
             {
                 UseCookies = true,
-                ClientCertificateOptions = ClientCertificateOption.Automatic
+                ClientCertificateOptions = ClientCertificateOption.Manual
             };
             else
             {
-                this.ClientHandler.ClientCertificateOptions = ClientCertificateOption.Automatic;
+                this.ClientHandler.ClientCertificateOptions = ClientCertificateOption.Manual;
                 this.ClientHandler.UseCookies = true;
             }
+            /*设置证书*/
+            this.SetCerList();
             /*设置HTTP代理*/
             if (this.WebProxy != null)
             {
