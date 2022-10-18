@@ -283,18 +283,25 @@ namespace XiaoFeng.Json
                 if (element != null && element.Name.IsNotNullOrEmpty()) name = element.Name;
                 object value = null;
                 Type mType = m.DeclaringType;
-
-                if(m.MemberType == MemberTypes.Property)
+                try
                 {
-                    var p = m as PropertyInfo;
-                    mType = p.PropertyType;
-                    value = p.GetValue(obj, null);
+                    if (m.MemberType == MemberTypes.Property)
+                    {
+                        var p = m as PropertyInfo;
+                        mType = p.PropertyType;
+                        value = p.GetValue(obj, null);
+                    }
+                    else
+                    {
+                        var f = m as FieldInfo;
+                        mType = f.FieldType;
+                        value = f.GetValue(obj);
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    var f = m as FieldInfo;
-                    mType = f.FieldType;
-                    value = f.GetValue(obj);
+                    mType = typeof(string);
+                    value = ex.Message;
                 }
                 var comment = string.Empty;
                 if (this.SerializerSetting.IsComment)
