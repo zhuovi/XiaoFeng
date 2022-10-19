@@ -33,16 +33,15 @@ namespace XiaoFeng.Device
         /// <summary>
         /// 获取网卡硬件地址
         /// </summary>
-        public static string MacAddress
+        public List<string> MacAddress
         {
             get
             {
                 var separator = "-";
-                string mac = string.Empty;
                 NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
                 if (nics == null || nics.Length < 1)
                 {
-                    return "";
+                    return new List<string>();
                 }
                 var macAddress = new List<string>();
                 foreach (NetworkInterface adapter in nics.Where(c =>
@@ -64,7 +63,7 @@ namespace XiaoFeng.Device
                         }
                     }
                 }
-                return mac;
+                return macAddress;
             }
         }
         #endregion
