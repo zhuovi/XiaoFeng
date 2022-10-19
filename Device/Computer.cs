@@ -33,7 +33,7 @@ namespace XiaoFeng.Device
         /// <summary>
         /// 获取网卡硬件地址
         /// </summary>
-        public List<string> MacAddress
+        public static List<string> MacAddress
         {
             get
             {
