@@ -134,6 +134,7 @@ namespace XiaoFeng.Redis
                 /*
                  * +OK\r\n 成功
                  */
+                case "PING":/*CommandType.PING*/
                 case "AUTH":/*CommandType.AUTH*/
                 case "QUIT":/*CommandType.QUIT*/
                 case "SELECT":/*CommandType.SELECT*/
@@ -244,7 +245,6 @@ namespace XiaoFeng.Redis
                 /*
                  * $1\r\n数据\r\n 单条数据
                  */
-                case "PING":/*CommandType.PING*/
                 case "ECHO":/*CommandType.ECHO*/
                 case "DUMP":/*CommandType.DUMP*/
                 case "RANDOMKEY":/*CommandType.RANDOMKEY*/
