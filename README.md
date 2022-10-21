@@ -233,7 +233,7 @@ HttpHelper 是Http模拟请求库。
 
 * GET 请求
 
-``` GET
+``` csharp
 var result = await XiaoFeng.Http.HttpHelper.GetHtmlAsync(new XiaoFeng.Http.HttpRequest
 {
     Method = HttpMethod.Get,//不设置默认为Get请求
@@ -256,7 +256,7 @@ else
 
 * POST 表单请求
 
-``` POST
+``` csharp
 var result = await XiaoFeng.Http.HttpHelper.GetHtmlAsync(new XiaoFeng.Http.HttpRequest
 {
     Method = HttpMethod.Post,
@@ -283,7 +283,7 @@ else
 
 * POST BODY请求
 
-``` POST BODY
+``` csharp
 
 var result = await XiaoFeng.Http.HttpHelper.GetHtmlAsync(new XiaoFeng.Http.HttpRequest
 {
@@ -309,7 +309,7 @@ else
 
 * POST FORMDATA 请求，就是有表单输入数据也有文件流数据
 
-``` POST FORMDATA
+``` csharp
 var result = await XiaoFeng.Http.HttpHelper.GetHtmlAsync(new XiaoFeng.Http.HttpRequest
 {
     Method = HttpMethod.Post,
@@ -348,7 +348,7 @@ else
 
 * 下载文件
 
-``` DOWN FILE
+``` csharp
 
 await XiaoFeng.Http.HttpHelper.Instance.DownFileAsync(new XiaoFeng.Http.HttpRequest
 {
@@ -367,7 +367,7 @@ await XiaoFeng.Http.HttpHelper.Instance.DownFileAsync(new XiaoFeng.Http.HttpRequ
 
 ## 使用方法
 
-```
+```csharp
 using XiaoFeng;
 
 int a = "10".ToCast<int>();
@@ -384,7 +384,7 @@ long j = "a".ToCast<long>(100);
 
 * 也可以用下边的方法
 
-```
+```csharp
 Int16 a = "1".ToInt16();
 int b = "2".ToInt32();
 Int64 c = "3".ToInt64();
@@ -412,7 +412,7 @@ Guid p = "58AFBEB5-7913-11EC-BF49-FA163E542B11".ToGuid();
 
 简单实例
 
-```
+```csharp
 var data = new XiaoFeng.Data.DataHelper(new XiaoFeng.Data.ConnectionConfig
 {
     ProviderType= XiaoFeng.Data.DbProviderType.SqlServer,
@@ -421,7 +421,8 @@ var data = new XiaoFeng.Data.DataHelper(new XiaoFeng.Data.ConnectionConfig
 var dt = data.ExecuteDataTable("select * from F_Tb_Account;");
 ```
 1. 直接执行SQL语句
-```
+
+```csharp
 var non1 = data.ExecuteNonQuery("insert into F_Tb_Account(Account,Password) values('jacky','admin');");
 ```
 non1值，如果non1是-1则表示 执行出错，可以通过data.ErrorMessage拿到最后一次执行出错的错误信息
@@ -429,35 +430,35 @@ non1值，如果non1是-1则表示 执行出错，可以通过data.ErrorMessage�
 
 2. 返回DataTable
 
-```
+```csharp
 var dt = data.ExecuteDataTable("select * from F_Tb_Account;");
 ```
 dt就是一个datatable 。
 
 3. 直接返回首行首列
 
-```
+```csharp
 var val1 = data.ExecuteScalar("select Acount from F_Tb_Account;");
 ```
-
 val1类型是object对象，根据数据库的值不同我们可以自定义转换如：var val2 = (int)val1;也可以用XiaoFeng自带的扩展方法,var val2 = val1.ToCast<int>();
 
 4. 直接返回DataReader
-```
+
+```csharp
 var dataReader = data.ExecuteReader("select * from F_Tb_Account;");
 ```
 dataReader就是DataReader对象。
 
 5. 直接返回DataSet
 
-```
+```csharp
 var dataSet = data.ExecuteDataSet("select * from F_Tb_Account;select * from F_Tb_Account;");
 ```
 dataSet就是DataSet对象。
 
 6. 执行存储过程
 
-```
+```csharp
 var data = data.ExecuteDataTable("proc_name", System.Data.CommandType.StoredProcedure, new System.Data.Common.DbParameter[]
 {
     data.MakeParam(@"Account","jacky")
@@ -466,7 +467,7 @@ var data = data.ExecuteDataTable("proc_name", System.Data.CommandType.StoredProc
 
 7. SQL语句带存储参数
 
-```
+```csharp
 var data2 = data.ExecuteDataTable("select * from F_Tb_Account where Account=@Account;", new System.Data.Common.DbParameter[]
 {
     data.MakeParam(@"@Account","jacky")
@@ -475,7 +476,7 @@ var data2 = data.ExecuteDataTable("select * from F_Tb_Account where Account=@Acc
 
 8. 直接转换成对象
 
-```
+```csharp
 var models = data.QueryList<Account>("select * from F_Tb_Account");
 var model = data.Query<Account>("select * from F_Tb_Account");
 ```
@@ -488,7 +489,7 @@ var model = data.Query<Account>("select * from F_Tb_Account");
 
 * IsMatch 扩展方法 主要是当前字符串是否匹配上正则表达式，比如，匹配当前字符串是否是QQ号码，代码如下：
 
-```
+```csharp
 if("7092734".IsMatch(@"^\d{5-11}$"))
     Console.WriteLine("是QQ号码格式.");
 else
@@ -521,7 +522,7 @@ ReplacePattern 扩展方法用途是使用正则达式来替换数据。
 
 下边通过实例来讲解这几个方法的使用及返回结果的区别：
 
-```
+```csharp
 var a = "abc4d5e6hh5654".GetMatch(@"\d+");
 a的值为："4";
 var b = "abc4d5e6hh5654".GetPatterns(@"\d+");
