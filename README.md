@@ -543,6 +543,90 @@ var i = "a1b2c3".ReplacePattern(@"\d+",m=>{
 i的值为："aa1ba2ca2";
 ```
 
+# 作业调度
+
+* 作业调度其实就是一个定时器，定时完成某件事，比如：每分钟执行一次，每小时执行一次，每天执行一次，第二周几执行，每月几号几点执行，间隔多少个小时执行一次等。
+
+作业类：XiaoFeng.Threading.Job
+
+主调度类：XiaoFeng.Threading.JobScheduler
+
+1. 定时只执行一次也就是多久后执行
+
+```csharp
+var job = new XiaoFeng.Threading.Job
+{
+     Async = true,
+     Name="作业名称",
+      TimerType= XiaoFeng.Threading.TimerType.Once,
+        StartTime= DateTime.Now.AddMinutes(5),
+    SuccessCallBack = job =>
+    {
+        /*到时间执行任务*/
+    }
+};
+job.Start();
+```
+当前作业为5 分钟后执行一次，然后就是销毁，作业从调度中移除。
+
+2. 间隔执行
+
+```csharp
+var job = new XiaoFeng.Threading.Job
+{
+    Async = true,
+    Name = "作业名称",
+    TimerType = XiaoFeng.Threading.TimerType.Interval,
+    Period = 5000,
+    StartTime = DateTime.Now.AddMinutes(5),
+    SuccessCallBack = job =>
+    {
+        /*到时间执行任务*/
+    }
+};
+job.Start();
+```
+当前作业为，5分钟后运行，然后每隔5分钟会再执行一次。
+
+3. 每天定时执行一次
+
+```csharp
+var job = new XiaoFeng.Threading.Job
+{
+    Async = true,
+    Name = "作业名称",
+    TimerType = XiaoFeng.Threading.TimerType.Day,
+    Time = new XiaoFeng.Threading.Time(2, 0, 0),
+    StartTime = DateTime.Now.AddMinutes(5),
+    SuccessCallBack = job =>
+    {
+        /*到时间执行任务*/
+    }
+};
+```
+当前作业为，5分钟后运行，然后每天2点执行一次。
+
+4. 每周几几点执行,每月几号几点执行
+
+```csharp
+var job = new XiaoFeng.Threading.Job
+{
+    Async = true,
+    Name = "作业名称",
+    TimerType = XiaoFeng.Threading.TimerType.Week,
+    DayOrWeekOrHour = new int[] { 1, 4 },
+    Time = new XiaoFeng.Threading.Time(2, 0, 0),
+    StartTime = DateTime.Now.AddMinutes(5),
+    SuccessCallBack = job =>
+    {
+        /*到时间执行任务*/
+    }
+};
+job.Start();
+```
+
+当前作业为，5分钟后运行，然后每周的周一，周四的两点执行一次。
+
 # XiaoFeng.Xml Xml序列化
 
 # XiaoFeng.Json Json序列号
