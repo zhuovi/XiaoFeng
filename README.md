@@ -12,7 +12,7 @@ Nuget：xiaofeng
 
 教程：https://www.yuque.com/fayelf/xiaofeng
 
-其中包含了Redis,Socket,Json,Xml,ADO.NET数据库操作兼容以下数据库（SQLSERVER,MYSQL,ORACLE,达梦,SQLITE,ACCESS,OLEDB,ODBC等数十种数据库）,正则表达式,QueryableX(ORM)和EF无缝对接,FTP,网络日志,调度,IO操作,加密算法(AES,DES,DES3,MD5,RSA,RC4,SHA等常用加密算法),超级好用的配置管理器,应用池等功能。
+其中包含了Redis,Socket,Json,Xml,ADO.NET数据库操作兼容以下数据库（SQLSERVER,MYSQL,ORACLE,达梦,SQLITE,ACCESS,OLEDB,ODBC等数十种数据库）,正则表达式,QueryableX(ORM)和EF无缝对接,FTP,网络日志,调度,IO操作,加密算法(AES,DES,DES3,MD5,RSA,RC4,SHA等常用加密算法),超级好用的配置管理器,应用池,类型转换等功能。
 
 # XiaoFeng.Redis
 
@@ -224,3 +224,328 @@ var set13 = await redis.GetSetUnionStoreAsync("a", "c", "b");
 //在这里就不再举例
 
 ```
+
+# XiaoFeng.HttpHelper
+
+HttpHelper 是Http模拟请求库。
+
+## 使用操作
+
+* GET 请求
+
+``` GET
+var result = await XiaoFeng.Http.HttpHelper.GetHtmlAsync(new XiaoFeng.Http.HttpRequest
+{
+    Method = HttpMethod.Get,//不设置默认为Get请求
+    Address = "http://www.fayelf.com"
+});
+if (result.StatusCode == System.Net.HttpStatusCode.OK)
+{
+    /*请求成功*/
+    //响应内容
+    var value = result.Html;
+    //响应内容字节集
+    var bytes = result.Data;
+}
+else
+{
+    /*请求失败*/
+}
+
+```
+
+* POST 表单请求
+
+``` POST
+var result = await XiaoFeng.Http.HttpHelper.GetHtmlAsync(new XiaoFeng.Http.HttpRequest
+{
+    Method = HttpMethod.Post,
+    Address = "http://www.fayelf.com",
+    Data=new Dictionary<string, string>
+    {
+        {"account","jacky" },
+        {"password","123456" }
+    }
+});
+if (result.StatusCode == System.Net.HttpStatusCode.OK)
+{
+    /*请求成功*/
+    //响应内容
+    var value = result.Html;
+    //响应内容字节集
+    var bytes = result.Data;
+}
+else
+{
+    /*请求失败*/
+}
+```
+
+* POST BODY请求
+
+``` POST BODY
+
+var result = await XiaoFeng.Http.HttpHelper.GetHtmlAsync(new XiaoFeng.Http.HttpRequest
+{
+    Method = HttpMethod.Post,
+    ContentType="application/json",
+    Address = "http://www.fayelf.com",
+    BodyData=@"{""account"":""jacky"",""password"":""123456""}"
+});
+if (result.StatusCode == System.Net.HttpStatusCode.OK)
+{
+    /*请求成功*/
+    //响应内容
+    var value = result.Html;
+    //响应内容字节集
+    var bytes = result.Data;
+}
+else
+{
+    /*请求失败*/
+}
+
+```
+
+* POST FORMDATA 请求，就是有表单输入数据也有文件流数据
+
+``` POST FORMDATA
+var result = await XiaoFeng.Http.HttpHelper.GetHtmlAsync(new XiaoFeng.Http.HttpRequest
+{
+    Method = HttpMethod.Post,
+    ContentType = "application/x-www-form-urlencoded",
+    Address = "http://www.fayelf.com",
+    FormData = new List<XiaoFeng.Http.FormData>
+    {
+        new XiaoFeng.Http.FormData
+        {
+             Name="account",Value="jacky", FormType= XiaoFeng.Http.FormType.Text
+        },
+        new XiaoFeng.Http.FormData
+        {
+            Name="password",Value="123456",FormType= XiaoFeng.Http.FormType.Text
+        },
+        new XiaoFeng.Http.FormData
+        {
+            Name="headimage",Value=@"E://Work/headimage.png", FormType= XiaoFeng.Http.FormType.File
+        }
+    }
+});
+if (result.StatusCode == System.Net.HttpStatusCode.OK)
+{
+    /*请求成功*/
+    //响应内容
+    var value = result.Html;
+    //响应内容字节集
+    var bytes = result.Data;
+}
+else
+{
+    /*请求失败*/
+}
+
+```
+
+* 下载文件
+
+``` DOWN FILE
+
+await XiaoFeng.Http.HttpHelper.Instance.DownFileAsync(new XiaoFeng.Http.HttpRequest
+{
+    Method = HttpMethod.Get,
+    Address = "http://www.fayelf.com/test.rar"
+}, @"E:/Work/test.rar");
+
+```
+
+# 万能的类型转换扩展方法 ToCast<T>()
+
+当前方法 可转任何值 类型 包括 对象类型 数组类型.
+在转换方法前 首选会验证当前值 类型和要转换的类型是否相同，接着就是验证 它是否符合目标类型的格式 如果不符合会转换成目标类型的默认值 也可以设置默认值。
+
+
+
+## 使用方法
+
+```
+using XiaoFeng;
+
+int a = "10".ToCast<int>();
+Int64 b = "10".ToCast<Int64>();
+double c = "10".ToCast<double>();
+DateTime d = "2022-01-19".ToCast<DateTime>();
+float e = "".ToCast<float>(1.0);
+int f = (int)"".GetValue(typeof(int));
+Guid g = "58AFBEB5791311ECBF49FA163E542B11".ToCast<Guid>();
+Guid h = "58AFBEB5-7913-11EC-BF49-FA163E542B11".ToCast<Guid>();
+long j = "a".ToCast<long>(100);
+
+```
+
+* 也可以用下边的方法
+
+```
+Int16 a = "1".ToInt16();
+int b = "2".ToInt32();
+Int64 c = "3".ToInt64();
+UInt16 d = "4".ToUInt16();
+UInt32 e = "5".ToUInt32();
+UInt64 f ="6".ToUInt64();
+float e = "7.2".ToFloat();
+DateTime g = "2022-01-19 12:32".ToDateTime();
+double h = "6.3".ToDouble();
+byte i = "2".ToByte();
+Boolean j = "1".ToBoolean();
+Boolean k = "true".ToBoolean();
+Boolean l = "False".ToBoolean();
+Decimal m = "3.658".ToDecimal();
+long n = "2584512".ToLong();
+Guid o = "58AFBEB5791311ECBF49FA163E542B11".ToGuid();
+Guid p = "58AFBEB5-7913-11EC-BF49-FA163E542B11".ToGuid();
+
+```
+# 数据库操作 DataHelper
+
+* XiaoFeng.Data.DataHelper，当前类库支持SQLSERVER,MYSQL,ORACLE,达梦,SQLITE,ACCESS,OLEDB,ODBC等数十种数据库。
+
+## 使用说明
+
+简单实例
+
+```
+var data = new XiaoFeng.Data.DataHelper(new XiaoFeng.Data.ConnectionConfig
+{
+    ProviderType= XiaoFeng.Data.DbProviderType.SqlServer,
+    ConnectionString= "server=.;uid=testuser;pwd=123;database=Fay_TestDb;"
+});
+var dt = data.ExecuteDataTable("select * from F_Tb_Account;");
+```
+1. 直接执行SQL语句
+```
+var non1 = data.ExecuteNonQuery("insert into F_Tb_Account(Account,Password) values('jacky','admin');");
+```
+non1值，如果non1是-1则表示 执行出错，可以通过data.ErrorMessage拿到最后一次执行出错的错误信息
+如果non1是大于等于0则表示执行SQL语句后所执行的行数。
+
+2. 返回DataTable
+
+```
+var dt = data.ExecuteDataTable("select * from F_Tb_Account;");
+```
+dt就是一个datatable 。
+
+3. 直接返回首行首列
+
+```
+var val1 = data.ExecuteScalar("select Acount from F_Tb_Account;");
+```
+
+val1类型是object对象，根据数据库的值不同我们可以自定义转换如：var val2 = (int)val1;也可以用XiaoFeng自带的扩展方法,var val2 = val1.ToCast<int>();
+
+4. 直接返回DataReader
+```
+var dataReader = data.ExecuteReader("select * from F_Tb_Account;");
+```
+dataReader就是DataReader对象。
+
+5. 直接返回DataSet
+
+```
+var dataSet = data.ExecuteDataSet("select * from F_Tb_Account;select * from F_Tb_Account;");
+```
+dataSet就是DataSet对象。
+
+6. 执行存储过程
+
+```
+var data = data.ExecuteDataTable("proc_name", System.Data.CommandType.StoredProcedure, new System.Data.Common.DbParameter[]
+{
+    data.MakeParam(@"Account","jacky")
+});
+```
+
+7. SQL语句带存储参数
+
+```
+var data2 = data.ExecuteDataTable("select * from F_Tb_Account where Account=@Account;", new System.Data.Common.DbParameter[]
+{
+    data.MakeParam(@"@Account","jacky")
+});
+```
+
+8. 直接转换成对象
+
+```
+var models = data.QueryList<Account>("select * from F_Tb_Account");
+var model = data.Query<Account>("select * from F_Tb_Account");
+```
+
+# 正则表达式 扩展方法
+
+字符串匹配，提取，是否符合规则，替换，移除等都可用是正则表达式来实现的。
+
+## 使用说明
+
+* IsMatch 扩展方法 主要是当前字符串是否匹配上正则表达式，比如，匹配当前字符串是否是QQ号码，代码如下：
+
+```
+if("7092734".IsMatch(@"^\d{5-11}$"))
+    Console.WriteLine("是QQ号码格式.");
+else
+    Console.WriteLine("非QQ号码格式.");
+```
+* 
+
+输出结果为：是QQ号码格式。
+
+因为字符串 "7092734"确实是QQ号码。
+
+IsNotMatch 扩展方法其实就是 !IsMatch,用法和IsMatch用法一样。
+
+Match 扩展方法返回的是Match,使用指定的匹配选项在输入字符串中搜索指定的正则表达式的第一个匹配项。
+
+Matches 当前扩展方法返回的是使用指定的匹配选项在指定的输入字符串中搜索指定的正则表达式的所有匹配项。
+
+这三个方法是最原始最底层的方法，其它扩展都基于当前三个方法中的一个或两个来实现的。
+
+GetMatch 扩展方法返回结果是：提取符合模式的数据所匹配的第一个匹配项所匹配的第一项或a组的数据。
+
+GetPatterns 扩展方法返回结果是：提取符合模式的数据所有匹配的第一项数据或a组数据。
+
+GetMatchs 扩展方法返回结果是：提取符合模式的数据所匹配的第一项中所有组数据。
+
+GetMatches 扩展方法返回结果是：提取符合模式的数据所有匹配项或所有组数据。
+
+提取的数据量对比：GetMatch<GetMatchs<GetPatterns<GetMatches 。
+
+ReplacePattern 扩展方法用途是使用正则达式来替换数据。
+
+下边通过实例来讲解这几个方法的使用及返回结果的区别：
+
+```
+var a = "abc4d5e6hh5654".GetMatch(@"\d+");
+a的值为："4";
+var b = "abc4d5e6hh5654".GetPatterns(@"\d+");
+b的值为：["4","5","6","5654"];
+var c = "abc4d5e6hh5654".GetMatchs(@"(?<a>[a-z]+)(?<b>\d+)");
+c的值为：{{"a","abc"},{"b","4"}};
+var d = "abc4d5e6hh5654".GetMatches(@"(?<a>[a-z]+)(?<b>\d+)");
+d的值为：[{{"a","abc"},{"b","4"}},{{"a","d"},{"b","5"}},{{"a","e"},{"b","6"}},{{"a","hh"},{"b","5654"}}]
+var g = "a6b9c53".ReplacePattern(@"\d+","g");
+g的值为："agbgcg";
+var h = "a6b7c56".RemovePattern(@"\d+");
+h的值为："abc";
+var i = "a1b2c3".ReplacePattern(@"\d+",m=>{
+   var a = a.Groups["a"].Value;
+    if(a == "1")return "a1";
+    else return "a2";
+});
+i的值为："aa1ba2ca2";
+```
+
+# XiaoFeng.Xml Xml序列化
+
+# XiaoFeng.Json Json序列号
+
+# XiaoFeng.Socket Socket操作
+
