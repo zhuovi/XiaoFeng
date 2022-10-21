@@ -3,7 +3,7 @@
 ![GitHub top language](https://img.shields.io/github/languages/top/zhuovi/xiaofeng?logo=github)
 ![GitHub License](https://img.shields.io/github/license/zhuovi/xiaofeng?logo=github)
 ![Nuget Downloads](https://img.shields.io/nuget/dt/xiaofeng?logo=nuget)
-![Nuget](https://img.shields.io/nuget/v/xiaofeng.redis?logo=nuget)
+![Nuget](https://img.shields.io/nuget/v/xiaofeng?logo=nuget)
 ![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/xiaofeng?label=dev%20nuget&logo=nuget)
 
 Nuget：xiaofeng
