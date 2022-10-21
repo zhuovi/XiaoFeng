@@ -20,7 +20,11 @@ Redis提供了友好的访问API。
 
 ## 基本使用方法
 
-Redis连接串 redis://7092734@127.0.0.1:6379/0?ConnectionTimeout=3000&ReadTimeout=3000&SendTimeout=3000&pool=3
+Redis连接串 
+
+```csharp
+redis://7092734@127.0.0.1:6379/0?ConnectionTimeout=3000&ReadTimeout=3000&SendTimeout=3000&pool=3
+```
 
 7092734	    密码
 
@@ -32,15 +36,19 @@ Redis连接串 redis://7092734@127.0.0.1:6379/0?ConnectionTimeout=3000&ReadTimeo
 
 ConnectionTimeout	连接超时时长
 
-ReadTimeout		读取数据超时时长
+ReadTimeout		    读取数据超时时长
 
-SendTimeout		发送数据超时时长
+SendTimeout		    发送数据超时时长
 
-pool			连接池中连接数量
+pool			    连接池中连接数量
 
 最小的连接串是：redis://127.0.0.1
 
-实例化一个redis对象	var redis = new XiaoFeng.Redis.RedisClient("redis://7092734@127.0.0.1:6379/0");
+实例化一个redis对象
+
+```csharp
+var redis = new XiaoFeng.Redis.RedisClient("redis://7092734@127.0.0.1:6379/0");
+```
 
 ## KEY的基本操作
 
