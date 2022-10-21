@@ -494,7 +494,6 @@ if("7092734".IsMatch(@"^\d{5-11}$"))
 else
     Console.WriteLine("非QQ号码格式.");
 ```
-* 
 
 输出结果为：是QQ号码格式。
 
