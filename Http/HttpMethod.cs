@@ -56,6 +56,10 @@ namespace XiaoFeng.Http
         /// </summary>
         public static HttpMethod Trace { get { return new HttpMethod("Trace"); } }
         /// <summary>
+        /// CONNECT     方法用来建立到给定URI标识的服务器的隧道；它通过简单的TCP / IP隧道更改请求连接，通常实使用解码的HTTP代理来进行SSL编码的通信（HTTPS）。
+        /// </summary>
+        public static HttpMethod Connect { get { return new HttpMethod("Connect"); } }
+        /// <summary>
         /// 名称
         /// </summary>
         public string Method { get; private set; } = "Get";
@@ -118,7 +122,7 @@ namespace XiaoFeng.Http
         /// HashCode
         /// </summary>
         /// <returns></returns>
-        public override int GetHashCode() => this.Method.GetHashCode();
+        public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(this.Method);
         /// <summary>
         /// 名称
         /// </summary>
