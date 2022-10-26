@@ -5,6 +5,7 @@
 ![Nuget Downloads](https://img.shields.io/nuget/dt/xiaofeng?logo=nuget)
 ![Nuget](https://img.shields.io/nuget/v/xiaofeng?logo=nuget)
 ![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/xiaofeng?label=dev%20nuget&logo=nuget)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 Nuget：xiaofeng
 
@@ -13,6 +14,31 @@ Nuget：xiaofeng
 教程：https://www.yuque.com/fayelf/xiaofeng
 
 其中包含了Redis,Socket,Json,Xml,ADO.NET数据库操作兼容以下数据库（SQLSERVER,MYSQL,ORACLE,达梦,SQLITE,ACCESS,OLEDB,ODBC等数十种数据库）,正则表达式,QueryableX(ORM)和EF无缝对接,FTP,网络日志,调度,IO操作,加密算法(AES,DES,DES3,MD5,RSA,RC4,SHA等常用加密算法),超级好用的配置管理器,应用池,类型转换等功能。
+
+## XiaoFeng
+
+XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
+
+## Install
+
+.NET CLI
+
+```
+$ dotnet add package XiaoFeng
+```
+
+Package Manager
+
+```
+PM> Install-Package XiaoFeng
+```
+
+PackageReference
+
+```
+<PackageReference Include="XiaoFeng" Version="3.1.0" />
+```
+
 
 # XiaoFeng.Redis
 
@@ -637,9 +663,19 @@ job.Start();
 
 当前作业为，5分钟后运行，然后每周的周一，周四的两点执行一次。
 
+# XiaoFeng.FTP
+
 # XiaoFeng.Xml Xml序列化
 
 # XiaoFeng.Json Json序列号
 
 # XiaoFeng.Socket Socket操作
+
+# 作者介绍
+
+
+
+* 网址 : http://www.fayelf.com
+* QQ : 7092734
+* EMail : jacky@fayelf.com
 

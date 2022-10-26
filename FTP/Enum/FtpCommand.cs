@@ -6,6 +6,10 @@
     public enum FtpCommand
     {
         /// <summary>
+        /// 打开
+        /// </summary>
+        OPEN,
+        /// <summary>
         /// 等待
         /// </summary>
         NOOP,
@@ -104,6 +108,6 @@
         /// <summary>
         /// 端口
         /// </summary>
-        PROT
+        PORT
     }
 }
