@@ -7,7 +7,6 @@
 ![Nuget Downloads](https://img.shields.io/nuget/dt/xiaofeng?logo=nuget)
 ![Nuget](https://img.shields.io/nuget/v/xiaofeng?logo=nuget)
 ![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/xiaofeng?label=dev%20nuget&logo=nuget)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 Nuget：xiaofeng
 
