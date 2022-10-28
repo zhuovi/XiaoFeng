@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using XiaoFeng.Event;
 
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
@@ -25,6 +26,14 @@ namespace XiaoFeng.Threading
         /// 队列名称
         /// </summary>
         string QueueName { get; }
+        /// <summary>
+        /// 任务错误事件
+        /// </summary>
+        event TaskQueueError<T> TaskQueueError;
+        /// <summary>
+        /// 任务成功事件
+        /// </summary>
+        event TaskQueueOk<T> TaskQueueOk;
         /// <summary>
         /// 加入队列
         /// </summary>
