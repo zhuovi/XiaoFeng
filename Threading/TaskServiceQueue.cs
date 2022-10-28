@@ -184,8 +184,7 @@ namespace XiaoFeng.Threading
                             var task = this.ExecuteAsync(workItem, this.CancelToken.Token);
                             if (task.Status == TaskStatus.Created)
                                 task.Start();
-                            await Task.WhenAny(task).ConfigureAwait(false);
-                            this.TaskQueueOk?.Invoke(workItem);
+                            await Task.WhenAny(task).ContinueWith(t => this.TaskQueueOk?.Invoke(workItem)).ConfigureAwait(false);
                         }
                         catch (Exception ex)
                         {
