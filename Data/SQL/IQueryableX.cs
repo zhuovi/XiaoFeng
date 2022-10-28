@@ -813,6 +813,55 @@ namespace XiaoFeng.Data.SQL
         List<TResult> Join<T2, TThird, TResult>(Expression<Func<T, bool>> func, Expression<Func<T2, bool>> func2, Expression<Func<T, T2, TThird>> funcOn, Expression<Func<T, T2, TResult>> fResult)
             where T2 : class, new()
             where TResult : class, new();
+        /// <summary>
+        /// 关联表
+        /// </summary>
+        /// <typeparam name="T2">T2类型</typeparam>
+        /// <param name="joinType">关联类型</param>
+        /// <param name="funcOn">On条件Lambda</param>
+        /// <param name="func">T2条件Lambda</param>
+        /// <returns></returns>
+        IQueryableX<T, T2> Join<T2>(JoinType joinType, Expression<Func<T, T2, bool>> funcOn, Expression<Func<T2, bool>> func = null);
+        /// <summary>
+        /// 左连接关联表（left join）
+        /// </summary>
+        /// <typeparam name="T2">T2类型</typeparam>
+        /// <param name="funcOn">On条件Lambda</param>
+        /// <param name="func">T2条件Lambda</param>
+        /// <returns></returns>
+        IQueryableX<T, T2> LeftJoin<T2>(Expression<Func<T, T2, bool>> funcOn, Expression<Func<T2, bool>> func = null);
+        /// <summary>
+        /// 右连接关联表（right join）
+        /// </summary>
+        /// <typeparam name="T2">T2类型</typeparam>
+        /// <param name="funcOn">On条件Lambda</param>
+        /// <param name="func">T2条件Lambda</param>
+        /// <returns></returns>
+        IQueryableX<T, T2> RightJoin<T2>(Expression<Func<T, T2, bool>> funcOn, Expression<Func<T2, bool>> func = null);
+        /// <summary>
+        /// 内连接关联表（inner join）
+        /// </summary>
+        /// <typeparam name="T2">T2类型</typeparam>
+        /// <param name="funcOn">On条件Lambda</param>
+        /// <param name="func">T2条件Lambda</param>
+        /// <returns></returns>
+        IQueryableX<T, T2> InnerJoin<T2>(Expression<Func<T, T2, bool>> funcOn, Expression<Func<T2, bool>> func = null);
+        /// <summary>
+        /// 合并连接关联表（union join）
+        /// </summary>
+        /// <typeparam name="T2">T2类型</typeparam>
+        /// <param name="funcOn">On条件Lambda</param>
+        /// <param name="func">T2条件Lambda</param>
+        /// <returns></returns>
+        IQueryableX<T, T2> UnionJoin<T2>(Expression<Func<T, T2, bool>> funcOn, Expression<Func<T2, bool>> func = null);
+        /// <summary>
+        /// 全连接关联表（full join）
+        /// </summary>
+        /// <typeparam name="T2">T2类型</typeparam>
+        /// <param name="funcOn">On条件Lambda</param>
+        /// <param name="func">T2条件Lambda</param>
+        /// <returns></returns>
+        IQueryableX<T, T2> FullJoin<T2>(Expression<Func<T, T2, bool>> funcOn, Expression<Func<T2, bool>> func = null);
         #endregion
 
         #region 复制

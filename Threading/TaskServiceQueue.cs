@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using XiaoFeng.Config;
+using XiaoFeng.Event;
 
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
@@ -77,6 +78,14 @@ namespace XiaoFeng.Threading
         /// 消费运行状态
         /// </summary>
         public Boolean ConsumeState { get; private set; } = false;
+        /// <summary>
+        /// 任务错误事件
+        /// </summary>
+        public event TaskQueueError<T> TaskQueueError;
+        /// <summary>
+        /// 任务成功事件
+        /// </summary>
+        public event TaskQueueOk<T> TaskQueueOk;
         /// <summary>
         /// 配置
         /// </summary>
@@ -176,11 +185,13 @@ namespace XiaoFeng.Threading
                             if (task.Status == TaskStatus.Created)
                                 task.Start();
                             await Task.WhenAny(task).ConfigureAwait(false);
+                            this.TaskQueueOk?.Invoke(workItem);
                         }
                         catch (Exception ex)
                         {
                             this.ConsoleWrite($"执行任务队列出错.{Environment.NewLine}{ex.Message}");
                             LogHelper.Error(ex, "执行任务队列出错.");
+                            this.TaskQueueError?.Invoke(workItem, ex);
                         }
                     }
                     else

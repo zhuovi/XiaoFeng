@@ -441,6 +441,69 @@ namespace XiaoFeng.Data.SQL
         /// <returns></returns>
         public IQueryableX<T, T2> Join<T2, TResult>(Expression<Func<T2, bool>> func, Expression<Func<T, T2, TResult>> funcOn) => this.Join(null, func, funcOn);
         /// <summary>
+        /// 左连接关联表（left join）
+        /// </summary>
+        /// <typeparam name="T2">T2类型</typeparam>
+        /// <param name="funcOn">On条件Lambda</param>
+        /// <param name="func">T2条件Lambda</param>
+        /// <returns></returns>
+        public IQueryableX<T, T2> LeftJoin<T2>(Expression<Func<T, T2, bool>> funcOn, Expression<Func<T2, bool>> func = null) => this.Join(JoinType.Left, funcOn, func);
+        /// <summary>
+        /// 右连接关联表（right join）
+        /// </summary>
+        /// <typeparam name="T2">T2类型</typeparam>
+        /// <param name="funcOn">On条件Lambda</param>
+        /// <param name="func">T2条件Lambda</param>
+        /// <returns></returns>
+        public IQueryableX<T, T2> RightJoin<T2>(Expression<Func<T, T2, bool>> funcOn, Expression<Func<T2, bool>> func = null) => this.Join(JoinType.Right, funcOn, func);
+        /// <summary>
+        /// 全连接关联表（full join）
+        /// </summary>
+        /// <typeparam name="T2">T2类型</typeparam>
+        /// <param name="funcOn">On条件Lambda</param>
+        /// <param name="func">T2条件Lambda</param>
+        /// <returns></returns>
+        public IQueryableX<T, T2> FullJoin<T2>(Expression<Func<T, T2, bool>> funcOn, Expression<Func<T2, bool>> func = null) => this.Join(JoinType.Full, funcOn, func);
+        /// <summary>
+        /// 内连接关联表（inner join）
+        /// </summary>
+        /// <typeparam name="T2">T2类型</typeparam>
+        /// <param name="funcOn">On条件Lambda</param>
+        /// <param name="func">T2条件Lambda</param>
+        /// <returns></returns>
+        public IQueryableX<T, T2> InnerJoin<T2>(Expression<Func<T, T2, bool>> funcOn, Expression<Func<T2, bool>> func = null) => this.Join(JoinType.Inner, funcOn, func);
+        /// <summary>
+        /// 合并连接关联表（union join）
+        /// </summary>
+        /// <typeparam name="T2">T2类型</typeparam>
+        /// <param name="funcOn">On条件Lambda</param>
+        /// <param name="func">T2条件Lambda</param>
+        /// <returns></returns>
+        public IQueryableX<T, T2> UnionJoin<T2>(Expression<Func<T, T2, bool>> funcOn, Expression<Func<T2, bool>> func = null) => this.Join(JoinType.Union, funcOn, func);
+        /// <summary>
+        /// 关联表
+        /// </summary>
+        /// <typeparam name="T2">T2类型</typeparam>
+        /// <param name="joinType">关联类型</param>
+        /// <param name="funcOn">On条件Lambda</param>
+        /// <param name="func">T2条件Lambda</param>
+        /// <returns></returns>
+        public IQueryableX<T, T2> Join<T2>(JoinType joinType, Expression<Func<T, T2, bool>> funcOn, Expression<Func<T2, bool>> func = null)
+        {
+            using (var dataX = new DataHelperX<T, T2>(this.Config, this.SQLCallBack))
+            {
+                dataX.DataSQL.TableName = new Dictionary<TableType, string>() { { TableType.T1, this.DataSQL.TableName } };
+                dataX.DataSQL.Parameters = this.DataSQL.Parameters;
+                dataX.DataSQL.SpliceSQLTime += this.DataSQL.SpliceSQLTime;
+                dataX.DataSQL.JoinType = joinType;
+                dataX.On(funcOn);
+                dataX.DataSQL.SetWhere(this.DataSQL.GetWhere(), TableType.T1);
+                if (func != null)
+                    dataX.Where(func, TableType.T2);
+                return dataX;
+            }
+        }
+        /// <summary>
         /// 扩展join
         /// </summary>
         /// <typeparam name="T2">T2类型</typeparam>

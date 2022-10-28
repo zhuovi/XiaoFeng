@@ -27,4 +27,23 @@ namespace XiaoFeng.Event
     /// <param name="bytes">字节组</param>
     /// <param name="e">错误信息</param>
     public delegate void MessageByteEventHandler(byte[] bytes, EventArgs e);
+    /// <summary>
+    /// 任务出错事件
+    /// </summary>
+    /// <param name="task">任务</param>
+    /// <param name="exception">错误</param>
+    public delegate void TaskError(Task task, Exception exception);
+    /// <summary>
+    /// 任务队列出错事件
+    /// </summary>
+    /// <typeparam name="T">数据类型</typeparam>
+    /// <param name="workItem">数据</param>
+    /// <param name="exception">错误</param>
+    public delegate void TaskQueueError<T>(T workItem, Exception exception);
+    /// <summary>
+    /// 任务队列成功事件
+    /// </summary>
+    /// <typeparam name="T">数据类型</typeparam>
+    /// <param name="workItem">数据</param>
+    public delegate void TaskQueueOk<T>(T workItem);
 }
