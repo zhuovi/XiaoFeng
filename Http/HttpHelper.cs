@@ -137,6 +137,7 @@ namespace XiaoFeng.Http
         /// 获取Http内容
         /// </summary>
         /// <param name="url">网址</param>
+        /// <param name="httpCore">核心</param>
         /// <returns></returns>
         public HttpResponse GetResponse(string url, HttpCore httpCore = HttpCore.HttpClient) => this.GetResponseAsync(url, httpCore).ConfigureAwait(false).GetAwaiter().GetResult();
         /// <summary>

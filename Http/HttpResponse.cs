@@ -290,6 +290,7 @@ namespace XiaoFeng.Http
         public async Task<long> DownFileAsync(string path)
         {
             path = path.GetBasePath();
+            FileHelper.CreateDirectory(path.GetDirectoryName());
             FileHelper.DeleteFile(path);
             using (var file = File.Create(path))
                 await file.WriteAsync(this.Data, 0, this.Data.Length).ConfigureAwait(false);
