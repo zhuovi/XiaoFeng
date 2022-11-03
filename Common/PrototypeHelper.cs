@@ -1690,7 +1690,7 @@ namespace XiaoFeng
         public static T ToCast<T>(this object _, T defaultValue = default(T))
         {
             var val = _.GetValue(typeof(T));
-            return val == null ? defaultValue : (T)val;
+            return val.IsNullOrEmpty() ? defaultValue : (T)val;
         }
         /// <summary>
         /// 类型相互转换
