@@ -1085,6 +1085,41 @@ namespace XiaoFeng.Http
         }
         #endregion
 
+        #region 设置头信息
+        /// <summary>
+        /// 设置头信息
+        /// </summary>
+        /// <param name="key">key</param>
+        /// <param name="value">值</param>
+        /// <returns></returns>
+        public IHttpRequest AddHeader(string key,string value)
+        {
+            if (key.IsNullOrEmpty()) return this;
+            if (this.Headers.ContainsKey(key))
+                this.Headers[key] = value;
+            else
+                this.Headers.Add(key, value);
+            return this;
+        }
+        /// <summary>
+        /// 设置头信息
+        /// </summary>
+        /// <param name="vals">集合</param>
+        /// <returns></returns>
+        public IHttpRequest AddHeader(Dictionary<string, string> vals)
+        {
+            if (vals == null || vals.Count == 0) return this;
+            vals.Each(k =>
+            {
+                if (this.Headers.ContainsKey(k.Key))
+                    this.Headers[k.Key] = k.Value;
+                else
+                    this.Headers.Add(k.Key, k.Value);
+            });
+            return this;
+        }
+        #endregion
+
         #endregion
     }
 }

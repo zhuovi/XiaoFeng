@@ -312,5 +312,18 @@ namespace XiaoFeng.Http
         /// <param name="contentType">内容类型</param>
         /// <returns></returns>
         IHttpRequest SetContentType(string contentType);
+        /// <summary>
+        /// 设置头信息
+        /// </summary>
+        /// <param name="key">key</param>
+        /// <param name="value">值</param>
+        /// <returns></returns>
+        IHttpRequest AddHeader(string key, string value);
+        /// <summary>
+        /// 设置头信息
+        /// </summary>
+        /// <param name="vals">集合</param>
+        /// <returns></returns>
+        IHttpRequest AddHeader(Dictionary<string, string> vals);
     }
 }
