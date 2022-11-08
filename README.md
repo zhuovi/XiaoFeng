@@ -47,7 +47,7 @@ PM> Install-Package XiaoFeng
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="3.1.2" />
+<PackageReference Include="XiaoFeng" Version="3.1.3" />
 ```
 
 
