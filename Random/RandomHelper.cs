@@ -81,16 +81,16 @@ namespace XiaoFeng
         /// <summary>
         /// 实例化类
         /// </summary>
-        private static RandomHelper _randomHelper = null;
+        private static WeakReference<RandomHelper> _Helper = null;
         /// <summary>
         /// 实例化类
         /// </summary>
-        private static RandomHelper randomHelper
+        private static RandomHelper Helper
         {
             get
             {
-                if (_randomHelper == null) _randomHelper = new RandomHelper();
-                return _randomHelper;
+                _Helper ??= new WeakReference<RandomHelper>(new RandomHelper());
+                return _Helper.IsAlive ? _Helper.Target : _Helper.Target = new RandomHelper();
             }
         }
         #endregion
@@ -104,7 +104,7 @@ namespace XiaoFeng
         /// <param name="min">最小值</param>
         /// <param name="max">最大值</param>
         /// <returns></returns>
-        public static int GetRandomInt(int min,int max) { return randomHelper.GetRandom(min, max); }
+        public static int GetRandomInt(int min,int max) { return Helper.GetRandom(min, max); }
         #endregion
 
         #region 获取一组随机数字
@@ -118,7 +118,7 @@ namespace XiaoFeng
         /// <returns></returns>
         public static List<int> GetRandomInts(int min, int max, int count, Boolean isRepeat = true)
         {
-            return randomHelper.GetRandoms(min, max, count, isRepeat);
+            return Helper.GetRandoms(min, max, count, isRepeat);
         }
         #endregion
 
@@ -132,7 +132,7 @@ namespace XiaoFeng
         /// <returns></returns>
         public static string GetRandomString(int length = 4, RandomType ranType = RandomType.Number | RandomType.Letter, Boolean isRepeat = true)
         {
-            return randomHelper.GetRandom(length, ranType, isRepeat);
+            return Helper.GetRandom(length, ranType, isRepeat);
         }
         #endregion
 
@@ -147,8 +147,17 @@ namespace XiaoFeng
         /// <returns></returns>
         public static List<string> GetRandomStrings(int count, int length = 4, RandomType ranType = RandomType.Number | RandomType.Letter, Boolean isRepeat = true)
         {
-            return randomHelper.GetRandoms(count, length, ranType, isRepeat);
+            return Helper.GetRandoms(count, length, ranType, isRepeat);
         }
+        #endregion
+
+        #region 随机生成一个字节数组
+        /// <summary>
+        /// 随机生成一个字节数组
+        /// </summary>
+        /// <param name="length">数组长度</param>
+        /// <returns></returns>
+        public static byte[] GetRandomBytes(int length) => Helper.GetBytes(length);
         #endregion
 
         #endregion
@@ -259,6 +268,20 @@ namespace XiaoFeng
                 list.Add(Rand);
             }
             return list;
+        }
+        #endregion
+
+        #region 随机生成一个字节数组
+        /// <summary>
+        /// 随机生成一个字节数组
+        /// </summary>
+        /// <param name="length">数组长度</param>
+        /// <returns></returns>
+        public byte[] GetBytes(int length)
+        {
+            var bytes = new byte[length];
+            this.Ran.NextBytes(bytes);
+            return bytes;
         }
         #endregion
 

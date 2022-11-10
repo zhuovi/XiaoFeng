@@ -8,7 +8,7 @@
 		<Copyright>CopyRight @ 2008-2023 魔法精灵(www.fayelf.com) QQ:7092734 Email:jacky@fayelf.com</Copyright>
 		<Company>河南魔法精灵软件科技有限公司</Company>
 		<VersionPrefix>3.1</VersionPrefix>
-		<VersionSuffix>3</VersionSuffix>
+		<VersionSuffix>4</VersionSuffix>
 		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
 		<FileVersion>$(Version)</FileVersion>
 		<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
@@ -24,7 +24,7 @@
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageReleaseNotes>修复ToCast当对象是字符串空时，不取默认值的问题;增加HttpHelper中的AddHeader方法</PackageReleaseNotes>
+		<PackageReleaseNotes>新增随机字节数组方法,RandomHelper.GetRandomBytes(int length);</PackageReleaseNotes>
 		<DelaySign>False</DelaySign>
 		<IsPackable>true</IsPackable>
 		<PackageProjectUrl>https://github.com/zhuovi/XiaoFeng</PackageProjectUrl>
