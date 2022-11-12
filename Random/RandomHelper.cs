@@ -89,7 +89,7 @@ namespace XiaoFeng
         {
             get
             {
-                _Helper = Helper?? new WeakReference<RandomHelper>(new RandomHelper());
+                _Helper = _Helper ?? new WeakReference<RandomHelper>(new RandomHelper());
                 return _Helper.IsAlive ? _Helper.Target : _Helper.Target = new RandomHelper();
             }
         }
