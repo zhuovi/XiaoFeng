@@ -184,7 +184,7 @@ namespace XiaoFeng.Http
         {
             get
             {
-                http ??= new WeakReference<HttpHelper>(new HttpHelper());
+                http = http ?? new WeakReference<HttpHelper>(new HttpHelper());
                 return http.IsAlive ? http.Target : http.Target = new HttpHelper();
             }
         }
