@@ -100,6 +100,18 @@ namespace XiaoFeng
         /// <param name="_">字符串</param>
         /// <returns></returns>
         public static Boolean IsGUID(this String _) { return _.Trim(new char[] { '{', '}', '(', ')' }).IsMatch(RegexPattern.guid); }
+        /// <summary>
+        /// 是否是GUID
+        /// </summary>
+        /// <param name="_">字符串</param>
+        /// <returns></returns>
+        public static Boolean IsGuid(this String _) => _.IsGUID();
+        /// <summary>
+        /// 是否是UUID
+        /// </summary>
+        /// <param name="_">字符串</param>
+        /// <returns></returns>
+        public static Boolean IsUUID(this String _) => _.IsGUID();
         #endregion
 
         #region 是否是Email格式
@@ -203,6 +215,18 @@ namespace XiaoFeng
         #endregion
 
         #region 指定字符串是否为 null 或 System.String.Empty 字符串
+        /// <summary>
+        /// Guid是否为空
+        /// </summary>
+        /// <param name="_">guid</param>
+        /// <returns></returns>
+        public static Boolean IsNullOrEmpty(this Guid? _) => !_.HasValue || _ == Guid.Empty || _ == null;
+        /// <summary>
+        /// Guid是否不为空
+        /// </summary>
+        /// <param name="_">guid</param>
+        /// <returns></returns>
+        public static Boolean IsNotNullOrEmpty(this Guid? _) => !_.IsNullOrEmpty();
         /// <summary>
         /// Guid是否为空
         /// </summary>

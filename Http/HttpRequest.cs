@@ -395,6 +395,7 @@ namespace XiaoFeng.Http
             }
             try
             {
+                Response.Request = this;
                 this.BeginTime = DateTime.Now;
                 /*请求数据*/
                 Response.Response = await this.Client.SendAsync(this.Request, CompletionOption, this.CancelToken.Token).ConfigureAwait(false);
@@ -578,6 +579,7 @@ namespace XiaoFeng.Http
             if (this.Connectionlimit > 0) this.RequestHttp.ServicePoint.ConnectionLimit = this.Connectionlimit;
             try
             {
+                Response.Request = this;
                 this.BeginTime = DateTime.Now;
                 /*请求数据*/
                 Response.ResponseHttp = await this.RequestHttp.GetResponseAsync() as HttpWebResponse;

@@ -24,7 +24,7 @@
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageReleaseNotes>新增随机字节数组方法,RandomHelper.GetRandomBytes(int length);</PackageReleaseNotes>
+		<PackageReleaseNotes>新增随机字节数组方法,RandomHelper.GetRandomBytes(int length);优化判断是否是UUID为空的方法;HttpHelper增加响应请求对象;</PackageReleaseNotes>
 		<DelaySign>False</DelaySign>
 		<IsPackable>true</IsPackable>
 		<PackageProjectUrl>https://github.com/zhuovi/XiaoFeng</PackageProjectUrl>

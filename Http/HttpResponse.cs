@@ -38,6 +38,10 @@ namespace XiaoFeng.Http
 
         #region 属性
         /// <summary>
+        /// 请求对象
+        /// </summary>
+        public IHttpRequest Request { get; set; }
+        /// <summary>
         /// 响应对象
         /// </summary>
         public HttpResponseMessage Response { get; set; }
