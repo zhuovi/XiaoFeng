@@ -539,12 +539,6 @@ namespace XiaoFeng.Http
                     this.ContentType = "multipart/form-data; boundary=" + boundary;
                     RequestData = this.GetBytes(boundary);
                 }
-                /*设置请求数据*/
-                if (RequestData != null && RequestData.Length > 0)
-                {
-                    this.RequestHttp.ContentLength = RequestData.Length;
-                    this.RequestHttp.GetRequestStream().Write(RequestData, 0, RequestData.Length);
-                }
             }
             this.RequestHttp.ServicePoint.Expect100Continue = this.Expect100Continue;
             this.RequestHttp.Method = this.Method.Method;
@@ -579,6 +573,14 @@ namespace XiaoFeng.Http
             if (this.MaximumAutomaticRedirections > 0) this.RequestHttp.MaximumAutomaticRedirections = this.MaximumAutomaticRedirections;
             /*设置最大连接*/
             if (this.Connectionlimit > 0) this.RequestHttp.ServicePoint.ConnectionLimit = this.Connectionlimit;
+
+            /*设置请求数据*/
+            if (RequestData != null && RequestData.Length > 0)
+            {
+                this.RequestHttp.ContentLength = RequestData.Length;
+                this.RequestHttp.GetRequestStream().Write(RequestData, 0, RequestData.Length);
+            }
+
             try
             {
                 Response.Request = this;
