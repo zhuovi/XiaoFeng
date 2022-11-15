@@ -504,14 +504,16 @@ namespace XiaoFeng.Http
             byte[] RequestData = Array.Empty<byte>();
             if (",POST,GET,DELETE,PUT,".IndexOf("," + this.Method.Method.ToUpper() + ",", StringComparison.OrdinalIgnoreCase) > -1)
             {
-                if (this.ContentType.IsNullOrEmpty())
-                    this.ContentType = "application/x-www-form-urlencoded";
                 if (this.FormData == null)
                 {
                     if (this.Data != null && this.Data.Any())
                     {
                         if (this.Method == "POST")
+                        {
+                            if (this.ContentType.IsNullOrEmpty())
+                                this.ContentType = "application/x-www-form-urlencoded";
                             RequestData = this.Data.ToQuery().GetBytes(this.Encoding);
+                        }
                     }
                     else if (this.BodyData.IsNotNullOrEmpty())
                     {
