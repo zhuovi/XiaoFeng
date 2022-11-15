@@ -1101,7 +1101,7 @@ namespace XiaoFeng.Http
         public IHttpRequest AddHeader(string key,string value)
         {
             if (key.IsNullOrEmpty()) return this;
-            this.Headers ??= new Dictionary<string, string>();
+            if (this.Headers == null) this.Headers = new Dictionary<string, string>();
             if (this.Headers.ContainsKey(key))
                 this.Headers[key] = value;
             else
@@ -1116,7 +1116,7 @@ namespace XiaoFeng.Http
         public IHttpRequest AddHeader(Dictionary<string, string> vals)
         {
             if (vals == null || vals.Count == 0) return this;
-            this.Headers ??= new Dictionary<string, string>();
+            if (this.Headers == null) this.Headers = new Dictionary<string, string>();
             vals.Each(k =>
             {
                 if (this.Headers.ContainsKey(k.Key))
