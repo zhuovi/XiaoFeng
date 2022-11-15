@@ -8,7 +8,7 @@
 		<Copyright>CopyRight @ 2008-2023 魔法精灵(www.fayelf.com) QQ:7092734 Email:jacky@fayelf.com</Copyright>
 		<Company>河南魔法精灵软件科技有限公司</Company>
 		<VersionPrefix>3.1</VersionPrefix>
-		<VersionSuffix>4</VersionSuffix>
+		<VersionSuffix>5</VersionSuffix>
 		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
 		<FileVersion>$(Version)</FileVersion>
 		<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
@@ -24,7 +24,7 @@
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageReleaseNotes>新增随机字节数组方法,RandomHelper.GetRandomBytes(int length);优化判断是否是UUID为空的方法;HttpHelper增加响应请求对象;</PackageReleaseNotes>
+		<PackageReleaseNotes>优化HttpHelper;</PackageReleaseNotes>
 		<DelaySign>False</DelaySign>
 		<IsPackable>true</IsPackable>
 		<PackageProjectUrl>https://github.com/zhuovi/XiaoFeng</PackageProjectUrl>

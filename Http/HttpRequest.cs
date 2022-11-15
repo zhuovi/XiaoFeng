@@ -927,7 +927,7 @@ namespace XiaoFeng.Http
         /// <param name="certificate">证书</param>
         /// <param name="chain">X509Chain</param>
         /// <param name="errors">SslPolicyErrors</param>
-        /// <returns>bool</returns>
+        /// <returns></returns>
         private bool CheckValidationResult(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors) { return true; }
         #endregion
 
@@ -1101,6 +1101,7 @@ namespace XiaoFeng.Http
         public IHttpRequest AddHeader(string key,string value)
         {
             if (key.IsNullOrEmpty()) return this;
+            this.Headers ??= new Dictionary<string, string>();
             if (this.Headers.ContainsKey(key))
                 this.Headers[key] = value;
             else
@@ -1115,6 +1116,7 @@ namespace XiaoFeng.Http
         public IHttpRequest AddHeader(Dictionary<string, string> vals)
         {
             if (vals == null || vals.Count == 0) return this;
+            this.Headers ??= new Dictionary<string, string>();
             vals.Each(k =>
             {
                 if (this.Headers.ContainsKey(k.Key))
