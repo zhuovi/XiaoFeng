@@ -24,7 +24,7 @@
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageReleaseNotes>优化HttpHelper;</PackageReleaseNotes>
+		<PackageReleaseNotes>优化HttpHelper;优化线程池归还资源;</PackageReleaseNotes>
 		<DelaySign>False</DelaySign>
 		<IsPackable>true</IsPackable>
 		<PackageProjectUrl>https://github.com/zhuovi/XiaoFeng</PackageProjectUrl>

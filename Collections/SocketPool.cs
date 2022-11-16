@@ -103,14 +103,27 @@ namespace XiaoFeng.Collections
             return value != null && value.IsWork;
         }
         ///<inheritdoc/>
-        public override void Close(Socket obj)
+        public override void Close(Socket item)
         {
-            if (obj == null) return;
+            if (item == null) return;
 
-            if (obj.Connected)
+            if (item.Connected)
             {
                 //socket.Disconnect(true);
             }
+        }
+        ///<inheritdoc/>
+        public override void OnDispose(Socket value)
+        {
+            if (value == null) return;
+            if (value.Connected)
+            {
+                value.Disconnect(true);
+                value.Shutdown(SocketShutdown.Both);
+                value.Close();
+                value.Dispose();
+            }
+            base.OnDispose(value);
         }
         /// <summary>
         /// 执行

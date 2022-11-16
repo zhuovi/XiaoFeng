@@ -182,12 +182,12 @@ namespace XiaoFeng.Collections
         /// <summary>
         /// 关闭资源
         /// </summary>
-        /// <param name="obj">资源</param>
-        public override void Close(DbConnection obj)
+        /// <param name="item">资源</param>
+        public override void Close(DbConnection item)
         {
-            if (obj == null) return;
+            if (item == null) return;
 
-            if (obj.State != ConnectionState.Closed)
+            if (item.State != ConnectionState.Closed)
             {
                 //conn.Close();
                 //conn.Dispose();

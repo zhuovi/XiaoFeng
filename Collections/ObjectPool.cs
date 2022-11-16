@@ -112,10 +112,7 @@ namespace XiaoFeng.Collections
         public virtual void Clear()
         {
             while (this.FreeItems.TryDequeue(out PoolItem<T> item)) OnDispose(item.Value);
-            foreach (var item in this.BusyItems.Values)
-            {
-                OnDispose(item.Value);
-            }
+            this.BusyItems.Values.Each(item => OnDispose(item.Value));
             this.BusyItems.Clear();
             this._BusyCount = 0;
             this._FreeCount = 0;
@@ -142,11 +139,9 @@ namespace XiaoFeng.Collections
             PoolItem<T> pi = null;
             do
             {
-                // 从空闲集合借一个
+                //从空闲集合借一个
                 if (this.FreeItems.TryDequeue(out pi))
-                {
                     Interlocked.Decrement(ref this._FreeCount);
-                }
                 else
                 {
                     var flag = false;
@@ -169,9 +164,9 @@ namespace XiaoFeng.Collections
                     }
                 }
             } while (!OnGet(pi));
-            // 最后时间
+            //最后时间
             pi.LastTime = DateTime.Now;
-            // 加入繁忙集合
+            //加入繁忙集合
             this.BusyItems.TryAdd(pi.ID, pi);
             Interlocked.Increment(ref this._BusyCount);
             return pi;
@@ -189,25 +184,33 @@ namespace XiaoFeng.Collections
             if (value == null) return false;
             //关闭资源
             this.Close(value.Value);
-            // 从繁忙队列找到并移除缓存项
-            this.BusyItems.TryRemove(value.ID, out var item);
-            Interlocked.Decrement(ref _BusyCount);
-            // 是否可用
-            if (!OnPut(value)) return false;
-            // 最后时间
-            item.LastTime = DateTime.Now;
-            this.FreeItems.Enqueue(item);
-            Interlocked.Increment(ref _FreeCount);
+            try
+            {
+                //从繁忙队列找到并移除缓存项
+                this.BusyItems.TryRemove(value.ID, out var _);
+                Interlocked.Decrement(ref _BusyCount);
+                //是否可用
+                if (!OnPut(value)) return false;
+                //最后时间
+                value.LastTime = DateTime.Now;
+                this.FreeItems.Enqueue(value);
+                Interlocked.Increment(ref _FreeCount);
+            }
+            catch (Exception ex)
+            {
+                this.OnDispose(value.Value);
+                LogHelper.Error(ex, "归还资源出错:");
+            }
             return true;
         }
         #endregion
-       
+
         #region 关闭资源
         /// <summary>
         /// 关闭资源
         /// </summary>
-        /// <param name="obj">资源</param>
-        public abstract void Close(T obj);
+        /// <param name="item">资源</param>
+        public abstract void Close(T item);
         #endregion
 
         #region 定时清理过期连接
@@ -233,10 +236,7 @@ namespace XiaoFeng.Collections
                     FreeQueue.Enqueue(item);
                 }
             }
-            FreeQueue.Each(item =>
-            {
-                this.FreeItems.Enqueue(item);
-            });
+            FreeQueue.Each(item => this.FreeItems.Enqueue(item));
             if (!this.BusyItems.IsEmpty)
             {
                 this.BusyItems.Each(item =>
@@ -251,11 +251,7 @@ namespace XiaoFeng.Collections
                     }
                 });
             }
-            if(this.FreeItems.IsEmpty && this.BusyItems.IsEmpty)
-            {
-                if (job != null)
-                    job.Stop();
-            }
+            if (this.FreeItems.IsEmpty && this.BusyItems.IsEmpty) job?.Stop();
         }
         #endregion
 

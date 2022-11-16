@@ -69,7 +69,7 @@ namespace XiaoFeng.Collections
         /// <summary>
         /// 关闭资源
         /// </summary>
-        /// <param name="obj">资源</param>
-        void Close(T obj);
+        /// <param name="item">资源</param>
+        void Close(T item);
     }
 }
