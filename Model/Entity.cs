@@ -374,7 +374,7 @@ namespace XiaoFeng.Model
             if (data != null)
             {
                 data.ClearDirty();
-                data.SetSubDataBase(this.DataBaseName, this.DataBaseNum);
+                data.SubDataBase(this.DataBaseName, this.DataBaseNum);
                 if (this.TableName != data.TableName) data.TableName = this.TableName;
             }
             return data;
@@ -405,7 +405,7 @@ namespace XiaoFeng.Model
             var data = this.Where(whereString).First();
             if (data == null) return null;
             data.ClearDirty();
-            data.SetSubDataBase(this.DataBaseName, this.DataBaseNum);
+            data.SubDataBase(this.DataBaseName, this.DataBaseNum);
             if (this.TableName != data.TableName) data.TableName = this.TableName;
             return data;
         }/// <summary>
@@ -432,7 +432,7 @@ namespace XiaoFeng.Model
             if (data != null)
             {
                 data.ClearDirty();
-                data.SetSubDataBase(this.DataBaseName, this.DataBaseNum);
+                data.SubDataBase(this.DataBaseName, this.DataBaseNum);
                 if (this.TableName != data.TableName) data.TableName = this.TableName;
             }
             return data;

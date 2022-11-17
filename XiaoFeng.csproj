@@ -4,9 +4,9 @@
 		<OutputType>Library</OutputType>
 		<Authors>Jacky</Authors>
 		<Product>基础类库 数据库中间件</Product>
-		<Description>基础类库、数据库中间件、网络通讯中间件、Redis、Socket、HttpHelper、QueryableX、Cache、FTP、JSON、XML、IO、配置、各种加密码算法、作业调度、正则、通用数据库操作，支持10多种数据库</Description>
-		<Copyright>CopyRight @ 2008-2023 魔法精灵(www.fayelf.com) QQ:7092734 Email:jacky@fayelf.com</Copyright>
-		<Company>河南魔法精灵软件科技有限公司</Company>
+		<Description>基础类库、数据库中间件、网络通讯中间件、Redis、Socket、HttpHelper、IQueryableX、Cache、FTP、JSON、XML、IO、配置、各种加密码算法、作业调度、正则、通用数据库操作，支持10多种数据库</Description>
+		<Copyright>CopyRight @ 2008-2024 魔法精灵(www.fayelf.com) QQ:7092734 Email:jacky@fayelf.com</Copyright>
+		<Company>魔法精灵</Company>
 		<VersionPrefix>3.1</VersionPrefix>
 		<VersionSuffix>5</VersionSuffix>
 		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
@@ -22,9 +22,9 @@
 		<RepositoryUrl>https://github.com/zhuovi/XiaoFeng</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
-		<PackageTags>XiaoFeng;FAYELF;</PackageTags>
+		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageReleaseNotes>优化HttpHelper;优化线程池归还资源;</PackageReleaseNotes>
+		<PackageReleaseNotes>优化HttpHelper;优化线程池归还资源;优化IQueryableX扩展方法;</PackageReleaseNotes>
 		<DelaySign>False</DelaySign>
 		<IsPackable>true</IsPackable>
 		<PackageProjectUrl>https://github.com/zhuovi/XiaoFeng</PackageProjectUrl>
@@ -37,5 +37,8 @@
 	<ItemGroup>
 	  <Compile Remove="Data\DataMapping.cs" />
 	  <Compile Remove="Log\Logger - 复制.cs" />
+	  <Compile Remove="Net\WebClientHelper.cs" />
+	  <Compile Remove="Xml\XmlParser.cs" />
+	  <Compile Remove="Xml\XmlValueX.cs" />
 	</ItemGroup>
 </Project>

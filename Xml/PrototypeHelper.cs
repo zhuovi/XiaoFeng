@@ -22,6 +22,7 @@ namespace XiaoFeng
         /// <param name="removeNamespaces">是否移除命名空间</param>
         /// <param name="removeXmlDeclaration">是否移除XML声明</param>
         /// <returns></returns>
+        [Obsolete("已过期，请使用EntityToXml")]
         public static string ToXml<T>(this T t, string encode = "UTF-8", Boolean removeNamespaces = false, Boolean removeXmlDeclaration = false)
         {
             if (t == null) return String.Empty;
@@ -50,6 +51,7 @@ namespace XiaoFeng
         /// <param name="xml">XML数据</param>
         /// <param name="encode">编码</param>
         /// <returns></returns>
+        [Obsolete("已过期，请使用XmlToEntity")]
         public static T XmlToObject<T>(this String xml, string encode = "UTF-8")
         {
             if (xml.IsNullOrEmpty()) return Activator.CreateInstance<T>();
@@ -61,6 +63,7 @@ namespace XiaoFeng
         /// <param name="xml">XML数据</param>
         /// <param name="type"></param>
         /// <returns></returns>
+        [Obsolete("已过期，请使用XmlToEntity")]
         public static object XmlToObject(this String xml, Type type)
         {
             if (xml.IsNullOrEmpty()) return Activator.CreateInstance(type);

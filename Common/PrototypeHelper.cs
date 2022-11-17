@@ -1801,7 +1801,7 @@ namespace XiaoFeng
                     return _.JsonToObject(targetType);
                 }
                 else if (_.IsXml())
-                    return _.XmlToObject(targetType);
+                    return _.XmlToEntity(targetType);
                 return null;
             }
             else if (BaseSourceType == ValueTypes.String && (BaseTargetType == ValueTypes.Dictionary || BaseTargetType == ValueTypes.IDictionary))

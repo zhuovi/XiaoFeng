@@ -36,10 +36,6 @@ namespace XiaoFeng.Log
         /// </summary>
         private static readonly object FileLock = new object();
         /// <summary>
-        /// 计时器
-        /// </summary>
-        private static int Count = 0;
-        /// <summary>
         /// 文件读写锁
         /// </summary>
         public static ReaderWriterLockSlim readerWriterLock = new ReaderWriterLockSlim();

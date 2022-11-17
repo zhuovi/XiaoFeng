@@ -39,7 +39,6 @@ namespace XiaoFeng.Cryptography
 
         #endregion
 
-
         #region 方法
         ///<inheritdoc/>
         public override byte[] Encode(byte[] data, byte[] slatKey, byte[] vector, CryptographyType type = CryptographyType.Encrypt, CipherMode cipherMode = CipherMode.CBC, PaddingMode paddingModel = PaddingMode.PKCS7)
