@@ -2048,25 +2048,32 @@ namespace XiaoFeng
         /// <returns>字节编码</returns>
         public static Encoding GetEncoding(this byte[] _) => FileHelper.GetEncoding(_);
         /// <summary>
-        /// 字符串转字节
+        /// 将指定字符数组中的所有字符编码为一个字节序列
+        /// </summary>
+        /// <param name="chars">包含要编码的字符的字符数组</param>
+        /// <param name="encoding">编码</param>
+        /// <returns>一个字节数组，包含对指定的字符集进行编码的结果</returns>
+        public static byte[] GetBytes(this char[] chars, Encoding encoding = null) => chars.Any() ? (encoding ?? Encoding.UTF8).GetBytes(chars) : Array.Empty<byte>();
+        /// <summary>
+        /// 字符串转字节组
         /// </summary>
         /// <param name="_">字符串</param>
         /// <param name="encoding">编码</param>
-        /// <returns></returns>
+        /// <returns>一个字节数组，包含对指定的字符集进行编码的结果</returns>
         public static byte[] GetBytes(this String _, Encoding encoding = null) => _.IsNullOrEmpty() ? null : (encoding ?? Encoding.UTF8).GetBytes(_);
         /// <summary>
         /// 字符串转字节
         /// </summary>
         /// <param name="_">字符串</param>
         /// <param name="encoding">编码</param>
-        /// <returns></returns>
+        /// <returns>一个字节数组，包含对指定的字符集进行编码的结果</returns>
         public static byte[] GetBytes(this String _, string encoding) => Encoding.GetEncoding(encoding ?? "UTF-8").GetBytes(_);
         /// <summary>
         /// 字符串转字节
         /// </summary>
         /// <param name="_">字符串</param>
         /// <param name="encoding">编码</param>
-        /// <returns></returns>
+        /// <returns>一个字节数组，包含对指定的字符集进行编码的结果</returns>
         public static sbyte[] GetSBytes(this String _, Encoding encoding = null)
         {
             var bytes = (encoding ?? Encoding.UTF8).GetBytes(_);
@@ -2082,7 +2089,7 @@ namespace XiaoFeng
         /// </summary>
         /// <param name="_">字符串</param>
         /// <param name="encoding">编码</param>
-        /// <returns></returns>
+        /// <returns>一个字节数组，包含对指定的字符集进行编码的结果</returns>
         public static sbyte[] GetSBytes(this String _, string encoding) => _.GetSBytes(Encoding.GetEncoding(encoding));
         /// <summary>
         /// 字节转字符串
@@ -2091,7 +2098,7 @@ namespace XiaoFeng
         /// <param name="encoding">编码</param>
         /// <param name="index">开始位置</param>
         /// <param name="count">长度</param>
-        /// <returns></returns>
+        /// <returns>包含指定字节序列解码结果的字符串</returns>
         public static string GetString(this byte[] _, Encoding encoding, int index = 0, int count = 0)
         {
             var result = string.Empty;
@@ -2109,7 +2116,7 @@ namespace XiaoFeng
         /// <param name="encoding">编码</param>
         /// <param name="index">开始位置</param>
         /// <param name="count">长度</param>
-        /// <returns></returns>
+        /// <returns>包含指定字节序列解码结果的字符串</returns>
         public static string GetString(this byte[] _, string encoding = "", int index = 0, int count = 0)
         {
             var result = string.Empty;
@@ -2117,6 +2124,29 @@ namespace XiaoFeng
             var _encoding = encoding.IsNullOrEmpty() ? _.GetEncoding() : Encoding.GetEncoding(encoding);
             return _.GetString(_encoding, index, count);
         }
+        /// <summary>
+        /// 将指定字节数组中的字节序列解码为指定的字符数组。
+        /// </summary>
+        /// <param name="_">包含要解码的字节序列的字节数组</param>
+        /// <param name="byteIndex">第一个要解码的字节的索引</param>
+        /// <param name="length">要解码的字节数</param>
+        /// <param name="chars">要用于包含所产生的字符集的字符数组</param>
+        /// <param name="charIndex">开始写入所产生的字符集的索引位置</param>
+        /// <param name="encoding">编码</param>
+        /// <returns>写入 chars 的实际字符数。</returns>
+        public static int GetChars(this byte[] _, int byteIndex, int length, char[] chars, int charIndex, Encoding encoding = null)
+        {
+            if (_.IsNullOrEmpty()) return 0;
+            if (chars == null) chars = new char[_.Length];
+            return (encoding ?? _.GetEncoding()).GetChars(_, byteIndex, length, chars, charIndex);
+        }
+        /// <summary>
+        /// 将指定字节数组中的字节序列解码为指定的字符数组。
+        /// </summary>
+        /// <param name="_">包含要解码的字节序列的字节数组</param>
+        /// <param name="encoding">编码 默认是UTF8</param>
+        /// <returns>一个字节数组，包含对指定的字节序列进行解码的结果。</returns>
+        public static char[] GetChars(this byte[] _, Encoding encoding = null) => _.IsNullOrEmpty() ? Array.Empty<char>() : (encoding ?? _.GetEncoding()).GetChars(_);
         #endregion
 
         #region 获取HTML文本内容
