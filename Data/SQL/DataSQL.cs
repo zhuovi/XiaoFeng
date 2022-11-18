@@ -65,6 +65,7 @@ namespace XiaoFeng.Data.SQL
             this.UpdateColumns = new List<object>();
             this.RunSQLTime = 0;
             this.SpliceSQLTime = 0;
+            this.LinqToSQLTime = 0;
             this.CacheState = CacheState.Null;
         }
         #endregion
@@ -177,6 +178,14 @@ namespace XiaoFeng.Data.SQL
         /// </summary>
         public Int64 SpliceSQLTime { get; set; }
         /// <summary>
+        /// LinqToSql时长
+        /// </summary>
+        public double LinqToSQLTime { get; set; }
+        /// <summary>
+        /// 初始化时间
+        /// </summary>
+        private DateTime BeginTime { get; set; } = DateTime.Now;
+        /// <summary>
         /// 存储过程参数集
         /// </summary>
         public Dictionary<string, object> Parameters { get; set; } = new Dictionary<string, object>();
@@ -248,6 +257,7 @@ namespace XiaoFeng.Data.SQL
         /// <returns></returns>
         public virtual string GetSQLString()
         {
+            this.LinqToSQLTime = (DateTime.Now - this.BeginTime).TotalMilliseconds;
             Stopwatch sTime = new Stopwatch();
             sTime.Start();
             string SQL = "";

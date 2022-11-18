@@ -12,15 +12,17 @@ namespace XiaoFeng.Model
 {
     /// <summary>
     /// 生成Model类操作类
-    /// Verstion : 1.0.0
+    /// Verstion : 1.0.1
     /// Author : jacky
     /// Email : jacky@zhuovi.com
     /// QQ : 7092734
     /// Site : www.zhuovi.com
     /// Create Time : 2018/08/24 08:47:12
-    /// Update Time : 2018/08/24 09:11:53
+    /// Update Time : 2022/11/17 17:39:23
     /// 2020-11-24
     /// 更新生成模型匹配度
+    /// 2022-11-17
+    /// 增加构造器
     /// </summary>
     public class MakeModel: Disposable
     {
@@ -29,6 +31,17 @@ namespace XiaoFeng.Model
         /// 无参构造器
         /// </summary>
         public MakeModel() { }
+        /// <summary>
+        /// 设置配置
+        /// </summary>
+        /// <param name="helper">数据库对象</param>
+        /// <param name="namespace">命令空间</param>
+        public MakeModel(IDbHelper helper, string @namespace = "")
+        {
+            this.DataHelper = helper;
+            if (@namespace.IsNotNullOrEmpty())
+                this.Namespace = @namespace;
+        }
         #endregion
 
         #region 属性

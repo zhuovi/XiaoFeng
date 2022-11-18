@@ -10,22 +10,23 @@ using System.Threading.Tasks;
     Email : jacky@zhuovi.com
     QQ : 7092734
     Site : www.zhuovi.com
-    Verstion : 1.1.7
+    Verstion : 1.1.8
     Create Time : 2017/12/18 10:18:41
     Update Time : 2018/07/12 16:07:16
     Description : 
     v 1.1.6   2018/07/12 16:07:16
     1.增加设置表名方法 SetTable
+    v 1.1.8
+    1.增加基础接口 IQueryableX
 ===================================================================
 */
 namespace XiaoFeng.Data.SQL
 {
-    #region T1
+    #region IQueryableX接口
     /// <summary>
-    /// 操作SQL
+    /// IQueryableX接口
     /// </summary>
-    /// <typeparam name="T">类型</typeparam>
-    public interface IQueryableX<T>
+    public interface IQueryableX
     {
         #region 事件
         /// <summary>
@@ -33,7 +34,16 @@ namespace XiaoFeng.Data.SQL
         /// </summary>
         event RunSQLEventHandler SQLCallBack;
         #endregion
+    }
+    #endregion
 
+    #region T1
+    /// <summary>
+    /// 操作SQL
+    /// </summary>
+    /// <typeparam name="T">类型</typeparam>
+    public interface IQueryableX<T> : IQueryableX
+    {
         #region 插入数据
         /// <summary>
         /// 插入数据
@@ -916,15 +926,8 @@ namespace XiaoFeng.Data.SQL
     /// </summary>
     /// <typeparam name="T">第一张表类型</typeparam>
     /// <typeparam name="T2">第二张表类型</typeparam>
-    public interface IQueryableX<T, T2>
+    public interface IQueryableX<T, T2> :IQueryableX
     {
-        #region 事件
-        /// <summary>
-        /// 执行完SQL回调
-        /// </summary>
-        event RunSQLEventHandler SQLCallBack;
-        #endregion
-
         #region 前几条数据
         /// <summary>
         /// 前几条数据
@@ -1167,15 +1170,8 @@ namespace XiaoFeng.Data.SQL
     /// <typeparam name="T">第一张表类型</typeparam>
     /// <typeparam name="T2">第二张表类型</typeparam>
     /// <typeparam name="T3">第三张表类型</typeparam>"
-    public interface IQueryableX<T, T2, T3>
+    public interface IQueryableX<T, T2, T3> : IQueryableX
     {
-        #region 事件
-        /// <summary>
-        /// 执行完SQL回调
-        /// </summary>
-        event RunSQLEventHandler SQLCallBack;
-        #endregion
-
         #region 前几条数据
         /// <summary>
         /// 前几条数据
@@ -1414,15 +1410,8 @@ namespace XiaoFeng.Data.SQL
     /// <typeparam name="T2">第二张表类型</typeparam>
     /// <typeparam name="T3">第三张表类型</typeparam>
     /// <typeparam name="T4">第四张表类型</typeparam>
-    public interface IQueryableX<T, T2, T3, T4>
+    public interface IQueryableX<T, T2, T3, T4> : IQueryableX
     {
-        #region 事件
-        /// <summary>
-        /// 执行完SQL回调
-        /// </summary>
-        event RunSQLEventHandler SQLCallBack;
-        #endregion
-
         #region 前几条数据
         /// <summary>
         /// 前几条数据
@@ -1666,15 +1655,8 @@ namespace XiaoFeng.Data.SQL
     /// <typeparam name="T3">第三张表类型</typeparam>
     /// <typeparam name="T4">第四张表类型</typeparam>
     /// <typeparam name="T5">第五张表类型</typeparam>
-    public interface IQueryableX<T, T2, T3, T4, T5>
+    public interface IQueryableX<T, T2, T3, T4, T5> :IQueryableX
     {
-        #region 事件
-        /// <summary>
-        /// 执行完SQL回调
-        /// </summary>
-        event RunSQLEventHandler SQLCallBack;
-        #endregion
-
         #region 前几条数据
         /// <summary>
         /// 前几条数据
@@ -1921,15 +1903,8 @@ namespace XiaoFeng.Data.SQL
     /// <typeparam name="T4">第四张表类型</typeparam>
     /// <typeparam name="T5">第五张表类型</typeparam>
     /// <typeparam name="T6">第六张表类型</typeparam>
-    public interface IQueryableX<T, T2, T3, T4, T5, T6>
+    public interface IQueryableX<T, T2, T3, T4, T5, T6> : IQueryableX
     {
-        #region 事件
-        /// <summary>
-        /// 执行完SQL回调
-        /// </summary>
-        event RunSQLEventHandler SQLCallBack;
-        #endregion
-
         #region 前几条数据
         /// <summary>
         /// 前几条数据

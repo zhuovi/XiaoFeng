@@ -24,7 +24,7 @@ namespace XiaoFeng.Data.SQL
     #region T1
     /// <summary>
     /// Queryable驱动
-    /// Verstion : 2.0.4
+    /// Verstion : 2.0.5
     /// Author : jacky
     /// Email : jacky@zhuovi.com
     /// QQ : 7092734
@@ -36,6 +36,9 @@ namespace XiaoFeng.Data.SQL
     /// 增加 boolean值!a.ColumnName 的判断
     /// v 2.0.4
     /// 优化执行Lambda算法
+    /// v 2.0.5
+    /// 优化执行子IQueryableX的问题
+    /// 优化IQueryableX中LinqToSql时增加存储参数效率问题
     /// </summary>
     public class QueryableProvider<T>
     {
@@ -443,6 +446,7 @@ namespace XiaoFeng.Data.SQL
         public virtual string GetLambdaValue(object val)
         {
             if (val == null) return "null";
+            if (val is IQueryableX x) return GetIQueryableXSQL(x);
             Type type = val.GetType();
             ValueTypes types = type.GetValueType();
             if (types == ValueTypes.Value || types == ValueTypes.String)
@@ -450,10 +454,14 @@ namespace XiaoFeng.Data.SQL
             else if (types == ValueTypes.Array || types == ValueTypes.ArrayList || types == ValueTypes.List || types == ValueTypes.IEnumerable)
             {
                 string _ = string.Empty;
-                foreach (var o in val as IEnumerable)
-                {
-                    _ += "{0},".format(this.GetParamName(o));
-                }
+                //var s = XiaoFeng.Threading.StopWatch.GetTime(() =>
+                //{
+                    foreach (var o in val as IEnumerable)
+                    {
+                        _ += "{0},".format(this.GetParamName(o));
+                    }
+                //});
+                //LogHelper.Info($"运行时长:{s}");
                 return _.TrimEnd(',');
             }
             return this.GetParamName(val);
@@ -470,17 +478,23 @@ namespace XiaoFeng.Data.SQL
         {
             if (value == null) return "null";
             if (value is string str && str.IsNullOrEmpty()) return "''";
-            if (value.ToString().IsMatch(@"@Sub_(\d+_)?ParamName\d+"))
+            if (value.ToString().IsMatch(@"^@Sub_(\d+_)?ParamName\d+$"))
                 return value.ToString();
             if (value is bool) value = Convert.ToInt32(value);
             else if (value is Guid guid) value = guid;
             //var ParaName = "@ParamName" + (this.DataSQL.Parameters.Count + 1);
-            var ParamIndex = 1;
+            //var ParamIndex = 1;
             if (this.DataSQL.Parameters == null) this.DataSQL.Parameters = new Dictionary<string, object>();
-            var ParamItems = this.DataSQL.Parameters.Where(a => a.Key.StartsWith("@ParamName")).Select(a => a.Key.Replace("@ParamName", "").ToCast<int>());
+
+            /*
+             * 2022-11-18 11:16
+             * 前期为了 让参数ID号不间断，只是为了好看，性能极具下降，现移除此功能，以参数总量+1
+             * var ParamItems = this.DataSQL.Parameters.Where(a => a.Key.StartsWith("@ParamName")).Select(a => a.Key.Replace("@ParamName", "").ToCast<int>());
             if (ParamItems.Count() > 0)
                 ParamIndex = ParamItems.Max() + 1;
             var ParaName = $"@ParamName{(this.DataSQL.Parameters.Count == 0 ? 1 : ParamIndex)}";
+            */
+            var ParaName = $"@ParamName{this.DataSQL.Parameters.Count + 1}";
             this.AddParam(ParaName, value);
             return ParaName;
             //return (this.DataHelper.ProviderType == DbProviderType.Dameng || this.DataHelper.ProviderType == DbProviderType.MySql) ? "?" : ParaName;
@@ -494,8 +508,15 @@ namespace XiaoFeng.Data.SQL
         {
             if (value == null) return;
             if (value is Guid || value is DateTime) value = value.GetValue();
-            if (value is bool) value = value.ToCast<int>();
-            if (this.DataSQL.Parameters == null) this.DataSQL.Parameters = new Dictionary<string, object>();
+            if (value is bool) value = Convert.ToInt32(value);
+            if (this.DataSQL.Parameters == null || !this.DataSQL.Parameters.Any())
+            {
+                this.DataSQL.Parameters = new Dictionary<string, object>()
+                {
+                    { name , value }
+                };
+                return;
+            }
             if (!this.DataSQL.Parameters.ContainsKey(name))
                 this.DataSQL.Parameters.Add(name, value);
             else
@@ -717,7 +738,9 @@ namespace XiaoFeng.Data.SQL
                     }
                     else if (SqlFun.IsMatch(@" like "))
                     {
-                        var b =/* args.Last();*/this.Eval(mce.Arguments[1]).ToString();
+                        var ev = this.Eval(mce.Arguments[1]);
+
+                        var b =/* args.Last();*/(ev is IQueryableX x) ? GetIQueryableXSQL(x) : ev.ToString();
                         b = b.Trim('\'');
                         string _Start = "", _End = "";
                         if (mce.Method.Name == "StartsWith") _End = "%";
@@ -783,8 +806,9 @@ namespace XiaoFeng.Data.SQL
                 }
                 else if (mce.Type.Name ==  typeof(IQueryableX<>).Name)
                 {
-                    object val = this.Eval(mce);
-                    return val == null ? "" : val.GetValue();
+                    //var val = this.Eval(mce) as IQueryableX;
+                    return GetIQueryableXSQL(this.Eval(mce) as IQueryableX);
+                    //return val == null ? "" : val.GetValue();
                 }
                 else if (mce.Type.Name == "Guid" && mce.Method.Name == "NewGuid")
                 {
@@ -975,7 +999,8 @@ namespace XiaoFeng.Data.SQL
                     }
                     else if (SqlFun.IsMatch(@" like "))
                     {
-                        var b =/* args.Last();*/this.Eval(mce.Arguments[1]).ToString();
+                        var ev = this.Eval(mce.Arguments[1]);
+                        var b =/* args.Last();*/(ev is IQueryableX x) ? GetIQueryableXSQL(x) : ev.ToString();
                         b = b.Trim('\'');
                         string _Start = "", _End = "";
                         if (mce.Method.Name == "StartsWith") _End = "%";
@@ -1049,9 +1074,10 @@ namespace XiaoFeng.Data.SQL
                 }
                 else if (mce.Type.Name == typeof(IQueryableX<>).Name)
                 {
-                    object val = this.Eval(mce);
-                    if (val == null) return "";
-                    return val.GetValue();
+                    return GetIQueryableXSQL(this.Eval(mce) as IQueryableX);
+                    //var val = this.Eval(mce);
+                    //if (val == null) return "";
+                    //return val.GetValue();
                 }
                 else return this.GetLambdaValue(this.Eval(mce));
             }
@@ -1234,7 +1260,8 @@ namespace XiaoFeng.Data.SQL
                     }
                     else if (SqlFun.IsMatch(@" like "))
                     {
-                        var b =/* args.Last();*/this.Eval(mce.Arguments[1]).ToString();
+                        var ev = this.Eval(mce.Arguments[1]);
+                        var b =/* args.Last();*/(ev is IQueryableX x) ? GetIQueryableXSQL(x) : ev.ToString();
                         b = b.Trim('\'');
                         string _Start = "", _End = "";
                         if (mce.Method.Name == "StartsWith") _End = "%";
@@ -1304,9 +1331,10 @@ namespace XiaoFeng.Data.SQL
                 }
                 else if (mce.Type.Name == typeof(IQueryableX<>).Name)
                 {
-                    object val = this.Eval(mce);
-                    if (val == null) return "";
-                    return val.GetValue();
+                    return GetIQueryableXSQL(this.Eval(mce) as IQueryableX);
+                    //var val = this.Eval(mce);
+                    //if (val == null) return "";
+                    //return val.GetValue();
                     /*
                     PropertyInfo info = val.GetType().GetProperty("DataSQL");
                     if (info == null) return "";
@@ -1552,6 +1580,45 @@ namespace XiaoFeng.Data.SQL
         }
         #endregion
 
+        #region 解析IQueryableX
+        /// <summary>
+        /// 解析IQueryableX
+        /// </summary>
+        /// <param name="queryableX">IQueryableX</param>
+        /// <returns></returns>
+        public string GetIQueryableXSQL(IQueryableX queryableX)
+        {
+            PropertyInfo info = queryableX.GetType().GetProperty("DataSQL");
+            if (info == null) return "";
+            if (!(info.GetValue(queryableX) is DataSQL dataSQL)) return "";
+            var SQL = dataSQL.GetSQLString().RemovePattern(@"\s*;\s*$");
+            if (dataSQL.Parameters.Count > 0)
+            {
+                var prefix = "@Sub_";
+                var id = this.GetParameters().Keys.Where(a => a.StartsWith(@"@Sub_")).OrderByDescending(a => a).Take(1);
+                if (id.Any())
+                {
+                    var _id = id.FirstOrDefault();
+                    if (_id.IsMatch(@"@Sub_\d+"))
+                    {
+                        var num = _id.GetMatch(@"@Sub_(?<a>\d+)").ToInt32();
+                        prefix += (++num) + "_";
+                    }
+                    else
+                        prefix += "0_";
+                }
+                else prefix += "0_";
+                dataSQL.Parameters.Each(a =>
+                {
+                    var key = prefix + a.Key.TrimStart('@');
+                    SQL = SQL.ReplacePattern(a.Key + @"([^\d])", key + "$1");
+                    this.AddParam(key, a.Value);
+                });
+            }
+            return SQL;
+        }
+        #endregion
+
         #region 执行Lambda表达式
         /// <summary>
         /// 执行Lambda表达式
@@ -1565,6 +1632,11 @@ namespace XiaoFeng.Data.SQL
             if (cast != null)
                 try { val = Expression.Lambda<Func<object>>(cast).Compile().Invoke(); }
                 catch { }
+            return val;
+            /*
+             * 2022-11-19 14:29
+             * IQueryableX专一再作处理
+             */
             if (val?.GetType().Name == "DataHelperX`1")
             {
                 PropertyInfo info = val.GetType().GetProperty("DataSQL");
@@ -1659,12 +1731,13 @@ namespace XiaoFeng.Data.SQL
             if (value is bool) value = Convert.ToInt32(value);
             else if (value is Guid guid) value = guid;
             //var ParaName = "@ParamName" + (this.DataSQL.Parameters.Count + 1);
-            var ParamIndex = 1;
+            //var ParamIndex = 1;
             if (this.DataSQL.Parameters == null) this.DataSQL.Parameters = new Dictionary<string, object>();
-            var ParamItems = this.DataSQL.Parameters.Where(a => a.Key.StartsWith("@ParamName")).Select(a => a.Key.Replace("@ParamName", "").ToCast<int>());
+            /*var ParamItems = this.DataSQL.Parameters.Where(a => a.Key.StartsWith("@ParamName")).Select(a => a.Key.Replace("@ParamName", "").ToCast<int>());
             if (ParamItems.Count() > 0)
                 ParamIndex = ParamItems.Max() + 1;
-            var ParaName = $"@ParamName{(this.DataSQL.Parameters.Count == 0 ? 1 : ParamIndex)}";
+            var ParaName = $"@ParamName{(this.DataSQL.Parameters.Count == 0 ? 1 : ParamIndex)}";*/
+            var ParaName = $"@ParamName{this.DataSQL.Parameters.Count + 1}";
             this.AddParam(ParaName, value);
             return ParaName;
             //return (this.DataHelper.ProviderType == DbProviderType.Dameng || this.DataHelper.ProviderType == DbProviderType.MySql) ? "?" : ParaName;
@@ -1678,7 +1751,14 @@ namespace XiaoFeng.Data.SQL
         {
             if (value is Guid || value is DateTime) value = value.GetValue();
             if (value is bool) value = value.ToCast<int>();
-            if (this.DataSQL.Parameters == null) this.DataSQL.Parameters = new Dictionary<string, object>();
+            if (this.DataSQL.Parameters == null || !this.DataSQL.Parameters.Any())
+            {
+                this.DataSQL.Parameters = new Dictionary<string, object>()
+                {
+                    { name , value }
+                };
+                return;
+            }
             if (!this.DataSQL.Parameters.ContainsKey(name))
                 this.DataSQL.Parameters.Add(name, value);
             else
@@ -1854,11 +1934,12 @@ namespace XiaoFeng.Data.SQL
             if (value is bool) value = Convert.ToInt32(value);
             else if (value is Guid guid) value = guid;
             //var ParaName = "@ParamName" + (this.DataSQL.Parameters.Count + 1);
-            var ParamIndex = 1;
+            /*var ParamIndex = 1;
             var ParamItems = this.DataSQL.Parameters.Where(a => a.Key.StartsWith("@ParamName")).Select(a => a.Key.Replace("@ParamName", "").ToCast<int>());
             if (ParamItems.Count() > 0)
                 ParamIndex = ParamItems.Max() + 1;
-            var ParaName = $"@ParamName{(this.DataSQL.Parameters.Count == 0 ? 1 : ParamIndex)}";
+            var ParaName = $"@ParamName{(this.DataSQL.Parameters.Count == 0 ? 1 : ParamIndex)}";*/
+            var ParaName = $"@ParamName{this.DataSQL.Parameters.Count + 1}";
             this.AddParam(ParaName, value);
             return ParaName;
             //return (this.DataHelper.ProviderType == DbProviderType.Dameng || this.DataHelper.ProviderType == DbProviderType.MySql) ? "?" : ParaName;
@@ -1872,6 +1953,14 @@ namespace XiaoFeng.Data.SQL
         {
             if (value is Guid || value is DateTime) value = value.GetValue();
             if (value is bool) value = value.ToCast<int>();
+            if (this.DataSQL.Parameters == null || !this.DataSQL.Parameters.Any())
+            {
+                this.DataSQL.Parameters = new Dictionary<string, object>()
+                {
+                    { name , value }
+                };
+                return;
+            }
             if (!this.DataSQL.Parameters.ContainsKey(name))
                 this.DataSQL.Parameters.Add(name, value);
             else
