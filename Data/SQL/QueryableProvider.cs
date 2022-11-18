@@ -1637,7 +1637,7 @@ namespace XiaoFeng.Data.SQL
              * 2022-11-19 14:29
              * IQueryableX专一再作处理
              */
-            if (val?.GetType().Name == "DataHelperX`1")
+            /*if (val?.GetType().Name == "DataHelperX`1")
             {
                 PropertyInfo info = val.GetType().GetProperty("DataSQL");
                 if (info == null) return "";
@@ -1668,7 +1668,7 @@ namespace XiaoFeng.Data.SQL
                 }
                 return SQL;
             }
-            return val;
+            return val;*/
         }
         #endregion
 
