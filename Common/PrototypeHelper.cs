@@ -207,7 +207,7 @@ namespace XiaoFeng
         /// <returns></returns>
         public static object ToEntity(this DataTable dataTable,Type type)
         {
-            if(dataTable==null|| dataTable.Rows.Count == 0) return null;
+            if (dataTable == null || dataTable.Rows.Count == 0) return null;
             return dataTable.Rows[0].ToEntity(type);
         }
         /// <summary>
@@ -1709,7 +1709,6 @@ namespace XiaoFeng
         public static object GetValue(this object o, Type targetType, out bool isGeneric)
         {
             isGeneric = false;
-            //获取基础值类型
             ValueTypes BaseTargetType = targetType.GetValueType();
             if (o.IsNullOrEmpty())
             {
@@ -1717,22 +1716,11 @@ namespace XiaoFeng
                 else if (BaseTargetType == ValueTypes.String) return string.Empty;
                 else return null;
             }
-            Type sourceType = o.GetType();
-            /*类型相同*/
-            if (sourceType == targetType) return o;
-#if false
-            if (o is Microsoft.Extensions.Primitives.StringValues _o)
-            {
-                if (_o.Count == 0) o = "";
-                else if (_o.Count == 1) o = _o.ToString();
-                else o = _o.ToArray();
-            }
-#endif
             else if (o is Json.JsonValue JValue)
             {
                 return JValue.ToObject(targetType);
             }
-            else if(o is Redis.RedisValue RValue)
+            else if (o is Redis.RedisValue RValue)
             {
                 return RValue.ToObject(targetType);
             }
@@ -1742,7 +1730,7 @@ namespace XiaoFeng
             }
             if (targetType == null || targetType == typeof(object)) return o;
 
-            
+            Type sourceType = o.GetType();
             /*类型相同*/
             if (sourceType == targetType) return o;
             /*枚举类型*/
@@ -1755,7 +1743,8 @@ namespace XiaoFeng
                 else return Convert.ChangeType(o, targetType);
             }
             if (targetType.IsEnum) return o.ToEnum(targetType);
-            if (targetType == typeof(string)) return o.ToString();
+            if (targetType == typeof(string)) return o.IsNullOrEmpty() ? String.Empty : o.ToString();
+            if (o.IsNullOrEmpty()) return null;
             /*判断是否是基础类型值类型*/
             ValueTypes BaseSourceType = sourceType.GetValueType();
             if ((BaseSourceType == ValueTypes.Struct ||
@@ -1770,7 +1759,7 @@ namespace XiaoFeng
                 o.CopyTo(_model);
                 return _model;
             }
-            if ((BaseSourceType == ValueTypes.Dictionary || BaseSourceType == ValueTypes.IDictionary) && (BaseTargetType == ValueTypes.Struct || BaseTargetType == ValueTypes.Class))
+            else if ((BaseSourceType == ValueTypes.Dictionary || BaseSourceType == ValueTypes.IDictionary) && (BaseTargetType == ValueTypes.Struct || BaseTargetType == ValueTypes.Class))
             {
                 var _ = o as IDictionary;
                 var _model = Activator.CreateInstance(targetType);
@@ -1792,13 +1781,11 @@ namespace XiaoFeng
                 });
                 return _model;
             }
-
-            if ((BaseSourceType == ValueTypes.Struct || BaseSourceType == ValueTypes.Class) && (BaseTargetType == ValueTypes.Dictionary || BaseTargetType == ValueTypes.IDictionary))
+            else if ((BaseSourceType == ValueTypes.Struct || BaseSourceType == ValueTypes.Class) && (BaseTargetType == ValueTypes.Dictionary || BaseTargetType == ValueTypes.IDictionary))
             {
                 return o.ObjectToDictionary();
             }
-
-            if ((BaseTargetType == ValueTypes.Struct || BaseTargetType == ValueTypes.Class) && BaseSourceType == ValueTypes.String)
+            else if ((BaseTargetType == ValueTypes.Struct || BaseTargetType == ValueTypes.Class) && BaseSourceType == ValueTypes.String)
             {
                 var _ = o.ToString();
                 if ((_.IsQuery() && !_.IsJson()) || _.IsJson())
@@ -1809,8 +1796,7 @@ namespace XiaoFeng
                     return _.XmlToEntity(targetType);
                 return null;
             }
-            
-            if (BaseSourceType == ValueTypes.String && (BaseTargetType == ValueTypes.Dictionary || BaseTargetType == ValueTypes.IDictionary))
+            else if (BaseSourceType == ValueTypes.String && (BaseTargetType == ValueTypes.Dictionary || BaseTargetType == ValueTypes.IDictionary))
             {
                 var _ = o.ToString();
                 if ((_.IsQuery() && !_.IsJson()) || _.IsJson())
@@ -1825,46 +1811,36 @@ namespace XiaoFeng
                 targetType = targetType.GetGenericArguments()[0];
                 isGeneric = true;
             }
-            
+            /*类型相同*/
+            if (sourceType == targetType) return o;
             /*是否继承了类型转换类型*/
             if ((!(o is IConvertible) && !(o is Guid)) || o is ICollection) return null;
             string _val = o.ToString().Trim();
-            if (targetType == typeof(bool))
+            if (targetType == typeof(DateTime))
             {
-                if (_val.IsFloat()) return _val.ToBoolean();
-                if (!_val.IsBoolean()) return isGeneric ? default(bool?) : default(bool);
-            }
-            if (targetType == typeof(char))
-            {
-                if (_val.IsNullOrEmpty()) return isGeneric ? default(char?) : default(char);
-                if (sourceType == typeof(int)) return Convert.ChangeType(o, targetType);
-                if (_val.Length > 1) return _val[0];
-            }
-            if (targetType == typeof(DateTime) || targetType == typeof(DateTime?))
-            {
-                if (sourceType == typeof(int) || sourceType == typeof(int?)) return ((int)o).ToDateTime();
-                else if (sourceType == typeof(long) || sourceType == typeof(long?)) return ((long)o).ToDateTime();
+                if (sourceType == typeof(int)) return ((int)o).ToDateTime();
+                else if (sourceType == typeof(long)) return ((long)o).ToDateTime();
                 if (!_val.IsDateOrTime()) return isGeneric ? default(DateTime?) : default(DateTime);
                 else o = _val.Replace("T", " ").Replace("点", "时");
             }
-            else if (targetType == typeof(Guid) || targetType == typeof(Guid?))
+            else if (targetType == typeof(Guid))
             {
                 if (!_val.IsGUID()) return isGeneric ? default(Guid?) : default(Guid);
                 o = new Guid(_val);
             }
             else if (targetType == typeof(int) || targetType == typeof(long) || targetType == typeof(double) || targetType == typeof(decimal) || targetType == typeof(float) || targetType == typeof(short) || targetType == typeof(ushort) || targetType == typeof(uint) || targetType == typeof(ulong) || targetType == typeof(byte) || targetType == typeof(sbyte))
             {
-                if (sourceType == typeof(DateTime) || sourceType == typeof(DateTime?))
+                if (sourceType == typeof(DateTime))
                 {
                     if (targetType == typeof(int)) return ((DateTime)o).ToTimeStamp();
                     else if (targetType == typeof(long)) return ((DateTime)o).ToTimeStamps();
                 }
-                if (sourceType == typeof(bool) || sourceType == typeof(bool?))
+                else if (sourceType == typeof(bool))
                 {
                     o = ((bool)o) ? 1 : 0;
                     return Convert.ChangeType(o, targetType);
                 }
-                if (sourceType == typeof(byte) && targetType == typeof(sbyte))
+                else if (sourceType == typeof(byte) && targetType == typeof(sbyte))
                 {
                     /*if (targetType == typeof(int) || targetType == typeof(long) || targetType == typeof(double) || targetType == typeof(decimal) || targetType == typeof(float) || targetType == typeof(short))
                     {
@@ -1873,7 +1849,7 @@ namespace XiaoFeng
                     else if (targetType == typeof(sbyte))*/
                     return (sbyte)o;
                 }
-                if (sourceType == typeof(sbyte) && targetType == typeof(byte))
+                else if (sourceType == typeof(sbyte) && targetType == typeof(byte))
                     return (byte)o;
                 if (_val.IsMatch(@"^(true|false)$"))
                 {
@@ -1895,7 +1871,17 @@ namespace XiaoFeng
                     try { o = Convert.ChangeType(o, targetType); } catch { o = 0; }
                 }
             }
-            
+            else if (targetType == typeof(bool))
+            {
+                if (_val.IsFloat()) return _val.ToBoolean();
+                if (!_val.IsBoolean()) return isGeneric ? default(bool?) : default(bool);
+            }
+            else if (targetType == typeof(char))
+            {
+                if (_val.IsNullOrEmpty()) return isGeneric ? default(char?) : default(char);
+                if (sourceType == typeof(int)) return Convert.ChangeType(o, targetType);
+                if (_val.Length > 1) return _val[0];
+            }
             try { return Convert.ChangeType(o, targetType); }
             catch { return Activator.CreateInstance(targetType); }
         }
