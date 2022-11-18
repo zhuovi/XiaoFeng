@@ -810,18 +810,18 @@ namespace XiaoFeng.Data.SQL
                     return GetIQueryableXSQL(this.Eval(mce) as IQueryableX);
                     //return val == null ? "" : val.GetValue();
                 }
-                else if (mce.Type.Name == "Guid" && mce.Method.Name == "NewGuid")
-                {
-                    return this.GetParamName(Guid.NewGuid());
-                }
-                else if (mce.Method.Name == "Parse")
-                {
-                    return this.GetLambdaValue(this.Eval(mce));
-                }
-                else if (mce.Type.Name == "String" && mce.Method.Name == "ToString")
-                {
-                    return "Convert(nvarchar(40)," + ExpressionRouter(mce.Arguments.Count == 0 ? mce.Object : mce.Arguments[0]) + ")";
-                }
+                //else if (mce.Type.Name == "Guid" && mce.Method.Name == "NewGuid")
+                //{
+                //    return this.GetParamName(Guid.NewGuid());
+                //}
+                //else if (mce.Method.Name == "Parse")
+                //{
+                //    return this.GetLambdaValue(this.Eval(mce));
+                //}
+                //else if (mce.Type.Name == "String" && mce.Method.Name == "ToString")
+                //{
+                //    return "Convert(nvarchar(40)," + ExpressionRouter(mce.Arguments.Count == 0 ? mce.Object : mce.Arguments[0]) + ")";
+                //}
                 else return this.GetLambdaValue(this.Eval(mce));
             }
             else if (exp is ConstantExpression ce)
@@ -1055,23 +1055,6 @@ namespace XiaoFeng.Data.SQL
                     var _ = SqlFun.format(args.ToArray());
                     return _;
                 }
-                else if (mce.Type.Name == "Guid" && mce.Method.Name == "NewGuid")
-                    return this.GetParamName(Guid.NewGuid());
-                else if (mce.Type.Name == "DateTime" && mce.Method.Name == "Parse")
-                    return ExpressionRouterModel(mce.Arguments[0]);
-                else if (mce.Type.Name == "Decimal" && mce.Method.Name == "Parse")
-                {
-                    ConstantExpression ce = mce.Arguments[0] as ConstantExpression;
-                    return this.GetParamName(ce.Value);
-                }
-                else if (mce.Method.Name == "Parse")
-                {
-                    return this.GetLambdaValue(this.Eval(mce));
-                }
-                else if (mce.Type.Name == "String" && mce.Method.Name == "ToString")
-                {
-                    return "Convert(nvarchar(20)," + ExpressionRouterModel(mce.Arguments.Count == 0 ? mce.Object : mce.Arguments[0]) + ")";
-                }
                 else if (mce.Type.Name == typeof(IQueryableX<>).Name)
                 {
                     return GetIQueryableXSQL(this.Eval(mce) as IQueryableX);
@@ -1079,6 +1062,23 @@ namespace XiaoFeng.Data.SQL
                     //if (val == null) return "";
                     //return val.GetValue();
                 }
+                //else if (mce.Type.Name == "Guid" && mce.Method.Name == "NewGuid")
+                //    return this.GetParamName(Guid.NewGuid());
+                //else if (mce.Type.Name == "DateTime" && mce.Method.Name == "Parse")
+                //    return ExpressionRouterModel(mce.Arguments[0]);
+                //else if (mce.Type.Name == "Decimal" && mce.Method.Name == "Parse")
+                //{
+                //    ConstantExpression ce = mce.Arguments[0] as ConstantExpression;
+                //    return this.GetParamName(ce.Value);
+                //}
+                //else if (mce.Method.Name == "Parse")
+                //{
+                //    return this.GetLambdaValue(this.Eval(mce));
+                //}
+                //else if (mce.Type.Name == "String" && mce.Method.Name == "ToString")
+                //{
+                //    return "Convert(nvarchar(20)," + ExpressionRouterModel(mce.Arguments.Count == 0 ? mce.Object : mce.Arguments[0]) + ")";
+                //}
                 else return this.GetLambdaValue(this.Eval(mce));
             }
             else if (exp is ConstantExpression ce)
@@ -1316,19 +1316,6 @@ namespace XiaoFeng.Data.SQL
                     var _ = SqlFun.format(args.ToArray());
                     return _;
                 }
-                else if (mce.Type.Name == "Guid" && mce.Method.Name == "NewGuid")
-                    return this.GetParamName(Guid.NewGuid());
-                else if (mce.Type.Name == "DateTime" && mce.Method.Name == "Parse")
-                    return ExpressionRouter(mce.Arguments[0]);
-                else if (mce.Type.Name == "Decimal" && mce.Method.Name == "Parse")
-                {
-                    ConstantExpression ce = mce.Arguments[0] as ConstantExpression;
-                    return this.GetParamName(ce.Value);
-                }
-                else if (mce.Type.Name == "String" && mce.Method.Name == "ToString")
-                {
-                    return "Convert(nvarchar(20)," + UnExpressionRouter(mce.Arguments.Count == 0 ? mce.Object : mce.Arguments[0]) + ")";
-                }
                 else if (mce.Type.Name == typeof(IQueryableX<>).Name)
                 {
                     return GetIQueryableXSQL(this.Eval(mce) as IQueryableX);
@@ -1348,6 +1335,19 @@ namespace XiaoFeng.Data.SQL
                     });
                     return SQL;*/
                 }
+                //else if (mce.Type.Name == "Guid" && mce.Method.Name == "NewGuid")
+                //    return this.GetParamName(Guid.NewGuid());
+                //else if (mce.Type.Name == "DateTime" && mce.Method.Name == "Parse")
+                //    return ExpressionRouter(mce.Arguments[0]);
+                //else if (mce.Type.Name == "Decimal" && mce.Method.Name == "Parse")
+                //{
+                //    ConstantExpression ce = mce.Arguments[0] as ConstantExpression;
+                //    return this.GetParamName(ce.Value);
+                //}
+                //else if (mce.Type.Name == "String" && mce.Method.Name == "ToString")
+                //{
+                //    return "Convert(nvarchar(20)," + UnExpressionRouter(mce.Arguments.Count == 0 ? mce.Object : mce.Arguments[0]) + ")";
+                //}
                 else return this.GetLambdaValue(this.Eval(mce));
             }
             else if (exp is ConstantExpression ce)
