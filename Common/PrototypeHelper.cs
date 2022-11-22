@@ -1339,7 +1339,13 @@ namespace XiaoFeng
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:命名样式", Justification = "<挂起>")]
         public static String format(this String _, IDictionary<String, String> d)
         {
-            var _d = new Dictionary<String, String>(d);
+            d.Each(a =>
+            {
+                _ = _.ReplacePattern($@"\$?{{{a.Key.RemovePattern(@"(^\$?\{|\}$)")}}}", a.Value);
+            });
+            return _;
+            /*
+             var _d = new Dictionary<String, String>(d);
             var RemoveKeys = new List<string>();
             _d.Each(a =>
             {
@@ -1347,11 +1353,15 @@ namespace XiaoFeng
             });
             RemoveKeys.Each(a => _d.Remove(a));
             RemoveKeys.Clear();
-            string[] keys = _d.Keys.ToArray();
-            string[] values = _d.Values.ToArray();
+            d.Each(a =>
+            {
+                a.Key = a.Key.RemovePattern(@"(^\$?\{|\}$)");
+            });
+            string[] keys = d.Keys.ToArray();
+            string[] values = d.Values.ToArray();
             for (int i = 0; i < keys.Length; i++)
                 _ = _.ReplacePattern(@"\$?{{{0}}}".format(keys[i]), "{" + i.ToString() + "}");
-            return String.Format(_, values);
+            return String.Format(_, values);*/
             /*d.Each(KValue => _ = _.ReplacePattern(@"\$?{{{0}}}".format(KValue.Key), KValue.Value));
             return _;*/
         }
@@ -1364,7 +1374,12 @@ namespace XiaoFeng
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:命名样式", Justification = "<挂起>")]
         public static String format(this String _, IDictionary<string, object> d)
         {
-            var _d = new Dictionary<string,object>(d);
+            d.Each(a =>
+            {
+                _ = _.ReplacePattern($@"\$?{{{a.Key.RemovePattern(@"(^\$?\{|\}$)")}}}", a.Value.getValue());
+            });
+            return _;
+            /*var _d = new Dictionary<string,object>(d);
             var RemoveKeys = new List<string>();
             _d.Each(a =>
             {
@@ -1376,7 +1391,7 @@ namespace XiaoFeng
             string[] values = _d.Values.ToArray<string>();
             for (int i = 0; i < keys.Length; i++)
                 _ = _.ReplacePattern(@"\$?{{{0}}}".format(keys[i]), "{" + i.ToString() + "}");
-            return String.Format(_, values);
+            return String.Format(_, values);*/
         }
         #endregion
 

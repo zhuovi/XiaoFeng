@@ -180,5 +180,11 @@ namespace XiaoFeng.IO
                 fileStream.Write(bytes, 0, bytes.Length);
             }
         }
+        /// <summary>
+        /// 将字符串数组组合成一个路径。
+        /// </summary>
+        /// <param name="paths">由路径的各部分构成的数组。</param>
+        /// <returns>已组合的路径。</returns>
+        public static string Combine(this IEnumerable<string> paths) => FileHelper.Combine(paths);
     }
 }

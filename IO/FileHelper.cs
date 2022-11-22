@@ -800,5 +800,20 @@ MIDI (mid)，文件头：4D546864
         /// <returns></returns>
         public static string GetCurrentDirectory() => OS.Platform.CurrentDirectory;
         #endregion
+
+        #region 合并目录
+        /// <summary>
+        /// 将字符串数组组合成一个路径。
+        /// </summary>
+        /// <param name="path">由路径的各部分构成的数组。</param>
+        /// <returns>已组合的路径。</returns>
+        public static string Combine(params string[] path) => path.Any() ? Path.Combine(path) : string.Empty;
+        /// <summary>
+        /// 将字符串数组组合成一个路径。
+        /// </summary>
+        /// <param name="paths">由路径的各部分构成的数组。</param>
+        /// <returns>已组合的路径。</returns>
+        public static string Combine(IEnumerable<string> paths) => paths == null || !paths.Any() ? string.Empty : Combine(paths.ToArray());
+        #endregion
     }
 }
