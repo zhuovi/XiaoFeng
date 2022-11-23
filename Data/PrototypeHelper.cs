@@ -71,15 +71,6 @@ namespace XiaoFeng
         }
         #endregion
 
-        #region 转换为数据库对象
-        /// <summary>
-        /// 转换为数据库对象
-        /// </summary>
-        /// <param name="config">数据库配置</param>
-        /// <returns></returns>
-        public static IDataHelper ToDataHelper(this ConnectionConfig config) => new DataHelper(config);
-        #endregion
-
         #region 转换到Redis配置连接串
         /// <summary>
         /// 转换到Redis配置连接串

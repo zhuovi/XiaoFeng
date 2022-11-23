@@ -126,7 +126,8 @@ namespace XiaoFeng.Cache
         /// <returns></returns>
         public async Task CloseAsync()
         {
-            this.Watcher.EnableRaisingEvents = false;
+            if (this.Watcher != null)
+                this.Watcher.EnableRaisingEvents = false;
             await Task.CompletedTask;
         }
         /// <summary>
@@ -140,8 +141,11 @@ namespace XiaoFeng.Cache
                 if (disposing)
                 {
                     this.CloseAsync().ConfigureAwait(false).GetAwaiter().GetResult();
-                    this.Watcher.Dispose();
-                    this.Watcher = null;
+                    if (this.Watcher != null)
+                    {
+                        this.Watcher.Dispose();
+                        this.Watcher = null;
+                    }
                 }
 
                 // TODO: 释放未托管的资源(未托管的对象)并重写终结器

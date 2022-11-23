@@ -56,11 +56,7 @@ namespace XiaoFeng.Data.Pool
                 if (_Pool != null) return _Pool;
                 //lock (obj)
                 {
-                    return _Pool = new ConnectionPool
-                    {
-                        Factory = ProviderFactory.GetDbProviderFactory(Config.ProviderType),
-                        ConnectionString = Config.ConnectionString
-                    };
+                    return _Pool = new ConnectionPool(this.Config, $"Pool<ConnectionPool>[{this.Config.ConnectionString}]");
                 }
             }
         }

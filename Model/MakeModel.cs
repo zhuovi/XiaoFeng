@@ -80,7 +80,7 @@ using XiaoFeng.Data;
 using XiaoFeng.Model;
 
 namespace {namespace}
-{{
+{
 	#region {TableName}操作类
 	/*
      ===================================================================
@@ -103,12 +103,12 @@ namespace {namespace}
     /// </summary>{ViewAttribute}
     [Table(Name = ""{TableFullName}"", PrimaryKey = ""{PrimaryKey}"", ModelType = ModelType.{modelType}, ConnName = ""{ConnName}"", ConnIndex = {ConnIndex})]
     public class {TableName} : Entity<{TableName}>
-	{{
+	{
         #region 构造器
         /// <summary>
         /// 无参构造器
         /// </summary>
-        public {TableName}() {{ }}
+        public {TableName}() { }
 		#endregion
 
 		#region 属性{Columns}
@@ -118,11 +118,11 @@ namespace {namespace}
 		/// <summary>
 		/// 析构器
 		/// </summary>
-		~{TableName}() {{ base.Dispose(true); }}
+		~{TableName}() { base.Dispose(true); }
 		#endregion
-	}}
+	}
     #endregion
-}}";
+}";
             } }
         /// <summary>
         /// 类属性模板
@@ -144,18 +144,18 @@ namespace {namespace}
 		[DataObjectField({PrimaryKey}, {IsIdentity}, {isNull}, {Length})]
 		[Column(Name = ""{Name}"", PrimaryKey = {PrimaryKey}, AutoIncrement = {IsIdentity}, DataType = ""{Type}"", DefaultValue = ""{DefaultValue}"", Description = ""{Description}"", IsNullable = {isNull}, Length = {Length}, Digit = {Digits}, IsUnique = {IsUnique}, IsIndex = {IsIndex}, AutoIncrementSeed = {AutoIncrementSeed}, AutoIncrementStep = {AutoIncrementStep})]
         public {getType} {Name}
-        {{
-            get {{ return this._{Name}; }}
+        {
+            get { return this._{Name}; }
             set
-            {{
+            {
                 if ({Equals})
-                {{
+                {
                     var val = this._{Name};
                     this._{Name} = value{State};
                     this.AddDirty(""{Name}"", val, value);
-                }}
-            }}
-        }}";
+                }
+            }
+        }";
             }
         }
         #endregion

@@ -19,25 +19,42 @@ namespace XiaoFeng.Collections
         /// <summary>
         /// 无参构造器
         /// </summary>
-        public ConnectionPool() {  }
+        private ConnectionPool() { this.TimeOut = 10; }
+        /// <summary>
+        /// 设置应用池名称
+        /// </summary>
+        /// <param name="poolName">应用池名称</param>
+        private ConnectionPool(string poolName):this() => this.Name = poolName;
         /// <summary>
         /// 设置连接
         /// </summary>
         /// <param name="factory">驱动工厂</param>
         /// <param name="connectionString">连接串</param>
-        public ConnectionPool(DbProviderFactory factory, string connectionString) : this()
+        /// <param name="poolName">应用池名称</param>
+        public ConnectionPool(DbProviderFactory factory, string connectionString, string poolName = "") : this(poolName)
         {
             this.Factory = factory;
             this.ConnectionString = connectionString;
+            this.Max = Math.Max(Environment.ProcessorCount, this.Max);
+            this.Min = Environment.ProcessorCount;
+            if (poolName.IsNullOrEmpty())
+                this.Name = $"Pool<ConnectionPool>[{this.ConnectionString}]";
+            //this.Init();
         }
         /// <summary>
         /// 设置连接
         /// </summary>
         /// <param name="config">连接配置</param>
-        public ConnectionPool(ConnectionConfig config) : this()
+        /// <param name="poolName">应用池名称</param>
+        public ConnectionPool(ConnectionConfig config, string poolName = "") : this(poolName)
         {
             this.ConnectionString = config.ConnectionString;
             this.Factory = ProviderFactory.GetDbProviderFactory(config.ProviderType);
+            this.Max = Math.Max(Environment.ProcessorCount, config.MaxPool);
+            this.Min = Environment.ProcessorCount;
+            if (poolName.IsNullOrEmpty())
+                this.Name = $"Pool<ConnectionPool>[{this.ConnectionString.ReplacePattern(@"((password|pwd)=)([\s\S]*)(;|$)","$1******$4")}]";
+            //this.Init();
         }
         #endregion
 

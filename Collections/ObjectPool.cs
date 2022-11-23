@@ -21,12 +21,7 @@ namespace XiaoFeng.Collections
         /// </summary>
         public ObjectPool()
         {
-            var str = this.GetType().Name;
-            if (str.Contains("`")) str = str.Substring(null, "`");
-            if (str != "Pool")
-                this.Name = str;
-            else
-                this.Name = $"Pool<{typeof(T).Name}>";
+            
         }
         #endregion
 
@@ -46,7 +41,7 @@ namespace XiaoFeng.Collections
         /// <summary>
         /// 空闲多长时间关闭资源 单位为秒 0为不清除
         /// </summary>
-        public virtual int IdleTime { get; set; } = 180;
+        public virtual int IdleTime { get; set; } = 3 * 60;
         /// <summary>
         /// 多长时间检查一次 单位为秒 0为不定时检查
         /// </summary>
@@ -97,6 +92,33 @@ namespace XiaoFeng.Collections
         public IJob Job { get; set; } = null;
         #endregion
 
+        #region 初始化
+        /// <summary>
+        /// 初始化
+        /// </summary>
+        public virtual void Init()
+        {
+            if (this.Name.IsNullOrEmpty())
+            {
+                var str = this.GetType().Name;
+                if (str.Contains("`")) str = str.Substring(null, "`");
+                if (str != "Pool")
+                    this.Name = str;
+                else
+                    this.Name = $"Pool<{typeof(T).Name}>";
+            }
+            /*先初如化最小数*/
+            for (var i = 0; i < this.Min; i++)
+            {
+                Task.Run(() =>
+                {
+                    this.FreeItems.Enqueue(new PoolItem<T>(OnCreate()));
+                    Interlocked.Increment(ref _FreeCount);
+                });
+            }
+        }
+        #endregion
+
         #region 创建对象
         /// <summary>
         /// 创建对象
@@ -131,38 +153,39 @@ namespace XiaoFeng.Collections
         /// <summary>
         /// 借出资源
         /// </summary>
-        /// <returns></returns>
+        /// <returns>返回一个对象</returns>
         public virtual PoolItem<T> Get()
         {
-            //LogHelper.Debug($"空闲数:{this.FreeItems.Count},繁忙数:{this.BusyItems.Count}");
             Interlocked.Increment(ref this._TotalCount);
             PoolItem<T> pi = null;
+            int i = 0;
             do
             {
+                //LogHelper.Debug($"空闲数:{this.FreeItems.Count},繁忙数:{this.BusyItems.Count}");
+                Interlocked.Increment(ref i);
                 //从空闲集合借一个
                 if (this.FreeItems.TryDequeue(out pi))
+                {
                     Interlocked.Decrement(ref this._FreeCount);
+                    break;
+                }
                 else
                 {
-                    var flag = false;
-                    Synchronized.Run(() =>
+                    if (Synchronized.Run(() =>
                     {
                         //超出最大值后,等待一会继续借直到借到为止
                         if (this.Max > 0 && this.Max <= this.FreeCount + this.BusyCount)
                         {
-                            var msg = $"申请失败,已有 {this.FreeCount + this.BusyCount:n0} 达到或超过最大值 {this.Max:n0}";
+                            var msg = $"申请失败,已有 {this.FreeCount + this.BusyCount:n0} 个资源,达到或超过最大值 {this.Max:n0} .";
                             LogHelper.Info(this.Name + " " + msg);
-                            flag = true;
+                            if (i < 4) return false;
                         }
-                        else
-                            pi = new PoolItem<T>(OnCreate());
-                    });
-                    if (flag)
-                    {
-                        //如果超过最大连接数 则等100毫秒后再去取
-                        Task.Delay(100).Wait();
-                    }
+                        pi = new PoolItem<T>(OnCreate());
+                        return true;
+                    })) break;
                 }
+                //如果超过最大连接数 则等100毫秒后再去取
+                Task.Delay(50).Wait();
             } while (!OnGet(pi));
             //最后时间
             pi.LastTime = DateTime.Now;
@@ -181,7 +204,7 @@ namespace XiaoFeng.Collections
         /// <returns></returns>
         public virtual bool Put(PoolItem<T> value)
         {
-            if (value == null) return false;
+            if (value == null || value.Value == null) return false;
             //关闭资源
             this.Close(value.Value);
             try
@@ -221,11 +244,11 @@ namespace XiaoFeng.Collections
         protected virtual void Work(IJob job)
         {
             if (this.IdleTime == 0 || this.FreeCount + this.BusyCount == 0) return;
-            var exp = DateTime.Now.AddSeconds(-this.IdleTime);
+            var expire = DateTime.Now.AddSeconds(-this.IdleTime);
             var FreeQueue = new ConcurrentQueue<PoolItem<T>>();
             while (this.FreeItems.TryDequeue(out var item))
             {
-                if (item.LastTime <= exp)
+                if (item.LastTime <= expire)
                 {
                     Interlocked.Decrement(ref this._FreeCount);
                     OnDispose(item.Value);
@@ -241,7 +264,7 @@ namespace XiaoFeng.Collections
             {
                 this.BusyItems.Each(item =>
                 {
-                    if (!item.Value.IsWork || item.Value.LastTime <= exp)
+                    if (!item.Value.IsWork || item.Value.LastTime <= expire)
                     {
                         if (this.BusyItems.TryRemove(item.Key, out PoolItem<T> _item))
                         {
@@ -251,6 +274,7 @@ namespace XiaoFeng.Collections
                     }
                 });
             }
+            LogHelper.Debug($"空闲数:{this.FreeItems.Count} 个资源,繁忙数:{this.BusyItems.Count} 个资源.");
             if (this.FreeItems.IsEmpty && this.BusyItems.IsEmpty) job?.Stop();
         }
         #endregion

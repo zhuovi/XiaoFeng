@@ -24,7 +24,7 @@
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageReleaseNotes>FileHelper增加方法 Combine(params string[] path),Combine(IEnumerable paths);优化format扩展方法;</PackageReleaseNotes>
+		<PackageReleaseNotes>FileHelper增加方法 Combine(params string[] path),Combine(IEnumerable paths);优化format扩展方法;优化ObjectPool初始化效率;</PackageReleaseNotes>
 		<DelaySign>False</DelaySign>
 		<IsPackable>true</IsPackable>
 		<PackageProjectUrl>https://github.com/zhuovi/XiaoFeng</PackageProjectUrl>

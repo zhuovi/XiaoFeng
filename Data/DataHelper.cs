@@ -128,18 +128,10 @@ namespace XiaoFeng.Data
                 return XiaoFeng.Threading.Synchronized.Run(() =>
                 {
                     if (DataHelperPools.TryGetValue(this.ConnectionString, out var _Pool))
-                    {
                         return _Pool;
-                    }
                     else
                     {
-                        var pool = new ConnectionPool
-                        {
-                            Factory = Data.ProviderFactory.GetDbProviderFactory(this.ProviderType),
-                            ConnectionString = this.ConnectionString,
-                            Max = this.ConnConfig.MaxPool,
-                            Name = $"Pool<ConnectionPool>[{this.ConnectionString}]"
-                        };
+                        var pool = new ConnectionPool(this.ConnConfig);
                         DataHelperPools.TryAdd(this.ConnectionString, pool);
                         return pool;
                     }
