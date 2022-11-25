@@ -300,7 +300,7 @@ namespace XiaoFeng.Redis
         /// <param name="stream">网络流</param>
         /// <param name="args">参数</param>
         /// <returns>响应结果</returns>
-        public RedisReader GetReplyResult(CommandType commandType,NetworkStream stream, object[] args=null)
+        public RedisReader GetReplyResult(CommandType commandType, NetworkStream stream, object[] args = null)
         {
             /*
             var num = 0;

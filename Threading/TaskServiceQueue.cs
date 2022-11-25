@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -79,6 +80,14 @@ namespace XiaoFeng.Threading
         /// </summary>
         public Boolean ConsumeState { get; private set; } = false;
         /// <summary>
+        /// 队列是否为空
+        /// </summary>
+        public Boolean IsEmpty => this.QueueData.IsEmpty;
+        /// <summary>
+        /// 队列包含元素数量
+        /// </summary>
+        public int Count => this.QueueData.Count;
+        /// <summary>
         /// 任务错误事件
         /// </summary>
         public event TaskQueueError<T> TaskQueueError;
@@ -107,6 +116,24 @@ namespace XiaoFeng.Threading
 
         #region 方法
         /// <summary>
+        /// 是否存在于队列
+        /// </summary>
+        /// <param name="t">对象</param>
+        /// <returns></returns>
+        public virtual Boolean Contains(T t) => QueueData.Contains(t);
+        /// <summary>
+        /// 加入到队列前边
+        /// </summary>
+        /// <param name="t">对象</param>
+        /// <returns></returns>
+        public virtual async Task PrependWorkItem(T t)
+        {
+            QueueData.Prepend(t);
+            Manual.Set();
+            RunConsume();
+            await Task.CompletedTask;
+        }
+        /// <summary>
         /// 加入队列
         /// </summary>
         /// <param name="t">对象</param>
@@ -114,6 +141,14 @@ namespace XiaoFeng.Threading
         {
             QueueData.Enqueue(t);
             Manual.Set();
+            RunConsume();
+            await Task.CompletedTask;
+        }
+        /// <summary>
+        /// 启动消费
+        /// </summary>
+        private void RunConsume()
+        {
             Synchronized.Run(() =>
             {
                 if (this.CancelToken.IsCancellationRequested || !this.ConsumeState)
@@ -132,7 +167,15 @@ namespace XiaoFeng.Threading
                     this.ConsumeTask();
                 }
             });
-            await Task.CompletedTask;
+        }
+        /// <summary>
+        /// 加入到队列前边
+        /// </summary>
+        /// <param name="func">委托</param>
+        /// <returns></returns>
+        public virtual async Task PrependWorkItem(Func<T> func)
+        {
+            if(func!=null)await PrependWorkItem(func.Invoke());
         }
         /// <summary>
         /// 加入队列

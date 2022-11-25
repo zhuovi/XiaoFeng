@@ -35,6 +35,26 @@ namespace XiaoFeng.Threading
         /// </summary>
         event TaskQueueOk<T> TaskQueueOk;
         /// <summary>
+        /// 队列是否为空
+        /// </summary>
+        Boolean IsEmpty { get; }
+        /// <summary>
+        /// 队列包含元素数量
+        /// </summary>
+        int Count { get; }
+        /// <summary>
+        /// 是否存在于队列
+        /// </summary>
+        /// <param name="t">对象</param>
+        /// <returns></returns>
+        Boolean Contains(T t);
+        /// <summary>
+        /// 加入到队列前边
+        /// </summary>
+        /// <param name="t">对象</param>
+        /// <returns></returns>
+        Task PrependWorkItem(T t);
+        /// <summary>
         /// 加入队列
         /// </summary>
         /// <param name="t">对象</param>
@@ -44,6 +64,12 @@ namespace XiaoFeng.Threading
         /// </summary>
         /// <param name="func">委托</param>
         Task AddWorkItem(Func<T> func);
+        /// <summary>
+        /// 加入到队列前边
+        /// </summary>
+        /// <param name="func">委托</param>
+        /// <returns></returns>
+        Task PrependWorkItem(Func<T> func);
         /// <summary>
         /// 消费运行状态
         /// </summary>
