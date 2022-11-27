@@ -98,8 +98,8 @@ namespace XiaoFeng.Cache
                 this._Path = value; 
                 if (value.IsNotNullOrEmpty())
                 {
-                    this.Provider = new FileProvider(this.Name);
-                    this.Provider.Watch(value, this.CallBack).ConfigureAwait(false);
+                    //this.Provider = new FileProvider(this.Name);
+                    //this.Provider.Watch(value, this.CallBack).ConfigureAwait(false);
                 }
             }
         }
