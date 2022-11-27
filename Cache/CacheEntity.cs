@@ -98,6 +98,7 @@ namespace XiaoFeng.Cache
                 this._Path = value; 
                 if (value.IsNotNullOrEmpty())
                 {
+                    //因为当前组件出现死锁，暂注释掉，后边单独在写一个方法监听文件目录
                     //this.Provider = new FileProvider(this.Name);
                     //this.Provider.Watch(value, this.CallBack).ConfigureAwait(false);
                 }
