@@ -69,10 +69,23 @@ namespace XiaoFeng
         /// 生成个数
         /// </summary>
         public int Count { get; set; }
+        private Random _Ran;
         /// <summary>
         /// 随机种子
         /// </summary>
-        private Random Ran { get; set; } = new Random(BitConverter.ToInt32(Guid.NewGuid().ToByteArray(), 0));
+        private Random Ran
+        {
+            get
+            {
+                if (this._Ran == null)
+                {
+                    long num = Guid.NewGuid().GetHashCode() + DateTime.Now.Ticks;
+                    this._Ran = new Random(((int)(((ulong)num) & 0xffffffffL)) | ((int)(num >> 32)));
+                }
+                return _Ran;
+            }
+            set => this._Ran = value;
+        }
         #endregion
 
         #region 方法
@@ -81,7 +94,7 @@ namespace XiaoFeng
         /// <summary>
         /// 实例化类
         /// </summary>
-        private static WeakReference<RandomHelper> _Helper = null;
+        private static RandomHelper _Helper = null;
         /// <summary>
         /// 实例化类
         /// </summary>
@@ -89,8 +102,8 @@ namespace XiaoFeng
         {
             get
             {
-                _Helper = _Helper ?? new WeakReference<RandomHelper>(new RandomHelper());
-                return _Helper.IsAlive ? _Helper.Target : _Helper.Target = new RandomHelper();
+                if(_Helper == null )_Helper= new RandomHelper();
+                return _Helper;
             }
         }
         #endregion

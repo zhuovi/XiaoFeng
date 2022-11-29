@@ -281,11 +281,13 @@ namespace XiaoFeng.Data
                     return this.Pool.Execute(fun);
                 else
                 {
-                    var conn = this.CreateConn();
-                    if (conn == null) throw new Exception("驱动或数据库连接串有问题.");
-                    var t = fun.Invoke(conn, ProviderFactory);
-                    if (conn.State != ConnectionState.Closed) conn.Close();
-                    return t;
+                    using (var conn = this.CreateConn())
+                    {
+                        if (conn == null) throw new Exception("驱动或数据库连接串有问题.");
+                        var t = fun.Invoke(conn, ProviderFactory);
+                        if (conn.State != ConnectionState.Closed) conn.Close();
+                        return t;
+                    }
                 }
             }
             else

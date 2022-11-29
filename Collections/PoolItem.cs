@@ -19,7 +19,7 @@ namespace XiaoFeng.Collections
     /// <summary>
     /// 连接池子类
     /// </summary>
-    public class PoolItem<T>
+    public class PoolItem<T> : Disposable
     {
         #region 构造器
         /// <summary>
