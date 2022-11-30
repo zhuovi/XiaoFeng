@@ -156,6 +156,8 @@ namespace XiaoFeng.Redis
                 case "FLUSHALL":/*CommandType.FLUSHALL*/
                 case "XGROUP CREATE":/*CommandType.XGROUPCREATE*/
                 case "XGROUP SETID":/*CommandType.XGROUPSETID*/
+                case "SCRIPT KILL":/*CommandType.SCRIPTKILL*/
+                case "SCRIPT FLUSH":/*CommandType.SCRIPTFLUSH*/
                     this.OK = type == ResultType.Status;
                     this.Value = result;
                     break;
@@ -262,6 +264,7 @@ namespace XiaoFeng.Redis
                 case "ZSCORE":/*CommandType.ZSCORE*/
                 case "GEODIST":/*CommandType.GEODIST*/
                 case "XADD":/*CommandType.XADD*/
+                case "SCRIPT LOAD":/*CommandType.SCRIPTLOAD*/
                     this.OK = type == ResultType.Bulk;
                     this.Value = result;
                     break;
@@ -825,6 +828,14 @@ namespace XiaoFeng.Redis
                             }
                         }
                     }
+                    break;
+                default:
+                    /*
+                     * CommandType.EVAL
+                     * CommandType.SCRIPTEXISTS
+                     */
+                    this.OK = true;
+                    this.Value = result;
                     break;
             }
             return this.Value;

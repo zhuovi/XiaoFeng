@@ -772,6 +772,33 @@ namespace XiaoFeng.Redis
         public static CommandType SORT => new CommandType("SORT", "SORT key [BY pattern] [LIMIT offset count] [GET pattern [GET pattern ...]] [ASC|DESC] [ALPHA] [STORE destination]");
         #endregion
 
+        #region 脚本
+        /// <summary>
+        /// 执行 Lua 脚本
+        /// </summary>
+        public static CommandType EVAL => new CommandType("EVAL", "EVAL script numkeys key [key ...] arg [arg ...]");
+        /// <summary>
+        /// 执行 Lua 脚本
+        /// </summary>
+        public static CommandType EVALSHA => new CommandType("EVALSHA", "EVALSHA sha1 numkeys key [key ...] arg [arg ...]");
+        /// <summary>
+        /// 查看指定的脚本是否已经被保存在缓存当中
+        /// </summary>
+        public static CommandType SCRIPTEXISTS => new CommandType("SCRIPT EXISTS", "SCRIPT EXISTS sha1 [sha1 ...]", new string[] { "SCRIPT", "EXISTS" });
+        /// <summary>
+        /// 从脚本缓存中移除所有脚本
+        /// </summary>
+        public static CommandType SCRIPTFLUSH => new CommandType("SCRIPT FLUSH", "SCRIPT FLUSH", new string[] { "SCRIPT", "FLUSH" });
+        /// <summary>
+        /// 杀死当前正在运行的 Lua 脚本
+        /// </summary>
+        public static CommandType SCRIPTKILL => new CommandType("SCRIPT KILL", "SCRIPT KILL", new string[] { "SCRIPT", "KILL" });
+        /// <summary>
+        /// 将脚本 script 添加到脚本缓存中，但并不立即执行这个脚本
+        /// </summary>
+        public static CommandType SCRIPTLOAD => new CommandType("SCRIPT LOAD", "SCRIPT LOAD script", new string[] { "SCRIPT", "LOAD" });
+        #endregion
+
         #endregion
 
         #region 方法
