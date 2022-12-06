@@ -961,6 +961,7 @@ namespace XiaoFeng.Data
                   });
                 return first + _list.Join(",");
             }
+            if (!config.IgnoreCase) return first + _;
             switch (config.ProviderType)
             {
                 case DbProviderType.SqlServer:
