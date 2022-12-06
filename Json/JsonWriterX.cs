@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -9,55 +9,64 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-
+/****************************************************************
+*  Copyright Â© (2017) www.fayelf.com All Rights Reserved.       *
+*  Author : jacky                                               *
+*  QQ : 7092734                                                 *
+*  Email : jacky@fayelf.com                                     *
+*  Site : www.fayelf.com                                        *
+*  Create Time : 2017-10-25 11:59:42                            *
+*  Version : v 1.0.0                                            *
+*  CLR Version : 4.0.30319.42000                                *
+*****************************************************************/
 namespace XiaoFeng.Json
 {
     /// <summary>
-    /// Ğ´Json
+    /// å†™Json
     /// </summary>
     public class JsonWriterX : Disposable
     {
-        #region ¹¹ÔìÆ÷
+        #region æ„é€ å™¨
         /// <summary>
-        /// ÎŞ²Î¹¹ÔìÆ÷
+        /// æ— å‚æ„é€ å™¨
         /// </summary>
         public JsonWriterX() { this.SerializerSetting = JsonParser.DefaultSettings ?? new JsonSerializerSetting(); }
         /// <summary>
-        /// ÉèÖÃÈÕÆÚ¸ñÊ½Json¸ñÊ½ÉèÖÃ        
+        /// è®¾ç½®æ—¥æœŸæ ¼å¼Jsonæ ¼å¼è®¾ç½®        
         /// </summary>
-        /// <param name="formatterSetting">Json¸ñÊ½ÉèÖÃ</param>
+        /// <param name="formatterSetting">Jsonæ ¼å¼è®¾ç½®</param>
         public JsonWriterX(JsonSerializerSetting formatterSetting)
         {
             this.SerializerSetting = formatterSetting;
         }
         #endregion
 
-        #region ÊôĞÔ
+        #region å±æ€§
         ///<summary>
-        /// Êı¾İ
+        /// æ•°æ®
         /// </summary>
         public StringBuilder Builder = new StringBuilder();
         /// <summary>
-        /// Éî¶È
+        /// æ·±åº¦
         /// </summary>
         private int _Depth = 0;
         /// <summary>
-        /// ×Öµä¼¯
+        /// å­—å…¸é›†
         /// </summary>
         private Dictionary<object, int> _DepthDict = new Dictionary<object, int>();
         /// <summary>
-        /// Json¸ñÊ½
+        /// Jsonæ ¼å¼
         /// </summary>
         public JsonSerializerSetting SerializerSetting { get; set; }
         #endregion
 
-        #region ·½·¨
+        #region æ–¹æ³•
 
-        #region Ğ´Êı¾İ
+        #region å†™æ•°æ®
         /// <summary>
-        /// Ğ´Êı¾İ
+        /// å†™æ•°æ®
         /// </summary>
-        /// <param name="value">¶ÔÏó</param>
+        /// <param name="value">å¯¹è±¡</param>
         /// <returns></returns>
         public void WriteValue(object value)
         {
@@ -147,20 +156,20 @@ namespace XiaoFeng.Json
         }
         #endregion
 
-        #region Ğ´Ê±¼ä
+        #region å†™æ—¶é—´
         /// <summary>
-        /// Ğ´Ê±¼ä
+        /// å†™æ—¶é—´
         /// </summary>
-        /// <param name="dateTime">Ê±¼ä</param>
+        /// <param name="dateTime">æ—¶é—´</param>
         private void WriteDateTime(DateTime dateTime)
         {
             Builder.AppendFormat("\"{0}\"", dateTime.ToString(this.SerializerSetting.DateTimeFormat));
         }
         #endregion
 
-        #region Ğ´Guid
+        #region å†™Guid
         /// <summary>
-        /// Ğ´Guid
+        /// å†™Guid
         /// </summary>
         /// <param name="guid">guid</param>
         private void WriteGuid(Guid guid)
@@ -169,17 +178,17 @@ namespace XiaoFeng.Json
         }
         #endregion
 
-        #region Ğ´¶ÔÏó
+        #region å†™å¯¹è±¡
         /// <summary>
-        /// Ğ´¶ÔÏó
+        /// å†™å¯¹è±¡
         /// </summary>
-        /// <param name="obj">¶ÔÏó</param>
+        /// <param name="obj">å¯¹è±¡</param>
         private void WriteObject(object obj)
         {
             if (!_DepthDict.TryGetValue(obj, out var i)) _DepthDict.Add(obj, _DepthDict.Count + 1);
             Builder.Append('{');
             _Depth++;
-            if (_Depth > SerializerSetting.MaxDepth) throw new JsonException("³¬¹ıÁËĞòÁĞ»¯×î´óÉî¶È " + SerializerSetting.MaxDepth);
+            if (_Depth > SerializerSetting.MaxDepth) throw new JsonException("è¶…è¿‡äº†åºåˆ—åŒ–æœ€å¤§æ·±åº¦ " + SerializerSetting.MaxDepth);
             var t = obj.GetType();
             var first = true;
             t.GetPropertiesAndFields().Each(m =>
@@ -234,11 +243,11 @@ namespace XiaoFeng.Json
         }
         #endregion
 
-        #region Ğ´DataTable
+        #region å†™DataTable
         /// <summary>
-        /// Ğ´DataTable
+        /// å†™DataTable
         /// </summary>
-        /// <param name="data">Êı¾İ±í</param>
+        /// <param name="data">æ•°æ®è¡¨</param>
         private void WriteDataTable(DataTable data)
         {
             Builder.Append('[');
@@ -262,11 +271,11 @@ namespace XiaoFeng.Json
         }
         #endregion
 
-        #region Ğ´DataRow
+        #region å†™DataRow
         /// <summary>
-        /// Ğ´DataRow
+        /// å†™DataRow
         /// </summary>
-        /// <param name="dr">Êı¾İ</param>
+        /// <param name="dr">æ•°æ®</param>
         private void WriteDataRow(DataRow dr)
         {
             var first = true;
@@ -280,11 +289,11 @@ namespace XiaoFeng.Json
         }
         #endregion
 
-        #region Ğ´¼üÖµ¶Ô
+        #region å†™é”®å€¼å¯¹
         /// <summary>
-        /// Ğ´¼üÖµ¶Ô
+        /// å†™é”®å€¼å¯¹
         /// </summary>
-        /// <param name="nvs">¼üÖµ¶Ô</param>
+        /// <param name="nvs">é”®å€¼å¯¹</param>
         private void WriteNV(NameValueCollection nvs)
         {
             Builder.Append('{');
@@ -302,10 +311,10 @@ namespace XiaoFeng.Json
             Builder.Append('}');
         }
         /// <summary>
-        /// Ğ´¼üÖµ¶Ô
+        /// å†™é”®å€¼å¯¹
         /// </summary>
-        /// <param name="name">¼ü</param>
-        /// <param name="value">Öµ</param>
+        /// <param name="name">é”®</param>
+        /// <param name="value">å€¼</param>
         private void WritePair(String name, Object value)
         {
             WriteStringFast(name);
@@ -314,11 +323,11 @@ namespace XiaoFeng.Json
         }
         #endregion
 
-        #region Ğ´Êı×é
+        #region å†™æ•°ç»„
         /// <summary>
-        /// Ğ´Êı×é
+        /// å†™æ•°ç»„
         /// </summary>
-        /// <param name="arr">Êı×é</param>
+        /// <param name="arr">æ•°ç»„</param>
         private void WriteArray(IEnumerable arr)
         {
             Builder.Append('[');
@@ -334,11 +343,11 @@ namespace XiaoFeng.Json
         }
         #endregion
 
-        #region Ğ´×Öµä
+        #region å†™å­—å…¸
         /// <summary>
-        /// Ğ´×Öµä
+        /// å†™å­—å…¸
         /// </summary>
-        /// <param name="dic">×Öµä</param>
+        /// <param name="dic">å­—å…¸</param>
         private void WriteSD(StringDictionary dic)
         {
             Builder.Append('{');
@@ -356,9 +365,9 @@ namespace XiaoFeng.Json
             Builder.Append('}');
         }
         /// <summary>
-        /// Ğ´×Öµä
+        /// å†™å­—å…¸
         /// </summary>
-        /// <param name="dic">×Öµä</param>
+        /// <param name="dic">å­—å…¸</param>
         private void WriteStringDictionary(IDictionary dic)
         {
             Builder.Append('{');
@@ -376,9 +385,9 @@ namespace XiaoFeng.Json
             Builder.Append('}');
         }
         /// <summary>
-        /// Ğ´×Öµä
+        /// å†™å­—å…¸
         /// </summary>
-        /// <param name="dic">×Öµä</param>
+        /// <param name="dic">å­—å…¸</param>
         private void WriteStringDictionary(IDictionary<string, object> dic)
         {
             Builder.Append('{');
@@ -396,9 +405,9 @@ namespace XiaoFeng.Json
             Builder.Append('}');
         }
         /// <summary>
-        /// Ğ´×Öµä
+        /// å†™å­—å…¸
         /// </summary>
-        /// <param name="dic">×Öµä</param>
+        /// <param name="dic">å­—å…¸</param>
         private void WriteDictionary(IDictionary dic)
         {
             Builder.Append("{");
@@ -413,11 +422,11 @@ namespace XiaoFeng.Json
         }
         #endregion
 
-        #region Ğ´×Ö·û´®
+        #region å†™å­—ç¬¦ä¸²
         /// <summary>
-        /// Ğ´×Ö·û´®
+        /// å†™å­—ç¬¦ä¸²
         /// </summary>
-        /// <param name="str">×Ö·û´®</param>
+        /// <param name="str">å­—ç¬¦ä¸²</param>
         private void WriteStringFast(string str)
         {
             var comment = "";
@@ -435,9 +444,9 @@ namespace XiaoFeng.Json
                 Builder.Append(" " + comment);
         }
         /// <summary>
-        /// Ğ´×Ö·û´®
+        /// å†™å­—ç¬¦ä¸²
         /// </summary>
-        /// <param name="str">×Ö·û´®</param>
+        /// <param name="str">å­—ç¬¦ä¸²</param>
         private void WriteString(string str)
         {
             Builder.Append('\"');
@@ -474,11 +483,11 @@ namespace XiaoFeng.Json
         }
         #endregion
 
-        #region Ğ´ÀàĞÍ
+        #region å†™ç±»å‹
         /// <summary>
-        /// Ğ´ÀàĞÍ
+        /// å†™ç±»å‹
         /// </summary>
-        /// <param name="type">ÀàĞÍ</param>
+        /// <param name="type">ç±»å‹</param>
         private void WriteType(Type type)
         {
             Builder.Append('\"');
@@ -487,9 +496,9 @@ namespace XiaoFeng.Json
         }
         #endregion
 
-        #region Ğ´JsonValue
+        #region å†™JsonValue
         /// <summary>
-        /// Ğ´JsonValue
+        /// å†™JsonValue
         /// </summary>
         /// <param name="jsonValue"></param>
         private void WriteJsonValue(JsonValue jsonValue)
@@ -515,8 +524,8 @@ namespace XiaoFeng.Json
         }
         #endregion
 
-        #region ¸ñÊ½»¯JsonÎÄ±¾
-        /// <summary>¸ñÊ½»¯JsonÎÄ±¾</summary>
+        #region æ ¼å¼åŒ–Jsonæ–‡æœ¬
+        /// <summary>æ ¼å¼åŒ–Jsonæ–‡æœ¬</summary>
         /// <param name="json"></param>
         /// <returns></returns>
         public string Format(string json)

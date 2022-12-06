@@ -7,16 +7,21 @@ using XiaoFeng.Data;
 using System.Data.Common;
 using XiaoFeng.Redis;
 using XiaoFeng.Model;
-
+/****************************************************************
+*  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
+*  Author : jacky                                               *
+*  QQ : 7092734                                                 *
+*  Email : jacky@fayelf.com                                     *
+*  Site : www.fayelf.com                                        *
+*  Create Time : 2017-08-10 11:45:08                            *
+*  Version : v 1.1.6                                            *
+*  CLR Version : 4.0.30319.42000                                *
+*****************************************************************/
 namespace XiaoFeng
 {
     /// <summary>
     /// 数据库扩展类
     /// Version : 1.1.6
-    /// Author : jacky
-    /// Site : www.zhuovi.com
-    /// QQ : 7092734
-    /// Email : jacky@zhuovi.com
     /// </summary>
     public static partial class PrototypeHelper
     {

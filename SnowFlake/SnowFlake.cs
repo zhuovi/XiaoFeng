@@ -1,11 +1,19 @@
 ﻿using System;
+/****************************************************************
+*  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
+*  Author : jacky                                               *
+*  QQ : 7092734                                                 *
+*  Email : jacky@fayelf.com                                     *
+*  Site : www.fayelf.com                                        *
+*  Create Time : 2017-10-31 14:18:38                            *
+*  Version : v 1.0.0                                            *
+*  CLR Version : 4.0.30319.42000                                *
+*****************************************************************/
 namespace XiaoFeng
 {
     /// <summary>  
     /// 动态生产有规律的ID  
     /// 雪花算法
-    /// Author : Jacky
-    /// Email : Jacky@zhuovi.com
     /// Create Date : 2018-05-31
     /// </summary>  
     public class SnowFlake

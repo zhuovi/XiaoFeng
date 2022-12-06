@@ -3,23 +3,21 @@ using System.Collections.Generic;
 using System.Text;
 using System.Net;
 using System.Net.Mail;
+/****************************************************************
+*  Copyright © (2018) www.fayelf.com All Rights Reserved.       *
+*  Author : jacky                                               *
+*  QQ : 7092734                                                 *
+*  Email : jacky@fayelf.com                                     *
+*  Site : www.fayelf.com                                        *
+*  Create Time : 2018-04-10 17:25:39                            *
+*  Version : v 1.0.0                                            *
+*  CLR Version : 4.0.30319.42000                                *
+*****************************************************************/
 namespace XiaoFeng.Net
 {
-    /*
-   ===================================================================
-      Author : jacky
-      Email : jacky@zhuovi.com
-      QQ : 7092734
-      Site : www.zhuovi.com
-   ===================================================================
-   */
     /// <summary>
     ///  发送邮件操作类
     /// Verstion : 1.0.1
-    /// Author : jacky
-    /// Email : jacky@zhuovi.com
-    /// QQ : 7092734
-    /// Site : www.zhuovi.com
     /// Create Time : 2018/04/10 17:25:39
     /// Update Time : 2018/04/10 17:25:39
     /// </summary>

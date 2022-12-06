@@ -6,23 +6,21 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using XiaoFeng.Config;
 using XiaoFeng.IO;
+/****************************************************************
+*  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
+*  Author : jacky                                               *
+*  QQ : 7092734                                                 *
+*  Email : jacky@fayelf.com                                     *
+*  Site : www.fayelf.com                                        *
+*  Create Time : 2017-11-16 14:19:03                            *
+*  Version : v 1.0.0                                            *
+*  CLR Version : 4.0.30319.42000                                *
+*****************************************************************/
 namespace XiaoFeng
 {
-    /*
-    ===================================================================
-       Author : jacky
-       Email : jacky@zhuovi.com
-       QQ : 7092734
-       Site : www.zhuovi.com
-    ===================================================================
-    */
     /// <summary>
     /// 判断字符串是否为某种格式
     /// Verstion : 1.0.1
-    /// Author : jacky
-    /// Email : jacky@zhuovi.com
-    /// QQ : 7092734
-    /// Site : www.zhuovi.com
     /// Create Time : 2017/11/16 14:19:03
     /// Update Time : 2018/04/11 11:43:18
     /// </summary>

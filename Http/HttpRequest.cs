@@ -11,8 +11,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using XiaoFeng.IO;
-using XiaoFeng.Resource;
-
 /****************************************************************
 *  Copyright © (2021) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *

@@ -5,16 +5,22 @@ using System.Text.RegularExpressions;
 using XiaoFeng;
 using XiaoFeng.Config;
 using XiaoFeng.IO;
+/****************************************************************
+*  Copyright © (2015) www.fayelf.com All Rights Reserved.       *
+*  Author : jacky                                               *
+*  QQ : 7092734                                                 *
+*  Email : jacky@fayelf.com                                     *
+*  Site : www.fayelf.com                                        *
+*  Create Time : 2015-12-26 11:56:36                            *
+*  Version : v 1.0.0                                            *
+*  CLR Version : 4.0.30319.42000                                *
+*****************************************************************/
 namespace XiaoFeng.Data
 {
     /// <summary>
     /// 加密数据库连接操作类
     /// Version : v 1.0.0
     /// Create Date : 2015-12-26
-    /// Author : jacky
-    /// Site : www.zhuovi.com
-    /// QQ : 7092734
-    /// Email : jacky@zhuovi.com
     /// </summary>
     public class Encrypt 
     {

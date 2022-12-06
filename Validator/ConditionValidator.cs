@@ -5,15 +5,21 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using XiaoFeng;
+/****************************************************************
+*  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
+*  Author : jacky                                               *
+*  QQ : 7092734                                                 *
+*  Email : jacky@fayelf.com                                     *
+*  Site : www.fayelf.com                                        *
+*  Create Time : 2017-10-31 14:18:38                            *
+*  Version : v 1.0.0                                            *
+*  CLR Version : 4.0.30319.42000                                *
+*****************************************************************/
 namespace XiaoFeng.Validator
 {
     /// <summary>
     /// 验证操作类
     /// Version : 1.0.2
-    /// Author : jacky
-    /// Site : www.zhuovi.com
-    /// QQ : 7092734
-    /// Email : jacky@zhuovi.com
     /// Description:
     /// </summary>
     public class ConditionValidator

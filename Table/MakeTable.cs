@@ -4,15 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using XiaoFeng.Data;
+/****************************************************************
+*  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
+*  Author : jacky                                               *
+*  QQ : 7092734                                                 *
+*  Email : jacky@fayelf.com                                     *
+*  Site : www.fayelf.com                                        *
+*  Create Time : 2017-10-31 14:18:38                            *
+*  Version : v 1.0.0                                            *
+*  CLR Version : 4.0.30319.42000                                *
+*****************************************************************/
 namespace XiaoFeng.Table
 {
     /// <summary>
     /// 通过Model创建表
     /// Verstion : 1.0.0
-    /// Author : jacky
-    /// Email : jacky@zhuovi.com
-    /// QQ : 7092734
-    /// Site : www.zhuovi.com
     /// Create Time : 2019/03/18 16:32:26
     /// Update Time : 2019/03/18 16:32:26
     /// </summary>

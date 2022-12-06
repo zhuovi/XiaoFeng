@@ -8,27 +8,22 @@ using System.Reflection;
 using System.Threading.Tasks;
 using XiaoFeng.Data;
 using System.Data.Common;
+/****************************************************************
+*  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
+*  Author : jacky                                               *
+*  QQ : 7092734                                                 *
+*  Email : jacky@fayelf.com                                     *
+*  Site : www.fayelf.com                                        *
+*  Create Time : 2017-12-18 10:55:55                            *
+*  Version : v 1.0.0                                            *
+*  CLR Version : 4.0.30319.42000                                *
+*****************************************************************/
 namespace XiaoFeng.Data.SQL
 {
-    /*
-    ===================================================================
-       Author : jacky
-       Email : jacky@zhuovi.com
-       QQ : 7092734
-       Site : www.zhuovi.com
-       Create Time : 2017/12/18 10:55:55
-       Update Time : 2017/12/18 10:55:55
-    ===================================================================
-    */
-
     #region T1
     /// <summary>
     /// Queryable驱动
     /// Verstion : 2.0.5
-    /// Author : jacky
-    /// Email : jacky@zhuovi.com
-    /// QQ : 7092734
-    /// Site : www.zhuovi.com
     /// Create Time : 2017/12/18 10:55:55
     /// Update Time : 2018/06/25 17:50:21
     /// Description : 增加了相关C#扩展接口 如 Replace,Substring,Trim,TrimStart,TrimEnd,StartsWith,EndsWith

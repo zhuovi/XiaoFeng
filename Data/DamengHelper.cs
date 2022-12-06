@@ -19,7 +19,7 @@ using System.Reflection;
 namespace XiaoFeng.Data
 {
     /// <summary>
-    /// DamengHelper 类说明
+    /// DamengHelper 帮助类
     /// </summary>
     public class DamengHelper : DataHelper, IDbHelper
     {

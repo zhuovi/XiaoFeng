@@ -2,13 +2,21 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
-
+/****************************************************************
+*  Copyright © (2016) www.fayelf.com All Rights Reserved.       *
+*  Author : jacky                                               *
+*  QQ : 7092734                                                 *
+*  Email : jacky@fayelf.com                                     *
+*  Site : www.fayelf.com                                        *
+*  Create Time : 2016-06-05 00:51:57                            *
+*  Version : v 1.0.0                                            *
+*  CLR Version : 4.0.30319.42000                                *
+*****************************************************************/
 namespace XiaoFeng
 {
     /// <summary>
     /// Enum 帮助类
     /// Version  : 1.0.1
-    /// Author : jacky
     /// Create Date : 2016-06-05
     /// Update Date : 2016-07-04
     /// </summary>

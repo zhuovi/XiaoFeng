@@ -8,7 +8,16 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using XiaoFeng.Json;
 using XiaoFeng.Xml;
-
+/****************************************************************
+*  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
+*  Author : jacky                                               *
+*  QQ : 7092734                                                 *
+*  Email : jacky@fayelf.com                                     *
+*  Site : www.fayelf.com                                        *
+*  Create Time : 2017-12-18 10:18:41                            *
+*  Version : v 1.0.0                                            *
+*  CLR Version : 4.0.30319.42000                                *
+*****************************************************************/
 namespace XiaoFeng.Data.SQL
 {
     #region 两表存储结构

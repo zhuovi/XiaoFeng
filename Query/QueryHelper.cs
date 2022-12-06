@@ -2,16 +2,22 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
+/****************************************************************
+*  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
+*  Author : jacky                                               *
+*  QQ : 7092734                                                 *
+*  Email : jacky@fayelf.com                                     *
+*  Site : www.fayelf.com                                        *
+*  Create Time : 2017-10-31 14:18:38                            *
+*  Version : v 1.0.0                                            *
+*  CLR Version : 4.0.30319.42000                                *
+*****************************************************************/
 namespace XiaoFeng
 {
     #region 参数操作类 第一种内核
     /// <summary>
     /// 参数操作类 第一种内核 第二种 ParamHelper
     /// Version : 1.0.1
-    /// Author : jacky
-    /// Site : www.zhuovi.com
-    /// QQ : 7092734
-    /// Email : jacky@zhuovi.com
     /// </summary>
     public class QueryHelper:IDisposable
     {
@@ -281,10 +287,6 @@ namespace XiaoFeng
     /// <summary>
     /// 参数操作类 第二种内核  第一种 QueryHelper
     /// Version : 1.0.1
-    /// Author : jacky
-    /// Site : www.zhuovi.com
-    /// QQ : 7092734
-    /// Email : jacky@zhuovi.com
     /// </summary>
     public class ParamHelper:IDisposable
     {

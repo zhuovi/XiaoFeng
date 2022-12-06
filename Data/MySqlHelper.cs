@@ -5,26 +5,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
-
+/****************************************************************
+*  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
+*  Author : jacky                                               *
+*  QQ : 7092734                                                 *
+*  Email : jacky@fayelf.com                                     *
+*  Site : www.fayelf.com                                        *
+*  Create Time : 2017-06-29 09:11:53                            *
+*  Version : v 1.0.0                                            *
+*  CLR Version : 4.0.30319.42000                                *
+*****************************************************************/
 namespace XiaoFeng.Data
 {
-    /*
-===================================================================
-    Author : jacky
-    Email : jacky @zhuovi.com
-    QQ : 7092734
-    Site : www.zhuovi.com
-    Create Time : 2018/06/29 09:11:53
-    Update Time : 2018/06/29 09:11:53
-===================================================================
-*/
     /// <summary>
     /// MySql 数据库操作类
     /// Verstion : 1.0.0
-    /// Author : jacky
-    /// Email : jacky@zhuovi.com
-    /// QQ : 7092734
-    /// Site : www.zhuovi.com
     /// Create Time : 2018/06/29 09:11:53
     /// Update Time : 2018/06/29 09:11:53
     /// </summary>

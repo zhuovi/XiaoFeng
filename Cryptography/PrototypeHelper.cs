@@ -1,15 +1,21 @@
 ﻿using System;
 using System.Security.Cryptography;
 using XiaoFeng.Cryptography;
+/****************************************************************
+*  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
+*  Author : jacky                                               *
+*  QQ : 7092734                                                 *
+*  Email : jacky@fayelf.com                                     *
+*  Site : www.fayelf.com                                        *
+*  Create Time : 2017-12-08 10:43:37                            *
+*  Version : v 1.0.0                                            *
+*  CLR Version : 4.0.30319.42000                                *
+*****************************************************************/
 namespace XiaoFeng
 {
     /// <summary>
     /// 加密解密扩展属性方法操作类
     /// Version : 1.0.0
-    /// Author : jacky
-    /// Site : www.zhuovi.com
-    /// QQ : 7092734
-    /// Email : jacky@zhuovi.com
     /// Description:
     /// </summary>
     public static partial class PrototypeHelper

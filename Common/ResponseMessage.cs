@@ -9,15 +9,22 @@ using System.Data;
 using System.Runtime.Serialization;
 using System.Text;
 using System.ComponentModel;
-
+/****************************************************************
+*  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
+*  Author : jacky                                               *
+*  QQ : 7092734                                                 *
+*  Email : jacky@fayelf.com                                     *
+*  Site : www.fayelf.com                                        *
+*  Create Time : 2017-12-08 10:43:37                            *
+*  Version : v 1.0.0                                            *
+*  CLR Version : 4.0.30319.42000                                *
+*****************************************************************/
 namespace XiaoFeng
 {
     /// <summary>
     /// 输出消息
     /// Version : 1.0
     /// Create Date : 2016-12-23
-    /// Author : jacky
-    /// Site : www.zhuovi.com
     /// </summary>
     [DataContract]
     [XmlRoot("Root")]

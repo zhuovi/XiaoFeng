@@ -15,20 +15,18 @@ using System.Reflection;
 using XiaoFeng.IO;
 using System.ComponentModel;
 using System.Xml.Serialization;
-
+/****************************************************************
+*  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
+*  Author : jacky                                               *
+*  QQ : 7092734                                                 *
+*  Email : jacky@fayelf.com                                     *
+*  Site : www.fayelf.com                                        *
+*  Create Time : 2017-12-18 11:05:38                            *
+*  Version : v 1.0.0                                            *
+*  CLR Version : 4.0.30319.42000                                *
+*****************************************************************/
 namespace XiaoFeng.Data.SQL
 {
-    /*
-    ===================================================================
-       Author : jacky
-       Email : jacky@zhuovi.com
-       QQ : 7092734
-       Site : www.zhuovi.com
-       Create Time : 2017/12/18 11:05:38
-       Description : 增加了兼容 SQLite MySQL Oracle数据库 2018/03/26 11:51:20
-    ===================================================================
-    */
-
     #region 委托
     /// <summary>
     /// 执行完SQL委托方法

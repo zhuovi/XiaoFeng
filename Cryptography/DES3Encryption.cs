@@ -22,7 +22,6 @@ namespace XiaoFeng.Cryptography
     /// DES3加密算法
     /// Version : 1.0.0
     /// CrateTime : 2020-12-23 上午 12:52:18
-    /// Author : Jacky
     /// 更新说明
     /// </summary>
     public class DES3Encryption : BaseSymmetricAlgorithm

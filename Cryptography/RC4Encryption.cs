@@ -21,7 +21,6 @@ namespace XiaoFeng.Cryptography
     /// RC4加密算法
     /// Version : 1.0.0
     /// CrateTime : 2020-12-24 上午 12:13:19
-    /// Author : Jacky
     /// 更新说明
     /// </summary>
     public class RC4Encryption : BaseCrypto

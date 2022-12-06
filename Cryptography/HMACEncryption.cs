@@ -22,7 +22,6 @@ namespace XiaoFeng.Cryptography
     /// HMAC加密
     /// Version : 1.0.0
     /// CrateTime : 2020-12-23 下午 09:06:44
-    /// Author : Jacky
     /// 更新说明
     /// </summary>
     public class HMACEncryption : BaseCrypto

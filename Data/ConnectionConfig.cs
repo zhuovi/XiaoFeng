@@ -7,27 +7,20 @@ using XiaoFeng.Json;
 using XiaoFeng.IO;
 using System.Data;
 using System.Linq;
-
+/****************************************************************
+*  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
+*  Author : jacky                                               *
+*  QQ : 7092734                                                 *
+*  Email : jacky@fayelf.com                                     *
+*  Site : www.fayelf.com                                        *
+*  Create Time : 2017-12-14 09:32:07                            *
+*  Version : v 1.0.0                                            *
+*  CLR Version : 4.0.30319.42000                                *
+*****************************************************************/
 namespace XiaoFeng.Data
 {
-    /*
-    ===================================================================
-       Author : jacky
-       Email : jacky@zhuovi.com
-       QQ : 7092734
-       Site : www.zhuovi.com
-       Create Time : 2017/12/14 9:32:07
-       Update Time : 2017/12/14 9:32:07
-    ===================================================================
-    */
     /// <summary>
-    /// 数据库配置 Verstion : 1.0.0
-    /// <para>Author : jacky</para>
-    /// <para>Email : jacky@zhuovi.com</para>
-    /// <para>QQ : 7092734</para>
-    /// <para>Site : www.zhuovi.com</para>
-    /// <para>Create Time : 2017/12/14 9:32:07</para>
-    /// <para>Update Time : 2017/12/14 9:32:07</para>
+    /// 数据库配置 Version : 1.0.0
     /// </summary>
     public class ConnectionConfig : EntityBase
     {

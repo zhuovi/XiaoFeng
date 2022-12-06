@@ -37,6 +37,16 @@ Log :
 1.更新基类中的相关bug
 ===================================================================
 */
+/****************************************************************
+*  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
+*  Author : jacky                                               *
+*  QQ : 7092734                                                 *
+*  Email : jacky@fayelf.com                                     *
+*  Site : www.fayelf.com                                        *
+*  Create Time : 2017-12-18 11:05:38                            *
+*  Version : v 1.0.0                                            *
+*  CLR Version : 4.0.30319.42000                                *
+*****************************************************************/
 namespace XiaoFeng.Data.SQL
 {
     #region 转换数据类型
@@ -228,10 +238,6 @@ namespace XiaoFeng.Data.SQL
     #region T1
     /// <summary>
     /// DataSQL 操作类
-    /// Author : jacky
-    /// Email : jacky@zhuovi.com
-    /// QQ : 7092734
-    /// Site : www.zhuovi.com
     /// Create Time : 2017/12/18 10:18:41
     /// Update Time : 2018/02/23 16:27:13
     /// </summary>

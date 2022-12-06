@@ -3,26 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+/****************************************************************
+*  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
+*  Author : jacky                                               *
+*  QQ : 7092734                                                 *
+*  Email : jacky@fayelf.com                                     *
+*  Site : www.fayelf.com                                        *
+*  Create Time : 2017-12-20 09:40:00                            *
+*  Version : v 2.0.0                                            *
+*  CLR Version : 4.0.30319.42000                                *
+*****************************************************************/
 namespace XiaoFeng.Data.SQL
 {
-    /*
-    ===================================================================
-       Author : jacky
-       Email : jacky@zhuovi.com
-       QQ : 7092734
-       Site : www.zhuovi.com
-       Create Time : 2017/12/20 9:40:00
-       Update Time : 2017/12/20 9:40:00
-    ===================================================================
-    */
     /// <summary>
     /// 扩展SQL语法
     /// Verstion : 2.0.0
-    /// Author : jacky
-    /// Email : jacky@zhuovi.com
-    /// QQ : 7092734
-    /// Site : www.zhuovi.com
     /// Create Time : 2017/12/20 9:40:00
     /// Update Time : 2018/01/19 13:40:00
     /// </summary>

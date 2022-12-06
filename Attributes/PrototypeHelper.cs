@@ -20,10 +20,6 @@ namespace XiaoFeng
     /// <summary>
     /// 自定义属性扩展
     /// Verstion : 1.2.0
-    /// Author : jacky
-    /// Email : jacky@zhuovi.com
-    /// QQ : 7092734
-    /// Site : www.zhuovi.com
     /// Create Time : 2017/11/15 09:41:58
     /// Update Time : 2018/04/09 16:01:29
     /// </summary>

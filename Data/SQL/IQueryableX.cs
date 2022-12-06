@@ -4,22 +4,16 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-/*
-===================================================================
-    Author : jacky
-    Email : jacky@zhuovi.com
-    QQ : 7092734
-    Site : www.zhuovi.com
-    Verstion : 1.1.8
-    Create Time : 2017/12/18 10:18:41
-    Update Time : 2018/07/12 16:07:16
-    Description : 
-    v 1.1.6   2018/07/12 16:07:16
-    1.增加设置表名方法 SetTable
-    v 1.1.8
-    1.增加基础接口 IQueryableX
-===================================================================
-*/
+/****************************************************************
+*  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
+*  Author : jacky                                               *
+*  QQ : 7092734                                                 *
+*  Email : jacky@fayelf.com                                     *
+*  Site : www.fayelf.com                                        *
+*  Create Time : 2017-12-18 10:18:41                            *
+*  Version : v 1.1.8                                            *
+*  CLR Version : 4.0.30319.42000                                *
+*****************************************************************/
 namespace XiaoFeng.Data.SQL
 {
     #region IQueryableX接口

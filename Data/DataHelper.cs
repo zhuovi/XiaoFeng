@@ -10,15 +10,22 @@ using XiaoFeng.Data.SQL;
 using XiaoFeng.Collections;
 using System.Collections.Concurrent;
 using XiaoFeng.Model;
-
+/****************************************************************
+*  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
+*  Author : jacky                                               *
+*  QQ : 7092734                                                 *
+*  Email : jacky@fayelf.com                                     *
+*  Site : www.fayelf.com                                        *
+*  Create Time : 2017-12-30 10:17:43                            *
+*  Version : v 1.0.0                                            *
+*  CLR Version : 4.0.30319.42000                                *
+*****************************************************************/
 namespace XiaoFeng.Data
 {
     /// <summary>
     /// 通用数据库操作类
     /// 增加 加密连接字符功能
     /// 增加 异步操作数据库功能
-    /// Author:jacky
-    /// QQ:7092734
     /// Version : V 6.0.1
     /// 增加是否启用连接池
     /// 6.0.1

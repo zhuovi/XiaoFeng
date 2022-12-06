@@ -7,16 +7,21 @@ using System.IO;
 using XiaoFeng;
 using XiaoFeng.Data;
 using XiaoFeng.IO;
-
+/****************************************************************
+*  Copyright © (2018) www.fayelf.com All Rights Reserved.       *
+*  Author : jacky                                               *
+*  QQ : 7092734                                                 *
+*  Email : jacky@fayelf.com                                     *
+*  Site : www.fayelf.com                                        *
+*  Create Time : 2018-05-24 08:47:12                            *
+*  Version : v 1.0.0                                            *
+*  CLR Version : 4.0.30319.42000                                *
+*****************************************************************/
 namespace XiaoFeng.Model
 {
     /// <summary>
     /// 生成Model类操作类
     /// Verstion : 1.0.1
-    /// Author : jacky
-    /// Email : jacky@zhuovi.com
-    /// QQ : 7092734
-    /// Site : www.zhuovi.com
     /// Create Time : 2018/08/24 08:47:12
     /// Update Time : 2022/11/17 17:39:23
     /// 2020-11-24

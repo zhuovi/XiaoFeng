@@ -20,8 +20,6 @@ namespace XiaoFeng.Data
     /// <summary>
     /// 指定事务的隔离级别。
     /// Version : 1.0.0
-    /// CrateTime : 2021-02-22 下午 10:08:10
-    /// Author : Jacky
     /// 更新说明
     /// </summary>
     public enum IsolationLevel

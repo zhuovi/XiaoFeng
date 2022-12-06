@@ -21,7 +21,6 @@ namespace XiaoFeng.Cryptography
     /// MD5加密方法
     /// Version : 1.0.0
     /// CrateTime : 2020-12-23 上午 01:52:56
-    /// Author : Jacky
     /// 更新说明
     /// </summary>
     public class MD5Encryption : BaseCrypto
