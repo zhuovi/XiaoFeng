@@ -44,7 +44,7 @@ namespace XiaoFeng.Redis
         /// <param name="key">key</param>
         /// <param name="geos">经纬度集</param>
         /// <returns>添加成功数量</returns>
-        int GeoAdd(string key, params GeoModel[] geos) => this.GeoAdd(key, null, geos);
+        int GeoAdd(string key, params GeoModel[] geos);
         /// <summary>
         /// 存储指定的地理空间位置，可以将一个或多个经度(longitude)、纬度(latitude)、位置名称(member)添加到指定的 key 中 异步
         /// </summary>
@@ -166,7 +166,7 @@ namespace XiaoFeng.Redis
         /// <param name="key">key</param>
         /// <param name="members">元素</param>
         /// <returns>HASH列表</returns>
-        List<string> GetGeoHash(string key, params object[] members) => this.GetGeoHash(key, null, members);
+        List<string> GetGeoHash(string key, params object[] members);
         /// <summary>
         /// 获取一个或多个位置元素的 geohash 值 异步
         /// GeoHash 编码长度与精度
