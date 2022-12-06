@@ -19,7 +19,7 @@ namespace XiaoFeng.Redis
     /// <summary>
     /// HyperLogLog
     /// </summary>
-    public partial class RedisClient : Disposable
+    public partial class RedisClient : Disposable, IRedisClient
     {
         #region HyperLogLog
         /// <summary>

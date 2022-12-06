@@ -19,7 +19,7 @@ namespace XiaoFeng.Redis
     /// <summary>
     /// 哈希(Hash)
     /// </summary>
-    public partial class RedisClient : Disposable
+    public partial class RedisClient : Disposable, IRedisClient
     {
         #region 哈希(Hash)
 

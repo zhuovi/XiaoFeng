@@ -19,7 +19,7 @@ namespace XiaoFeng.Redis
     /// <summary>
     /// GEO
     /// </summary>
-    public partial class RedisClient : Disposable
+    public partial class RedisClient : Disposable, IRedisClient
     {
         #region GEO
         /// <summary>

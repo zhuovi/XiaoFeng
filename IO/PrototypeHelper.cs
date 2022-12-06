@@ -142,6 +142,12 @@ namespace XiaoFeng.IO
             return content;
         }
         /// <summary>
+        /// 使用从缓冲区读取的数据将字节块写入当前流
+        /// </summary>
+        /// <param name="stream">流</param>
+        /// <param name="buffer">字节组</param>
+        public static void Write(this Stream stream, byte[] buffer) => stream.Write(buffer, 0, buffer.Length);
+        /// <summary>
         /// 将字符串数组合并成一个路径
         /// </summary>
         /// <param name="_">开始字符串</param>

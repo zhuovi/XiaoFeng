@@ -19,7 +19,7 @@ namespace XiaoFeng.Redis
     /// <summary>
     /// 集合(Set)
     /// </summary>
-    public partial class RedisClient:Disposable
+    public partial class RedisClient : Disposable, IRedisClient
     {
         #region 集合(Set)
 
@@ -404,7 +404,7 @@ namespace XiaoFeng.Redis
         /// <param name="value">元素</param>
         /// <param name="dbNum">库索引</param>
         /// <returns>是否存在</returns>
-        public Boolean ExistsSetMember<T>(string key, T value, int? dbNum = null) => this.Execute(CommandType.SISMEMBER, dbNum, result => result.OK&& (int)result.Value>0, key, this.GetValue(value));
+        public Boolean ExistsSetMember<T>(string key, T value, int? dbNum = null) => this.Execute(CommandType.SISMEMBER, dbNum, result => result.OK && (int)result.Value > 0, key, this.GetValue(value));
         /// <summary>
         /// 判断成员元素是否是集合的成员 异步
         /// </summary>
@@ -469,7 +469,7 @@ namespace XiaoFeng.Redis
         /// <param name="count">移除位数</param>
         /// <param name="dbNum">库索引</param>
         /// <returns>移除的元素</returns>
-        public async Task<List<T>> GetSetPopAsync<T>(string key, int count = 1, int? dbNum = null) => await this.ExecuteAsync(CommandType.SPOP, dbNum, async result => await Task.FromResult(result.OK ?result.Value.ToList<T>() : null), key, count);
+        public async Task<List<T>> GetSetPopAsync<T>(string key, int count = 1, int? dbNum = null) => await this.ExecuteAsync(CommandType.SPOP, dbNum, async result => await Task.FromResult(result.OK ? result.Value.ToList<T>() : null), key, count);
         /// <summary>
         /// 移除并返回集合中的一个或多个随机元素 异步
         /// </summary>

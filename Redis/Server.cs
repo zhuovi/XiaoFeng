@@ -19,7 +19,7 @@ namespace XiaoFeng.Redis
     /// <summary>
     /// 服务器
     /// </summary>
-    public partial class RedisClient:Disposable
+    public partial class RedisClient : Disposable, IRedisClient
     {
         #region 服务器
         /// <summary>
@@ -94,7 +94,7 @@ namespace XiaoFeng.Redis
         /// <returns></returns>
         public async Task<List<ClientInfo>> ClientListAsync()
         {
-           var reader =  await this.ClientAsync("LIST");
+            var reader = await this.ClientAsync("LIST");
             return reader.OK ? (List<ClientInfo>)reader.Value.Value : null;
         }
         /// <summary>

@@ -19,7 +19,7 @@ namespace XiaoFeng.Redis
     /// <summary>
     /// 有序集合(ZSet)
     /// </summary>
-    public partial class RedisClient : Disposable
+    public partial class RedisClient : Disposable, IRedisClient
     {
         #region 有序集合(ZSet)
 
@@ -135,7 +135,7 @@ namespace XiaoFeng.Redis
         /// <param name="stop">结束索引</param>
         /// <param name="dbNum">库索引</param>
         /// <returns></returns>
-        public async Task<List<string>> GetSortedSetRangeAsync(string key, int start = 0, int stop = -1, int? dbNum = null)=>await this.GetSortedSetRangeAsync<string>(key, start, stop, dbNum);
+        public async Task<List<string>> GetSortedSetRangeAsync(string key, int start = 0, int stop = -1, int? dbNum = null) => await this.GetSortedSetRangeAsync<string>(key, start, stop, dbNum);
         /// <summary>
         /// 通过索引区间返回有序集合指定区间内的成员 分数递增排序
         /// </summary>
@@ -148,7 +148,7 @@ namespace XiaoFeng.Redis
         public async Task<List<T>> GetSortedSetRangeAsync<T>(string key, int start = 0, int stop = -1, int? dbNum = null)
         {
             var list = new List<object> { key, start, stop };
-            return await this.ExecuteAsync(CommandType.ZRANGE, dbNum, async result =>await Task.FromResult( result.OK ? result.Value.ToList<T>() : null), list.ToArray());
+            return await this.ExecuteAsync(CommandType.ZRANGE, dbNum, async result => await Task.FromResult(result.OK ? result.Value.ToList<T>() : null), list.ToArray());
         }
         /// <summary>
         /// 通过索引区间返回有序集合指定区间内的成员 分数递增排序
@@ -158,7 +158,7 @@ namespace XiaoFeng.Redis
         /// <param name="stop">结束索引</param>
         /// <param name="dbNum">库索引</param>
         /// <returns></returns>
-        public async Task<Dictionary<string,float>> GetSortedSetRangeWithScoresAsync(string key, int start = 0, int stop = -1, int? dbNum = null) =>await this.GetSortedSetRangeWithScoresAsync<string,float>(key, start, stop, dbNum);
+        public async Task<Dictionary<string, float>> GetSortedSetRangeWithScoresAsync(string key, int start = 0, int stop = -1, int? dbNum = null) => await this.GetSortedSetRangeWithScoresAsync<string, float>(key, start, stop, dbNum);
         /// <summary>
         /// 通过索引区间返回有序集合指定区间内的成员 分数递增排序
         /// </summary>
@@ -306,7 +306,7 @@ namespace XiaoFeng.Redis
         /// <param name="stop">结束索引</param>
         /// <param name="dbNum">库索引</param>
         /// <returns></returns>
-        public async Task<Dictionary<TKey,TValue>> GetSortedSetRevRangeWithScoresAsync<TKey,TValue>(string key, int start = 0, int stop = -1, int? dbNum = null)
+        public async Task<Dictionary<TKey, TValue>> GetSortedSetRevRangeWithScoresAsync<TKey, TValue>(string key, int start = 0, int stop = -1, int? dbNum = null)
         {
             var list = new List<object>
             {
@@ -315,7 +315,7 @@ namespace XiaoFeng.Redis
                 stop,
                 "WITHSCORES"
             };
-            return await this.ExecuteAsync(CommandType.ZREVRANGE, dbNum, async result => await Task.FromResult(result.OK ? result.Value.ToDictionary<TKey,TValue>() : null), list.ToArray());
+            return await this.ExecuteAsync(CommandType.ZREVRANGE, dbNum, async result => await Task.FromResult(result.OK ? result.Value.ToDictionary<TKey, TValue>() : null), list.ToArray());
         }
         /// <summary>
         /// 通过索引区间返回有序集合指定区间内的成员 分数递减排序 异步
@@ -325,7 +325,7 @@ namespace XiaoFeng.Redis
         /// <param name="stop">结束索引</param>
         /// <param name="dbNum">库索引</param>
         /// <returns></returns>
-        public Dictionary<string,double> GetSortedSetRevRangeWithScores(string key, int start = 0, int stop = -1, int? dbNum = null) => this.GetSortedSetRevRangeWithScores<string, double>(key, start, stop, dbNum);
+        public Dictionary<string, double> GetSortedSetRevRangeWithScores(string key, int start = 0, int stop = -1, int? dbNum = null) => this.GetSortedSetRevRangeWithScores<string, double>(key, start, stop, dbNum);
         /// <summary>
         /// 通过索引区间返回有序集合指定区间内的成员 分数递减排序 异步
         /// </summary>
@@ -426,7 +426,7 @@ namespace XiaoFeng.Redis
         /// <param name="end">结束索引</param>
         /// <param name="dbNum">库索引</param>
         /// <returns></returns>
-        public async Task<List<T>> GetSortedSetRangeByScoreAsync<T>(string key, float min, float max,  int start = 0, int end = -1, int? dbNum = null)
+        public async Task<List<T>> GetSortedSetRangeByScoreAsync<T>(string key, float min, float max, int start = 0, int end = -1, int? dbNum = null)
         {
             var list = new List<object>
             {
@@ -462,7 +462,7 @@ namespace XiaoFeng.Redis
         /// <param name="end">结束索引</param>
         /// <param name="dbNum">库索引</param>
         /// <returns></returns>
-        public Dictionary<TKey,TValue> GetSortedSetRangeByScoreWithScores<TKey,TValue>(string key, float min, float max, int start = 0, int end = -1, int? dbNum = null)
+        public Dictionary<TKey, TValue> GetSortedSetRangeByScoreWithScores<TKey, TValue>(string key, float min, float max, int start = 0, int end = -1, int? dbNum = null)
         {
             var list = new List<object>
             {
@@ -474,7 +474,7 @@ namespace XiaoFeng.Redis
                 start,
                 end
             };
-            return this.Execute(CommandType.ZRANGEBYSCORE, dbNum, result => result.OK ? result.Value.ToDictionary<TKey,TValue>() : null, list.ToArray());
+            return this.Execute(CommandType.ZRANGEBYSCORE, dbNum, result => result.OK ? result.Value.ToDictionary<TKey, TValue>() : null, list.ToArray());
         }
         /// <summary>
         /// 通过分数区间返回有序集合的成员
@@ -486,7 +486,7 @@ namespace XiaoFeng.Redis
         /// <param name="end">结束索引</param>
         /// <param name="dbNum">库索引</param>
         /// <returns></returns>
-        public Dictionary<string,double> GetSortedSetRangeByScoreWithScoresWithScores(string key, float min, float max, int start = 0, int end = -1, int? dbNum = null) => this.GetSortedSetRangeByScoreWithScores<string, double>(key, min, max, start, end, dbNum);
+        public Dictionary<string, double> GetSortedSetRangeByScoreWithScoresWithScores(string key, float min, float max, int start = 0, int end = -1, int? dbNum = null) => this.GetSortedSetRangeByScoreWithScores<string, double>(key, min, max, start, end, dbNum);
         /// <summary>
         /// 通过分数区间返回有序集合的成员 异步
         /// </summary>
@@ -499,7 +499,7 @@ namespace XiaoFeng.Redis
         /// <param name="end">结束索引</param>
         /// <param name="dbNum">库索引</param>
         /// <returns></returns>
-        public async Task<Dictionary<TKey, TValue>> GetSortedSetRangeByScoreWithScoresAsync<TKey,TValue>(string key, float min, float max, int start = 0, int end = -1, int? dbNum = null)
+        public async Task<Dictionary<TKey, TValue>> GetSortedSetRangeByScoreWithScoresAsync<TKey, TValue>(string key, float min, float max, int start = 0, int end = -1, int? dbNum = null)
         {
             var list = new List<object>
             {
@@ -511,7 +511,7 @@ namespace XiaoFeng.Redis
                 start,
                 end
             };
-            return await this.ExecuteAsync(CommandType.ZRANGEBYSCORE, dbNum, async result => await Task.FromResult(result.OK ? result.Value.ToDictionary<TKey,TValue>() : null), list.ToArray());
+            return await this.ExecuteAsync(CommandType.ZRANGEBYSCORE, dbNum, async result => await Task.FromResult(result.OK ? result.Value.ToDictionary<TKey, TValue>() : null), list.ToArray());
         }
         /// <summary>
         /// 通过分数区间返回有序集合的成员 异步
@@ -590,7 +590,7 @@ namespace XiaoFeng.Redis
         /// <param name="end">结束索引</param>
         /// <param name="dbNum">库索引</param>
         /// <returns></returns>
-        public List<string> GetSortedSetRevRangeByScore(string key, float max, float min, int start = 0, int end = -1, int? dbNum = null)=>this.GetSortedSetRevRangeByScore<string>(key, max, min, start, end, dbNum);
+        public List<string> GetSortedSetRevRangeByScore(string key, float max, float min, int start = 0, int end = -1, int? dbNum = null) => this.GetSortedSetRevRangeByScore<string>(key, max, min, start, end, dbNum);
         /// <summary>
         /// 通过有序集中指定分数区间内的成员，分数从高到低排序 异步
         /// </summary>
@@ -625,7 +625,7 @@ namespace XiaoFeng.Redis
         /// <param name="end">结束索引</param>
         /// <param name="dbNum">库索引</param>
         /// <returns></returns>
-        public async Task<List<string>> GetSortedSetRevRangeByScoreAsync(string key, float min, float max, int start = 0, int end = -1, int? dbNum = null)=>await this.GetSortedSetRevRangeByScoreAsync(key, min, max, start, end, dbNum);
+        public async Task<List<string>> GetSortedSetRevRangeByScoreAsync(string key, float min, float max, int start = 0, int end = -1, int? dbNum = null) => await this.GetSortedSetRevRangeByScoreAsync(key, min, max, start, end, dbNum);
 
 
         /// <summary>
@@ -640,7 +640,7 @@ namespace XiaoFeng.Redis
         /// <param name="end">结束索引</param>
         /// <param name="dbNum">库索引</param>
         /// <returns></returns>
-        public Dictionary<TKey,TValue> GetSortedSetRevRangeByScoreWithScores<TKey,TValue>(string key, float max, float min, int start = 0, int end = -1, int? dbNum = null)
+        public Dictionary<TKey, TValue> GetSortedSetRevRangeByScoreWithScores<TKey, TValue>(string key, float max, float min, int start = 0, int end = -1, int? dbNum = null)
         {
             var list = new List<object>
             {
@@ -652,7 +652,7 @@ namespace XiaoFeng.Redis
                 start,
                 end
             };
-            return this.Execute(CommandType.ZREVRANGEBYSCORE, dbNum, result => result.OK ? result.Value.ToDictionary<TKey,TValue>() : null, list.ToArray());
+            return this.Execute(CommandType.ZREVRANGEBYSCORE, dbNum, result => result.OK ? result.Value.ToDictionary<TKey, TValue>() : null, list.ToArray());
         }
         /// <summary>
         /// 通过有序集中指定分数区间内的成员，分数从高到低排序
@@ -664,7 +664,7 @@ namespace XiaoFeng.Redis
         /// <param name="end">结束索引</param>
         /// <param name="dbNum">库索引</param>
         /// <returns></returns>
-        public Dictionary<string,double> GetSortedSetRevRangeByScoreWithScores(string key, float max, float min, int start = 0, int end = -1, int? dbNum = null) => this.GetSortedSetRevRangeByScoreWithScores<string, double>(key, max, min, start, end, dbNum);
+        public Dictionary<string, double> GetSortedSetRevRangeByScoreWithScores(string key, float max, float min, int start = 0, int end = -1, int? dbNum = null) => this.GetSortedSetRevRangeByScoreWithScores<string, double>(key, max, min, start, end, dbNum);
         /// <summary>
         /// 通过有序集中指定分数区间内的成员，分数从高到低排序 异步
         /// </summary>
@@ -677,7 +677,7 @@ namespace XiaoFeng.Redis
         /// <param name="end">结束索引</param>
         /// <param name="dbNum">库索引</param>
         /// <returns></returns>
-        public async Task<Dictionary<TKey, TValue>> GetSortedSetRevRangeByScoreWithScoresAsync<TKey,TValue>(string key, float min, float max, int start = 0, int end = -1, int? dbNum = null)
+        public async Task<Dictionary<TKey, TValue>> GetSortedSetRevRangeByScoreWithScoresAsync<TKey, TValue>(string key, float min, float max, int start = 0, int end = -1, int? dbNum = null)
         {
             var list = new List<object>
             {
@@ -701,7 +701,7 @@ namespace XiaoFeng.Redis
         /// <param name="end">结束索引</param>
         /// <param name="dbNum">库索引</param>
         /// <returns></returns>
-        public async Task<Dictionary<string,double>> GetSortedSetRevRangeByScoreWithScoresAsync(string key, float min, float max, int start = 0, int end = -1, int? dbNum = null) => await this.GetSortedSetRevRangeByScoreWithScoresAsync<string, double>(key, min, max, start, end, dbNum);
+        public async Task<Dictionary<string, double>> GetSortedSetRevRangeByScoreWithScoresAsync(string key, float min, float max, int start = 0, int end = -1, int? dbNum = null) => await this.GetSortedSetRevRangeByScoreWithScoresAsync<string, double>(key, min, max, start, end, dbNum);
         /// <summary>
         /// 获取有序集中，成员的分数值
         /// </summary>

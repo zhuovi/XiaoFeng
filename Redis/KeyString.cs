@@ -19,7 +19,7 @@ namespace XiaoFeng.Redis
     /// <summary>
     /// KEY 操作
     /// </summary>
-    public partial class RedisClient : Disposable
+    public partial class RedisClient : Disposable, IRedisClient
     {
         #region KEY
 
@@ -54,7 +54,7 @@ namespace XiaoFeng.Redis
         public async Task<int> DelKeyAsync(int? dbNum, params string[] keys)
         {
             if (keys.Length == 0) return -1;
-            return await this.ExecuteAsync(CommandType.DEL, dbNum, async result => await Task.FromResult(result.OK?result.Value.ToInt():-1), keys);
+            return await this.ExecuteAsync(CommandType.DEL, dbNum, async result => await Task.FromResult(result.OK ? result.Value.ToInt() : -1), keys);
         }
         /// <summary>
         /// 删除key 异步
@@ -900,7 +900,7 @@ namespace XiaoFeng.Redis
         public long StringIncrement(string key, long increment, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return -1;
-            return this.Execute(CommandType.INCRBY, dbNum, result => result.OK ? result.Value.ToCast <long>() : -1, key, increment);
+            return this.Execute(CommandType.INCRBY, dbNum, result => result.OK ? result.Value.ToCast<long>() : -1, key, increment);
         }
         /// <summary>
         /// 将 key 所储存的值加上给定的增量值（increment） 异步

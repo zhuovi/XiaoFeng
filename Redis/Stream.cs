@@ -20,7 +20,7 @@ namespace XiaoFeng.Redis
     /// <summary>
     /// Redis Stream
     /// </summary>
-    public partial class RedisClient : Disposable
+    public partial class RedisClient : Disposable, IRedisClient
     {
         #region 消息队列(Redis Stream)
 
@@ -821,7 +821,7 @@ namespace XiaoFeng.Redis
         public ConsumerGroupXInfoStreamFullModel ConsumerGroupXInfoStream(string key, int? count, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return null;
-            var list = new List<object> { key ,"FULL"};
+            var list = new List<object> { key, "FULL" };
             if (count.HasValue)
             {
                 if (count.GetValueOrDefault() > 0)
@@ -842,7 +842,7 @@ namespace XiaoFeng.Redis
         public async Task<ConsumerGroupXInfoStreamFullModel> ConsumerGroupXInfoStreamAsync(string key, int? count, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return null;
-            var list = new List<object> { key,"FULL" };
+            var list = new List<object> { key, "FULL" };
             if (count.HasValue)
             {
                 if (count.GetValueOrDefault() > 0)

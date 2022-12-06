@@ -28,7 +28,7 @@ namespace XiaoFeng.Redis
     /// v 1.1.0
     /// 修改提取数据用正则改为字符提取 更加精确
     /// </summary>
-    public partial class RedisClient : Disposable
+    public partial class RedisClient : Disposable,IRedisClient
     {
         #region 构造器
         /// <summary>

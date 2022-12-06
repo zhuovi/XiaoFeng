@@ -18,7 +18,7 @@ namespace XiaoFeng.Redis
     /// <summary>
     /// Redis 脚本
     /// </summary>
-    public partial class RedisClient : Disposable
+    public partial class RedisClient : Disposable, IRedisClient
     {
         #region 脚本
 

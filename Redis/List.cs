@@ -19,7 +19,7 @@ namespace XiaoFeng.Redis
     /// <summary>
     /// 列表(List)
     /// </summary>
-    public partial class RedisClient : Disposable
+    public partial class RedisClient : Disposable, IRedisClient
     {
         #region 列表(List)
 
@@ -116,7 +116,7 @@ namespace XiaoFeng.Redis
             if (values == null || !values.Any()) return -1;
             var list = new List<string> { key };
             values.Each(v => list.Add(this.GetValue(v)));
-            return this.Execute(CommandType.RPUSH, dbNum, result => result.OK?result.Value.ToInt():-1, list.ToArray());
+            return this.Execute(CommandType.RPUSH, dbNum, result => result.OK ? result.Value.ToInt() : -1, list.ToArray());
         }
         /// <summary>
         /// 在列表中添加一个或多个值 异步
@@ -130,7 +130,7 @@ namespace XiaoFeng.Redis
             if (values == null || !values.Any()) return -1;
             var list = new List<string> { key };
             values.Each(v => list.Add(this.GetValue(v)));
-            return await this.ExecuteAsync(CommandType.RPUSH, dbNum, async result => await Task.FromResult(result.OK?result.Value.ToInt():-1), list.ToArray());
+            return await this.ExecuteAsync(CommandType.RPUSH, dbNum, async result => await Task.FromResult(result.OK ? result.Value.ToInt() : -1), list.ToArray());
         }
         /// <summary>
         /// 在列表中添加一个或多个值
@@ -155,7 +155,7 @@ namespace XiaoFeng.Redis
         /// <param name="value">值</param>
         /// <param name="dbNum">库索引</param>
         /// <returns>列表长度</returns>
-        public int InsertListItemBefore<T>(string key, string item, T value, int? dbNum = null) => this.Execute(CommandType.LINSERT, dbNum, result => result.OK?result.Value.ToInt():-1, key, "BEFORE", item, this.GetValue(value));
+        public int InsertListItemBefore<T>(string key, string item, T value, int? dbNum = null) => this.Execute(CommandType.LINSERT, dbNum, result => result.OK ? result.Value.ToInt() : -1, key, "BEFORE", item, this.GetValue(value));
         /// <summary>
         /// 在列表的元素前插入元素 异步
         /// </summary>
@@ -193,7 +193,7 @@ namespace XiaoFeng.Redis
         /// <param name="value">值</param>
         /// <param name="dbNum">库索引</param>
         /// <returns>列表长度</returns>
-        public int InsertListItemAfter<T>(string key, string item, T value, int? dbNum = null) => this.Execute(CommandType.LINSERT, dbNum, result => result.OK?result.Value.ToInt():-1, key, "AFTER", item, this.GetValue(value));
+        public int InsertListItemAfter<T>(string key, string item, T value, int? dbNum = null) => this.Execute(CommandType.LINSERT, dbNum, result => result.OK ? result.Value.ToInt() : -1, key, "AFTER", item, this.GetValue(value));
         /// <summary>
         /// 在列表的元素后插入元素 异步
         /// </summary>
@@ -203,7 +203,7 @@ namespace XiaoFeng.Redis
         /// <param name="value">值</param>
         /// <param name="dbNum">库索引</param>
         /// <returns>列表长度</returns>
-        public async Task<int> InsertListItemAfterAsync<T>(string key, string item, T value, int? dbNum = null) => await this.ExecuteAsync(CommandType.LINSERT, dbNum, async result => await Task.FromResult(result.OK?result.Value.ToInt():-1), key, "AFTER", item, this.GetValue(value));
+        public async Task<int> InsertListItemAfterAsync<T>(string key, string item, T value, int? dbNum = null) => await this.ExecuteAsync(CommandType.LINSERT, dbNum, async result => await Task.FromResult(result.OK ? result.Value.ToInt() : -1), key, "AFTER", item, this.GetValue(value));
         /// <summary>
         /// 在列表的元素后插入元素
         /// </summary>
@@ -244,7 +244,7 @@ namespace XiaoFeng.Redis
         /// <param name="value">值</param>
         /// <param name="dbNum">库索引</param>
         /// <returns>列表长度</returns>
-        public int SetListItemBeforeExists<T>(string key, T value, int? dbNum = null) => this.Execute(CommandType.LPUSHX, dbNum, result => result.OK?(int)result.Value:-1, key, this.GetValue(value));
+        public int SetListItemBeforeExists<T>(string key, T value, int? dbNum = null) => this.Execute(CommandType.LPUSHX, dbNum, result => result.OK ? (int)result.Value : -1, key, this.GetValue(value));
         /// <summary>
         /// 将一个值插入到已存在的列表头部 异步
         /// </summary>
@@ -253,7 +253,7 @@ namespace XiaoFeng.Redis
         /// <param name="value">值</param>
         /// <param name="dbNum">库索引</param>
         /// <returns>列表长度</returns>
-        public async Task<int> SetListItemBeforeExistsAsync<T>(string key, T value, int? dbNum = null) => await this.ExecuteAsync(CommandType.LPUSHX, dbNum, async result => await Task.FromResult(result.OK?(int)result.Value:-1), key, this.GetValue(value));
+        public async Task<int> SetListItemBeforeExistsAsync<T>(string key, T value, int? dbNum = null) => await this.ExecuteAsync(CommandType.LPUSHX, dbNum, async result => await Task.FromResult(result.OK ? (int)result.Value : -1), key, this.GetValue(value));
         /// <summary>
         /// 将一个值插入到已存在的列表头部
         /// </summary>
@@ -278,7 +278,7 @@ namespace XiaoFeng.Redis
         /// <param name="value">值</param>
         /// <param name="dbNum">库索引</param>
         /// <returns>列表长度</returns>
-        public int SetListItemExists<T>(string key, T value, int? dbNum = null) => this.Execute(CommandType.RPUSHX, dbNum, result => result.OK?(int)result.Value:-1, key, this.GetValue(value));
+        public int SetListItemExists<T>(string key, T value, int? dbNum = null) => this.Execute(CommandType.RPUSHX, dbNum, result => result.OK ? (int)result.Value : -1, key, this.GetValue(value));
         /// <summary>
         /// 为已存在的列表添加值 异步
         /// </summary>
@@ -287,7 +287,7 @@ namespace XiaoFeng.Redis
         /// <param name="value">值</param>
         /// <param name="dbNum">库索引</param>
         /// <returns>列表长度</returns>
-        public async Task<int> SetListItemExistsAsync<T>(string key, T value, int? dbNum = null) => await this.ExecuteAsync(CommandType.RPUSHX, dbNum, async result => await Task.FromResult(result.OK?(int)result.Value:-1), key, this.GetValue(value));
+        public async Task<int> SetListItemExistsAsync<T>(string key, T value, int? dbNum = null) => await this.ExecuteAsync(CommandType.RPUSHX, dbNum, async result => await Task.FromResult(result.OK ? (int)result.Value : -1), key, this.GetValue(value));
         /// <summary>
         /// 为已存在的列表添加值
         /// </summary>
@@ -410,7 +410,7 @@ namespace XiaoFeng.Redis
         /// <param name="timeout">超时时间 单位为秒 0一直等待</param>
         /// <param name="dbNum">库索引</param>
         /// <returns>最后一个元素</returns>
-        public async Task<T> GetListLastItemToOtherListFirstAsync<T>(string key, string otherKey, int? timeout = 0, int? dbNum = null) => await this.ExecuteAsync(CommandType.BRPOPLPUSH, dbNum, async result => await Task.FromResult(result.OK? result.Value.ToCast<T>():default(T)), key, otherKey, timeout ?? 100);
+        public async Task<T> GetListLastItemToOtherListFirstAsync<T>(string key, string otherKey, int? timeout = 0, int? dbNum = null) => await this.ExecuteAsync(CommandType.BRPOPLPUSH, dbNum, async result => await Task.FromResult(result.OK ? result.Value.ToCast<T>() : default(T)), key, otherKey, timeout ?? 100);
         /// <summary>
         /// 从列表中取出最后一个元素，并插入到另外一个列表的头部； 如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止
         /// </summary>
@@ -437,7 +437,7 @@ namespace XiaoFeng.Redis
         /// <param name="index">索引</param>
         /// <param name="dbNum">库索引</param>
         /// <returns>列表中的元素</returns>
-        public T GetListItem<T>(string key, int index, int? dbNum = null) => this.Execute(CommandType.LINDEX, dbNum, result => result.OK?result.Value.ToCast<T>():default(T), key, index);
+        public T GetListItem<T>(string key, int index, int? dbNum = null) => this.Execute(CommandType.LINDEX, dbNum, result => result.OK ? result.Value.ToCast<T>() : default(T), key, index);
         /// <summary>
         /// 通过索引获取列表中的元素 异步
         /// </summary>
@@ -446,7 +446,7 @@ namespace XiaoFeng.Redis
         /// <param name="index">索引</param>
         /// <param name="dbNum">库索引</param>
         /// <returns>列表中的元素</returns>
-        public async Task<T> GetListItemAsync<T>(string key, int index, int? dbNum = null) => await this.ExecuteAsync(CommandType.LINDEX, dbNum, async result => await Task.FromResult(result.OK? result.Value.ToCast<T>():default(T)), key, index);
+        public async Task<T> GetListItemAsync<T>(string key, int index, int? dbNum = null) => await this.ExecuteAsync(CommandType.LINDEX, dbNum, async result => await Task.FromResult(result.OK ? result.Value.ToCast<T>() : default(T)), key, index);
         /// <summary>
         /// 通过索引获取列表中的元素
         /// </summary>
@@ -470,7 +470,7 @@ namespace XiaoFeng.Redis
         /// <param name="key">key</param>
         /// <param name="dbNum">库索引</param>
         /// <returns>第一个元素</returns>
-        public T GetListFirstItem<T>(string key, int? dbNum = null) => this.Execute(CommandType.LPOP, dbNum, result => result.OK?result.Value.ToCast<T>():default(T), key);
+        public T GetListFirstItem<T>(string key, int? dbNum = null) => this.Execute(CommandType.LPOP, dbNum, result => result.OK ? result.Value.ToCast<T>() : default(T), key);
         /// <summary>
         /// 移出并获取列表的第一个元素 异步
         /// </summary>
@@ -478,7 +478,7 @@ namespace XiaoFeng.Redis
         /// <param name="key">key</param>
         /// <param name="dbNum">库索引</param>
         /// <returns>第一个元素</returns>
-        public async Task<T> GetListFirstItemAsync<T>(string key, int? dbNum = null) => await this.ExecuteAsync(CommandType.LPOP, dbNum, async result => await Task.FromResult(result.OK? result.Value.ToCast<T>():default(T)), key);
+        public async Task<T> GetListFirstItemAsync<T>(string key, int? dbNum = null) => await this.ExecuteAsync(CommandType.LPOP, dbNum, async result => await Task.FromResult(result.OK ? result.Value.ToCast<T>() : default(T)), key);
         /// <summary>
         /// 移出并获取列表的第一个元素
         /// </summary>
@@ -500,7 +500,7 @@ namespace XiaoFeng.Redis
         /// <param name="key">key</param>
         /// <param name="dbNum">库索引</param>
         /// <returns></returns>
-        public T GetListLastItem<T>(string key, int? dbNum = null) => this.Execute(CommandType.RPOP, dbNum, result =>result.OK? result.Value.ToCast<T>():default(T), key);
+        public T GetListLastItem<T>(string key, int? dbNum = null) => this.Execute(CommandType.RPOP, dbNum, result => result.OK ? result.Value.ToCast<T>() : default(T), key);
         /// <summary>
         /// 移出并获取列表的最后一个元素 异步
         /// </summary>
@@ -508,7 +508,7 @@ namespace XiaoFeng.Redis
         /// <param name="key">key</param>
         /// <param name="dbNum">库索引</param>
         /// <returns>最后一个元素</returns>
-        public async Task<T> GetListLastItemAsync<T>(string key, int? dbNum = null) => await this.ExecuteAsync(CommandType.RPOP, dbNum, async result => await Task.FromResult(result.OK?result.Value.ToCast<T>():default(T)), key);
+        public async Task<T> GetListLastItemAsync<T>(string key, int? dbNum = null) => await this.ExecuteAsync(CommandType.RPOP, dbNum, async result => await Task.FromResult(result.OK ? result.Value.ToCast<T>() : default(T)), key);
         /// <summary>
         /// 移出并获取列表的最后一个元素
         /// </summary>
