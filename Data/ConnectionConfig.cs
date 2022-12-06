@@ -124,6 +124,10 @@ namespace XiaoFeng.Data
         /// </summary>
         [Description("连接池最大数量")]
         public int MaxPool { get; set; } = 100;
+        /// <summary>
+        /// 字符串大小写敏感
+        /// </summary>
+        public Boolean IgnoreCase { get; set; } = true;
         #endregion
 
         #region 方法

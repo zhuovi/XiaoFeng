@@ -943,10 +943,10 @@ namespace XiaoFeng.Data
         /// <summary>
         /// 字段表格式
         /// </summary>
-        /// <param name="dbProviderType">驱动类型</param>
+        /// <param name="config">数据库配置</param>
         /// <param name="_">字段名</param>
         /// <returns></returns>
-        public static string FieldFormat(DbProviderType dbProviderType, string _)
+        public static string FieldFormat(ConnectionConfig config, string _)
         {
             if (_.IsMatch(@"(\(|\)| as |\]|\[|`|\"")")) return _;
             var first = "";
@@ -957,11 +957,11 @@ namespace XiaoFeng.Data
                 var _list = new List<string>();
                 _.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Each(a =>
                   {
-                      _list.Add(FieldFormat(dbProviderType, a));
+                      _list.Add(FieldFormat(config, a));
                   });
                 return first + _list.Join(",");
             }
-            switch (dbProviderType)
+            switch (config.ProviderType)
             {
                 case DbProviderType.SqlServer:
                 case DbProviderType.OleDb:

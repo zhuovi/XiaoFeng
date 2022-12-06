@@ -66,7 +66,7 @@ namespace XiaoFeng.Data.SQL
         internal string FieldFormat(string _)
         {
             if (this.DataHelper == null) return _;
-            return DataSQLFun.FieldFormat(this.DataHelper.ProviderType, _);
+            return DataSQLFun.FieldFormat(this.DataHelper.ConnConfig, _);
             /*switch (this.DataHelper.ProviderType)
             {
                 case DbProviderType.SqlServer:

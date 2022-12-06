@@ -335,7 +335,7 @@ namespace XiaoFeng.Model
         internal string FieldFormat(string _)
         {
             if (this.Data == null) return _;
-            return DataSQLFun.FieldFormat(this.Data.Config.ProviderType, _);
+            return DataSQLFun.FieldFormat(this.Data.Config, _);
             /*
             switch (this.Data.Config.ProviderType)
             {

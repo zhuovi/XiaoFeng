@@ -24,7 +24,7 @@
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageReleaseNotes>增加随机种被回收时再创建;XiaoFeng.Redis增加Redis脚本功能;增加IRedisClient接口;优化RSA算法,增加SHA256,SHA384,SHA51;把类说明中的版本去除;</PackageReleaseNotes>
+		<PackageReleaseNotes>增加随机种被回收时再创建;XiaoFeng.Redis增加Redis脚本功能;增加IRedisClient接口;优化RSA算法,增加SHA256,SHA384,SHA51;把类说明中的版权去除;数据库配置增加对字符串是否敏感;</PackageReleaseNotes>
 		<DelaySign>False</DelaySign>
 		<IsPackable>true</IsPackable>
 		<PackageProjectUrl>https://github.com/zhuovi/XiaoFeng</PackageProjectUrl>

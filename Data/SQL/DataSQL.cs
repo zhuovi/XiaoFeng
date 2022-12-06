@@ -200,7 +200,7 @@ namespace XiaoFeng.Data.SQL
         internal string FieldFormat(string _)
         {
             if (this.Config.IsNullOrEmpty()) return _;
-            return DataSQLFun.FieldFormat(this.Config.ProviderType, _);
+            return DataSQLFun.FieldFormat(this.Config, _);
             /*switch (this.Config.ProviderType)
             {
                 case DbProviderType.SqlServer:
