@@ -21,6 +21,100 @@ namespace XiaoFeng.Redis
     /// </summary>
     public interface IRedisClient
     {
+        #region 事件
+        /// <summary>
+        /// 接收频道消息
+        /// </summary>
+        event OnMessageEventHandler OnMessage;
+        /// <summary>
+        /// 订阅频道消息
+        /// </summary>
+        event OnSubscribeEventHandler OnSubscribe;
+        /// <summary>
+        /// 取消订阅频道消息
+        /// </summary>
+        event OnUnSubscribeEventHandler OnUnSubscribe;
+        /// <summary>
+        /// 出错
+        /// </summary>
+        event OnErrorEventHandler OnError;
+        #endregion
+
+        #region 基础
+
+        #region 验证密码
+        /// <summary>
+        /// 验证密码
+        /// </summary>
+        /// <param name="password">密码</param>
+        /// <returns></returns>
+        Boolean Auth(string password);
+        /// <summary>
+        /// 验证密码 异步
+        /// </summary>
+        /// <param name="password">密码</param>
+        /// <returns></returns>
+        Task<Boolean> AuthAsync(string password);
+        #endregion
+
+        #region PING
+        /// <summary>
+        /// PING
+        /// </summary>
+        /// <returns></returns>
+        Boolean Ping();
+        /// <summary>
+        /// PING 异步
+        /// </summary>
+        /// <returns></returns>
+        Task<Boolean> PingAsync();
+        #endregion
+
+        #region 打印字符串
+        /// <summary>
+        /// 打印字符串
+        /// </summary>
+        /// <param name="echoStr">要打印的字符串</param>
+        /// <returns></returns>
+        Boolean Echo(string echoStr);
+        /// <summary>
+        /// 打印字符串 异步
+        /// </summary>
+        /// <param name="echoStr">要打印的字符串</param>
+        /// <returns></returns>
+        Task<Boolean> EchoAsync(string echoStr);
+        #endregion
+
+        #region 退出
+        /// <summary>
+        /// 退出
+        /// </summary>
+        /// <returns></returns>
+        Boolean Quit();
+        /// <summary>
+        /// 退出 异步
+        /// </summary>
+        /// <returns></returns>
+        Task<Boolean> QuitAsync();
+        #endregion
+
+        #region 选择数据库
+        /// <summary>
+        /// 选择数据库
+        /// </summary>
+        /// <param name="dbNum">库索引</param>
+        /// <returns>是否设置成功</returns>
+        Boolean Select(int dbNum = 0);
+        /// <summary>
+        /// 选择数据库 异步
+        /// </summary>
+        /// <param name="dbNum">库索引</param>
+        /// <returns></returns>
+        Task<Boolean> SelectAsync(int dbNum = 0);
+        #endregion
+
+        #endregion
+
         #region GEO
         /// <summary>
         /// 存储指定的地理空间位置，可以将一个或多个经度(longitude)、纬度(latitude)、位置名称(member)添加到指定的 key 中
@@ -3315,6 +3409,7 @@ namespace XiaoFeng.Redis
         /// <param name="members">成员</param>
         /// <returns>成功移除个数</returns>
         Task<int> DelSortedSetMemberAsync(string key, int? dbNum, params object[] members);
+        /// <summary>
         /// 移除有序集合中的一个或多个成员
         /// </summary>
         /// <param name="key">key</param>
@@ -3840,6 +3935,62 @@ namespace XiaoFeng.Redis
         /// <param name="dbNum">库索引</param>
         /// <returns></returns>
         Task<ConsumerGroupXInfoStreamFullModel> ConsumerGroupXInfoStreamAsync(string key, int? count, int? dbNum = null);
+        #endregion
+
+        #endregion
+
+        #region 发布与订阅
+
+        #region 订阅频道
+        /// <summary>
+        /// 订阅频道
+        /// </summary>
+        /// <param name="channel">频道 支持模糊订阅 如:*?[]  * 至少0个占位符  ?一个占位符 []选择字符</param>
+        void SubScribe(params string[] channel);
+        #endregion
+
+        #region 取消订阅频道
+        /// <summary>
+        /// 取消订阅频道
+        /// </summary>
+        /// <param name="channel">频道</param>
+        void UnSubScribe(params string[] channel);
+        #endregion
+
+        #region 将信息发送到指定的频道
+        /// <summary>
+        /// 将信息发送到指定的频道
+        /// </summary>
+        /// <param name="message">消息</param>
+        /// <param name="channel">频道</param>
+        void PubLish(string message, string channel);
+        #endregion
+
+        #region 查看订阅与发布系统状态
+        /// <summary>
+        /// 查看订阅与发布系统状态
+        /// </summary>
+        /// <param name="cmd">子命令</param>
+        /// <param name="channel">频道</param>
+        /// <returns></returns>
+        RedisReader PubSub(PubSubCommand cmd, params string[] channel);
+        /// <summary>
+        /// 查询系统中符合模式的频道信息，pattern为空，则查询系统中所有存在的频道
+        /// </summary>
+        /// <param name="pattern">模式</param>
+        /// <returns></returns>
+        List<string> PubsubChannels(params string[] pattern);
+        /// <summary>
+        /// 查询一个或多个频道的订阅数
+        /// </summary>
+        /// <param name="channels">频道</param>
+        /// <returns></returns>
+        Dictionary<string, int> PubsubNum(params string[] channels);
+        /// <summary>
+        /// 查询当前客户端订阅了多少频道
+        /// </summary>
+        /// <returns></returns>
+        List<string> PubsubPats();
         #endregion
 
         #endregion

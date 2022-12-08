@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Sockets;
 using XiaoFeng;
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
@@ -36,15 +37,13 @@ namespace XiaoFeng.Redis
         /// 设置数据
         /// </summary>
         /// <param name="commandType">命令类型</param>
-        /// <param name="result">数据</param>
+        /// <param name="stream">网络流</param>
         /// <param name="args">参数</param>
-        public RedisReader(CommandType commandType, byte[] result, object[] args = null)
+        public RedisReader(CommandType commandType, Stream stream, object[] args = null)
         {
-            if (result == null || result.Length == 0) return;
             this.CommandType = commandType;
-            this.Data = result;
             this.Arguments = args;
-            this.Reader = new MemoryStream(result);
+            this.Reader = stream;
             this.GetValue();
         }
         #endregion
@@ -55,6 +54,10 @@ namespace XiaoFeng.Redis
         /// </summary>
         public object[] Arguments { get; set; }
         /// <summary>
+        /// 锁
+        /// </summary>
+        public object StreamLock { get; set; } = new object();
+        /// <summary>
         /// 换行
         /// </summary>
         private const string EOF = "\r\n";
@@ -62,10 +65,6 @@ namespace XiaoFeng.Redis
         /// 命令类型
         /// </summary>
         public CommandType CommandType { get; set; }
-        /// <summary>
-        /// 结果
-        /// </summary>
-        public byte[] Data { get; set; }
         /// <summary>
         /// 流
         /// </summary>
@@ -854,7 +853,10 @@ namespace XiaoFeng.Redis
         /// :2\r\n 整型数字
         /// </summary>
         /// <returns>类型</returns>
-        public ResultType ReadType() => this.Reader.ReadByte().ToEnum<ResultType>();
+        public ResultType ReadType() {
+            lock (StreamLock)
+                return (ResultType)this.Reader.ReadByte();
+        }
         #endregion
 
         #region 读取状态
@@ -976,11 +978,29 @@ namespace XiaoFeng.Redis
         /// <returns>一行数据</returns>
         public byte[] ReadLineBytes()
         {
-            if (this.Reader.Position == this.Reader.Length) return Array.Empty<byte>();
+            /*if (this.Reader.Position == this.Reader.Length) return Array.Empty<byte>();
             var should_break = false;
             var length = this.Reader.Length;
             var list = new List<byte>();
             while (this.Reader.Position < length)
+            {
+                var b = this.Reader.ReadByte();
+                var c = (char)b;
+                if (c == '\r')
+                    should_break = true;
+                else if (c == '\n' && should_break)
+                    break;
+                else
+                {
+                    list.Add((byte)b);
+                    should_break = false;
+                }
+            }
+            return list.ToArray();*/
+            var reader = this.Reader as NetworkStream;
+            var should_break = false;
+            var list = new List<byte>();
+            while (reader.DataAvailable && reader.CanRead)
             {
                 var b = this.Reader.ReadByte();
                 var c = (char)b;

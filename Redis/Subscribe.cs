@@ -17,20 +17,8 @@ using XiaoFeng.Redis;
 *****************************************************************/
 namespace XiaoFeng.Redis
 {
-    /// <summary>
-    /// 订阅频道
-    /// </summary>
-    public class Subscribe
+    public partial class RedisClient : IRedisClient
     {
-        /// <summary>
-        /// 设备频道
-        /// </summary>
-        /// <param name="redis">Redis</param>
-        public Subscribe(RedisClient redis)
-        {
-            this.Redis = redis;
-        }
-
         #region 事件
         /// <summary>
         /// 接收频道消息
@@ -50,13 +38,6 @@ namespace XiaoFeng.Redis
         public event OnErrorEventHandler OnError;
         #endregion
 
-        #region 属性
-        /// <summary>
-        /// Redis客户端
-        /// </summary>
-        public RedisClient Redis { get; set; }
-        #endregion
-
         #region 方法
 
         #region 订阅频道
@@ -73,7 +54,7 @@ namespace XiaoFeng.Redis
             }
             try
             {
-                if (Redis.Execute(channel.Join(",").IsMatch(@"[\*\?\[\]]")
+                if (this.Execute(channel.Join(",").IsMatch(@"[\*\?\[\]]")
                     ? CommandType.PSUBSCRIBE : CommandType.SUBSCRIBE, null, result =>
                     {
                         return result.OK;
@@ -81,24 +62,12 @@ namespace XiaoFeng.Redis
                     OnSubscribe?.Invoke(channel.Join(","));
                 else
                     OnError?.Invoke(channel.Join(","), "订阅频道[" + channel + "]失败.");
-                Task.Factory.StartNew(async () =>
+                Task.Factory.StartNew(() =>
                 {
-                    while (Redis.IsConnected.HasValue && Redis.IsConnected.Value)
+                    while (this.Redis.IsConnected)
                     {
-                        var ms = new MemoryStream();
-                        if (Redis.Stream.DataAvailable)
-                        {
-                            var bytes = new byte[Redis.MemorySize];
-                            do
-                            {
-                                Array.Clear(bytes, 0, Redis.MemorySize);
-                                var count = await Redis.Stream.ReadAsync(bytes, 0, bytes.Length);
-                                ms.Write(bytes, 0, count);
-                            } while (Redis.Stream.DataAvailable);
-                            var reader = new RedisReader(CommandType.SUBSCRIBE, ms.ToArray());
-                            this.OnMessage?.Invoke(channel.Join(","), reader.OK ? reader.Value : new RedisValue());
-                        }
-                       await Task.Delay(1000);
+                        var reader = new RedisReader(CommandType.SUBSCRIBE, this.Redis.GetStream());
+                        this.OnMessage?.Invoke(channel.Join(","), reader.OK ? reader.Value : new RedisValue());
                     }
                 }, TaskCreationOptions.LongRunning);
             }
@@ -121,7 +90,7 @@ namespace XiaoFeng.Redis
                 this.OnError.Invoke(channel.Join(","), "无频道取消订阅.");
                 return;
             }
-            if (Redis.Execute(channel.Join(",").IsMatch(@"[\*\?\[\]]")
+            if (this.Execute(channel.Join(",").IsMatch(@"[\*\?\[\]]")
                    ? CommandType.PUNSUBSCRIBE : CommandType.UNSUBSCRIBE, null, result =>
                    {
                        return result.OK;
@@ -145,10 +114,10 @@ namespace XiaoFeng.Redis
                 this.OnError.Invoke(channel, "发送频道信息出错.");
                 return;
             }
-            if (Redis.Execute(CommandType.PUBLISH , null, result =>
-                   {
-                       return result.OK;
-                   },channel,message))
+            if (this.Execute(CommandType.PUBLISH, null, result =>
+            {
+                return result.OK;
+            }, channel, message))
                 OnSubscribe?.Invoke(channel);
             else
                 OnError?.Invoke(channel, "发送频道[" + channel + "]信息失败.");
@@ -169,7 +138,7 @@ namespace XiaoFeng.Redis
                 this.OnError.Invoke(channel.Join(","), "频道信息出错.");
                 return null;
             }
-            return Redis.Execute(CommandType.PUBSUB, null, result => result, new object[] { cmd.ToString() }.Concat(channel).ToArray());
+            return this.Execute(CommandType.PUBSUB, null, result => result, new object[] { cmd.ToString() }.Concat(channel).ToArray());
         }
         /// <summary>
         /// 查询系统中符合模式的频道信息，pattern为空，则查询系统中所有存在的频道
@@ -186,7 +155,7 @@ namespace XiaoFeng.Redis
         /// </summary>
         /// <param name="channels">频道</param>
         /// <returns></returns>
-        public Dictionary<string,int> PubsubNum(params string[] channels)
+        public Dictionary<string, int> PubsubNum(params string[] channels)
         {
             var reader = this.PubSub(PubSubCommand.NUMSUB, channels);
             return reader.OK ? reader.Value.ToDictionary<string, int>() : new Dictionary<string, int>();

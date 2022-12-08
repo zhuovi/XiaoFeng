@@ -104,13 +104,37 @@ namespace XiaoFeng.Redis
         /// <summary>
         /// 主机
         /// </summary>
+        private string _Host = "127.0.0.1";
+        /// <summary>
+        /// 主机
+        /// </summary>
         [Description("主机")]
-        public string Host { get; set; } = "127.0.0.1";
+        public string Host
+        {
+            get
+            {
+                if (_Host.IsNullOrEmpty()) _Host = "127.0.0.1";
+                return _Host;
+            }
+            set => _Host = value;
+        }
+        /// <summary>
+        /// 端口
+        /// </summary>
+        private int _Port = 6379;
         /// <summary>
         /// 端口
         /// </summary>
         [Description("端口")]
-        public int Port { get; set; } = 6379;
+        public int Port
+        {
+            get
+            {
+                if (_Port <= 0) _Port = 6379;
+                return _Port;
+            }
+            set => _Port = value;
+        }
         /// <summary>
         /// 密码
         /// </summary>
@@ -131,6 +155,10 @@ namespace XiaoFeng.Redis
         /// </summary>
         [Description("读取数据超时时间")] 
         public int ReadTimeout { get; set; } = 10000;
+        /// <summary>
+        /// 是否是SSL
+        /// </summary>
+        public Boolean IsSsl { get; set; }
         #endregion
 
         #region 方法

@@ -336,7 +336,7 @@ namespace XiaoFeng.Cache
         /// <summary>
         /// 回调事件
         /// </summary>
-        private Action<WatcherChangeType, string, string> CallBack => (t, p, k) =>
+        private Action<IO.WatcherChangeType, string, string> CallBack => (t, p, k) =>
           {
               this.Remove(k);
           };

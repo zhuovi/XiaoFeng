@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using XiaoFeng.IO;
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -101,6 +101,20 @@ namespace XiaoFeng.Cache
                     //因为当前组件出现死锁，暂注释掉，后边单独在写一个方法监听文件目录
                     //this.Provider = new FileProvider(this.Name);
                     //this.Provider.Watch(value, this.CallBack).ConfigureAwait(false);
+                    /*
+                     * 2022-12-07
+                     * 重写写一个监控目录方法，所有的配置只要在Config文件夹下统一管理
+                     */
+                    var config = FileHelper.Combine(FileHelper.GetCurrentDirectory(), "Config");
+                    if (value.StartsWith(config, StringComparison.OrdinalIgnoreCase))
+                    {
+                        XiaoFeng.Config.ConfigSetFileProvider.Add(this.Name, value, this.CallBack);
+                    }
+                    else
+                    {
+                        this.Provider = new FileProvider(this.Name);
+                        this.Provider.Watch(value, this.CallBack).ConfigureAwait(false);
+                    }
                 }
             }
         }

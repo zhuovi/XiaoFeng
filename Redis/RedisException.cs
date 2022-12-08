@@ -1,44 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+
 /****************************************************************
-*  Copyright © (2015) www.fayelf.com All Rights Reserved.       *
+*  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
 *  QQ : 7092734                                                 *
 *  Email : jacky@fayelf.com                                     *
 *  Site : www.fayelf.com                                        *
-*  Create Time : 2017-12-08 15:04:47                            *
+*  Create Time : 2022-12-08 17:55:12                            *
 *  Version : v 1.0.0                                            *
 *  CLR Version : 4.0.30319.42000                                *
 *****************************************************************/
-namespace XiaoFeng.Data
+namespace XiaoFeng.Redis
 {
     /// <summary>
-    /// 数据库操作类异常
+    /// Redis 错误类
     /// </summary>
-    public class DataHelperException : DbException
+    public class RedisException : Exception
     {
+        #region 构造器
         /// <summary>
         /// 标识名
         /// </summary>
-        const string FlagName = "XiaoFeng.Data.DataHelper:";
+        const string FlagName = "XiaoFeng.Redis:";
         /// <summary>
         /// 无参构造器
         /// </summary>
-        public DataHelperException() : base() { }
+        public RedisException() : base() { }
         /// <summary>
-        /// 设置错误信息
+        /// 错误信息
         /// </summary>
-        /// <param name="message">错误信息</param>
-        public DataHelperException(string message) : base(FlagName + message) { }
+        /// <param name="message">信息</param>
+        public RedisException(string message) : base(FlagName + message) { }
         /// <summary>
-        /// 设置错误信息及异常
+        /// 错误信息
         /// </summary>
-        /// <param name="message">错误信息</param>
-        /// <param name="exception">异常</param>
-        public DataHelperException(string message, Exception exception) : base(FlagName + message, exception) { }
+        /// <param name="message">信息</param>
+        /// <param name="exception">错误</param>
+        public RedisException(string message, Exception exception) : base(FlagName + message, exception) { }
+        #endregion
+
+        #region 属性
+
+        #endregion
+
+        #region 方法
+        #endregion
     }
 }
