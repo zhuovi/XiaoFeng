@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 namespace XiaoFeng.Redis
 {
     /// <summary>
-    /// ClientInfo 类说明
+    /// 客户端信息类
     /// </summary>
     public class ClientInfo
     {

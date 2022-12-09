@@ -239,7 +239,7 @@ namespace XiaoFeng.Redis
                     }
                     else
                     {
-                        this.Value = result.Value.ToString();
+                        this.Value = result.Value?.ToString();
                         this.OK = false;
                     }
                     break;
@@ -854,8 +854,15 @@ namespace XiaoFeng.Redis
         /// </summary>
         /// <returns>类型</returns>
         public ResultType ReadType() {
-            lock (StreamLock)
-                return (ResultType)this.Reader.ReadByte();
+            //try
+            {
+                lock (StreamLock)
+                    return (ResultType)this.Reader.ReadByte();
+            }
+            //catch
+            {
+                //return ResultType.Error;
+            }
         }
         #endregion
 

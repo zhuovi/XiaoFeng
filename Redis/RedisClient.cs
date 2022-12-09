@@ -87,10 +87,6 @@ namespace XiaoFeng.Redis
         /// </summary>
         public RedisConfig ConnConfig { get; set; }
         /// <summary>
-        /// 是否连接
-        /// </summary>
-        public Boolean? IsConnected { get; set; }
-        /// <summary>
         /// 寻址方案
         /// </summary>
         public AddressFamily AddressFamily { get; set; } = AddressFamily.InterNetwork;
@@ -152,6 +148,10 @@ namespace XiaoFeng.Redis
         /// RedisSocket 项
         /// </summary>
         public PoolItem<IO.IRedisSocket> RedisItem { get; set; }
+        /// <summary>
+        /// 排它锁
+        /// </summary>
+        private static readonly Mutex Mutex = new Mutex();
         #endregion
 
         #region 方法
@@ -207,8 +207,9 @@ namespace XiaoFeng.Redis
         /// <returns>执行结果</returns>
         public T Execute<T>(CommandType commandType, int? dbNum, Func<RedisReader, T> func, params object[] args)
         {
+            Mutex.WaitOne();
             this.Init();
-            if (commandType != CommandType.AUTH && this.ConnConfig.Password.IsNotNullOrEmpty())
+            if (!this.Redis.IsAuth && commandType != CommandType.AUTH && this.ConnConfig.Password.IsNotNullOrEmpty())
             {
                 this.Redis.IsAuth = this.Auth(this.ConnConfig.Password);
                 if (!this.Redis.IsAuth)
@@ -225,6 +226,7 @@ namespace XiaoFeng.Redis
             }
             new CommandPacket(commandType, args).SendCommand(this.Redis.GetStream() as NetworkStream);
             var result = func.Invoke(new RedisReader(commandType, this.Redis.GetStream() as NetworkStream, args));
+            Mutex.ReleaseMutex();
             return result;
         }
         /// <summary>
@@ -238,6 +240,7 @@ namespace XiaoFeng.Redis
         /// <returns>执行结果</returns>
         public async Task<T> ExecuteAsync<T>(CommandType commandType, int? dbNum, Func<RedisReader, Task<T>> func, params object[] args)
         {
+            Mutex.WaitOne();
             this.Init();
             if (commandType != CommandType.AUTH && this.ConnConfig.Password.IsNotNullOrEmpty())
             {
@@ -254,6 +257,7 @@ namespace XiaoFeng.Redis
             }
             new CommandPacket(commandType, args).SendCommand(this.Redis.GetStream() as NetworkStream);
             var result = func.Invoke(new RedisReader(commandType, this.Redis.GetStream() as NetworkStream, args));
+            Mutex.ReleaseMutex();
             return await result;
         }
         #endregion

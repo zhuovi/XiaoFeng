@@ -8,9 +8,13 @@ namespace XiaoFeng.Redis
     /// <summary>
     /// 接收频道消息
     /// </summary>
-    /// <param name="channel">频道</param>
     /// <param name="message">消息</param>
-    public delegate void OnMessageEventHandler(string channel, RedisValue message);
+    public delegate void OnMessageEventHandler(RedisValue message);
+    /// <summary>
+    /// 接收频道消息
+    /// </summary>
+    /// <param name="message">消息</param>
+    public delegate void OnReceivedEventHandler(SubscribeMessage message);
     /// <summary>
     /// 订阅频道
     /// </summary>
@@ -27,5 +31,9 @@ namespace XiaoFeng.Redis
     /// <param name="channel">频道</param>
     /// <param name="message">错误消息</param>
     public delegate void OnErrorEventHandler(string channel,string message);
+    /// <summary>
+    /// 退出订阅监听
+    /// </summary>
+    public delegate void OnQuitSubscribeEventHandler();
     #endregion
 }
