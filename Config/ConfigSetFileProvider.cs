@@ -60,7 +60,7 @@ namespace XiaoFeng.Config
                     {
                         if (t == WatcherChangeType.Deleted)
                             ConfigFiles.TryRemove(p, out var _);
-                        _item.CallBack?.Invoke(t, p, k);
+                        _item.CallBack?.Invoke(t, p, _item.Key);
                     }
                 }).ConfigureAwait(false);
             });
