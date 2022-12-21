@@ -122,7 +122,7 @@ namespace XiaoFeng.Redis.IO
             Init();
             IAsyncResult result = this.SocketClient.BeginConnect(this.ConnConfig.Host,this.ConnConfig.Port, null, null);
             if (!result.AsyncWaitHandle.WaitOne(Math.Max(this.ConnConfig.ConnectionTimeout, 10000), true))
-                throw new Exception("连接服务器超时.");
+                throw new RedisException("连接服务器超时.");
         }
         ///<inheritdoc/>
         public Stream GetStream()
