@@ -180,12 +180,6 @@ namespace XiaoFeng.Data.SQL
         /// <summary>
         /// 查询数据
         /// </summary>
-        /// <param name="Columns">显示字段</param>
-        /// <returns></returns>
-        IQueryableX<T> Select(string Columns);
-        /// <summary>
-        /// 查询数据
-        /// </summary>
         /// <param name="func">显示字段Lambda</param>
         /// <returns></returns>
         IQueryableX<TResult> Select<TResult>(Expression<Func<T, TResult>> func);
@@ -198,6 +192,18 @@ namespace XiaoFeng.Data.SQL
         /// <param name="func">显示字段Lambda</param>
         /// <returns></returns>
         IQueryableX<T> SelectX<TResult>(Expression<Func<T, TResult>> func);
+        /// <summary>
+        /// 设置显示字段
+        /// </summary>
+        /// <param name="columns">字段集合</param>
+        /// <returns></returns>
+        IQueryableX<T> Select(IEnumerable<string> columns);
+        /// <summary>
+        /// 设置显示字段
+        /// </summary>
+        /// <param name="Columns">显示字段</param>
+        /// <returns></returns>
+        IQueryableX<T> Select(string Columns);
         #endregion
 
         #region 设置表名

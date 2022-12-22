@@ -3046,15 +3046,20 @@ namespace XiaoFeng.Data.SQL
 
         #region 查询数据
         /// <summary>
-        /// 查询数据
+        /// 设置显示字段
         /// </summary>
         /// <param name="Columns">显示字段</param>
         /// <returns></returns>
-        public IQueryableX<T> Select(string Columns)
+        public IQueryableX<T> Select(string Columns) => this.Select(Columns.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+        /// <summary>
+        /// 设置显示字段
+        /// </summary>
+        /// <param name="columns">字段集合</param>
+        /// <returns></returns>
+        public IQueryableX<T> Select(IEnumerable<string> columns)
         {
-            if (Columns.IsNullOrEmpty()) return this;
-            this.DataSQL.SQLType = SQLType.select;
-            this.DataSQL.SetColumns(Columns.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+            if (columns.IsNullOrEmpty() || !columns.Any()) return this;
+            this.DataSQL.SetColumns(columns);
             return this;
         }
         /// <summary>

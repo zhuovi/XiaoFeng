@@ -591,7 +591,7 @@ select {Limits} row_number() over({OrderBy}) as TempID, * from
         /// 设置显示列数据
         /// </summary>
         /// <param name="list">列集</param>
-        public virtual void SetColumns(List<string> list)
+        public virtual void SetColumns(IEnumerable<string> list)
         {
             if (list == null) return;
             if (this.Columns == null) this.Columns = new List<string>();
@@ -601,6 +601,7 @@ select {Limits} row_number() over({OrderBy}) as TempID, * from
             }); 
             //this.Columns.AddRange(list);
         }
+        /*
         /// <summary>
         /// 设置显示列数据
         /// </summary>
@@ -614,7 +615,7 @@ select {Limits} row_number() over({OrderBy}) as TempID, * from
                 if (!this.Columns.Contains(a)) this.Columns.Add(a);
             });
             //this.Columns.AddRange(list);
-        }
+        }*/
         #endregion
 
         #region 获取更新列数据
