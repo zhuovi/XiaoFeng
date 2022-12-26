@@ -10,7 +10,7 @@ using System.Threading.Tasks;
  *  QQ : 7092734                                    *
  *  Email : jacky@fayelf.com                        *
  *  Site : www.fayelf.com                           *
- *  Create Time : 2020/12/22 15:53:11          *
+ *  Create Time : 2020-12-22 15:53:11			    *
  *  Version : v 1.0.0                               *
  ****************************************************/
 namespace XiaoFeng.Cryptography

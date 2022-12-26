@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Security.Cryptography;
-/****************************************************
- *  Copyright © www.fayelf.com All Rights Reserved  *
- *  Author : jacky                                  *
- *  QQ : 7092734                                    *
- *  Email : jacky@fayelf.com                        *
- *  Site : www.fayelf.com                           *
- *  Create Time : 2020/12/22 16:07:10          *
- *  Version : v 1.0.0                               *
- ****************************************************/
+using System.Text;
+/************************************************************
+ *  Copyright © (2020)www.fayelf.com All Rights Reserved.   *
+ *  Author : jacky                                          *
+ *  QQ : 7092734                                            *
+ *  Email : jacky@fayelf.com                                *
+ *  Site : www.fayelf.com                                   *
+ *  Create Time : 2020-12-22 16:07:10                       *
+ *  Version : v 1.0.0                                       *
+ ************************************************************/
 namespace XiaoFeng.Cryptography
 {
     /// <summary>
