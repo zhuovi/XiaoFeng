@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 /****************************************************************
@@ -13,7 +10,8 @@ using System.Threading.Tasks;
 *  Email : jacky@fayelf.com                                     *
 *  Site : www.fayelf.com                                        *
 *  Create Time : 2021-05-26 15:34:18                            *
-*  Version : v 1.0.0                                            *
+*  Update Time : 2022-12-26 11:41:25                            *
+*  Version : v 1.0.1                                            *
 *  CLR Version : 4.0.30319.42000                                *
 *****************************************************************/
 namespace XiaoFeng.Http
@@ -89,5 +87,17 @@ namespace XiaoFeng.Http
         /// <param name="key">key</param>
         /// <returns></returns>
         string GetCookieValue(string key);
+        /// <summary>
+        /// 获取Header值
+        /// </summary>
+        /// <param name="key">key</param>
+        /// <returns></returns>
+        string GetHeader(string key);
+        /// <summary>
+        /// 获取Header值
+        /// </summary>
+        /// <param name="header">key</param>
+        /// <returns></returns>
+        string GetHeader(HttpRequestHeader header);
     }
 }

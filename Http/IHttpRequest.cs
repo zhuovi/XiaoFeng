@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 /****************************************************************
@@ -15,7 +13,8 @@ using System.Threading.Tasks;
 *  Email : jacky@fayelf.com                                     *
 *  Site : www.fayelf.com                                        *
 *  Create Time : 2021-05-26 15:34:01                            *
-*  Version : v 2.0.0                                            *
+*  Update Time : 2022-12-26 11:41:25                            *
+*  Version : v 2.0.1                                            *
 *  CLR Version : 4.0.30319.42000                                *
 *****************************************************************/
 namespace XiaoFeng.Http
@@ -325,5 +324,11 @@ namespace XiaoFeng.Http
         /// <param name="vals">集合</param>
         /// <returns></returns>
         IHttpRequest AddHeader(Dictionary<string, string> vals);
+        /// <summary>
+        /// 设置请求内核
+        /// </summary>
+        /// <param name="httpCore">请求内核</param>
+        /// <returns></returns>
+        IHttpRequest SetHttpCore(HttpCore httpCore);
     }
 }

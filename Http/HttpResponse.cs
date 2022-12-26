@@ -5,7 +5,6 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using XiaoFeng.IO;
 
@@ -16,7 +15,8 @@ using XiaoFeng.IO;
 *  Email : jacky@fayelf.com                                     *
 *  Site : www.fayelf.com                                        *
 *  Create Time : 2021-05-25 18:36:17                            *
-*  Version : v 1.0.0                                            *
+*  Update Time : 2022-12-26 11:41:25                            *
+*  Version : v 1.0.1                                            *
 *  CLR Version : 4.0.30319.42000                                *
 *****************************************************************/
 namespace XiaoFeng.Http
@@ -24,7 +24,7 @@ namespace XiaoFeng.Http
     /// <summary>
     /// 响应对象
     /// </summary>
-    public class HttpResponse : HttpBase,IHttpResponse
+    public class HttpResponse : HttpBase, IHttpResponse
     {
         #region 构造器
         /// <summary>
@@ -128,17 +128,19 @@ namespace XiaoFeng.Http
               });
             //获取最后访问的URl
             this.ResponseUri = this.Response.Headers.Location;
+            if (this.ResponseUri.IsNullOrEmpty())
+                this.ResponseUri = this.Request.Request.RequestUri;
             this.ProtocolVersion = this.Response.Version;
             this.ContentEncoding = this.Response.Content.Headers.ContentEncoding.FirstOrDefault();
             this.ContentLength = this.Response.Content.Headers.ContentLength.Value;
             this.ContentType = this.Response.Content.Headers.ContentType?.MediaType;
             this.CharacterSet = this.Response.Content.Headers.ContentType?.CharSet;
             this.Server = this.Response.Headers.Server.ToString();
-            this.Method = this.Response.RequestMessage.Method.Method.ToEnum<HttpMethod>();
+            this.Method = (HttpMethod)this.Response.RequestMessage.Method;
             this.LastModified = this.Response.Content.Headers.LastModified;
             //获取CookieCollection
             if (this.CookieContainer == null) this.CookieContainer = new CookieContainer();
-            if(this.Response.Headers.TryGetValues("Set-Cookie",out var Cookies))
+            if (this.Response.Headers.TryGetValues("Set-Cookie", out var Cookies))
             {
                 Cookies.Each(c =>
                 {
@@ -178,7 +180,7 @@ namespace XiaoFeng.Http
                     {
                         cookie.Name = a.Key; cookie.Value = a.Value;
                     });
-                   this.CookieContainer.Add(cookie);
+                    this.CookieContainer.Add(cookie);
                 });
             }
             /*读取数据*/
@@ -203,18 +205,20 @@ namespace XiaoFeng.Http
             //获取最后访问的URl
             var location = this.ResponseHttp.Headers.Get(HttpRequestHeader.ContentLocation.ToString());
             if (location.IsNotNullOrEmpty())
-            this.ResponseUri = new Uri(location);
+                this.ResponseUri = new Uri(location);
+            else
+                this.ResponseUri = this.ResponseHttp.ResponseUri;
             this.ProtocolVersion = this.ResponseHttp.ProtocolVersion;
             this.ContentEncoding = this.ResponseHttp.ContentEncoding;
             this.ContentLength = this.ResponseHttp.ContentLength;
             this.ContentType = this.ResponseHttp.ContentType;
             this.CharacterSet = this.ResponseHttp.CharacterSet;
             this.Server = this.ResponseHttp.Server;
-            this.Method = this.ResponseHttp.Method.ToEnum<HttpMethod>();
+            this.Method = (HttpMethod)this.ResponseHttp.Method;
             this.LastModified = this.ResponseHttp.LastModified;
             //获取CookieCollection
             if (this.CookieContainer == null) this.CookieContainer = new CookieContainer();
-            if (this.ResponseHttp.Cookies!=null && this.ResponseHttp.Cookies.Count>0)
+            if (this.ResponseHttp.Cookies != null && this.ResponseHttp.Cookies.Count > 0)
             {
                 if (this.CookieContainer == null) this.CookieContainer = new CookieContainer();
                 this.CookieContainer.Add(this.ResponseHttp.Cookies);
@@ -235,7 +239,7 @@ namespace XiaoFeng.Http
             using (MemoryStream _stream = new MemoryStream())
             {
                 var ContentEncoding = this.ContentEncoding;
-                var stream = this.HttpCore== HttpCore.HttpClient? await this.Response.Content.ReadAsStreamAsync().ConfigureAwait(false):this.ResponseHttp.GetResponseStream();
+                var stream = this.HttpCore == HttpCore.HttpClient ? await this.Response.Content.ReadAsStreamAsync().ConfigureAwait(false) : this.ResponseHttp.GetResponseStream();
                 /*GZIP处理*/
                 if (ContentEncoding.IsNotNullOrEmpty())
                 {
@@ -278,7 +282,7 @@ namespace XiaoFeng.Http
         /// </summary>
         /// <param name="begin">开始时间</param>
         /// <param name="end">结束时间</param>
-        public void SetBeginAndEndTime(DateTime begin,DateTime end)
+        public void SetBeginAndEndTime(DateTime begin, DateTime end)
         {
             this.BeginTime = begin;
             this.EndTime = end;
@@ -312,6 +316,7 @@ namespace XiaoFeng.Http
         public Cookie GetCookie(string key)
         {
             if (key.IsNullOrEmpty()) return null;
+            if (this.ResponseUri.IsNullOrEmpty()) return null;
             var cookies = this.CookieContainer.GetCookies(this.ResponseUri);
             return cookies[key];
         }
@@ -321,6 +326,26 @@ namespace XiaoFeng.Http
         /// <param name="key">key</param>
         /// <returns></returns>
         public string GetCookieValue(string key) => this.GetCookie(key).Value;
+        #endregion
+
+        #region 获取Header
+        /// <summary>
+        /// 获取Header值
+        /// </summary>
+        /// <param name="key">key</param>
+        /// <returns></returns>
+        public string GetHeader(string key)
+        {
+            if (this.Headers != null && this.Headers.Count > 0 && this.Headers.TryGetValue(key, out var val))
+                return val;
+            return String.Empty;
+        }
+        /// <summary>
+        /// 获取Header值
+        /// </summary>
+        /// <param name="header">key</param>
+        /// <returns></returns>
+        public string GetHeader(HttpRequestHeader header) => this.GetHeader(header.ToString());
         #endregion
 
         #endregion

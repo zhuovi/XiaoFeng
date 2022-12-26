@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
 
 /****************************************************************
 *  Copyright © (2021) www.fayelf.com All Rights Reserved.       *
@@ -13,7 +9,8 @@ using System.Threading.Tasks;
 *  Email : jacky@fayelf.com                                     *
 *  Site : www.fayelf.com                                        *
 *  Create Time : 2021-05-25 18:35:08                            *
-*  Version : v 1.0.0                                            *
+*  Update Time : 2022-12-26 11:41:25                            *
+*  Version : v 1.0.1                                            *
 *  CLR Version : 4.0.30319.42000                                *
 *****************************************************************/
 namespace XiaoFeng.Http
@@ -37,7 +34,7 @@ namespace XiaoFeng.Http
         /// <summary>
         /// 请求内核
         /// </summary>
-        public HttpCore HttpCore { get; set; }
+        public HttpCore HttpCore { get; set; } = HttpCore.HttpClient;
         /// <summary>
         /// 获取或设置与此响应关联的 Cookie
         /// </summary>

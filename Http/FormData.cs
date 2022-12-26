@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-/****************************************************************
+﻿/****************************************************************
 *  Copyright © (2021) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
 *  QQ : 7092734                                                 *
@@ -17,7 +11,7 @@ using System.Threading.Tasks;
 namespace XiaoFeng.Http
 {
     /// <summary>
-    /// FormData 类说明
+    /// FormData 操作类
     /// </summary>
     public class FormData
     {

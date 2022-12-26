@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
@@ -22,9 +16,9 @@ using System.Threading.Tasks;
 namespace XiaoFeng.Redis.IO
 {
     /// <summary>
-    /// RedisSocket 类
+    /// RedisSocket 操作类
     /// </summary>
-    public class RedisSocket :Disposable, IRedisSocket
+    public class RedisSocket : Disposable, IRedisSocket
     {
         #region 构造器
         /// <summary>
@@ -120,9 +114,9 @@ namespace XiaoFeng.Redis.IO
         public void Connect()
         {
             Init();
-            IAsyncResult result = this.SocketClient.BeginConnect(this.ConnConfig.Host,this.ConnConfig.Port, null, null);
+            IAsyncResult result = this.SocketClient.BeginConnect(this.ConnConfig.Host, this.ConnConfig.Port, null, null);
             if (!result.AsyncWaitHandle.WaitOne(Math.Max(this.ConnConfig.ConnectionTimeout, 10000), true))
-                throw new RedisException("连接服务器超时.");
+                throw new RedisException($"连接服务器超时.{this.ConnConfig.ToJson()}");
         }
         ///<inheritdoc/>
         public Stream GetStream()

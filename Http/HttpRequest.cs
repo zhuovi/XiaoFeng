@@ -18,7 +18,8 @@ using XiaoFeng.IO;
 *  Email : jacky@fayelf.com                                     *
 *  Site : www.fayelf.com                                        *
 *  Create Time : 2021-05-25 18:36:04                            *
-*  Version : v 3.0.0                                            *
+*  Update Time : 2022-12-26 11:41:25                            *
+*  Version : v 3.0.1                                            *
 *  CLR Version : 4.0.30319.42000                                *
 *****************************************************************/
 namespace XiaoFeng.Http
@@ -1122,6 +1123,19 @@ namespace XiaoFeng.Http
                 else
                     this.Headers.Add(k.Key, k.Value);
             });
+            return this;
+        }
+        #endregion
+
+        #region 设置请求内核
+        /// <summary>
+        /// 设置请求内核
+        /// </summary>
+        /// <param name="httpCore">请求内核</param>
+        /// <returns></returns>
+        public IHttpRequest SetHttpCore(HttpCore httpCore)
+        {
+            this.HttpCore = httpCore;
             return this;
         }
         #endregion
