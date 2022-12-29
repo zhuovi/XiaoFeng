@@ -2247,6 +2247,7 @@ namespace XiaoFeng.Data.SQL
                             Dirtys.ToArray().Each(k =>
                             {
                                 var p = _t.GetProperty(k,BindingFlags.Public| BindingFlags.IgnoreCase | BindingFlags.Instance);
+                                if (p.IsDefined(typeof(FieldIgnoreAttribute))) return;
                                 object value = p.GetValue(model, null);
                                 ColumnAttribute column = p.GetCustomAttribute<ColumnAttribute>();
                                 if (column != null && column.AutoIncrement) return;
@@ -2268,6 +2269,7 @@ namespace XiaoFeng.Data.SQL
                     _t.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase).Each(p =>
                     {
                         if (!p.CanRead || !p.CanWrite || p.IsIndexer()) return;
+                        if (p.IsDefined(typeof(FieldIgnoreAttribute))) return;
                         object value = p.GetValue(model, null);
                         if (value != null)
                         {
@@ -2339,10 +2341,10 @@ namespace XiaoFeng.Data.SQL
                         {
                             var p = t.GetProperty(k, BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance);
                             if (p == null) return;
+                            if (p.IsDefined(typeof(FieldIgnoreAttribute))) return;
                             object value = p.GetValue(model, null);
-                            ColumnAttribute Column = p.GetCustomAttribute<ColumnAttribute>();
+                            var Column = p.GetCustomAttribute<ColumnAttribute>();
                             if (Column != null && Column.AutoIncrement) return;
-
                             Type _t = p.PropertyType;
                             if (!_t.Name.IsMatch(@"^List`") && _t.ToString().IsMatch(@"^System\."))
                             {
@@ -2364,6 +2366,7 @@ namespace XiaoFeng.Data.SQL
                 t.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase).Each(p =>
                 {
                     if (ValueType != ValueTypes.Anonymous && (!p.CanRead || !p.CanWrite || p.IsIndexer())) return;
+                    if (p.IsDefined(typeof(FieldIgnoreAttribute))) return;
                     if (!p.CanRead || !p.CanWrite || p.IsIndexer()) return;
                     object value = p.GetValue(model, null);
                     if (value != null)
@@ -2670,6 +2673,7 @@ namespace XiaoFeng.Data.SQL
                         {
                             var p = t.GetProperty(k, BindingFlags.IgnoreCase| BindingFlags.Public | BindingFlags.Instance);
                             if (p == null) return;
+                            if (p.IsDefined(typeof(FieldIgnoreAttribute))) return;
                             object value = p.GetValue(model, null);
                             //if (value != null)
                             {
@@ -2735,6 +2739,7 @@ namespace XiaoFeng.Data.SQL
                     t.GetProperties( BindingFlags.Instance| BindingFlags.Public| BindingFlags.IgnoreCase).Each(p =>
                     {
                         if (!p.CanRead || !p.CanWrite || p.IsIndexer() || !p.PropertyType.IsValueType()) return;
+                        if (p.IsDefined(typeof(FieldIgnoreAttribute))) return;
                         object value = p.GetValue(model, null);
                         if (value != null)
                         {
@@ -2847,6 +2852,7 @@ namespace XiaoFeng.Data.SQL
                             Dirtys.ToArray().Each(k =>
                             {
                                 var p = t.GetProperty(k, BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance);
+                                if (p.IsDefined(typeof(FieldIgnoreAttribute))) return;
                                 object value = p.GetValue(model, null);
                                 //if (value != null)
                                 {
@@ -2901,6 +2907,7 @@ namespace XiaoFeng.Data.SQL
                     _t.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase).Each(p =>
                     {
                         if (ValueType != ValueTypes.Anonymous && (!p.CanRead || !p.CanWrite || p.IsIndexer()) && !p.PropertyType.IsValueType()) return;
+                        if (p.IsDefined(typeof(FieldIgnoreAttribute))) return;
                         object value = p.GetValue(model, null);
                         if (value != null)
                         {
