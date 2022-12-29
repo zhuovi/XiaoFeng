@@ -24,7 +24,7 @@
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageReleaseNotes>IQueryableX 增加Select(IEnumable)设置显示字段;修改HttpHelper响应请求类型为空的bug;增加设置HttpHelper请求内核方法;优化HttpHelper响应ResponseUri为空时,取cookie出错问题;增加HttpHelper中响应获取Header方法GetHeader;优化IQueryableX中插入无脏数据时获取到未设置字段问题;</PackageReleaseNotes>
+		<PackageReleaseNotes>IQueryableX 增加Select(IEnumable)设置显示字段;修改HttpHelper响应请求类型为空的bug;增加设置HttpHelper请求内核方法;优化HttpHelper响应ResponseUri为空时,取cookie出错问题;增加HttpHelper中响应获取Header方法GetHeader;优化IQueryableX中插入无脏数据时获取到未设置字段问题;增加MKV类型;</PackageReleaseNotes>
 		<DelaySign>False</DelaySign>
 		<IsPackable>true</IsPackable>
 		<PackageProjectUrl>https://github.com/zhuovi/XiaoFeng</PackageProjectUrl>

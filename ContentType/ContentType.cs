@@ -129,6 +129,7 @@ namespace XiaoFeng
             {"swf", "application/x-shockwave-flash" },
             {"wmx", "video/x-ms-wmx" },
             {"3gp", "video/3gpp" },
+            {"mkv", "video/x-matroska" },
             {"flv", "flv-application/octet-stream,video/x-flv" },
             /*附件*/
             {"apk", "application/vnd.android,application/octet-stream,application/vnd.android.package-archive" },
