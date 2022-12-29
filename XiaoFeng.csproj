@@ -7,8 +7,8 @@
 		<Description>基础类库、数据库中间件、网络通讯中间件、Redis、Socket、HttpHelper、IQueryableX、Cache、FTP、JSON、XML、IO、配置、各种加密码算法、作业调度、正则、通用数据库操作，支持10多种数据库</Description>
 		<Copyright>CopyRight @ 2008-2024 魔法精灵(www.fayelf.com) QQ:7092734 Email:jacky@fayelf.com</Copyright>
 		<Company>魔法精灵</Company>
-		<VersionPrefix>3.1</VersionPrefix>
-		<VersionSuffix>9</VersionSuffix>
+		<VersionPrefix>3.2</VersionPrefix>
+		<VersionSuffix>0</VersionSuffix>
 		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
 		<FileVersion>$(Version)</FileVersion>
 		<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
@@ -24,7 +24,7 @@
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageReleaseNotes>IQueryableX 增加Select(IEnumable)设置显示字段;修改HttpHelper响应请求类型为空的bug;增加设置HttpHelper请求内核方法;优化HttpHelper响应ResponseUri为空时,取cookie出错问题;增加HttpHelper中响应获取Header方法GetHeader;优化IQueryableX中插入无脏数据时获取到未设置字段问题;增加MKV类型;</PackageReleaseNotes>
+		<PackageReleaseNotes>IQueryableX 增加Select(IEnumable)设置显示字段;修改HttpHelper响应请求类型为空的bug;增加设置HttpHelper请求内核方法;优化HttpHelper响应ResponseUri为空时,取cookie出错问题;增加HttpHelper中响应获取Header方法GetHeader;优化IQueryableX中插入无脏数据时获取到未设置字段问题;增加MKV类型;增加Excel操作类;</PackageReleaseNotes>
 		<DelaySign>False</DelaySign>
 		<IsPackable>true</IsPackable>
 		<PackageProjectUrl>https://github.com/zhuovi/XiaoFeng</PackageProjectUrl>
