@@ -680,7 +680,97 @@ job.Start();
 
 # XiaoFeng.Json Json序列号
 
-# XiaoFeng.Socket Socket操作
+# XiaoFeng.Net Socket操作
+
+## 服务端实例
+
+```csharp
+//新建一个服务端,同时支持websocket,socket客户端连接
+var SocketServer = new XiaoFeng.Net.NetServer<XiaoFeng.Net.ServerSession>(8888)
+{
+    //是否启用ping
+    IsPing = true,
+    //是否启用新行
+    IsNewLine = true,
+    //传输编码
+    Encoding = System.Text.Encoding.UTF8
+};
+SocketServer.SocketAuth = session =>
+{
+    //判断 客户端是否符合认证,不符合则直接返回false即可
+    return true;
+};
+SocketServer.OnClientError += (session,e)=>
+{
+    //客户端出错事件
+};
+SocketServer.OnDisconnected += (session,e)=>
+{
+    //断开连接事件
+};
+SocketServer.OnError += (session, e) =>
+{
+    //服务端出错事件
+};
+SocketServer.OnNewConnection += (session, e) =>
+{
+    //有新的连接事件
+};
+SocketServer.OnMessageByte += (session,message,e)=>
+{
+    //接收消息事件
+
+    session.Send("回复客户端消息");
+};
+SocketServer.OnStart += (socket,e)=>
+{
+    //服务端启动事件
+};
+SocketServer.OnStop += (socket,e)=>
+{
+    //服务端停止事件
+};
+//启动监听
+SocketServer.Start();
+//发送消息给所有客户端
+SocketServer.Send("发送消息");
+//添加黑名单
+SocketServer.AddIpBlack("124.2.2.2");
+```
+
+## 客户端实例
+
+```csharp
+var SocketClient = new XiaoFeng.Net.NetClient<XiaoFeng.Net.ClientSession>("127.0.0.1", 8888);
+SocketClient.OnStart += (socket, e) =>
+{
+    //启动消息
+};
+SocketClient.OnClose += (socket,e)=>
+{
+    //关闭消息
+};
+SocketClient.OnDisconnected += (session,e)=>{
+    //断开连接消息
+};
+SocketClient.OnError += (socket,e)=>
+{
+    //出错消息
+};
+
+SocketClient.OnMessageByte += (session,message,e)=>
+{
+//接收信息
+};
+
+//启动客户端
+SocketClient.Start();
+
+SocketClient.Send("发送消息");
+SocketClient.Subscribe("订阅频道");
+
+SocketClient.UnSubscribe("取消订阅频道");
+```
 
 # 作者介绍
 
