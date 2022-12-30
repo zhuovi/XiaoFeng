@@ -674,11 +674,470 @@ job.Start();
 
 当前作业为，5分钟后运行，然后每周的周一，周四的两点执行一次。
 
-# XiaoFeng.FTP
+# XiaoFeng.Ftp
+
+FTP客户端
+
+```csharp
+var ftp = new XiaoFeng.Ftp.FtpClient(new XiaoFeng.Ftp.FtpClientConfig
+{
+     Host= "127.0.0.1",
+     Port= 21
+});
+//上传一个文件
+var a = await ftp.PutAsync(@"E://a/a.txt");
+//上传一个文件到指定目录
+var b = await ftp.UploadFileAsync(@"E://a/a.txt", "/a/a.txt");
+//上传一个文件夹到指定目录
+await ftp.UploadFolderAsync(@"E://a", "/a");
+//下载一个文件到指定目录
+var c = await ftp.DownFileAsync(@"/a/a.txt", @"E://a", "a.txt");
+//获取文件夹列表
+var d = await ftp.GetDirAsync("a");
+//获取文件夹列表-详细
+var e = await ftp.GetDirListAsync("a");
+//获取文件详细信息
+var f = await ftp.GetFileInfoAsync("a/a.txt");
+//获取文件大小
+var g = await ftp.GetFileSizeAsync(@"a/a/txt");
+//改变文件目录
+var h = await ftp.ChangeDirectoryAsync("/b");
+//删除文件夹
+var i = await ftp.DeleteAsync("a");
+//删除文件
+var j = await ftp.DeleteAsync("a/a.txt");
+//当前目录
+var k = ftp.RemoteDirectory;
+```
 
 # XiaoFeng.Xml Xml序列化
 
+XML序列化操作就是把一个数据对象序列化成XML格式的数据，反序列化操作就是把一个XML格式的数据反序列化成一个数据对象。
+命名空间:XiaoFeng.Xml
+先看序列化配置
+
+```csharp
+/// <summary>
+/// 序列化设置
+/// </summary>
+public class XmlSerializerSetting
+{
+    #region 构造器
+    /// <summary>
+    /// 无参构造器
+    /// </summary>
+    public XmlSerializerSetting()
+    {
+
+    }
+    #endregion
+
+    #region 属性
+    /// <summary>
+    /// Guid格式
+    /// </summary>
+    public string GuidFormat { get; set; } = "D";
+    /// <summary>
+    /// 日期格式
+    /// </summary>
+    public string DateTimeFormat { get; set; } = "yyyy-MM-dd HH:mm:ss.fff";
+    /// <summary>
+    /// 是否格式化
+    /// </summary>
+    public bool Indented { get; set; } = true;
+    /// <summary>
+    /// 枚举值
+    /// </summary>
+    public EnumValueType EnumValueType { get; set; } = 0;
+    /// <summary>
+    /// 解析最大深度
+    /// </summary>
+    public int MaxDepth { get; set; } = 28;
+    /// <summary>
+    /// 是否写注释
+    /// </summary>
+    public bool OmitComment { get; set; } = true;
+    /// <summary>
+    /// 忽略大小写 key值统一变为小写
+    /// </summary>
+    public bool IgnoreCase { get; set; } = false;
+    /// <summary>
+    /// 默认根目录节点名称
+    /// </summary>
+    public string DefaultRootName { get; set; } = "Root";
+    /// <summary>
+    /// 默认编码
+    /// </summary>
+    public Encoding DefaultEncoding { get; set; } = Encoding.UTF8;
+    /// <summary>
+    /// 获取或设置一个值，该值指示是否 System.Xml.XmlWriter 编写 XML 内容时应移除重复的命名空间声明。 写入器的默认行为是输出写入器的命名空间解析程序中存在的所有命名空间声明。
+    /// </summary>
+    public NamespaceHandling NamespaceHandling { get; set; }
+    /// <summary>
+    /// 是否忽略输出XML声明
+    /// </summary>
+    public Boolean OmitXmlDeclaration { get; set; } = false;
+    /// <summary>
+    /// 获取或设置要用于换行符的字符串。要用于换行符的字符串。 它可以设置为任何字符串值。 但是，为了确保 XML 有效，应该只指定有效的空格字符，例如空格、制表符、回车符或换行符。 默认值是\r\n （回车符、 换行符）。
+    /// </summary>
+    public string NewLineChars { get; set; } = Environment.NewLine;
+    /// <summary>
+    /// 是否忽略数组项未指定KEY的项用节点名称代替
+    /// </summary>
+    public Boolean OmitArrayItemName { get; set; } = true;
+    /// <summary>
+    /// 是否忽略空节点
+    /// </summary>
+    public Boolean OmitEmptyNode { get; set; } = true;
+    /// <summary>
+    /// 是否忽略命名空间
+    /// </summary>
+    public Boolean OmitNamespace { get; set; } = true;
+    #endregion
+}
+```
+
+简单使用，扩展了两个方法 EntityToXml(),XmlToEntity();
+先看 XMl模型对象
+
+``` csharp
+/// <summary>
+/// XmlModel 类说明
+/// </summary>
+[XmlRoot("Root")]
+public class XmlModel
+{
+    #region 构造器
+    /// <summary>
+    /// 无参构造器
+    /// </summary>
+    public XmlModel()
+    {
+
+    }
+    #endregion
+
+    #region 属性
+    /// <summary>
+    /// 属性1
+    /// </summary>
+    [XmlCData]
+    [XmlElement("NameA")]
+    public string FieldName1 { get; set; }
+    /// <summary>
+    /// 属性2
+    /// </summary>
+    [XmlConverter(typeof(XiaoFeng.Xml.StringEnumConverter))]
+    [XmlElement("NameB")]
+    public EnumValueType FieldName2 { get; set;}
+    /// <summary>
+    /// 属性3
+    /// </summary>
+    [XmlConverter(typeof(XiaoFeng.Xml.DescriptionConverter))]
+    [XmlElement("Namec")]
+    public EnumValueType FieldName3 { get; set; }
+    /// <summary>
+    /// 属性4
+    /// </summary>
+    public string FieldName4 { get; set; }
+    #endregion
+
+    #region 方法
+
+    #endregion
+}
+```
+简单使用
+
+```csharp
+var a = new XmlModel
+    {
+        FieldName1 = "Value1",
+        FieldName2 = EnumValueType.Name,
+        FieldName3 = EnumValueType.Value,
+        FieldName4 = "Value4"
+    }.EntityToXml();
+//XmlSerializer.Serializer(a) 和a.EntityToXml()是一样的
+```
+//输出结果
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Root>
+  <FieldName1><![CDATA[Value1]]></FieldName1>
+  <NameB>Name</NameB>
+  <Namec>值</Namec>
+  <FieldName4>Value4</FieldName4>
+</Root>
+var b = a.XmlToEntity<XmlModel>();
+//XmlSerializer.Deserialize<XmlModel>(a) 和XmlToEntity<XmlModel>()是一样的
+```
+接下来讲一下序列化时的几个特性
+
+```csharp
+//忽略属性值
+XmlIgnoreAttribute
+//指定节点名称
+XmlElementPath
+//转换类型
+XmlConverterAttribute
+//枚举转换器
+StringEnumConverter
+//说明转换器
+DescriptionConverter
+```
+下边举例讲一下XmlElementPath的使用,当前属性仅支持反序列化时使用，序列化时暂时还不支持当前属性。假设下边有一个 这样的xml
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Root>
+  <NameA>
+    <NameD><![CDATA[Value1]]><NameD>
+    <NameC>bbb</NameC>
+  </NameA>
+  <NameB>Name</NameB>
+  <Namec>值</Namec>
+  <FieldName4>Value4</FieldName4>
+</Root>
+```
+按正常定义模型时 NameA 子节点 A  B 要定义到一个类中 
+实际在这里可以这样定义
+
+```csharp
+/// <summary>
+  /// XmlModel 类说明
+  /// </summary>
+  [XmlRoot("Root")]
+  public class XmlModel
+  {
+      #region 构造器
+      /// <summary>
+      /// 无参构造器
+      /// </summary>
+      public XmlModel()
+      {
+
+      }
+      #endregion
+
+      #region 属性
+      /// <summary>
+      /// 属性1
+      /// </summary>
+      [XmlCData]
+      [XmlElementPath("NameA/NameC")]
+      public string A { get; set; }
+      /// <summary>
+      /// 属性1
+      /// </summary>
+      [XmlCData]
+      [XmlElementPath("NameA/NameD")]
+      public string B { get; set; }
+      /// <summary>
+      /// 属性2
+      /// </summary>
+      [XmlConverter(typeof(XiaoFeng.Xml.StringEnumConverter))]
+      [XmlElement("NameB")]
+      public EnumValueType FieldName2 { get; set;}
+      /// <summary>
+      /// 属性3
+      /// </summary>
+      [XmlConverter(typeof(XiaoFeng.Xml.DescriptionConverter))]
+      [XmlElement("Namec")]
+      public EnumValueType FieldName3 { get; set; }
+      /// <summary>
+      /// 属性4
+      /// </summary>
+      public string FieldName4 { get; set; }
+      #endregion
+
+      #region 方法
+
+      #endregion
+  }
+```
+反序列化结果为:
+
+就是可以直接从子节点取数据反序列化到对象上，不用再单独去定义子模型了。
+如果不想定义模型，则XiaoFeng.Xml中提供了一个万能的对象模型就是XmlValue对象。
+Xml序列化，反序列化就讲到这里，具体操作还需要自己去实践操作。
+
 # XiaoFeng.Json Json序列号
+
+JSON序列化操作，就是把数据对象序列化成JSON数据，也可以把JSON数据反序列化成数据对象。
+命名空间是：XiaoFeng.Json
+序列化方法 JsonParser.SerializeObject 也可以用扩展方法 ToJson()
+反序列化方法 JsonParser.JsonParser.DeserializeObject<T>() 也可以使用JsonToObject()
+简单使用，看代码
+
+```csharp
+//序列化
+var a = new {
+        key1="value1",
+        key2 ="value2"
+    }.ToJson();
+//a的值就是：{"key1":"value1","key2":"value2"}
+//反序列化
+var b = @"{""key1"":""value1"",""key2"":""value2""}.JsonToObject();
+//b的值就是：一个字典形式
+
+```
+上边用的是一个匿名对象，反序列化回来的时候因为没有设置对应的类型，所以自动转换成JsonValue类型的值；
+下边详细介绍一下 序列配置,在使用Tojson,JsonToObject扩展方法时可以设置配置参数的。配置参数如下：
+
+```csharp
+/// <summary>
+/// Json格式设置
+/// </summary>
+public class JsonSerializerSetting
+{
+    #region 构造器
+    /// <summary>
+    /// 无参构造器
+    /// </summary>
+    public JsonSerializerSetting() { }
+    #endregion
+
+    #region 属性
+    /// <summary>
+    /// Guid格式
+    /// </summary>
+    public string GuidFormat { get; set; } = "D";
+    /// <summary>
+    /// 日期格式
+    /// </summary>
+    public string DateTimeFormat { get; set; } = "yyyy-MM-dd HH:mm:ss.fff";
+    /// <summary>
+    /// 是否格式化
+    /// </summary>
+    public bool Indented { get; set; } = false;
+    /// <summary>
+    /// 枚举值
+    /// </summary>
+    public EnumValueType EnumValueType { get; set; } = 0;
+    /// <summary>
+    /// 解析最大深度
+    /// </summary>
+    public int MaxDepth { get; set; } = 28;
+    /// <summary>
+    /// 是否写注释
+    /// </summary>
+    public bool IsComment { get; set; } = false;
+    /// <summary>
+    /// 忽略大小写 key值统一变为小写
+    /// </summary>
+    public bool IgnoreCase { get; set; } = false;
+    /// <summary>
+    /// 忽略空节点
+    /// </summary>
+    public bool OmitEmptyNode { get; set; } = false;
+    #endregion
+}
+```
+接下来讲一下序列化时的几个特性
+
+```csharp
+//忽略属性值
+JsonIgnoreAttribute
+//指定节点名称
+JsonElement
+//转换类型
+JsonConverterAttribute
+//枚举转换器
+StringEnumConverter
+//说明转换器
+DescriptionConverter
+```
+
+下边通过实例讲解一下;下面是一个定义好的JSON模型
+
+```csharp
+/// <summary>
+/// JsonModel 类说明
+/// </summary>
+public class JsonModel
+{
+    #region 构造器
+    /// <summary>
+    /// 无参构造器
+    /// </summary>
+    public JsonModel()
+    {
+
+    }
+    #endregion
+
+    #region 属性
+    /// <summary>
+    /// 属性1
+    /// </summary>
+    [JsonElement("NameA")]
+    public string FieldName1 { get; set; }
+    /// <summary>
+    /// 属性2
+    /// </summary>
+    [JsonConverter(typeof(XiaoFeng.Json.DescriptionConverter))]
+    [JsonElement("NameB")]
+    public EnumValueType FieldName2 { get; set; }
+    /// <summary>
+    /// 属性3
+    /// </summary>
+    [JsonConverter(typeof(XiaoFeng.Json.StringEnumConverter))]
+    [JsonElement("NameC")]
+    public EnumValueType FieldName3 { get; set; }
+    /// <summary>
+    /// 属性4
+    /// </summary>
+    [JsonElement("NameD")]
+    public EnumValueType FieldName4 { get; set; }
+    #endregion
+
+    #region 方法
+
+    #endregion
+}
+//使用时
+var a = new JsonModel
+{
+    FieldName1 = "aaaa",
+    FieldName2 = EnumValueType.Name,
+    FieldName3 = EnumValueType.Value,
+	FieldName4 = EnumValueType.Value
+}.ToJson();
+//当前转换成JSON是：{"NameA":"aaaa","NameB":"名称","NameC":"Value","NameD":0}
+//因为 FieldName1 被设置成了NameA FieldName2被设置成了NameB FieldName3被设置成了NameC FieldName4无设置
+//两个枚举值不一样，是因为第二个设置的是读取Description内容 就是EnumValueType.Name的属性值DescriptionAttribute中设置的值
+//第三个取的是Value是因为设置取的是StringEnumConverter 所以直接就转换成了名称，如果不设置则直接输出对应的数字
+//反序列化时也是这样对应到实体模型中去
+```
+
+Json序列化，反序列化就讲到这里，具体操作还需要自己去实践操作。
+
+
+# XiaoFeng.Excel 操作
+
+```csharp
+
+var excel = new XiaoFeng.Excel.Workbook();
+//打开excel
+excel.Open(@"E://a.xlsx");
+///excel中所有的表
+var sheets = excel.Sheets;
+//第一张表中所有行
+var rows = excel.Sheets.FirstOrDefault().Rows;
+//第一张表中第一行所有列
+var cells = rows.FirstOrDefault().Cells;
+//单元格值
+var cellValue = cell.Value;
+//单元格位置
+var location = cell.Location;
+//单元格格式
+var format = cell.Format;
+//单元格所在行
+var cellRow = cell.Row;
+//单元格所在列
+var cellColumn = cell.Column;
+
+```
 
 # XiaoFeng.Net Socket操作
 
