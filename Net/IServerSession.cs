@@ -29,10 +29,6 @@ namespace XiaoFeng.Net
         /// </summary>
         String Name { get; set; }
         /// <summary>
-        /// 频道
-        /// </summary>
-        String Channel { get; set; }
-        /// <summary>
         /// 分组ID
         /// </summary>
         String GroupID { get; set; }

@@ -20,5 +20,25 @@ namespace XiaoFeng.Net
     /// </summary>
     public interface INetClient : ISocket
     {
+        /// <summary>
+        /// 订阅频道
+        /// </summary>
+        /// <param name="channel">频道</param>
+        void Subscribe(string channel);
+        /// <summary>
+        /// 订阅频道
+        /// </summary>
+        /// <param name="channels">频道</param>
+        void Subscribe(IEnumerable<string> channels);
+        /// <summary>
+        /// 取消订阅频道
+        /// </summary>
+        /// <param name="channel">频道</param>
+        void UnSubscribe(string channel);
+        /// <summary>
+        /// 取消订阅频道
+        /// </summary>
+        /// <param name="channels">频道</param>
+        void UnSubscribe(IEnumerable<string> channels);
     }
 }

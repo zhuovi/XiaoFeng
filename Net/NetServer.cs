@@ -551,6 +551,19 @@ namespace XiaoFeng.Net
                 this.RemoveQueue(session);
             }
         }
+        /// <summary>
+        /// 发送频道消息
+        /// </summary>
+        /// <param name="channel">频道</param>
+        /// <param name="bytes">数据</param>
+        public void Send(string channel, byte[] bytes)
+        {
+            if (bytes.IsNullOrEmpty()) return;
+            this.ConnectionSocketList.Values.Where(a => a.Channel.Contains(channel, StringComparer.OrdinalIgnoreCase)).Each(socket =>
+            {
+                this.Send(bytes, socket);
+            });
+        }
         #endregion
 
         #region 队列
@@ -950,5 +963,6 @@ namespace XiaoFeng.Net
             return false;
         }
         #endregion
+        
     }
 }

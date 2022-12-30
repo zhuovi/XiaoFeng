@@ -97,6 +97,12 @@ namespace XiaoFeng.Net
         /// <param name="socket">连接</param>
         void Send(byte[] bytes, Socket socket);
         /// <summary>
+        /// 发送频道消息
+        /// </summary>
+        /// <param name="channel">频道</param>
+        /// <param name="bytes">消息</param>
+        void Send(string channel, byte[] bytes);
+        /// <summary>
         /// 发送消息
         /// </summary>
         /// <param name="bytes">消息</param>
@@ -206,6 +212,5 @@ namespace XiaoFeng.Net
         /// <param name="endPoint">IP和port</param>
         /// <returns></returns>
         Boolean IsConnected(IPEndPoint endPoint);
-
     }
 }

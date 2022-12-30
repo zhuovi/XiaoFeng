@@ -36,6 +36,10 @@ namespace XiaoFeng.Net
 
         #region 属性
         /// <summary>
+        /// 频道
+        /// </summary>
+        public IList<String> Channel { get; set; }
+        /// <summary>
         /// WS类型
         /// </summary>
         public WebSocketType WsType { get; set; } = WebSocketType.Null;
@@ -154,10 +158,10 @@ namespace XiaoFeng.Net
             if (message.IsNullOrEmpty() || this.ConnectionSocket == null || !this.ConnectionSocket.Connected) return false;
             if (this.IsNewLine)
                 message += Environment.NewLine;
-           return this.Send(this.WsType != WebSocketType.Null &&
-                message.IndexOf("Sec-WebSocket-Key") == -1 ?
-                new DataFrame(message,this.Encoding,this.OpCode,this.DataType).GetBytes() :
-                this.GetBytes(message));
+            return this.Send(this.WsType != WebSocketType.Null &&
+                 message.IndexOf("Sec-WebSocket-Key") == -1 ?
+                 new DataFrame(message, this.Encoding, this.OpCode, this.DataType).GetBytes() :
+                 this.GetBytes(message));
         }
         /// <summary>
         /// 发送消息
@@ -197,6 +201,59 @@ namespace XiaoFeng.Net
             if (this.ConnectionSocket != null && this.ConnectionSocket.Connected) this.ConnectionSocket.Close();
         }
         #endregion
+
+        #region 添加频道
+        /// <summary>
+        /// 添加频道
+        /// </summary>
+        /// <param name="channel">频道</param>
+        public void AddChannel(string channel)
+        {
+            if (channel.IsNullOrEmpty()) return;
+            if (this.Channel.IsNullOrEmpty()) this.Channel = new List<string>();
+            if (this.Channel.Contains(channel, StringComparer.OrdinalIgnoreCase)) return;
+            this.Channel.Add(channel);
+        }
+        /// <summary>
+        /// 添加频道
+        /// </summary>
+        /// <param name="channels">频道</param>
+        public void AddChannel(IEnumerable<String> channels)
+        {
+            if (channels.IsNullOrEmpty()) return;
+            if (this.Channel.IsNullOrEmpty()) this.Channel = new List<string>();
+            channels.Each(channel =>
+            {
+                if (this.Channel.Contains(channel, StringComparer.OrdinalIgnoreCase)) return;
+                this.Channel.Add(channel);
+            });
+        }
+        #endregion
+
+        #region 移除频道
+        /// <summary>
+        /// 移除频道
+        /// </summary>
+        /// <param name="channel">频道</param>
+        public void RemoveChannel(string channel)
+        {
+            if (channel.IsNullOrEmpty() || this.Channel.IsNullOrEmpty()) return;
+            if (this.Channel.Contains(channel, StringComparer.OrdinalIgnoreCase)) this.Channel.Remove(channel);
+        }
+        /// <summary>
+        /// 移除频道
+        /// </summary>
+        /// <param name="channels">频道</param>
+        public void RemoveChannel(IEnumerable<String> channels)
+        {
+            if (channels.IsNullOrEmpty() || this.Channel.IsNullOrEmpty()) return;
+            this.Channel.Each(channel =>
+            {
+                if (this.Channel.Contains(channel, StringComparer.OrdinalIgnoreCase)) this.Channel.Remove(channel);
+            });
+        }
+        #endregion
+
         #endregion
     }
     #endregion

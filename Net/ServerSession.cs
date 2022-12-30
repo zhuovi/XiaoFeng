@@ -47,10 +47,6 @@ namespace XiaoFeng.Net
         /// </summary>
         public String Name { get; set; }
         /// <summary>
-        /// 频道
-        /// </summary>
-        public String Channel { get; set; }
-        /// <summary>
         /// 分组ID
         /// </summary>
         public String GroupID { get; set; }
@@ -225,15 +221,26 @@ namespace XiaoFeng.Net
                 {
                     msg = buffer.GetString(this.Encoding, 0, length);
                 }
-                /*websocket建立连接的时候,除了TCP连接的三次握手,websocket协议中客户端与服务器想建立连接需要一次额外的握手动作*/
-                OnMessage?.Invoke(this, msg, EventArgs.Empty);
-                OnMessageByte?.Invoke(this, this.GetBytes(msg), EventArgs.Empty);
-                /*if (OnMessageByte != null)
+                if (msg.StartsWith("SUBSCRIBE:", StringComparison.OrdinalIgnoreCase))
                 {
-                    byte[] msgBytes = new byte[length];
-                    Buffer.BlockCopy(ReceivedDataBuffer, 0, msgBytes, 0, length);
-                    OnMessageByte?.Invoke(this, msgBytes, EventArgs.Empty);
-                }*/
+                    this.AddChannel(msg.RemovePattern(@"^SUBSCRIBE:").Split(','));
+                }
+                else if (msg.StartsWith("UNSUBSCRIBE", StringComparison.OrdinalIgnoreCase))
+                {
+                    this.RemoveChannel(msg.RemovePattern(@"^UNSUBSCRIBE:").Split(','));
+                }
+                else
+                {
+                    /*websocket建立连接的时候,除了TCP连接的三次握手,websocket协议中客户端与服务器想建立连接需要一次额外的握手动作*/
+                    OnMessage?.Invoke(this, msg, EventArgs.Empty);
+                    OnMessageByte?.Invoke(this, this.GetBytes(msg), EventArgs.Empty);
+                    /*if (OnMessageByte != null)
+                    {
+                        byte[] msgBytes = new byte[length];
+                        Buffer.BlockCopy(ReceivedDataBuffer, 0, msgBytes, 0, length);
+                        OnMessageByte?.Invoke(this, msgBytes, EventArgs.Empty);
+                    }*/
+                }
             }
             catch (SocketException ex)
             {

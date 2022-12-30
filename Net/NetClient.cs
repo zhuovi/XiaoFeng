@@ -407,6 +407,45 @@ Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits
         }
         #endregion
 
+        #region 订阅频道
+        /// <summary>
+        /// 订阅频道
+        /// </summary>
+        /// <param name="channel">频道</param>
+        public void Subscribe(string channel)
+        {
+            Session.AddChannel(channel);
+            this.Send("SUBSCRIBE:" + channel);
+        }
+        /// <summary>
+        /// 订阅频道
+        /// </summary>
+        /// <param name="channels">频道</param>
+        public void Subscribe(IEnumerable<string> channels)
+        {
+            Session.AddChannel(channels);
+            this.Send("SUBSCRIBE:" + channels.Join(","));
+        }
+        /// <summary>
+        /// 取消订阅频道
+        /// </summary>
+        /// <param name="channel">频道</param>
+        public void UnSubscribe(string channel)
+        {
+            Session.RemoveChannel(channel);
+            this.Send("UNSUBSCRIBE:" + channel);
+        }
+        /// <summary>
+        /// 取消订阅频道
+        /// </summary>
+        /// <param name="channels">频道</param>
+        public void UnSubscribe(IEnumerable<string> channels)
+        {
+            Session.RemoveChannel(channels);
+            this.Send("UNSUBSCRIBE:" + channels.Join(","));
+        }
+        #endregion
+
         #endregion
     }
 }

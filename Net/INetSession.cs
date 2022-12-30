@@ -24,6 +24,10 @@ namespace XiaoFeng.Net
     public interface INetSession
     {
         /// <summary>
+        /// 频道
+        /// </summary>
+        IList<String> Channel { get; set; }
+        /// <summary>
         /// WS类型
         /// </summary>
         WebSocketType WsType { get; set; }
@@ -118,6 +122,25 @@ namespace XiaoFeng.Net
         /// 关闭
         /// </summary>
         void Close();
-        
+        /// <summary>
+        /// 添加频道
+        /// </summary>
+        /// <param name="channel">频道</param>
+        void AddChannel(string channel);
+        /// <summary>
+        /// 移除频道
+        /// </summary>
+        /// <param name="channel">频道</param>
+        void RemoveChannel(string channel);
+        /// <summary>
+        /// 添加频道
+        /// </summary>
+        /// <param name="channels">频道</param>
+        void AddChannel(IEnumerable<string> channels);
+        /// <summary>
+        /// 移除频道
+        /// </summary>
+        /// <param name="channels">频道</param>
+        void RemoveChannel(IEnumerable<string> channels);
     }
 }
