@@ -260,7 +260,7 @@ MIDI (mid)，文件头：4D546864
             Create(_path.GetDirectoryName(), FileAttribute.Directory);
             try
             {
-                using (var fs = new FileStream(_path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+                using (var fs = new FileStream(_path, offset == 0 ? FileMode.Create : FileMode.Append, FileAccess.Write, FileShare.Read,4096))
                 {
                     if (offset == 0)
                     {
