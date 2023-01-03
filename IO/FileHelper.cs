@@ -244,6 +244,15 @@ MIDI (mid)，文件头：4D546864
         public static Boolean WriteText(string path, string content, Encoding encoding = null)
         {
             if (path.IsNullOrEmpty()) return false;
+            //try
+            //{
+            //    File.WriteAllText(path, content, encoding == null ? Encoding.UTF8 : encoding);
+            //    return true;
+            //}
+            //catch
+            //{
+            //    return false;
+            //}
             return WriteBytes(path, content.GetBytes(encoding), 0);
         }
         /// <summary>
@@ -258,8 +267,8 @@ MIDI (mid)，文件头：4D546864
             if (path.IsNullOrEmpty()) return false;
             var _path = GetBasePath(path);
             Create(_path.GetDirectoryName(), FileAttribute.Directory);
-            try
-            {
+            //try
+            //{
                 using (var fs = new FileStream(_path, offset == 0 ? FileMode.Create : FileMode.Append, FileAccess.Write, FileShare.Read,4096))
                 {
                     if (offset == 0)
@@ -284,12 +293,12 @@ MIDI (mid)，文件头：4D546864
                     fs.Dispose();
                 }
                 return true;
-            }
-            catch (Exception e)
-            {
-                LogHelper.Error(e);
-                return false;
-            }
+            //}
+            //catch (Exception e)
+            //{
+            //    LogHelper.Error(e);
+            //    return false;
+            //}
         }
         #endregion
 
@@ -304,6 +313,15 @@ MIDI (mid)，文件头：4D546864
         public static Boolean AppendText(string path, string content, Encoding encoding)
         {
             if (path.IsNullOrEmpty() || content.IsNullOrEmpty()) return false;
+            //try
+            //{
+            //    File.AppendAllText(path, content, encoding);
+            //    return true;
+            //}
+            //catch
+            //{
+            //    return false;
+            //}
             return WriteBytes(path, content.GetBytes(encoding), -1);
         }
         /// <summary>
