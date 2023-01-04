@@ -153,8 +153,8 @@ namespace XiaoFeng.Log
             {
                 var sb = new StringBuilder();
                 //sb.AppendLine($"线程ID:{System.Threading.Tasks.Task.CurrentId.GetValueOrDefault()}");
-                try
-                {
+                //try
+                //{
                     if (log.IsRecord)
                     {
                         if (log.Message.IsNotNullOrEmpty())
@@ -234,17 +234,17 @@ namespace XiaoFeng.Log
                         }
                     }*/
                     //readerWriterLock.ExitWriteLock();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"写日志出错:{ex.Message}- {sb} - {DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ffffff")}");
+                //}
+                //catch (Exception ex)
+                //{
+                   // Console.WriteLine($"写日志出错:{ex.Message}- {sb} - {DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ffffff")}");
                     //if (Interlocked.Increment(ref Count) == 3)
                     //{
                     //    Count = 0;
                     //    return;
                     //}
                     //Run(log);
-                }
+                //}
             }
             /*数据库*/
             if (this.StorageType.HasFlag(StorageType.Database) && log.LogType == LogType.Error)
