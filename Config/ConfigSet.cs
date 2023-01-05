@@ -310,6 +310,23 @@ namespace XiaoFeng.Config
         }
         #endregion
 
+        #region 删除文件
+        /// <summary>
+        /// 删除文件
+        /// </summary>
+        /// <returns></returns>
+        public virtual Boolean Delete()
+        {
+            var attr = this.ConfigFileAttribute;
+            var cache = CacheFactory.Create(CacheType.Memory);
+            cache.Remove(attr.CacheKey);
+            if (attr == null) return false;
+            if (File.Exists(attr.FileName))
+                return FileHelper.DeleteFile(attr.FileName);
+            return false;
+        }
+        #endregion
+
         #endregion
 
     }

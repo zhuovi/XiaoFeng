@@ -56,6 +56,11 @@ namespace XiaoFeng.Config
         /// <param name="indented">是否格式化</param>
         /// <param name="comment">是否带注释说明</param>
         bool Save(Boolean indented = true, Boolean comment = true);
+        /// <summary>
+        /// 删除文件
+        /// </summary>
+        /// <returns></returns>
+        Boolean Delete();
         #endregion
     }
 }
