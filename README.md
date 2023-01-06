@@ -35,19 +35,41 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng
+$ dotnet add package XiaoFeng --version 3.2.0
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng
+PM> Install-Package XiaoFeng -Version 3.2.0
 ```
 
 PackageReference
 
 ```
 <PackageReference Include="XiaoFeng" Version="3.2.0" />
+```
+
+Paket CLI
+
+```
+> paket add XiaoFeng --version 3.2.0
+```
+
+Script & Interactive
+
+```
+> #r "nuget: XiaoFeng, 3.2.0"
+```
+
+Cake
+
+```
+// Install XiaoFeng as a Cake Addin
+#addin nuget:?package=XiaoFeng&version=3.2.0
+
+// Install XiaoFeng as a Cake Tool
+#tool nuget:?package=XiaoFeng&version=3.2.0
 ```
 
 
