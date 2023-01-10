@@ -79,6 +79,7 @@ namespace XiaoFeng.Redis
             {
                 Host = this.Host,
                 Port = this.Port,
+                Password = this.Password,
                 ReadTimeout = this.ReceiveTimeout,
                 CommandTimeOut = this.SendTimeout
             });

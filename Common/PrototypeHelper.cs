@@ -2160,6 +2160,16 @@ namespace XiaoFeng
         public static char[] GetChars(this byte[] _, Encoding encoding = null) => _.IsNullOrEmpty() ? Array.Empty<char>() : (encoding ?? _.GetEncoding()).GetChars(_);
         #endregion
 
+        #region 获取字符串字节长度
+        /// <summary>
+        /// 获取字符串字节长度
+        /// </summary>
+        /// <param name="_">字符串</param>
+        /// <param name="encoding">编码 默认是utf8</param>
+        /// <returns></returns>
+        public static int GetByteCount(this String _, Encoding encoding = null) => (encoding ?? Encoding.UTF8).GetByteCount(_);
+        #endregion
+
         #region 获取HTML文本内容
         /// <summary>
         /// 获取HTML文本内容
@@ -3028,6 +3038,22 @@ namespace XiaoFeng
         /// <param name="match">要搜索的元素的条件</param>
         /// <returns></returns>
         public static T[] FindAll<T>(this T[] array, Predicate<T> match) => Array.FindAll(array, match);
+        /// <summary>
+        /// 获取数组中指定区间的数据
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="array">数组</param>
+        /// <param name="index">开始索引</param>
+        /// <param name="length">长度</param>
+        /// <param name="match">要搜索的元素的条件</param>
+        /// <returns></returns>
+        public static T[] FindAll<T>(this T[] array, int index, int length, Predicate<T> match = null)
+        {
+            var _ = array.Skip(index).Take(length).ToArray();
+            if (match != null) _ = Array.FindAll(_, match);
+            return _;
+        }
         #endregion
+
     }
 }

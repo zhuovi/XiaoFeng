@@ -109,6 +109,10 @@ namespace XiaoFeng.Redis.IO
                 this.SocketClient.Dispose();
             }
             this.SocketClient = new Socket(this.AddressFamily, this.SocketType, this.ProtocolType);
+            this.SocketClient.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendTimeout, this.SendTimeout);
+            this.SocketClient.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, this.ReceiveTimeout);
+            this.SocketClient.SendTimeout = this.SendTimeout;
+            this.SocketClient.ReceiveTimeout = this.ReceiveTimeout;
         }
         ///<inheritdoc/>
         public void Connect()

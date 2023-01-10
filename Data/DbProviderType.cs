@@ -103,6 +103,11 @@ namespace XiaoFeng.Data
         /// </summary>
         [Description("瀚高")] 
         Highgo = 1<<15,
+        /// <summary>
+        /// Memcached
+        /// </summary>
+        [Description("Memcached")]
+        Memcached = 1 << 16
     }
     #endregion
 }

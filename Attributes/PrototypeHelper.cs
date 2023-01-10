@@ -124,8 +124,7 @@ namespace XiaoFeng
         /// <typeparam name="T">自定义属性类型</typeparam>
         /// <param name="m">属性对象</param>
         /// <returns></returns>
-        [Obsolete("被系统替换")]
-        public static T GetCustomAttributeBAK<T>(this MemberInfo m) where T : Attribute
+        public static T GetCustomAttributeX<T>(this MemberInfo m) where T : Attribute
         {
             T tc = default(T);
             if (m == null) return tc;
