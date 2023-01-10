@@ -325,7 +325,7 @@ pool			    连接池中连接数量
 实例化一个memcached对象
 
 ```csharp
-var memcached = new XiaoFeng.Memcached.MemcachedClient("memcached://7092734@127.0.0.1:11211/0");
+var memcached = new XiaoFeng.Memcached.MemcachedClient("memcached://memcached:123456@127.0.0.1:11211");
 ```
 
 #使用方法
