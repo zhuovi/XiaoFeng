@@ -299,7 +299,7 @@ Memcached缓存数据库连接驱动
 Memcached连接串 
 
 ```csharp
-memcached://7092734:123456@127.0.0.1:11211/0?ConnectionTimeout=3000&ReadTimeout=3000&SendTimeout=3000&pool=3
+memcached://7092734:123456@127.0.0.1:11211?ConnectionTimeout=3000&ReadTimeout=3000&SendTimeout=3000&pool=3
 ```
 
 7092734	    帐号
