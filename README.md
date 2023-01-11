@@ -75,7 +75,7 @@ Cake
 
 # XiaoFeng.Redis
 
-Redis提供了友好的访问API。
+Redis提供了友好的访问API。Redis中间件,支持.NET框架、.NET内核和.NET标准库,一种非常方便操作的客户端工具。实现了Hash,Key,String,ZSet,Stream,Log,订阅发布,线程池功能。
 
 ## 基本使用方法
 
@@ -294,15 +294,17 @@ var set13 = await redis.GetSetUnionStoreAsync("a", "c", "b");
 
 # XiaoFeng.Memcached
 
+Redis提供了友好的访问API。Memcached中间件,支持.NET框架、.NET内核和.NET标准库,一种非常方便操作的客户端工具。实现了Set,Add,Replace,PrePend,Append,Cas,Get,Gets,Gat,Gats,Delete,Touch,Stats,Stats Items,Stats Slabs,Stats Sizes,Flush_All,线程池功能。
+
 Memcached缓存数据库连接驱动
 
 Memcached连接串 
 
 ```csharp
-memcached://7092734:123456@127.0.0.1:11211?ConnectionTimeout=3000&ReadTimeout=3000&SendTimeout=3000&pool=3
+memcached://memcached:123456@127.0.0.1:11211?ConnectionTimeout=3000&ReadTimeout=3000&SendTimeout=3000&pool=3
 ```
 
-7092734	    帐号
+memcached   帐号
 
 123456      密码
 
