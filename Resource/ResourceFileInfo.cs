@@ -45,9 +45,15 @@ namespace XiaoFeng.Resource
             else
                 path = path.ReplacePattern(@"(\\|\/)+", "/");
             this.ResourcePath = "/" + path.Trim(new char[] { '/', '\\' }) + this.Extension;
-
+            // - 转换成_ @转换成_ .数字转换成._数字
+            var pIndex = this.ResourcePath.LastIndexOfAny(new char[] { '\\', '/' });
+            var subPath = this.ResourcePath.Substring(0, pIndex);
+            if (subPath.IsMatch(@"(-|@|\.\d+)"))
+            {
+                this.ResourcePath = subPath.ReplacePattern(@"[-@]", "_").ReplacePattern(@"(\.)(\d+)", "$1_$2") + this.ResourcePath.Substring(pIndex);
+            }
             this.Key = assemblyName + "." + path.TrimStart('/').ReplacePattern(@"(\\|\/)+", ".") + this.Extension;
-            this.Name = path.GetFileName()+ this.Extension;
+            this.Name = path.GetFileName() + this.Extension;
         }
         #endregion
 

@@ -25,7 +25,7 @@ namespace XiaoFeng.Memcached
     /// <summary>
     /// Memcached客户端
     /// </summary>
-    public class MemcachedClient : Disposable
+    public class MemcachedClient : Disposable, IMemcachedClient
     {
         #region 构造器
         /// <summary>
@@ -126,7 +126,7 @@ namespace XiaoFeng.Memcached
         /// <summary>
         /// 连接池
         /// </summary>
-        public MemcachedPool MemcachedPool
+        private MemcachedPool MemcachedPool
         {
             get
             {
@@ -157,7 +157,7 @@ namespace XiaoFeng.Memcached
         /// <summary>
         /// IMemcachedSocket 项
         /// </summary>
-        public PoolItem<IO.IMemcachedSocket> MemcachedItem { get; set; }
+        private PoolItem<IO.IMemcachedSocket> MemcachedItem { get; set; }
         /// <summary>
         /// 排它锁
         /// </summary>
@@ -217,7 +217,7 @@ namespace XiaoFeng.Memcached
         /// <param name="func">回调方法</param>
         /// <param name="args">参数集</param>
         /// <returns>执行结果</returns>
-        public T Execute<T>(CommandType commandType, Func<MemcachedReader, T> func, params object[] args)
+        protected T Execute<T>(CommandType commandType, Func<MemcachedReader, T> func, params object[] args)
         {
             Mutex.WaitOne();
             this.Init();
@@ -240,7 +240,7 @@ namespace XiaoFeng.Memcached
         /// <param name="func">回调方法</param>
         /// <param name="args">参数集</param>
         /// <returns>执行结果</returns>
-        public async Task<T> ExecuteAsync<T>(CommandType commandType, Func<MemcachedReader, Task<T>> func, params object[] args)
+        protected async Task<T> ExecuteAsync<T>(CommandType commandType, Func<MemcachedReader, Task<T>> func, params object[] args)
         {
             Mutex.WaitOne();
             this.Init();
@@ -257,7 +257,7 @@ namespace XiaoFeng.Memcached
         }
         #endregion
 
-        #region 验证密码
+        #region 认证
         /// <summary>
         /// 认证
         /// </summary>
@@ -272,7 +272,7 @@ namespace XiaoFeng.Memcached
             return this.Execute(CommandType.AUTH, result => result.OK, this.ConnConfig.User, this.ConnConfig.Password);
         }
         /// <summary>
-        /// 验证密码 异步
+        /// 认证 异步
         /// </summary>
         /// <returns></returns>
         public async Task<Boolean> AuthAsync()
@@ -285,56 +285,6 @@ namespace XiaoFeng.Memcached
             return await this.ExecuteAsync(CommandType.AUTH, async result => await Task.FromResult(result.OK), this.ConnConfig.User, this.ConnConfig.Password);
         }
         #endregion
-
-        #region 获取值
-        /// <summary>
-        /// 获取值
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="value">值</param>
-        /// <param name="isValue">是否是值类型</param>
-        /// <returns></returns>
-        public string GetValue<T>(T value, out Boolean isValue)
-        {
-            var type = value.GetType();
-            var valueType = type.GetValueType();
-            isValue = false;
-            if (valueType == ValueTypes.Null || valueType == ValueTypes.String || valueType == ValueTypes.Value || valueType == ValueTypes.Other)
-            {
-                isValue = true;
-                return (type == typeof(DateTime) || type == typeof(DateTime?)) ? value.ToCast<DateTime>().ToString("yyyy-MM-dd HH:mm:ss.ffffff") : value.ToString();
-            }
-            else return value.ToJson();
-        }
-        /// <summary>
-        /// 获取值
-        /// </summary>
-        /// <typeparam name="T">类型</typeparam>
-        /// <param name="value">值</param>
-        /// <returns></returns>
-        public string GetValue<T>(T value) => this.GetValue(value, out _);
-        /// <summary>
-        /// 获取值
-        /// </summary>
-        /// <param name="values">数据集合</param>
-        /// <returns></returns>
-        public List<string> GetValues(params object[] values)
-        {
-            var list = new List<string>();
-            values.Each(t => list.Add(GetValue(t)));
-            return list;
-        }
-        /// <summary>
-        /// 设置值
-        /// </summary>
-        /// <typeparam name="T">类型</typeparam>
-        /// <param name="value">值</param>
-        /// <returns></returns>
-        public T SetValue<T>(object value)
-        {
-            var type = typeof(T).GetValueType();
-            return (type == ValueTypes.Null || type == ValueTypes.String || type == ValueTypes.Value || type == ValueTypes.Other) ? value.ToCast<T>() : value.ToString().JsonToObject<T>();
-        }
 
         #region Hash
         /// <summary>
@@ -380,8 +330,6 @@ namespace XiaoFeng.Memcached
                 result[i] = GetHash(hashValues[i]);
             return result;
         }
-        #endregion
-
         #endregion
 
         #region Store 存储
@@ -673,10 +621,10 @@ namespace XiaoFeng.Memcached
         /// <param name="exptime">过期时间</param>
         /// <param name="key">key</param>
         /// <returns>值</returns>
-        public async Task<MemcachedValue> GatsAsync(uint exptime,string key)
+        public async Task<MemcachedValue> GatsAsync(uint exptime, string key)
         {
             if (key.IsNullOrEmpty()) return null;
-            return await this.ExecuteAsync(CommandType.GATS, async reader => await Task.FromResult(reader.OK ? reader.Value?[0] : null), exptime ,key);
+            return await this.ExecuteAsync(CommandType.GATS, async reader => await Task.FromResult(reader.OK ? reader.Value?[0] : null), exptime, key);
         }
         /// <summary>
         /// 用于获取key的带有CAS令牌值的value值，若key不存在，返回空。支持多个key 更新缓存时间
@@ -707,7 +655,7 @@ namespace XiaoFeng.Memcached
         /// <returns>状态</returns>
         public Boolean Delete(string key)
         {
-            if(key.IsNullOrEmpty()) return false;
+            if (key.IsNullOrEmpty()) return false;
             return this.Execute(CommandType.DELETE, reader => reader.OK, key);
         }
         /// <summary>
