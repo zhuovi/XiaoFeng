@@ -8,7 +8,7 @@
 		<Copyright>CopyRight @ 2008-2024 魔法精灵(www.fayelf.com) QQ:7092734 Email:jacky@fayelf.com</Copyright>
 		<Company>魔法精灵</Company>
 		<VersionPrefix>3.3</VersionPrefix>
-		<VersionSuffix>1</VersionSuffix>
+		<VersionSuffix>2</VersionSuffix>
 		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
 		<FileVersion>$(Version)</FileVersion>
 		<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
@@ -24,7 +24,7 @@
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageReleaseNotes>增加Memcached操作类;修复内嵌文件路径问题;增加IMemcachedClient;增加资源文件接口属性;</PackageReleaseNotes>
+		<PackageReleaseNotes>修复有新连接时，握手成功后也回调的bug;</PackageReleaseNotes>
 		<DelaySign>False</DelaySign>
 		<IsPackable>true</IsPackable>
 		<PackageProjectUrl>https://github.com/zhuovi/XiaoFeng</PackageProjectUrl>

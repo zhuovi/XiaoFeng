@@ -553,7 +553,7 @@ namespace XiaoFeng.Net
             {
                 ConnectionSocket.EndSend(status);
                 ConnectionSocket?.BeginReceive(ReceivedDataBuffer, 0, ReceivedDataBuffer.Length, 0, new AsyncCallback(ReceiveWebSocketData), null);
-                OnNewConnection?.Invoke(this, EventArgs.Empty);
+                //OnNewConnection?.Invoke(this, EventArgs.Empty);
             }
             catch (Exception ex)
             {
