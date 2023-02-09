@@ -77,7 +77,7 @@ namespace XiaoFeng.Net
         /// 握手信息
         /// </summary>
         /// <param name="status">状态</param>
-        void ManageHandshake(IAsyncResult status);        
-        #endregion
-    }
+        void ManageHandshake(IAsyncResult status);
+		#endregion
+	}
 }

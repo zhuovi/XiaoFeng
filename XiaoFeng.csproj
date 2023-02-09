@@ -24,7 +24,7 @@
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageReleaseNotes>修复有新连接时，握手成功后也回调的bug;</PackageReleaseNotes>
+		<PackageReleaseNotes>修复有新连接时,握手成功后也回调的bug;socket类中增加移出队列时断开客户端连接;</PackageReleaseNotes>
 		<DelaySign>False</DelaySign>
 		<IsPackable>true</IsPackable>
 		<PackageProjectUrl>https://github.com/zhuovi/XiaoFeng</PackageProjectUrl>

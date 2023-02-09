@@ -383,7 +383,7 @@ namespace XiaoFeng.Net
                                         var session = s as IServerSession;
                                         if (session == null || session.ConnectionSocket == null || !session.ConnectionSocket.Connected)
                                         {
-                                            this.RemoveQueue(session);
+                                            //this.RemoveQueue(session);
                                             session.Close();
                                         }
                                         else
@@ -396,7 +396,7 @@ namespace XiaoFeng.Net
                                                 Int64 TimeSpan = TimeStamp - session.PingTimeStamp;
                                                 if (TimeSpan > 1 * this.PingCount * this.PingTimer / 1000)
                                                 {
-                                                    this.RemoveQueue(session);
+                                                    //this.RemoveQueue(session);
                                                     session.Close();
                                                 }
                                             }
@@ -459,7 +459,8 @@ namespace XiaoFeng.Net
             {
                 OnClientError?.Invoke(session, ex);
                 //OnError?.Invoke(this, ex);
-                this.RemoveQueue(session);
+                //this.RemoveQueue(session);
+                session.Close();
             }
         }
         #endregion
@@ -503,7 +504,7 @@ namespace XiaoFeng.Net
             catch (SocketException ex)
             {
                 OnError?.Invoke(this, ex);
-                this.RemoveQueue(session);
+                session.Close();
             }
         }
         #endregion
@@ -548,7 +549,7 @@ namespace XiaoFeng.Net
             {
                 //OnError?.Invoke(this, ex);
                 OnClientError?.Invoke(session, ex);
-                this.RemoveQueue(session);
+                session.Close();
             }
         }
         /// <summary>
@@ -600,14 +601,18 @@ namespace XiaoFeng.Net
                 {
                     this.ConnectionSocketList.TryRemove(session.EndPoint, out IServerSession _);
                 }
-            }
+				if (session.IsConnected())
+					session.Close();
+				else
+					OnDisconnected?.Invoke(session, EventArgs.Empty);
+			}
             catch (SocketException sex)
             {
                 LogHelper.Error(sex);
             }
             finally
             {
-                OnDisconnected?.Invoke(session, EventArgs.Empty);
+                
             }
         }
         /// <summary>
@@ -623,17 +628,25 @@ namespace XiaoFeng.Net
                 {
                     if (this.ConnectionSocketList != null && this.ConnectionSocketList.Count > 0)
                     {
-                        this.ConnectionSocketList.TryRemove(endPoint, out IServerSession _);
+                        if(this.ConnectionSocketList.TryRemove(endPoint, out IServerSession session))
+                        {
+                            if (session.IsConnected())
+                            {
+                                session.Close();
+                                return;
+                            }
+						}
                     }
                 }
-            }
+				OnDisconnected?.Invoke(new ServerSession { EndPoint = endPoint }, EventArgs.Empty);
+			}
             catch (SocketException sex)
             {
                 LogHelper.Error(sex);
             }
             finally
             {
-                OnDisconnected?.Invoke(new ServerSession { EndPoint = endPoint }, EventArgs.Empty);
+                
             }
         }
         /// <summary>
@@ -643,6 +656,11 @@ namespace XiaoFeng.Net
         {
             if (this.ConnectionSocketList != null && this.ConnectionSocketList.Count > 0)
             {
+                //先断开所有连接
+                this.GetData().Each(a =>
+                {
+                    a.Close();
+                });
                 this.ConnectionSocketList.Clear();
                 this.ConnectionSocketList = new ConcurrentDictionary<IPEndPoint, IServerSession>();
             }
@@ -867,8 +885,8 @@ namespace XiaoFeng.Net
         public void Close(Func<IServerSession, bool> func)
         {
             var session = this.GetQueue(func);
-            this.RemoveQueue(session);
-            session.Close();
+			//this.RemoveQueue(session);
+			session?.Close();
         }
         /// <summary>
         /// 关闭客户端连接
@@ -878,7 +896,7 @@ namespace XiaoFeng.Net
         {
             if (session != null)
             {
-                this.RemoveQueue(session);
+                //this.RemoveQueue(session);
                 session.Close();
             }
         }

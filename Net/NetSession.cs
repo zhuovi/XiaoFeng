@@ -198,7 +198,13 @@ namespace XiaoFeng.Net
         public virtual void Close()
         {
             this.CancelToken.Cancel();
-            if (this.ConnectionSocket != null && this.ConnectionSocket.Connected) this.ConnectionSocket.Close();
+            if (this.IsConnected())
+            {
+                this.ConnectionSocket.Shutdown(SocketShutdown.Both);
+                this.ConnectionSocket.Disconnect(false);
+                this.ConnectionSocket.Close();
+                this.ConnectionSocket.Dispose();
+            }
         }
         #endregion
 
