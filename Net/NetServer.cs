@@ -272,6 +272,8 @@ namespace XiaoFeng.Net
                         OnStop?.Invoke(this, EventArgs.Empty);
                         /*清空队列*/
                         this.ClearQueue();
+                        ServerSocket.Shutdown(SocketShutdown.Both);
+                        ServerSocket.Disconnect(false);
                         ServerSocket.Close(3);
                         break;
                     }

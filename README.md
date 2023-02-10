@@ -1275,90 +1275,132 @@ var cellColumn = cell.Column;
 
 ```csharp
 //新建一个服务端,同时支持websocket,socket客户端连接
-var SocketServer = new XiaoFeng.Net.NetServer<XiaoFeng.Net.ServerSession>(8888)
+var server = new NetServer<ServerSession>(8088)
 {
     //是否启用ping
     IsPing = true,
     //是否启用新行
     IsNewLine = true,
     //传输编码
-    Encoding = System.Text.Encoding.UTF8
+    Encoding = System.Text.Encoding.UTF8,
+    //认证 认证不过则直接断开
+    SocketAuth = s =>
+    {
+        //判断 客户端是否符合认证,不符合则直接返回false即可
+        return true;
+    }
 };
-SocketServer.SocketAuth = session =>
+server.OnStart += (s, e) =>
 {
-    //判断 客户端是否符合认证,不符合则直接返回false即可
-    return true;
+    //服务端启动事件
+    Console.WriteLine($"启动!-{DateTime.Now:yyyy-MM-dd HH:mm:ss.fffffff}");
 };
-SocketServer.OnClientError += (session,e)=>
+server.OnNewConnection += (s, e) =>
+{
+    //客户端新连接事件
+    Console.WriteLine($"新连接-{DateTime.Now:yyyy-MM-dd HH:mm:ss.fffffff}");
+    //给当前客户端设置一个频道名  为后边按频道名发送作准备
+    //一个客户端可以订阅多个频道
+    //websocket可以从头里面获取标识
+    //如果非websocket 可以从消息里设置频道消息
+    if (s.Headers.IndexOf("Channel:a") > 0)
+        s.AddChannel("a");
+    else
+        s.AddChannel("b");
+};
+server.OnDisconnected += (s, e) =>
+{
+    //客户端断开连接事件
+    Console.WriteLine($"断开连接!-{DateTime.Now:yyyy-MM-dd HH:mm:ss.fffffff}");
+};
+server.OnMessage += (s, m, e) =>
+{
+    //接收消息事件
+    if (m.IndexOf("Channel:a") > 0)
+    {
+        s.AddChannel("a");
+        return;
+    }
+    else if (m.IndexOf("Channel:b") > 0)
+    {
+        s.AddChannel("b");
+        return;
+    }
+    Console.WriteLine($"消息-{m}-{DateTime.Now:yyyy-MM-dd HH:mm:ss.fffffff}");
+    //把当前消息发送到频道名为a的所有客户端
+    server.Send("a", Encoding.UTF8.GetBytes("消息"));
+    //回复当前客户端消息
+    s.Send("消息");
+    //发送消息给所有客户端
+    server.Send("消息");
+};
+server.OnMessageByte += (session, message, e) =>
+{
+    //接收消息事件
+    session.Send("回复客户端消息");
+};
+server.OnError += (s, e) =>
+{
+    //服务端出错事件
+    Console.WriteLine($"出错-{e.Message}-{DateTime.Now:yyyy-MM-dd HH:mm:ss.fffffff}");
+};
+server.OnClientError += (session, e) =>
 {
     //客户端出错事件
 };
-SocketServer.OnDisconnected += (session,e)=>
-{
-    //断开连接事件
-};
-SocketServer.OnError += (session, e) =>
+server.OnError += (session, e) =>
 {
     //服务端出错事件
 };
-SocketServer.OnNewConnection += (session, e) =>
-{
-    //有新的连接事件
-};
-SocketServer.OnMessageByte += (session,message,e)=>
-{
-    //接收消息事件
-
-    session.Send("回复客户端消息");
-};
-SocketServer.OnStart += (socket,e)=>
-{
-    //服务端启动事件
-};
-SocketServer.OnStop += (socket,e)=>
+server.OnStop += (socket, e) =>
 {
     //服务端停止事件
 };
-//启动监听
-SocketServer.Start();
-//发送消息给所有客户端
-SocketServer.Send("发送消息");
+server.Start();
 //添加黑名单
-SocketServer.AddIpBlack("124.2.2.2");
+server.AddIpBlack("10.10.10.10");
+//移除黑名单
+server.RemoveIpBlack("10.10.10.10");
+//清空黑名单
+server.ClearIpBlack();
+//断开所有客户端
+server.ClearQueue();
+//在线客户端列表 复制出来的
+var clients = server.GetData();
+//在线客户端列表 原列表
+var clients1 = server.ConnectionSocketList;
 ```
 
 ## 客户端实例
 
 ```csharp
-var SocketClient = new XiaoFeng.Net.NetClient<XiaoFeng.Net.ClientSession>("127.0.0.1", 8888);
-SocketClient.OnStart += (socket, e) =>
+var client = new XiaoFeng.Net.NetClient<XiaoFeng.Net.ClientSession>("127.0.0.1", 8888);
+client.OnStart += (socket, e) =>
 {
     //启动消息
 };
-SocketClient.OnClose += (socket,e)=>
+client.OnClose += (socket,e)=>
 {
     //关闭消息
 };
-SocketClient.OnDisconnected += (session,e)=>{
+client.OnDisconnected += (session,e)=>{
     //断开连接消息
 };
-SocketClient.OnError += (socket,e)=>
+client.OnError += (socket,e)=>
 {
     //出错消息
 };
-
-SocketClient.OnMessageByte += (session,message,e)=>
+client.OnMessageByte += (session,message,e)=>
 {
 //接收信息
 };
-
 //启动客户端
-SocketClient.Start();
+client.Start();
 
-SocketClient.Send("发送消息");
-SocketClient.Subscribe("订阅频道");
+client.Send("发送消息");
 
-SocketClient.UnSubscribe("取消订阅频道");
+client.Subscribe("订阅频道");
+client.UnSubscribe("取消订阅频道");
 ```
 
 # 作者介绍

@@ -157,6 +157,7 @@ namespace XiaoFeng.Redis.IO
                 if (this.SocketClient != null)
                 {
                     this.SocketClient.Shutdown(SocketShutdown.Both);
+                    this.SocketClient.Disconnect(false);
                     this.SocketClient.Close();
                     this.SocketClient.Dispose();
                 }
