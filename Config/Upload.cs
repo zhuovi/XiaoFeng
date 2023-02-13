@@ -86,7 +86,7 @@ namespace XiaoFeng.Config
         /// 图片压缩最长边限制
         /// </summary>
         [Description("图片压缩最长边限制")] 
-        public int ImageCompressLength { get; set; } = 1000;
+        public int ImageCompressLength { get; set; } = 2000;
         /// <summary>
         /// 图片压缩质量
         /// </summary>
