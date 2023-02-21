@@ -50,12 +50,13 @@ namespace XiaoFeng.Redis
         public RedisConfig(string connectionString) : this()
         {
             if (connectionString.IsNullOrEmpty()) return;
-            if (connectionString.IsMatch(@"^redis://([a-z0-9]+@)?[^:/]+(:\d+)?(\/\d+)?"))
+            if (connectionString.IsMatch(@"^redis://(([a-z0-9]+)?(:[^@]+)?@)?[^:/]+(:\d+)?(\/\d+)?"))
             {
-                var dict = connectionString.GetMatchs(@"^redis://((?<pwd>[a-z0-9]+)@)?(?<host>[^:/]+)(:(?<port>\d+))?(\/(?<db>\d+))?(\/?\?(?<option>[\s\S]*))?$");
+                var dict = connectionString.GetMatchs(@"^redis://((?<user>[a-z0-9]+)?(:(?<pwd>[^@]+))?@)?(?<host>[^:/]+)(:(?<port>\d+))?(\/(?<db>\d+))?(\/?\?(?<option>[\s\S]*))?$");
                 this.Host = dict["host"];
                 this.Port = dict["port"].ToCast(6379);
                 this.DbNum = dict["db"].ToCast<int>();
+                this.User = dict["user"];
                 this.Password = dict["pwd"];
                 var option = dict["option"];
                 if (option.IsNotNullOrEmpty())
@@ -76,10 +77,11 @@ namespace XiaoFeng.Redis
                     }
                 }
             }
-            else if (connectionString.IsMatch("(server|host|port|pwd|password|db|database|pool|connectiontimeout|readtimeout|commandtimeout)="))
+            else if (connectionString.IsMatch("(server|host|port|user|uid|account|pwd|password|db|database|pool|connectiontimeout|readtimeout|commandtimeout)="))
             {
                 this.Host = connectionString.GetMatch(@"(^|;)\s*(server|host)\s*=\s*(?<a>[^;]+)\s*(;|$)");
                 this.Port = connectionString.GetMatch(@"(^|;)\s*port\s*=\s*(?<a>\d+)\s*(;|$)").ToCast<int>(6379);
+                this.User = connectionString.GetMatch(@"(^|;)\s*(user|uid|account)\s*=\s*(?<a>[^;]+)\s*(;|$)");
                 this.Password = connectionString.GetMatch(@"(^|;)\s*(pwd|password)\s*=\s*(?<a>[^;]+)\s*(;|$)");
                 this.DbNum = connectionString.GetMatch(@"(^|;)\s*(db|database)\s*=\s*(?<a>[^;]+)\s*(;|$)").ToCast<int>();
                 this.MaxPool = connectionString.GetMatch(@"(^|;)\s*(pool)\s*=\s*(?<a>[^;]+)\s*(;|$)").ToCast<int>();
@@ -136,6 +138,11 @@ namespace XiaoFeng.Redis
             set => _Port = value;
         }
         /// <summary>
+        /// 帐号
+        /// </summary>
+        [Description("帐号")]
+        public string User { get; set; }
+        /// <summary>
         /// 密码
         /// </summary>
         [Description("密码")] 
@@ -168,7 +175,7 @@ namespace XiaoFeng.Redis
         /// <returns></returns>
         public override string ToString()
         {
-            return $"redis://{this.Password + (this.Password.IsNotNullOrEmpty() ? "@" : "")}{this.Host}:{this.Port}/{this.DbNum}?connectiontimout={this.ConnectionTimeout}&readtimeout={this.ReadTimeout}&pool={this.MaxPool}";
+            return $"redis://{this.User}{(this.Password.IsNotNullOrEmpty() ? ":" : "") + this.Password}{(this.User.IsNotNullOrEmpty() || this.Password.IsNotNullOrEmpty() ? "@" : "")}{this.Host}:{this.Port}/{this.DbNum}?connectiontimout={this.ConnectionTimeout}&readtimeout={this.ReadTimeout}&pool={this.MaxPool}";
         }
         /// <summary>
         /// 转换成字符串

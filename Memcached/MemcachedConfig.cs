@@ -47,9 +47,9 @@ namespace XiaoFeng.Memcached
         public MemcachedConfig(string connectionString) : this()
         {
             if (connectionString.IsNullOrEmpty()) return;
-            if (connectionString.IsMatch(@"^memcached://([a-z0-9]+@)?[^:/]+(:\d+)?(\/\d+)?"))
+            if (connectionString.IsMatch(@"^memcached://(([a-z0-9]+)?(:[^@]+)?@)?[^:/]+(:\d+)?(\/\d+)?"))
             {
-                var dict = connectionString.GetMatchs(@"^memcached://((?<user>[a-z0-9]+):(?<pwd>[a-z0-9]+)@)?(?<host>[^:/]+)(:(?<port>\d+))?(\/(?<db>\d+))?(\/?\?(?<option>[\s\S]*))?$");
+                var dict = connectionString.GetMatchs(@"^memcached://((?<user>[a-z0-9]+)?(:(?<pwd>[^@]+))?@)?(?<host>[^:/]+)(:(?<port>\d+))?(\/(?<db>\d+))?(\/?\?(?<option>[\s\S]*))?$");
                 this.Host = dict["host"];
                 this.Port = dict["port"].ToCast(11211);
                 this.DbNum = dict["db"].ToCast<int>();
@@ -172,7 +172,7 @@ namespace XiaoFeng.Memcached
         /// <returns></returns>
         public override string ToString()
         {
-            return $"memcached://{this.User}:{this.Password + (this.Password.IsNotNullOrEmpty() ? "@" : "")}{this.Host}:{this.Port}/{this.DbNum}?connectiontimout={this.ConnectionTimeout}&readtimeout={this.ReadTimeout}&pool={this.MaxPool}";
+            return $"memcached://{this.User}{(this.Password.IsNotNullOrEmpty() ? ":" : "") + this.Password}{(this.User.IsNotNullOrEmpty() || this.Password.IsNotNullOrEmpty() ? "@" : "")}{this.Host}:{this.Port}/{this.DbNum}?connectiontimout={this.ConnectionTimeout}&readtimeout={this.ReadTimeout}&pool={this.MaxPool}";
         }
         /// <summary>
         /// 转换成字符串
