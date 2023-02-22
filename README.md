@@ -8,23 +8,19 @@
 ![Nuget](https://img.shields.io/nuget/v/xiaofeng?logo=nuget)
 ![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/xiaofeng?label=dev%20nuget&logo=nuget)
 
-Nuget：xiaofeng
+Nuget：XiaoFeng
 
-QQ群号：748408911 
+| QQ群号 | QQ群 | 公众号 |
+| :----:| :----: | :----: |
+| 748408911  | ![QQ 群](https://user-images.githubusercontent.com/16105174/198058269-0ea5928c-a2fc-4049-86da-cca2249229ae.png) | ![畅聊了个科技](https://user-images.githubusercontent.com/16105174/198059698-adbf29c3-60c2-4c76-b894-21793b40cf34.jpg) |
 
-QQ群二维码： 
-
-![QQ 群](https://user-images.githubusercontent.com/16105174/198058269-0ea5928c-a2fc-4049-86da-cca2249229ae.png)
-
-公众号： 
-
-![畅聊了个科技](https://user-images.githubusercontent.com/16105174/198059698-adbf29c3-60c2-4c76-b894-21793b40cf34.jpg)
 
 源码： https://github.com/zhuovi/xiaofeng
 
 教程： https://www.yuque.com/fayelf/xiaofeng
 
 其中包含了Redis,Memcached,Socket,Json,Xml,ADO.NET数据库操作兼容以下数据库（SQLSERVER,MYSQL,ORACLE,达梦,SQLITE,ACCESS,OLEDB,ODBC等数十种数据库）,正则表达式,QueryableX(ORM)和EF无缝对接,FTP,网络日志,调度,IO操作,加密算法(AES,DES,DES3,MD5,RSA,RC4,SHA等常用加密算法),超级好用的配置管理器,应用池,类型转换等功能。
+
 
 ## XiaoFeng
 
