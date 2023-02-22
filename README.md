@@ -256,6 +256,126 @@ var i = "a1b2c3".ReplacePattern(@"\d+",m=>{
 i的值为："aa1ba2ca2";
 ```
 
+# 配置管理器 XiaoFeng.Config.ConfigSet<>
+
+通过继承当前类可以轻松实现配置文件的操作，缓存，增，删，改，查等功能.
+
+## 用法实例
+
+XiaoFeng类库自动创建一个XiaoFeng.json配置文件 它的类库源码如下
+
+```csharp
+    /// <summary>
+    /// XiaoFeng总配置
+    /// </summary>
+    [ConfigFile("Config/XiaoFeng.json", 0, "FAYELF-CONFIG-XIAOFENG", ConfigFormat.Json)]
+    public class Setting : ConfigSet<Setting>, ISetting
+    {
+        #region 构造器
+        /// <summary>
+        /// 无参构造器
+        /// </summary>
+        public Setting() : base() { }
+        /// <summary>
+        /// 设置配置文件名
+        /// </summary>
+        /// <param name="fileName"></param>
+        public Setting(string fileName) : base(fileName) { }
+        #endregion
+
+        #region 属性
+        /// <summary>
+        /// 是否启用调试
+        /// </summary>
+        [Description("是否启用调试")]
+        public bool Debug { get; set; } = true;
+        /// <summary>
+        /// 最大线程数量
+        /// </summary>
+        [Description("最大线程数量")]
+        public int MaxWorkerThreads { get; set; } = 100;
+        /// <summary>
+        /// 消费日志空闲时长
+        /// </summary>
+        [Description("消费日志空闲时长")]
+        public int IdleSeconds { get; set; } = 60;
+        /// <summary>
+        /// 任务队列执行任务超时时间
+        /// </summary>
+        private int _TaskWaitTimeout = 5 * 60;
+        /// <summary>
+        /// 任务队列执行任务超时时间
+        /// </summary>
+        [Description("任务队列执行任务超时时间")]
+        public int TaskWaitTimeout {
+            get
+            {
+                if (this._TaskWaitTimeout  == 0)
+                    this._TaskWaitTimeout  = 10 * 1000;
+                return this._TaskWaitTimeout ;
+            }
+            set
+            {
+                this._TaskWaitTimeout  = value;
+            }
+        }
+        /// <summary>
+        /// 是否启用数据加密
+        /// </summary>
+        [Description("是否启用数据加密")]
+        public bool DataEncrypt { get; set; } = false;
+        /// <summary>
+        /// 加密数据key
+        /// </summary>
+        [Description("加密数据key")]
+        public string DataKey { get; set; } = "7092734";
+        /// <summary>
+        /// 是否开启请求日志
+        /// </summary>
+        [Description("是否开启请求日志")]
+        public bool ServerLogging { get; set; }
+        /// <summary>
+        /// 是否拦截
+        /// </summary>
+        [Description("是否拦截")]
+        public bool IsIntercept { get; set; }
+        /// <summary>
+        /// SQL注入串
+        /// </summary>
+        [Description("SQL注入串")]
+        public string SQLInjection { get; set; } = @"insert\s+into |update |delete |select | union | join |exec |execute | exists|'|truncate |create |drop |alter |column |table |dbo\.|sys\.|alert\(|<scr|ipt>|<script|confirm\(|console\.|\.js|<\/\s*script>|now\(\)|getdate\(\)|time\(\)| Directory\.| File\.|FileStream |\.Write\(|\.Connect\(|<\?php|show tables |echo | outfile |Request[\.\(]|Response[\.\(]|eval\s*\(|\$_GET|\$_POST|cast\(|Server\.CreateObject|VBScript\.Encode|replace\(|location|\-\-";
+        #endregion
+    }
+```
+生成的JSON文件如下
+```json
+{
+  "Debug"/*是否启用调试*/: true,
+  "MaxWorkerThreads"/*最大线程数量*/: 100,
+  "IdleSeconds"/*消费日志空闲时长*/: 60,
+  "TaskWaitTimeout"/*任务队列执行任务超时时间*/: 300,
+  "DataEncrypt"/*是否启用数据加密*/: false,
+  "DataKey"/*加密数据key*/: "7092734",
+  "ServerLogging"/*是否开启请求日志*/: false,
+  "IsIntercept"/*是否拦截*/: false,
+  "SQLInjection"/*SQL注入串*/: "insert\\s+into |update |delete |select | union | join |exec |execute | exists|'|truncate |create |drop |alter |column |table |dbo\\.|sys\\.|alert\\(|<scr|ipt>|<script|confirm\\(|console\\.|\\.js|<\\/\\s*script>|now\\(\\)|getdate\\(\\)|time\\(\\)| Directory\\.| File\\.|FileStream |\\.Write\\(|\\.Connect\\(|<\\?php|show tables |echo | outfile |Request[\\.\\(]|Response[\\.\\(]|eval\\s*\\(|\\$_GET|\\$_POST|cast\\(|Server\\.CreateObject|VBScript\\.Encode|replace\\(|location|\\-\\-"
+}
+```
+ConfigFileAttribute 当前属性主要是定义当前配置存放路径，存放格式（JSON，XML），缓存KEY，缓存时长，文件改后会自动更新缓存。
+
+DescriptionAttribute 当前属性是配置文件属性注释
+
+当前配置文件使用方法
+```csharp
+var set = XiaoFeng.Config.Setting.Current;
+//读取节点数据
+var debug = set.Debug;
+//设置节点数据
+set.Debug = false;
+//保存当前配置 通过当前 Save 方法 可把 内容更新至配置文件中去
+set.Save();
+```
+
 # XiaoFeng.Redis
 
 Redis提供了友好的访问API。Redis中间件,支持.NET框架、.NET内核和.NET标准库,一种非常方便操作的客户端工具。实现了Hash,Key,String,ZSet,Stream,Log,订阅发布,线程池功能。
