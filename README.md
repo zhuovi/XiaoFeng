@@ -71,7 +71,194 @@ Cake
 // Install XiaoFeng as a Cake Tool
 #tool nuget:?package=XiaoFeng&version=3.3.2
 ```
+# XiaoFeng 扩展方法
 
+## 万能的类型转换扩展方法 ToCast<T>()
+
+当前方法可转换任何值类型包括 对象类型,数组类型.
+在转换方法前，首选会验证当前值，类型和要转换的类型是否相同，接着就是验证，它是否符合目标类型的格式，如果不符合会转换成目标类型的默认值，也可以设置默认值。
+
+数据类型相互转换如：
+字符串转整型，字符串转日期，字符串转UUID
+
+### 用法示例：
+```csharp
+using XiaoFeng;
+
+int a = "10".ToCast<int>();
+Int64 b = "10".ToCast<Int64>();
+double c = "10".ToCast<double>();
+DateTime d = "2022-01-19".ToCast<DateTime>();
+float e = "".ToCast<float>(1.0);
+int f = (int)"".GetValue(typeof(int));
+Guid g = "58AFBEB5791311ECBF49FA163E542B11".ToCast<Guid>();
+Guid h = "58AFBEB5-7913-11EC-BF49-FA163E542B11".ToCast<Guid>();
+```
+还有一系列专一处理字符串转相关类型的方法，如：
+```csharp
+Int16 a = "1".ToInt16();
+int b = "2".ToInt32();
+Int64 c = "3".ToInt64();
+UInt16 d = "4".ToUInt16();
+UInt32 e = "5".ToUInt32();
+UInt64 f ="6".ToUInt64();
+float e = "7.2".ToFloat();
+DateTime g = "2022-01-19 12:32".ToDateTime();
+double h = "6.3".ToDouble();
+byte i = "2".ToByte();
+Boolean j = "1".ToBoolean();
+Boolean k = "true".ToBoolean();
+Boolean l = "False".ToBoolean();
+Decimal m = "3.658".ToDecimal();
+long n = "2584512".ToLong();
+Guid o = "58AFBEB5791311ECBF49FA163E542B11".ToGuid();
+Guid p = "58AFBEB5-7913-11EC-BF49-FA163E542B11".ToGuid();
+```
+
+## 获取对象基础类型 GetValueType
+
+### 用法实例
+```csharp
+var a = "a".GetValueType();
+var b = 10.GetValueType();
+var c = new{a="a",b="b"}.GetValueType();
+var d = new Dictionary<String,String>().GetValueType();
+```
+返回的是一个枚举类型 ValueTypes
+
+```csharp
+/// <summary>
+/// 值类型枚举
+/// </summary>
+public enum ValueTypes
+{
+    /// <summary>
+    /// 空
+    /// </summary>
+    [Description("空")] 
+    Null = 0,
+    /// <summary>
+    /// 值
+    /// </summary>
+    [Description("值")] 
+    Value = 1,
+    /// <summary>
+    /// 类
+    /// </summary>
+    [Description("类")] 
+    Class = 2,
+    /// <summary>
+    /// 结构体
+    /// </summary>
+    [Description("结构体")] 
+    Struct = 3,
+    /// <summary>
+    /// 枚举
+    /// </summary>
+    [Description("枚举")] 
+    Enum = 4,
+    /// <summary>
+    /// 字符串
+    /// </summary>
+    [Description("字符串")] 
+    String = 5,
+    /// <summary>
+    /// 数组
+    /// </summary>
+    [Description("数组")] 
+    Array = 6,
+    /// <summary>
+    /// List
+    /// </summary>
+    [Description("List")] 
+    List = 7,
+    /// <summary>
+    /// 字典
+    /// </summary>
+    [Description("字典")] 
+    Dictionary = 8,
+    /// <summary>
+    /// ArrayList
+    /// </summary>
+    [Description("ArrayList")] 
+    ArrayList = 9,
+    /// <summary>
+    /// 是否是集合类型
+    /// </summary>
+    [Description("是否是集合类型")] 
+    IEnumerable = 10,
+    /// <summary>
+    /// 字典类型
+    /// </summary>
+    [Description("字典类型")] 
+    IDictionary = 11,
+    /// <summary>
+    /// 匿名类型
+    /// </summary>
+    [Description("匿名类型")] 
+    Anonymous = 12,
+    /// <summary>
+    /// DataTable
+    /// </summary>
+    [Description("DataTable")] 
+    DataTable = 13,
+    /// <summary>
+    /// 其它
+    /// </summary>
+    [Description("其它")] 
+    Other = 20
+}
+```
+
+# 字符串匹配提取
+
+### 用法实例
+
+IsMatch 当前扩展方法 主要是 当前字符串是否匹配上正则表达式，比如，匹配当前字符串是否是QQ号码，代码如下：
+```csharp
+if("7092734".IsMatch(@"^\d{5-11}$"))
+    Console.WriteLine("是QQ号码格式.");
+else
+    Console.WriteLine("非QQ号码格式.");
+```
+输出结果为：是QQ号码格式.
+因为 字符串 "7092734"确实是QQ号码。
+
+IsNotMatch 当前方法其实就是 !IsMatch,用法和IsMatch用法一样。
+Match 当前扩展方法返回的是Match,使用指定的匹配选项在输入字符串中搜索指定的正则表达式的第一个匹配项。
+Matches 当前扩展方法返回的是使用指定的匹配选项在指定的输入字符串中搜索指定的正则表达式的所有匹配项。
+
+这三个方法是最原始最底层的方法，其它扩展都基于当前三个方法中的一个或两个来实现的。
+
+GetMatch 扩展方法返回结果是：提取符合模式的数据所匹配的第一个匹配项所匹配的第一项或a组的数据
+GetPatterns 扩展方法返回结果是：提取符合模式的数据所有匹配的第一项数据或a组数据
+GetMatchs 扩展方法返回结果是：提取符合模式的数据所匹配的第一项中所有组数据
+GetMatches 扩展方法返回结果是：提取符合模式的数据所有匹配项或所有组数据
+提取的数据量对比：GetMatch < GetMatchs < GetPatterns < GetMatches
+
+ReplacePattern 扩展方法用途是 使用 正则达式 来替换数据
+
+下边通过实例来讲解这几个方法的使用及返回结果的区别：
+```csharp
+var a = "abc4d5e6hh5654".GetMatch(@"\d+");
+a的值为："4";
+var b = "abc4d5e6hh5654".GetPatterns(@"\d+");
+b的值为：["4","5","6","5654"];
+var c = "abc4d5e6hh5654".GetMatchs(@"(?<a>[a-z]+)(?<b>\d+)");
+c的值为：{{"a","abc"},{"b","4"}};
+var d = "abc4d5e6hh5654".GetMatches(@"(?<a>[a-z]+)(?<b>\d+)");
+d的值为：[{{"a","abc"},{"b","4"}},{{"a","d"},{"b","5"}},{{"a","e"},{"b","6"}},{{"a","hh"},{"b","5654"}}]
+var g = "a6b9c53".ReplacePattern(@"\d+","g");
+g的值为："agbgcg";
+var h = "a6b7c56".RemovePattern(@"\d+");
+h的值为："abc";
+var i = "a1b2c3".ReplacePattern(@"\d+",m=>{
+   var a = a.Groups["a"].Value;
+    if(a == "1")return "a1";
+    else return "a2";
+});
+i的值为："aa1ba2ca2";
+```
 
 # XiaoFeng.Redis
 
@@ -533,52 +720,6 @@ await XiaoFeng.Http.HttpHelper.Instance.DownFileAsync(new XiaoFeng.Http.HttpRequ
 
 ```
 
-# 万能的类型转换扩展方法 ToCast<T>()
-
-当前方法 可转任何值 类型 包括 对象类型 数组类型.
-在转换方法前 首选会验证当前值 类型和要转换的类型是否相同，接着就是验证 它是否符合目标类型的格式 如果不符合会转换成目标类型的默认值 也可以设置默认值。
-
-
-
-## 使用方法
-
-```csharp
-using XiaoFeng;
-
-int a = "10".ToCast<int>();
-Int64 b = "10".ToCast<Int64>();
-double c = "10".ToCast<double>();
-DateTime d = "2022-01-19".ToCast<DateTime>();
-float e = "".ToCast<float>(1.0);
-int f = (int)"".GetValue(typeof(int));
-Guid g = "58AFBEB5791311ECBF49FA163E542B11".ToCast<Guid>();
-Guid h = "58AFBEB5-7913-11EC-BF49-FA163E542B11".ToCast<Guid>();
-long j = "a".ToCast<long>(100);
-
-```
-
-* 也可以用下边的方法
-
-```csharp
-Int16 a = "1".ToInt16();
-int b = "2".ToInt32();
-Int64 c = "3".ToInt64();
-UInt16 d = "4".ToUInt16();
-UInt32 e = "5".ToUInt32();
-UInt64 f ="6".ToUInt64();
-float e = "7.2".ToFloat();
-DateTime g = "2022-01-19 12:32".ToDateTime();
-double h = "6.3".ToDouble();
-byte i = "2".ToByte();
-Boolean j = "1".ToBoolean();
-Boolean k = "true".ToBoolean();
-Boolean l = "False".ToBoolean();
-Decimal m = "3.658".ToDecimal();
-long n = "2584512".ToLong();
-Guid o = "58AFBEB5791311ECBF49FA163E542B11".ToGuid();
-Guid p = "58AFBEB5-7913-11EC-BF49-FA163E542B11".ToGuid();
-
-```
 # 数据库操作 DataHelper
 
 * XiaoFeng.Data.DataHelper，当前类库支持SQLSERVER,MYSQL,ORACLE,达梦,SQLITE,ACCESS,OLEDB,ODBC等数十种数据库。
