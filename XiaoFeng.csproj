@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>.netstandard2.0;.netstandard2.1;</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;netstandard2.1;</TargetFrameworks>
 		<OutputType>Library</OutputType>
 		<Authors>Jacky</Authors>
 		<Product>基础类库 数据库中间件</Product>
