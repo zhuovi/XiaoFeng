@@ -127,7 +127,7 @@ namespace XiaoFeng.Net
         /// <summary>
         /// 与客户端通信的套接字
         /// </summary>
-        public Socket ServerSocket { get; set; }
+        public Socket ClientSocket { get; set; }
         /// <summary>
         /// 是否有回车
         /// </summary>
@@ -152,13 +152,33 @@ namespace XiaoFeng.Net
         /// 连接数据
         /// </summary>
         public TSession Session { get; set; }
-        #endregion
-
-        #region 事件
+		/// <summary>
+		/// 获取或设置 System.Boolean 值，该值指定流 System.Net.Sockets.Socket 是否正在使用 Nagle 算法。使用 Nagle 算法，则为 false；否则为 true。 默认值为 false。
+		/// </summary>
+		public Boolean NoDelay { get; set; } = false;
         /// <summary>
-        /// 接收消息事件
+        /// 获取或设置一个值，该值指定之后同步 Overload:System.Net.Sockets.Socket.Receive 调用将超时的时间长度。默认值为 0，指示超时期限无限大。 指定 -1 还会指示超时期限无限大。
         /// </summary>
-        public event MessageEventHandler OnMessage;
+        public int ReceiveTimeout { get; set; } = 0;
+        /// <summary>
+        /// 获取或设置一个值，该值指定之后同步 Overload:System.Net.Sockets.Socket.Send 调用将超时的时间长度。超时值（以毫秒为单位）。 如果将该属性设置为 1 到 499 之间的值，该值将被更改为 500。 默认值为 0，指示超时期限无限大。 指定 -1 还会指示超时期限无限大。
+        /// </summary>
+        public int SendTimeout { get; set; } = 0;
+		/// <summary>
+		/// 获取或设置一个值，它指定 System.Net.Sockets.Socket 接收缓冲区的大小。System.Int32，它包含接收缓冲区的大小（以字节为单位）。 默认值为 8192。
+		/// </summary>
+		public int ReceiveBufferSize { get; set; } = 8192;
+		/// <summary>
+		/// 获取或设置一个值，该值指定 System.Net.Sockets.Socket 发送缓冲区的大小。System.Int32，它包含发送缓冲区的大小（以字节为单位）。 默认值为 8192。
+		/// </summary>
+		public int SendBufferSize { get; set; } = 8192;
+		#endregion
+
+		#region 事件
+		/// <summary>
+		/// 接收消息事件
+		/// </summary>
+		public event MessageEventHandler OnMessage;
         /// <summary>
         /// 接收消息事件
         /// </summary>
@@ -208,18 +228,25 @@ namespace XiaoFeng.Net
                 if (Cookie != null) this.Session.Header.Add("Cookie", Cookie);
             }
             /*定义一个套接字监听*/
-            this.ServerSocket = new Socket(this.AddressFamily, this.SocketType, this.ProtocolType);
-            IPEndPoint endPoint = this.Session.EndPoint;
+            this.ClientSocket = new Socket(this.AddressFamily, this.SocketType, this.ProtocolType)
+            {
+                NoDelay = this.NoDelay,
+                ReceiveTimeout = this.ReceiveTimeout,
+                SendTimeout = this.SendTimeout,
+                ReceiveBufferSize = this.ReceiveBufferSize,
+                SendBufferSize = this.SendBufferSize
+            };
+			IPEndPoint endPoint = this.Session.EndPoint;
             try
             {
                 /*客户端套接字连接到网络节点上,用的是Connect*/
-                this.ServerSocket.Connect(endPoint);
+                this.ClientSocket.Connect(endPoint);
                 /*创建握手*/
                 if (this.Session.WsType != WebSocketType.Null)
                 {
                     this.Send(CreateHeader());
                 }
-                this.Session.ConnectionSocket = this.ServerSocket;
+                this.Session.ConnectionSocket = this.ClientSocket;
                 /*连接成功事件*/
                 OnStart?.Invoke(this, EventArgs.Empty);
                 Task.Factory.StartNew(ClientSocket =>
@@ -396,11 +423,11 @@ Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits
         {
             this.CancelToken.Cancel();
             Task.Delay(100).Wait();
-            if (this.ServerSocket != null && this.ServerSocket.Connected)
+            if (this.ClientSocket != null && this.ClientSocket.Connected)
             {
-                this.ServerSocket?.Disconnect(false);
-                this.ServerSocket?.Close();
-                this.ServerSocket?.Dispose();
+                this.ClientSocket?.Disconnect(false);
+                this.ClientSocket?.Close();
+                this.ClientSocket?.Dispose();
             }
             this.Session?.TryDispose();
             this.OnClose?.Invoke(this, EventArgs.Empty);

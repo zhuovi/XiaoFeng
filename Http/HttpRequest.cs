@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Security;
+using System.Net.Sockets;
+using System.Runtime.ConstrainedExecution;
+using System.Runtime.InteropServices.ComTypes;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
@@ -146,10 +150,22 @@ namespace XiaoFeng.Http
         /// 请求标头值 默认为text/html, application/xhtml+xml, */*
         /// </summary>
         public string Accept { get; set; } = "text/html, application/xhtml+xml, */*";
-        /// <summary>
-        /// 获取或设置一个值，该值指示请求是否应跟随重定向响应。
-        /// </summary>
-        public Boolean AllowAutoRedirect { get; set; } = true;
+		/// <summary>
+		/// Accept-Charset 标头，指定响应可接受的内容编码。
+		/// </summary>
+		public string AcceptEncoding { get; set; }
+		/// <summary>
+		/// Accept-Langauge 标头，指定用于响应的首选自然语言。
+		/// </summary>
+		public string AcceptLanguage { get; set; }
+		/// <summary>
+		/// Cache-Control 标头，指定请求/响应链上所有缓存控制机制必须服从的指令。
+		/// </summary>
+		public CacheControlHeaderValue CacheControl { get; set; }
+		/// <summary>
+		/// 获取或设置一个值，该值指示请求是否应跟随重定向响应。
+		/// </summary>
+		public Boolean AllowAutoRedirect { get; set; } = true;
         /// <summary>
         /// 获取或设置请求将跟随的重定向的最大数目。
         /// </summary>
@@ -157,7 +173,7 @@ namespace XiaoFeng.Http
         /// <summary>
         /// 获取或设置一个值，该值指示是否与 Internet 资源建立持久性连接。
         /// </summary>
-        public Boolean KeepAlive { get; set; } = false;
+        public Boolean KeepAlive { get; set; } = true;
         /// <summary>
         /// 设置509证书集合
         /// </summary>
@@ -209,7 +225,7 @@ namespace XiaoFeng.Http
         /// <summary>
         /// 数据
         /// </summary>
-        public Dictionary<string, string> Data { get; set; }
+        public IDictionary<string, string> Data { get; set; }
         /// <summary>
         /// Body请求数据
         /// </summary>
@@ -248,6 +264,8 @@ namespace XiaoFeng.Http
             if (this.Address.IsNullOrEmpty() || !this.Address.IsSite()) return null;
             if (this.HttpCore == HttpCore.HttpWebRequest)
                 return await this.GetHttpResponseAsync();
+            else if (this.HttpCore == HttpCore.HttpSocket)
+                return await this.GetHttpSocketResponseAsync();
             var Response = new HttpResponse();
             /*回收*/
             GC.Collect();
@@ -343,13 +361,26 @@ namespace XiaoFeng.Http
             /*Accept*/
             if (this.Accept.IsNotNullOrWhiteSpace())
                 this.Request.Headers.Accept.ParseAdd(this.Accept);
-
+            
             /*UserAgent客户端的访问类型，包括浏览器版本和操作系统信息*/
             this.Request.Headers.UserAgent.Clear();
             this.Request.Headers.UserAgent.ParseAdd(this.UserAgent);
             /*编码*/
+            if (this.AcceptEncoding.IsNotNullOrWhiteSpace())
+            {
             this.Request.Headers.AcceptEncoding.Clear();
-            this.Request.Headers.AcceptEncoding.ParseAdd(this.Encoding.WebName);
+                this.Request.Headers.AcceptEncoding.ParseAdd(this.AcceptEncoding);
+            }
+            if (this.AcceptLanguage.IsNotNullOrWhiteSpace())
+            {
+                this.Request.Headers.AcceptLanguage.Clear();
+                this.Request.Headers.AcceptLanguage.ParseAdd(this.AcceptLanguage);
+            }
+            if (this.CacheControl != null)
+            {
+                this.Request.Headers.CacheControl = this.CacheControl;
+            }
+
             this.Request.Headers.AcceptCharset.ParseAdd(this.Encoding.WebName);
             /*设置安全凭证*/
             this.ClientHandler.Credentials = this.Credentials;
@@ -549,7 +580,15 @@ namespace XiaoFeng.Http
             /*Accept*/
             if (this.Accept.IsNotNullOrWhiteSpace())
                 this.RequestHttp.Accept = this.Accept;
-            
+
+            if (this.AcceptEncoding.IsNotNullOrWhiteSpace())
+                this.RequestHttp.Headers.Add(HttpRequestHeader.AcceptEncoding, this.AcceptEncoding);
+
+            if (this.AcceptLanguage.IsNotNullOrWhiteSpace())
+                this.RequestHttp.Headers.Add(HttpRequestHeader.AcceptLanguage, this.AcceptLanguage);
+
+            if (this.CacheControl != null)
+                this.RequestHttp.Headers.Add(HttpRequestHeader.CacheControl, this.CacheControl.ToString());
             if (this.ContentType.IsNullOrEmpty())
                 this.ContentType = "text/html";
             /*请求内容类型*/
@@ -622,17 +661,187 @@ namespace XiaoFeng.Http
             }
             return Response;
         }
-        #endregion
+		#endregion
 
-        #region 通过设置这个属性，可以在发出连接的时候绑定客户端发出连接所使用的IP地址。
-        /// <summary>
-        /// 通过设置这个属性，可以在发出连接的时候绑定客户端发出连接所使用的IP地址。 
-        /// </summary>
-        /// <param name="servicePoint"></param>
-        /// <param name="remoteEndPoint"></param>
-        /// <param name="retryCount"></param>
-        /// <returns></returns>
-        private IPEndPoint BindIPEndPointCallback(ServicePoint servicePoint, IPEndPoint remoteEndPoint, int retryCount)
+		#region 获取响应数据
+		/// <summary>
+		/// 获取响应数据
+		/// </summary>
+		/// <returns></returns>
+		public async Task<HttpResponse> GetHttpSocketResponseAsync()
+        {
+            var Response = new HttpResponse();
+			/*回收*/
+			GC.Collect();
+            var uri = new Uri(this.Address);
+			var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, System.Net.Sockets.ProtocolType.Tcp)
+			{
+				NoDelay = true,
+				ReceiveTimeout = this.Timeout,
+				SendTimeout = this.Timeout
+			};
+			socket.Connect(Dns.GetHostAddresses(uri.Host), uri.Port);
+            Stream stream = new NetworkStream(socket, true);
+            var header = new StringBuilder();
+            header.Append($"{this.Method.Method.ToUpper()} {uri.PathAndQuery} HTTP/{this.ProtocolVersion}\r\n");
+            header.Append($"Accept:{this.Accept}\r\n");
+            header.Append($"Accept-Encoding:{this.AcceptEncoding.Multivariate("gzip, deflate")}\r\n");
+            header.Append($"Accept-Language:{this.AcceptLanguage.Multivariate("zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6")}\r\n");
+            header.Append($"Cache-Control:{(this.CacheControl == null ? "max-age=0" : this.CacheControl.ToString())}\r\n");
+            header.Append($"Connection:{(this.KeepAlive ? "keep-alive" : "close")}\r\n");
+            if (this.CookieContainer != null && this.CookieContainer.Count>0)
+            {
+                var Cookie = new List<string>();
+                var cookies = this.CookieContainer.GetCookies(uri);
+                for(var i = 0; i < cookies.Count; i++)
+                {
+                    var cookie = cookies[i];
+                    Cookie.Add($"{cookie.Name}={cookie.Value}");
+                }
+                header.Append($"{Cookie}:{Cookie.Join("&")}\r\n");
+            }
+            header.Append($"Host:{uri.Host}\r\n");
+            header.Append($"Upgrade-Insecure-Requests:1\r\n");
+            header.Append($"User-Agent:{this.UserAgent}\r\n");
+
+            if (this.ContentType.IsNotNullOrWhiteSpace())
+            {
+                header.Append($"Content-type:{ContentType}\r\n");
+            }
+            else
+            {
+                if (this.Method.Method.ToUpper() == "POST")
+                {
+                    header.Append($"Content-Type:application/x-www-form-urlencoded");
+                }
+            }
+
+            header.Append("\r\n");
+            var bytes = header.ToString().GetBytes(this.Encoding);
+
+			MemoryStream buffers = new MemoryStream();
+			byte[] buffer;
+
+			if (uri.Scheme.ToUpper() == "HTTPS")
+            {
+                var ssl = new SslStream(stream, true, new RemoteCertificateValidationCallback((o, certificate, chain, errors) =>
+                {
+                    return true;
+                }));
+                if (this.CertPath.IsNotNullOrEmpty())
+                {
+					var cert = this.CertPath.GetBasePath();
+                    if (File.Exists(cert))
+                    {
+                        var x509 = this.CertPassWord.IsNullOrEmpty() ? new X509Certificate2(cert) : new X509Certificate2(cert, this.CertPassWord);
+                        if (this.ClentCertificates == null) this.ClentCertificates = new X509Certificate2Collection(x509);
+                        else
+                            this.ClentCertificates.Add(x509);
+                    }
+				}
+                await ssl.AuthenticateAsClientAsync(uri.Host, this.ClentCertificates, System.Security.Authentication.SslProtocols.Tls12, false);
+                if (ssl.IsAuthenticated)
+                {
+                    await ssl.WriteAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
+					await ssl.FlushAsync().ConfigureAwait(false);
+					
+					while (true)
+					{
+						buffer = new byte[1024];
+						var length = await ssl.ReadAsync(buffer, 0, buffer.Length);
+						if (length == 0) break;
+						await buffers.WriteAsync(buffer, 0, length);
+						if (length < buffer.Length) break;
+					}
+					ssl.Close();
+					ssl.Dispose();
+				}
+                else
+                {
+                    throw new Exception("认证失败.");
+                }
+            }
+            else
+            {
+                await stream.WriteAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
+				await stream.FlushAsync().ConfigureAwait(false);
+
+                while (true)
+                {
+                    buffer = new byte[1024];
+                    var length = await stream.ReadAsync(buffer, 0, buffer.Length);
+                    if (length == 0) break;
+                    await buffers.WriteAsync(buffer, 0, length);
+                    if (length < buffer.Length) break;
+                }
+                stream.Close();
+                stream.Dispose();
+            }
+            if (socket.Connected)
+            {
+                socket.Shutdown(SocketShutdown.Both);
+                socket.Disconnect(false);
+                socket.Close();
+            }
+            socket.Dispose();
+
+            var content = buffers.ToArray().GetString(this.Encoding);
+            
+            this.Headers = new Dictionary<string, string>();
+            var reader = new StreamReader(buffers);
+			buffers.Seek(0, SeekOrigin.Begin);
+			var state = reader.ReadLine();
+            while (!reader.EndOfStream)
+            {
+                var line = await reader.ReadLineAsync().ConfigureAwait(false);
+                if (line.IsNullOrEmpty()) 
+                {
+                    if (this.Headers.TryGetValue("Content-Encoding",out var ContentEncoding))
+                    {
+                        var NStream = new MemoryStream(reader.ReadToEnd().Trim(new char[] { '\r', '\n' }).GetBytes(this.Encoding));
+                        var _stream = new MemoryStream();
+						if (ContentEncoding.Equals("gzip", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            /*开始读取流并设置编码方式*/
+							using (var zip = new GZipStream(NStream, CompressionMode.Decompress)) zip.CopyTo(_stream);
+                        }
+                        else if (ContentEncoding.Equals("deflate", StringComparison.InvariantCultureIgnoreCase))
+						{
+							using (var deflate = new DeflateStream(NStream, CompressionMode.Decompress)) deflate.CopyTo(_stream);
+                        }
+#if !NETFRAMEWORK && !NETSTANDARD2_0
+						else if (ContentEncoding.Equals("br", StringComparison.InvariantCultureIgnoreCase))
+						{
+							using (var br = new BrotliStream(NStream, CompressionMode.Decompress)) br.CopyTo(_stream);
+						}
+#endif
+					}
+					else
+                    {
+                        
+                    }
+                }
+                else
+                {
+                    var lines = line.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (lines.Length != 2) continue;
+                    this.Headers.Add(lines[0].Trim(), lines[1].Trim());
+                }
+            }
+
+			return Response;
+        }
+		#endregion
+
+		#region 通过设置这个属性，可以在发出连接的时候绑定客户端发出连接所使用的IP地址。
+		/// <summary>
+		/// 通过设置这个属性，可以在发出连接的时候绑定客户端发出连接所使用的IP地址。 
+		/// </summary>
+		/// <param name="servicePoint"></param>
+		/// <param name="remoteEndPoint"></param>
+		/// <param name="retryCount"></param>
+		/// <returns></returns>
+		private IPEndPoint BindIPEndPointCallback(ServicePoint servicePoint, IPEndPoint remoteEndPoint, int retryCount)
         {
             return this.IPEndPoint;
         }
@@ -739,7 +948,10 @@ namespace XiaoFeng.Http
                     ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(CheckValidationResult);
                     /*将证书添加到请求里*/
                     var cert = this.CertPath.GetBasePath();
-                    ClientCerts.Add(this.CertPassWord.IsNullOrEmpty() ? new X509Certificate2(cert) : new X509Certificate2(cert, this.CertPassWord));
+                    if (File.Exists(cert))
+                    {
+                        ClientCerts.Add(this.CertPassWord.IsNullOrEmpty() ? new X509Certificate2(cert) : new X509Certificate2(cert, this.CertPassWord));
+                    }
                 }
                 else
                 {

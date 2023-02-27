@@ -108,10 +108,30 @@ namespace XiaoFeng.Net
         /// 协议类型
         /// </summary>
         public ProtocolType ProtocolType { get; set; } = ProtocolType.IP;
-        /// <summary>
-        /// 连接请求数
-        /// </summary>
-        public int ListenCount { get; set; } = int.MaxValue;
+		/// <summary>
+		/// 获取或设置 System.Boolean 值，该值指定流 System.Net.Sockets.Socket 是否正在使用 Nagle 算法。使用 Nagle 算法，则为 false；否则为 true。 默认值为 false。
+		/// </summary>
+		public Boolean NoDelay { get; set; } = false;
+		/// <summary>
+		/// 获取或设置一个值，该值指定之后同步 Overload:System.Net.Sockets.Socket.Receive 调用将超时的时间长度。默认值为 0，指示超时期限无限大。 指定 -1 还会指示超时期限无限大。
+		/// </summary>
+		public int ReceiveTimeout { get; set; } = 0;
+		/// <summary>
+		/// 获取或设置一个值，该值指定之后同步 Overload:System.Net.Sockets.Socket.Send 调用将超时的时间长度。超时值（以毫秒为单位）。 如果将该属性设置为 1 到 499 之间的值，该值将被更改为 500。 默认值为 0，指示超时期限无限大。 指定 -1 还会指示超时期限无限大。
+		/// </summary>
+		public int SendTimeout { get; set; } = 0;
+		/// <summary>
+		/// 获取或设置一个值，它指定 System.Net.Sockets.Socket 接收缓冲区的大小。System.Int32，它包含接收缓冲区的大小（以字节为单位）。 默认值为 8192。
+		/// </summary>
+		public int ReceiveBufferSize { get; set; } = 8192;
+		/// <summary>
+		/// 获取或设置一个值，该值指定 System.Net.Sockets.Socket 发送缓冲区的大小。System.Int32，它包含发送缓冲区的大小（以字节为单位）。 默认值为 8192。
+		/// </summary>
+		public int SendBufferSize { get; set; } = 8192;
+		/// <summary>
+		/// 连接请求数
+		/// </summary>
+		public int ListenCount { get; set; } = int.MaxValue;
         /// <summary>
         /// 取消通知
         /// </summary>
@@ -135,7 +155,7 @@ namespace XiaoFeng.Net
         /// <summary>
         /// 服务监听
         /// </summary>
-        public Socket ServerSocket { get; set; }
+        public Socket ClientSocket { get; set; }
         /// <summary>
         /// 最大接收数
         /// </summary>
@@ -242,12 +262,19 @@ namespace XiaoFeng.Net
             try
             {
                 /*定义一个套接字用于监听客户端发来的消息,包含三个参数（IP4寻址协议，流式连接，Tcp协议）*/
-                ServerSocket = new Socket(this.AddressFamily, this.SocketType, this.ProtocolType);
-                ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                ClientSocket = new Socket(this.AddressFamily, this.SocketType, this.ProtocolType)
+                {
+                    NoDelay = this.NoDelay,
+                    ReceiveTimeout = this.ReceiveTimeout,
+                    SendTimeout = this.SendTimeout,
+                    ReceiveBufferSize = this.ReceiveBufferSize,
+                    SendBufferSize = this.SendBufferSize
+                };
+                ClientSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
                 /*绑定IP和端口*/
-                ServerSocket.Bind(new IPEndPoint(this.IP, this.Port));
+                ClientSocket.Bind(new IPEndPoint(this.IP, this.Port));
                 /*设定排队连接请求数*/
-                ServerSocket.Listen(this.ListenCount);
+                ClientSocket.Listen(this.ListenCount);
                 /*设定服务器运行状态*/
                 this.SocketState = SocketState.Runing;
                 /*启动事件*/
@@ -272,15 +299,15 @@ namespace XiaoFeng.Net
                         OnStop?.Invoke(this, EventArgs.Empty);
                         /*清空队列*/
                         this.ClearQueue();
-                        ServerSocket.Shutdown(SocketShutdown.Both);
-                        ServerSocket.Disconnect(false);
-                        ServerSocket.Close(3);
+                        ClientSocket.Shutdown(SocketShutdown.Both);
+                        ClientSocket.Disconnect(false);
+                        ClientSocket.Close(3);
                         break;
                     }
                     try
                     {
                         /*建立异步监听*/
-                        Socket socket = ServerSocket.Accept();
+                        Socket socket = ClientSocket.Accept();
                         if (socket != null)
                         {
                             /*判断是否在黑名单*/
@@ -948,9 +975,9 @@ namespace XiaoFeng.Net
             if (!AlreadyDisposed)
             {
                 AlreadyDisposed = true;
-                if (ServerSocket != null)
+                if (ClientSocket != null)
                 {
-                    ServerSocket.Close();
+                    ClientSocket.Close();
                 }
                 this.RWLock.EnterWriteLock();
                 try

@@ -124,10 +124,10 @@ namespace XiaoFeng.Http
         /// 获取或设置 Referer HTTP 标头的值。
         /// </summary>
         string Referer { get; set; }
-        /// <summary>
-        /// 数据
-        /// </summary>
-        Dictionary<string, string> Data { get; set; }
+		/// <summary>
+		/// 数据
+		/// </summary>
+		IDictionary<string, string> Data { get; set; }
         /// <summary>
         /// Body请求数据
         /// </summary>

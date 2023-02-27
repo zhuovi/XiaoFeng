@@ -29,6 +29,11 @@ namespace XiaoFeng.Http
         /// HttpWebRequest
         /// </summary>
         [Description("HttpWebRequest")]
-        HttpWebRequest = 1
+        HttpWebRequest = 1,
+        /// <summary>
+        /// Socket
+        /// </summary>
+        [Description("Socket")]
+        HttpSocket = 2
     }
 }

@@ -27,10 +27,10 @@ namespace XiaoFeng.Http
         /// 获取或设置与此响应关联的 Cookie
         /// </summary>
         CookieContainer CookieContainer { get; set; }
-        /// <summary>
-        /// 指定构成 HTTP 标头的名称/值对的集合。
-        /// </summary>
-        Dictionary<string, string> Headers { get; set; }
+		/// <summary>
+		/// 指定构成 HTTP 标头的名称/值对的集合。
+		/// </summary>
+		IDictionary<string, string> Headers { get; set; }
         /// <summary>
         /// 获取或设置请求的方法
         /// </summary>
