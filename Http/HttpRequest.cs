@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.IO.Pipes;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -193,7 +194,7 @@ namespace XiaoFeng.Http
         /// <summary>
         /// 指定 Schannel 安全包支持的安全协议
         /// </summary>
-        public SecurityProtocolType ProtocolType { get; set; } = SecurityProtocolType.Tls12;
+        public SecurityProtocolType ProtocolType { get; set; } = SecurityProtocolType.Tls12 ;
         /// <summary>
         /// 获取或设置用于请求的 HTTP 版本。返回结果:用于请求的 HTTP 版本。默认为 System.Net.HttpVersion.Version11。
         /// </summary>
@@ -254,7 +255,7 @@ namespace XiaoFeng.Http
 
         #region 方法
 
-        #region 获取响应数据
+        #region 获取响应数据 HttpClient
         /// <summary>
         /// 获取响应数据
         /// </summary>
@@ -263,9 +264,9 @@ namespace XiaoFeng.Http
         {
             if (this.Address.IsNullOrEmpty() || !this.Address.IsSite()) return null;
             if (this.HttpCore == HttpCore.HttpWebRequest)
-                return await this.GetHttpResponseAsync();
+                return await this.GetHttpResponseAsync().ConfigureAwait(false);
             else if (this.HttpCore == HttpCore.HttpSocket)
-                return await this.GetHttpSocketResponseAsync();
+                return await this.GetHttpSocketResponseAsync().ConfigureAwait(false);
             var Response = new HttpResponse();
             /*回收*/
             GC.Collect();
@@ -432,7 +433,7 @@ namespace XiaoFeng.Http
                 this.EndTime = DateTime.Now;
                 Response.HttpCore = this.HttpCore;
                 Response.SetBeginAndEndTime(this.BeginTime, this.EndTime);
-                await Response.InitAsync();
+                await Response.InitAsync().ConfigureAwait(false);
                 return Response;
             }
             catch (HttpRequestException ex)
@@ -443,7 +444,7 @@ namespace XiaoFeng.Http
                     {
                         Response.Response.Headers.Add(kv.Key, kv.Value);
                     });
-                    await Response.InitAsync();
+                    await Response.InitAsync().ConfigureAwait(false);
                 }
                 return Response;
             }
@@ -455,7 +456,7 @@ namespace XiaoFeng.Http
                     {
                         Response.Response.Headers.Add(kv.Key, kv.Value);
                     });
-                    await Response.InitAsync();
+                    await Response.InitAsync().ConfigureAwait(false);
                 }
                 return Response;
             }
@@ -467,7 +468,7 @@ namespace XiaoFeng.Http
                     {
                         Response.Response.Headers.Add(kv.Key, kv.Value);
                     });
-                    await Response.InitAsync();
+                    await Response.InitAsync().ConfigureAwait(false);
                 }
                 return Response;
             }
@@ -501,7 +502,7 @@ namespace XiaoFeng.Http
         public HttpResponse GetResponse() => this.GetResponseAsync().ConfigureAwait(false).GetAwaiter().GetResult();
         #endregion
 
-        #region 获取响应数据
+        #region 获取响应数据 HttpWebRequest
         /// <summary>
         /// 获取响应数据
         /// </summary>
@@ -531,45 +532,9 @@ namespace XiaoFeng.Http
                 this.RequestHttp.Proxy = this.WebProxy;
             /*设置Http版本*/
             if (this.ProtocolVersion != null) this.RequestHttp.ProtocolVersion = this.ProtocolVersion;
-            byte[] RequestData = Array.Empty<byte>();
-            if (",POST,GET,DELETE,PUT,".IndexOf("," + this.Method.Method.ToUpper() + ",", StringComparison.OrdinalIgnoreCase) > -1)
-            {
-                if (this.FormData == null)
-                {
-                    if (this.Data != null && this.Data.Any())
-                    {
-                        if (this.Method == "POST")
-                        {
-                            if (this.ContentType.IsNullOrEmpty())
-                                this.ContentType = "application/x-www-form-urlencoded";
-                            RequestData = this.Data.ToQuery().GetBytes(this.Encoding);
-                        }
-                    }
-                    else if (this.BodyData.IsNotNullOrEmpty())
-                    {
-                        this.Method = HttpMethod.Post;
-                        if (this.ContentType.IsNullOrEmpty())
-                            this.ContentType = "application/json";
-                        RequestData = this.BodyData.GetBytes(this.Encoding);
-                    }
-                    if (this.ContentType.IsNotNullOrEmpty())
-                        this.RequestHttp.ContentType = this.ContentType;
-                }
-                else
-                {
-                    this.Method = HttpMethod.Post;
-                    if (this.Data.IsNotNullOrEmpty())
-                    {
-                        this.Data.Each(kv =>
-                        {
-                            this.FormData.Add(new FormData(kv.Key, kv.Value, FormType.Text));
-                        });
-                    }
-                    var boundary = this.GetBoundary();
-                    this.ContentType = "multipart/form-data; boundary=" + boundary;
-                    RequestData = this.GetBytes(boundary);
-                }
-            }
+
+            byte[] RequestData = this.GetReuqestBody();
+
             this.RequestHttp.ServicePoint.Expect100Continue = this.Expect100Continue;
             this.RequestHttp.Method = this.Method.Method;
             this.RequestHttp.Timeout = this.Timeout;
@@ -624,16 +589,16 @@ namespace XiaoFeng.Http
                 Response.Request = this;
                 this.BeginTime = DateTime.Now;
                 /*请求数据*/
-                Response.ResponseHttp = await this.RequestHttp.GetResponseAsync() as HttpWebResponse;
+                Response.ResponseHttp = await this.RequestHttp.GetResponseAsync().ConfigureAwait(false) as HttpWebResponse;
                 this.EndTime = DateTime.Now;
                 Response.HttpCore = this.HttpCore;
                 Response.SetBeginAndEndTime(this.BeginTime, this.EndTime);
-                await Response.InitHttpAsync();
+                await Response.InitHttpAsync().ConfigureAwait(false);
             }
             catch (WebException ex)
             {
                 if (ex.Response != null)
-                    using (Response.ResponseHttp = (HttpWebResponse)ex.Response) await Response.InitHttpAsync();
+                    using (Response.ResponseHttp = (HttpWebResponse)ex.Response) await Response.InitHttpAsync().ConfigureAwait(false);
                 else
                 {
                     Response.StatusCode = HttpStatusCode.BadRequest;
@@ -663,173 +628,15 @@ namespace XiaoFeng.Http
         }
 		#endregion
 
-		#region 获取响应数据
+		#region 获取响应数据 Socket
 		/// <summary>
 		/// 获取响应数据
 		/// </summary>
 		/// <returns></returns>
 		public async Task<HttpResponse> GetHttpSocketResponseAsync()
         {
-            var Response = new HttpResponse();
-			/*回收*/
-			GC.Collect();
-            var uri = new Uri(this.Address);
-			var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, System.Net.Sockets.ProtocolType.Tcp)
-			{
-				NoDelay = true,
-				ReceiveTimeout = this.Timeout,
-				SendTimeout = this.Timeout
-			};
-			socket.Connect(Dns.GetHostAddresses(uri.Host), uri.Port);
-            Stream stream = new NetworkStream(socket, true);
-            var header = new StringBuilder();
-            header.Append($"{this.Method.Method.ToUpper()} {uri.PathAndQuery} HTTP/{this.ProtocolVersion}\r\n");
-            header.Append($"Accept:{this.Accept}\r\n");
-            header.Append($"Accept-Encoding:{this.AcceptEncoding.Multivariate("gzip, deflate")}\r\n");
-            header.Append($"Accept-Language:{this.AcceptLanguage.Multivariate("zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6")}\r\n");
-            header.Append($"Cache-Control:{(this.CacheControl == null ? "max-age=0" : this.CacheControl.ToString())}\r\n");
-            header.Append($"Connection:{(this.KeepAlive ? "keep-alive" : "close")}\r\n");
-            if (this.CookieContainer != null && this.CookieContainer.Count>0)
-            {
-                var Cookie = new List<string>();
-                var cookies = this.CookieContainer.GetCookies(uri);
-                for(var i = 0; i < cookies.Count; i++)
-                {
-                    var cookie = cookies[i];
-                    Cookie.Add($"{cookie.Name}={cookie.Value}");
-                }
-                header.Append($"{Cookie}:{Cookie.Join("&")}\r\n");
-            }
-            header.Append($"Host:{uri.Host}\r\n");
-            header.Append($"Upgrade-Insecure-Requests:1\r\n");
-            header.Append($"User-Agent:{this.UserAgent}\r\n");
-
-            if (this.ContentType.IsNotNullOrWhiteSpace())
-            {
-                header.Append($"Content-type:{ContentType}\r\n");
-            }
-            else
-            {
-                if (this.Method.Method.ToUpper() == "POST")
-                {
-                    header.Append($"Content-Type:application/x-www-form-urlencoded");
-                }
-            }
-
-            header.Append("\r\n");
-            var bytes = header.ToString().GetBytes(this.Encoding);
-
-			MemoryStream buffers = new MemoryStream();
-			byte[] buffer;
-
-			if (uri.Scheme.ToUpper() == "HTTPS")
-            {
-                var ssl = new SslStream(stream, true, new RemoteCertificateValidationCallback((o, certificate, chain, errors) =>
-                {
-                    return true;
-                }));
-                if (this.CertPath.IsNotNullOrEmpty())
-                {
-					var cert = this.CertPath.GetBasePath();
-                    if (File.Exists(cert))
-                    {
-                        var x509 = this.CertPassWord.IsNullOrEmpty() ? new X509Certificate2(cert) : new X509Certificate2(cert, this.CertPassWord);
-                        if (this.ClentCertificates == null) this.ClentCertificates = new X509Certificate2Collection(x509);
-                        else
-                            this.ClentCertificates.Add(x509);
-                    }
-				}
-                await ssl.AuthenticateAsClientAsync(uri.Host, this.ClentCertificates, System.Security.Authentication.SslProtocols.Tls12, false);
-                if (ssl.IsAuthenticated)
-                {
-                    await ssl.WriteAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
-					await ssl.FlushAsync().ConfigureAwait(false);
-					
-					while (true)
-					{
-						buffer = new byte[1024];
-						var length = await ssl.ReadAsync(buffer, 0, buffer.Length);
-						if (length == 0) break;
-						await buffers.WriteAsync(buffer, 0, length);
-						if (length < buffer.Length) break;
-					}
-					ssl.Close();
-					ssl.Dispose();
-				}
-                else
-                {
-                    throw new Exception("认证失败.");
-                }
-            }
-            else
-            {
-                await stream.WriteAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
-				await stream.FlushAsync().ConfigureAwait(false);
-
-                while (true)
-                {
-                    buffer = new byte[1024];
-                    var length = await stream.ReadAsync(buffer, 0, buffer.Length);
-                    if (length == 0) break;
-                    await buffers.WriteAsync(buffer, 0, length);
-                    if (length < buffer.Length) break;
-                }
-                stream.Close();
-                stream.Dispose();
-            }
-            if (socket.Connected)
-            {
-                socket.Shutdown(SocketShutdown.Both);
-                socket.Disconnect(false);
-                socket.Close();
-            }
-            socket.Dispose();
-
-            var content = buffers.ToArray().GetString(this.Encoding);
-            
-            this.Headers = new Dictionary<string, string>();
-            var reader = new StreamReader(buffers);
-			buffers.Seek(0, SeekOrigin.Begin);
-			var state = reader.ReadLine();
-            while (!reader.EndOfStream)
-            {
-                var line = await reader.ReadLineAsync().ConfigureAwait(false);
-                if (line.IsNullOrEmpty()) 
-                {
-                    if (this.Headers.TryGetValue("Content-Encoding",out var ContentEncoding))
-                    {
-                        var NStream = new MemoryStream(reader.ReadToEnd().Trim(new char[] { '\r', '\n' }).GetBytes(this.Encoding));
-                        var _stream = new MemoryStream();
-						if (ContentEncoding.Equals("gzip", StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            /*开始读取流并设置编码方式*/
-							using (var zip = new GZipStream(NStream, CompressionMode.Decompress)) zip.CopyTo(_stream);
-                        }
-                        else if (ContentEncoding.Equals("deflate", StringComparison.InvariantCultureIgnoreCase))
-						{
-							using (var deflate = new DeflateStream(NStream, CompressionMode.Decompress)) deflate.CopyTo(_stream);
-                        }
-#if !NETFRAMEWORK && !NETSTANDARD2_0
-						else if (ContentEncoding.Equals("br", StringComparison.InvariantCultureIgnoreCase))
-						{
-							using (var br = new BrotliStream(NStream, CompressionMode.Decompress)) br.CopyTo(_stream);
-						}
-#endif
-					}
-					else
-                    {
-                        
-                    }
-                }
-                else
-                {
-                    var lines = line.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
-                    if (lines.Length != 2) continue;
-                    this.Headers.Add(lines[0].Trim(), lines[1].Trim());
-                }
-            }
-
-			return Response;
+            var httpSocket = new HttpSocket(this);
+            return await httpSocket.SendRequestAsync().ConfigureAwait(false);
         }
 		#endregion
 
@@ -859,13 +666,63 @@ namespace XiaoFeng.Http
             var f = m.GetMethod("IdleServicePointTimeoutCallback", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
             f.Invoke(null, new object[] { null, 0, servicePoint });*/
         }
-        #endregion
+		#endregion
 
-        #region 分界线
-        /// <summary>
-        /// 分界线
-        /// </summary>
-        public string GetBoundary()
+		#region 获取请求Body
+		/// <summary>
+		/// 获取请求Body
+		/// </summary>
+		/// <returns></returns>
+		public byte[] GetReuqestBody()
+        {
+			byte[] RequestData = Array.Empty<byte>();
+			if (",POST,GET,DELETE,PUT,".IndexOf("," + this.Method.Method.ToUpper() + ",", StringComparison.OrdinalIgnoreCase) > -1)
+			{
+				if (this.FormData == null)
+				{
+					if (this.Data != null && this.Data.Any())
+					{
+						if (this.Method == "POST")
+						{
+							if (this.ContentType.IsNullOrEmpty())
+								this.ContentType = "application/x-www-form-urlencoded";
+							RequestData = this.Data.ToQuery().GetBytes(this.Encoding);
+						}
+					}
+					else if (this.BodyData.IsNotNullOrEmpty())
+					{
+						this.Method = HttpMethod.Post;
+						if (this.ContentType.IsNullOrEmpty())
+							this.ContentType = "application/json";
+						RequestData = this.BodyData.GetBytes(this.Encoding);
+					}
+					if (this.ContentType.IsNotNullOrEmpty())
+						this.RequestHttp.ContentType = this.ContentType;
+				}
+				else
+				{
+					this.Method = HttpMethod.Post;
+					if (this.Data.IsNotNullOrEmpty())
+					{
+						this.Data.Each(kv =>
+						{
+							this.FormData.Add(new FormData(kv.Key, kv.Value, FormType.Text));
+						});
+					}
+					var boundary = this.GetBoundary();
+					this.ContentType = "multipart/form-data; boundary=" + boundary;
+					RequestData = this.GetBytes(boundary);
+				}
+			}
+            return RequestData;
+		}
+		#endregion
+
+		#region 分界线
+		/// <summary>
+		/// 分界线
+		/// </summary>
+		public string GetBoundary()
         {
             var Boundary =
 #if NETCORE

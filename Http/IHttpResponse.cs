@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -29,10 +30,14 @@ namespace XiaoFeng.Http
         /// 获取响应请求的 Internet 资源的 URI。
         /// </summary>
         Uri ResponseUri { get; set; }
-        /// <summary>
-        /// 获取响应中使用的 HTTP 协议的版本。
-        /// </summary>
-        Version ProtocolVersion { get; set; }
+		/// <summary>
+		/// 转换 URI 列表
+		/// </summary>
+		List<Uri> ResponseUris { get; set; }
+		/// <summary>
+		/// 获取响应中使用的 HTTP 协议的版本。
+		/// </summary>
+		Version ProtocolVersion { get; set; }
         /// <summary>
         /// 获取与响应一起返回的状态说明。
         /// </summary>
@@ -69,12 +74,16 @@ namespace XiaoFeng.Http
         /// 响应内容
         /// </summary>
         string Html { get; }
-        /// <summary>
-        /// 下载文件
-        /// </summary>
-        /// <param name="path">文件保存路径</param>
-        /// <returns>运行时长</returns>
-        Task<long> DownFileAsync(string path);
+		/// <summary>
+		/// 是否分块响应
+		/// </summary>
+		Boolean IsChunked { get; set; }
+		/// <summary>
+		/// 下载文件
+		/// </summary>
+		/// <param name="path">文件保存路径</param>
+		/// <returns>运行时长</returns>
+		Task<long> DownFileAsync(string path);
         /// <summary>
         /// 获取Cookie
         /// </summary>
@@ -99,5 +108,22 @@ namespace XiaoFeng.Http
         /// <param name="header">key</param>
         /// <returns></returns>
         string GetHeader(HttpRequestHeader header);
-    }
+
+		#region 设置结束时间
+		/// <summary>
+		/// 设置结束时间
+		/// </summary>
+		void SetEndTime();
+        /// <summary>
+        /// 设置开始结束时间
+        /// </summary>
+        /// <param name="begin">开始时间</param>
+        /// <param name="end">结束时间</param>
+        void SetBeginAndEndTime(DateTime begin, DateTime end);
+        /// <summary>
+        /// 设置开始时间
+        /// </summary>
+        void SetBeginTime();
+		#endregion
+	}
 }

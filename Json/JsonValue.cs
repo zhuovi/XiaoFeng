@@ -1066,7 +1066,6 @@ namespace XiaoFeng.Json
         /// </summary>
         /// <param name="provider">格式</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:删除未使用的参数", Justification = "<挂起>")]
         public float ToFloat(IFormatProvider provider = null)
         {
             var _ = value.ToString();

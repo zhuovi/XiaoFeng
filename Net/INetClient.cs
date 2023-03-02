@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 /****************************************************************
@@ -40,5 +41,22 @@ namespace XiaoFeng.Net
         /// </summary>
         /// <param name="channels">频道</param>
         void UnSubscribe(IEnumerable<string> channels);
-    }
+        /// <summary>
+        /// 运行
+        /// </summary>
+        /// <param name="iPEndPoint">远程host及端口</param>
+        void Start(IPEndPoint iPEndPoint);
+        /// <summary>
+        /// 运行
+        /// </summary>
+        /// <param name="iPAddress">远程host</param>
+        /// <param name="port">端口</param>
+        void Start(IPAddress iPAddress, int port);
+        /// <summary>
+        /// 运行
+        /// </summary>
+        /// <param name="host">远程host</param>
+        /// <param name="port">端口</param>
+        void Start(string host, int port);
+	}
 }

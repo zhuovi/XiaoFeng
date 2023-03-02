@@ -506,7 +506,18 @@ namespace XiaoFeng.Json
                 break;
             }
             var strNum = data.JsonString.Substring(start, data.Index - start);
-            if (strNum.IsMatch(@"^(\+|-)?\d+[.]\d+$"))
+            if (strNum.IndexOf("E", StringComparison.OrdinalIgnoreCase) > -1)
+            {
+                if (decimal.TryParse(strNum, System.Globalization.NumberStyles.Float, null, out var dValue))
+                {
+                    return new JsonValue(dValue);
+                }
+                else
+                {
+                    throw new JsonException("Json转换数字,不能强转字符 [{0}]".format(strNum));
+                }
+            }
+            else if (strNum.IsMatch(@"^(\+|-)?\d+[.]\d+$"))
             {
                 if (double.TryParse(strNum, out var fValue))
                 {

@@ -24,7 +24,7 @@
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageReleaseNotes>优化redis,memcached连接串;优化HttpHelper中属性Dictionary改成字典接口IDictionary;优化Socket连接;增加HttpHelper内核Socket请求</PackageReleaseNotes>
+		<PackageReleaseNotes>优化redis,memcached连接串;优化HttpHelper中属性Dictionary改成字典接口IDictionary;优化Socket连接;增加HttpHelper内核Socket请求;优化json反序列化时科学计数法转换出错;</PackageReleaseNotes>
 		<DelaySign>False</DelaySign>
 		<IsPackable>true</IsPackable>
 		<PackageProjectUrl>https://github.com/zhuovi/XiaoFeng</PackageProjectUrl>

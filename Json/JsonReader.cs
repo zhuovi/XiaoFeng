@@ -249,20 +249,27 @@ namespace XiaoFeng.Json
                             if (element.Name.IsNotNullOrEmpty()) name = element.Name;
                         }
                         var _f = list.ContainsKey(name);
-                        if (m is FieldInfo f)
+                        try
                         {
-                            val = _f ? this.ToObject(list[name], f.FieldType, null) : null;
-                            if (val != null && _f && list[name].Type != JsonType.Type)
-                                val = val.GetValue(f.FieldType);
-                            f.SetValue(target, val);
+                            if (m is FieldInfo f)
+                            {
+                                val = _f ? this.ToObject(list[name], f.FieldType, null) : null;
+                                if (val != null && _f && list[name].Type != JsonType.Type)
+                                    val = val.GetValue(f.FieldType);
+                                f.SetValue(target, val);
+                            }
+                            else if (m is PropertyInfo p)
+                            {
+                                if (!p.CanRead || !p.CanWrite || p.IsIndexer()) return;
+                                val = _f ? this.ToObject(list[name], p.PropertyType, null) : null;
+                                if (val != null && _f && list[name].Type != JsonType.Type)
+                                    val = val.GetValue(p.PropertyType);
+                                p.SetValue(target, val, null);
+                            }
                         }
-                        else if (m is PropertyInfo p)
+                        catch
                         {
-                            if (!p.CanRead || !p.CanWrite || p.IsIndexer()) return;
-                            val = _f ? this.ToObject(list[name], p.PropertyType, null) : null;
-                            if (val != null && _f && list[name].Type != JsonType.Type)
-                                val = val.GetValue(p.PropertyType);
-                            p.SetValue(target, val, null);
+
                         }
                     }
                 });

@@ -262,6 +262,35 @@ namespace XiaoFeng.Net
                 OnError?.Invoke(this, ex);
             }
         }
+		/// <summary>
+		/// 运行
+		/// </summary>
+		/// <param name="iPEndPoint">远程host及端口</param>
+		public void Start(IPEndPoint iPEndPoint)
+        {
+            this.Session.EndPoint = iPEndPoint;
+            this.Start();
+        }
+        /// <summary>
+        /// 运行
+        /// </summary>
+        /// <param name="iPAddress">远程host</param>
+        /// <param name="port">端口</param>
+        public void Start(IPAddress iPAddress, int port)
+        {
+            this.Session.EndPoint = new IPEndPoint(iPAddress, port);
+            this.Start();
+        }
+        /// <summary>
+        /// 运行
+        /// </summary>
+        /// <param name="host">远程host</param>
+        /// <param name="port">端口</param>
+        public void Start(string host, int port)
+        {
+            this.Session.EndPoint = new IPEndPoint(IPAddress.Parse(host), port);
+            this.Start();
+        }
         #endregion
 
         #region 处理连接
