@@ -109,7 +109,7 @@ namespace XiaoFeng.Http
             get
             {
                 if (this._Html.IsNullOrEmpty())
-                    this._Html = this.Data.GetString();
+                    this._Html = this.Data.GetString(this.CharacterSet);
                 return this._Html;
             }
         }
