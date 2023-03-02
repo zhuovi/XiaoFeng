@@ -7,8 +7,8 @@
 		<Description>基础类库、数据库中间件、网络通讯中间件、Redis、Socket、HttpHelper、IQueryableX、Cache、FTP、JSON、XML、IO、配置、各种加密码算法、作业调度、正则、通用数据库操作，支持10多种数据库</Description>
 		<Copyright>CopyRight @ 2008-2024 魔法精灵(www.fayelf.com) QQ:7092734 Email:jacky@fayelf.com</Copyright>
 		<Company>魔法精灵</Company>
-		<VersionPrefix>3.3</VersionPrefix>
-		<VersionSuffix>4</VersionSuffix>
+		<VersionPrefix>3.4</VersionPrefix>
+		<VersionSuffix>0</VersionSuffix>
 		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
 		<FileVersion>$(Version)</FileVersion>
 		<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
