@@ -705,7 +705,8 @@ var flushall = memcached.FulshAll();
 
 # XiaoFeng.HttpHelper 网络请求库
 
-HttpHelper 是Http模拟请求库。
+HttpHelper 是Http模拟请求库。提供了三种内核，HttpClient,HttpWebRequest,HttpSocket
+默认用的是HttpClient内核
 
 ## 使用操作
 
@@ -715,6 +716,7 @@ HttpHelper 是Http模拟请求库。
 var result = await XiaoFeng.Http.HttpHelper.GetHtmlAsync(new XiaoFeng.Http.HttpRequest
 {
     Method = HttpMethod.Get,//不设置默认为Get请求
+    HttpCore = HttpCore.HttpClient,
     Address = "http://www.fayelf.com"
 });
 if (result.StatusCode == System.Net.HttpStatusCode.OK)
