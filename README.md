@@ -716,7 +716,7 @@ HttpHelper 是Http模拟请求库。提供了三种内核，HttpClient,HttpWebRe
 var result = await XiaoFeng.Http.HttpHelper.GetHtmlAsync(new XiaoFeng.Http.HttpRequest
 {
     Method = HttpMethod.Get,//不设置默认为Get请求
-    HttpCore = HttpCore.HttpClient,
+    HttpCore = HttpCore.HttpClient,//不设置默认为HttpClient内核
     Address = "http://www.fayelf.com"
 });
 if (result.StatusCode == System.Net.HttpStatusCode.OK)
