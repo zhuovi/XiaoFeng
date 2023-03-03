@@ -251,10 +251,6 @@ namespace XiaoFeng.Http
         /// 请求
         /// </summary>
         public HttpWebRequest RequestHttp { get; private set; }
-        /// <summary>
-        /// 请求内容长度
-        /// </summary>
-        public int ContentLength { get; set; } = 0;
         #endregion
 
         #region 方法
