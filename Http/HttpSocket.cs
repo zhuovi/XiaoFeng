@@ -264,7 +264,7 @@ namespace XiaoFeng.Http
 					}
 					else
 					{
-						throw new Exception("转向地址超过了设置最大数量.");
+						throw new Exception("转向地址次数超过了设置最大数量.");
 					}
 				}
 			}
