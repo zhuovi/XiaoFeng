@@ -251,6 +251,10 @@ namespace XiaoFeng.Http
         /// 请求
         /// </summary>
         public HttpWebRequest RequestHttp { get; private set; }
+        /// <summary>
+        /// 请求内容长度
+        /// </summary>
+        public int ContentLength { get; set; } = 0;
         #endregion
 
         #region 方法
@@ -677,43 +681,44 @@ namespace XiaoFeng.Http
         {
 			byte[] RequestData = Array.Empty<byte>();
 			if (",POST,GET,DELETE,PUT,".IndexOf("," + this.Method.Method.ToUpper() + ",", StringComparison.OrdinalIgnoreCase) > -1)
-			{
-				if (this.FormData == null)
-				{
-					if (this.Data != null && this.Data.Any())
-					{
-						if (this.Method == "POST")
-						{
-							if (this.ContentType.IsNullOrEmpty())
-								this.ContentType = "application/x-www-form-urlencoded";
-							RequestData = this.Data.ToQuery().GetBytes(this.Encoding);
-						}
-					}
-					else if (this.BodyData.IsNotNullOrEmpty())
-					{
-						this.Method = HttpMethod.Post;
-						if (this.ContentType.IsNullOrEmpty())
-							this.ContentType = "application/json";
-						RequestData = this.BodyData.GetBytes(this.Encoding);
-					}
-					if (this.ContentType.IsNotNullOrEmpty())
-						this.RequestHttp.ContentType = this.ContentType;
-				}
-				else
-				{
-					this.Method = HttpMethod.Post;
-					if (this.Data.IsNotNullOrEmpty())
-					{
-						this.Data.Each(kv =>
-						{
-							this.FormData.Add(new FormData(kv.Key, kv.Value, FormType.Text));
-						});
-					}
-					var boundary = this.GetBoundary();
-					this.ContentType = "multipart/form-data; boundary=" + boundary;
-					RequestData = this.GetBytes(boundary);
-				}
-			}
+            {
+                if (this.FormData == null)
+                {
+                    if (this.Data != null && this.Data.Any())
+                    {
+                        if (this.Method == "POST")
+                        {
+                            if (this.ContentType.IsNullOrEmpty())
+                                this.ContentType = "application/x-www-form-urlencoded";
+                            RequestData = this.Data.ToQuery().GetBytes(this.Encoding);
+                        }
+                    }
+                    else if (this.BodyData.IsNotNullOrEmpty())
+                    {
+                        this.Method = HttpMethod.Post;
+                        if (this.ContentType.IsNullOrEmpty())
+                            this.ContentType = "application/json";
+                        RequestData = this.BodyData.GetBytes(this.Encoding);
+                    }
+                    if (this.ContentType.IsNotNullOrEmpty())
+                        this.RequestHttp.ContentType = this.ContentType;
+                }
+                else
+                {
+                    this.Method = HttpMethod.Post;
+                    if (this.Data.IsNotNullOrEmpty())
+                    {
+                        this.Data.Each(kv =>
+                        {
+                            this.FormData.Add(new FormData(kv.Key, kv.Value, FormType.Text));
+                        });
+                    }
+                    var boundary = this.GetBoundary();
+                    this.ContentType = "multipart/form-data; boundary=" + boundary;
+                    RequestData = this.GetBytes(boundary);
+                }
+                this.ContentLength = RequestData.Length;
+            }
             return RequestData;
 		}
 		#endregion

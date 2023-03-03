@@ -24,7 +24,7 @@ namespace XiaoFeng.Http
 	/// <summary>
 	/// HttpSocket 请求操作类
 	/// </summary>
-	public class HttpSocket
+	public class HttpSocket : Disposable
 	{
 		#region 构造器
 		/// <summary>
@@ -79,7 +79,8 @@ namespace XiaoFeng.Http
 				var credentials = this.Request.WebProxy.Credentials.GetCredential(uri, "Basic");
 				header.Append($"Proxy-Authorization:Basic {(credentials.UserName + ":" + credentials.Password).ToBase64String()}\r\n");
 			}
-			else {
+			else
+			{
 				header.Append($"{this.Request.Method.Method.ToUpper()} {uri.PathAndQuery} HTTP/{this.Request.ProtocolVersion}\r\n");
 			}
 			if (uri.Scheme.ToUpper() == "HTTPS")
@@ -133,10 +134,12 @@ namespace XiaoFeng.Http
 
 			if (this.Request.Expect100Continue)
 				header.Append($"Expect:100-continue\r\n");
+			if (this.Request.ContentLength > 0)
+				header.Append($"Content-Length:{this.Request.ContentLength}\r\n");
 
 			if (this.Request.IfModifiedSince != null)
 				header.Append($"If-Modified-Since:{this.Request.IfModifiedSince:r}\r\n");
-			if(this.Request.Headers!=null && this.Request.Headers.Count > 0)
+			if (this.Request.Headers != null && this.Request.Headers.Count > 0)
 			{
 				this.Request.Headers.Each(h =>
 				{
@@ -146,26 +149,6 @@ namespace XiaoFeng.Http
 
 			header.Append("\r\n");
 			return header;
-		}
-		#endregion
-
-		#region 创建请求Body
-		/// <summary>
-		///创建请求Body
-		/// </summary>
-		/// <returns></returns>
-		public StringBuilder CreateRequestBody()
-		{
-			var body = new StringBuilder();
-			if(this.Request.ContentType== "application/x-www-form-urlencoded")
-			{
-				
-			}
-			else
-			{
-
-			}
-			return body;
 		}
 		#endregion
 
@@ -221,7 +204,7 @@ namespace XiaoFeng.Http
 
 			var NetStream = this.CreateNetStream();
 			this.NetStream = this.RequestUri.Scheme.ToUpper() == "HTTP" ? NetStream as Stream : this.GetSslStream(NetStream);
-			
+
 			this.Response.Request = this.Request;
 			this.Response.SetBeginTime();
 
@@ -353,7 +336,7 @@ namespace XiaoFeng.Http
 		/// </summary>
 		/// <param name="resonseStream">响应流</param>
 		/// <returns></returns>
-		private IDictionary<string,string> GetResponseHeaders(MemoryStream resonseStream)
+		private IDictionary<string, string> GetResponseHeaders(MemoryStream resonseStream)
 		{
 			var Headers = new Dictionary<string, string>();
 			resonseStream.Seek(0, SeekOrigin.Begin);
