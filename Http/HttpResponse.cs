@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -270,7 +271,7 @@ namespace XiaoFeng.Http
 			this.Method = (HttpMethod)this.Request.Method;
 			if (this.Headers.TryGetValue("Last-Modified", out var LastModified))
 			{
-                this.LastModified = new DateTimeOffset(LastModified.ToCast<DateTime>());
+                this.LastModified = new DateTimeOffset(DateTime.Parse(LastModified, CultureInfo.InvariantCulture));
 			}
 			//获取CookieCollection
 			if (this.CookieContainer == null) this.CookieContainer = new CookieContainer();
