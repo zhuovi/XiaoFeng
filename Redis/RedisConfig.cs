@@ -58,6 +58,11 @@ namespace XiaoFeng.Redis
                 this.DbNum = dict["db"].ToCast<int>();
                 this.User = dict["user"];
                 this.Password = dict["pwd"];
+                if(this.Password.IsNullOrEmpty() && this.User.IsNotNullOrEmpty())
+                {
+                    this.Password = this.User;
+                    this.User = "";
+                }
                 var option = dict["option"];
                 if (option.IsNotNullOrEmpty())
                 {
