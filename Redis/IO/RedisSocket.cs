@@ -104,7 +104,8 @@ namespace XiaoFeng.Redis.IO
             }
             if (this.SocketClient != null)
             {
-                this.SocketClient.Shutdown(SocketShutdown.Both);
+                if(this.SocketClient.Connected)
+                    this.SocketClient.Shutdown(SocketShutdown.Both);
                 this.SocketClient.Close();
                 this.SocketClient.Dispose();
             }
@@ -118,10 +119,14 @@ namespace XiaoFeng.Redis.IO
         public void Connect()
         {
             Init();
-            IAsyncResult result = this.SocketClient.BeginConnect(this.ConnConfig.Host, this.ConnConfig.Port, null, null);
+            
+			IAsyncResult result = this.SocketClient.BeginConnect(this.ConnConfig.Host, this.ConnConfig.Port, null, null);
             if (!result.AsyncWaitHandle.WaitOne(Math.Max(this.ConnConfig.ConnectionTimeout, 10000), true))
                 throw new RedisException($"连接服务器超时.{this.ConnConfig.ToJson()}");
-        }
+
+			this.SocketClient.EndConnect(result);
+			this.GetStream();
+		}
         ///<inheritdoc/>
         public Stream GetStream()
         {
@@ -131,7 +136,7 @@ namespace XiaoFeng.Redis.IO
 
             if (!this.IsSsl) { this.Stream = ns; return ns; }
 
-            var sns = new SslStream(ns, true);
+            var sns = new SslStream(ns, true, new RemoteCertificateValidationCallback((o, cert, chain, errors) => errors == SslPolicyErrors.None));
 #if NETSTANDARD2_0
             sns.AuthenticateAsClient(this.ConnConfig.Host);
 #else

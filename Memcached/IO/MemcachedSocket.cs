@@ -104,7 +104,8 @@ namespace XiaoFeng.Memcached.IO
             }
             if (this.SocketClient != null)
             {
-                this.SocketClient.Shutdown(SocketShutdown.Both);
+                if(this.SocketClient.Connected)
+                    this.SocketClient.Shutdown(SocketShutdown.Both);
                 this.SocketClient.Close();
                 this.SocketClient.Dispose();
             }
@@ -135,7 +136,7 @@ namespace XiaoFeng.Memcached.IO
 
             if (!this.IsSsl) { this.Stream = ns; return ns; }
 
-            var sns = new SslStream(ns, true);
+            var sns = new SslStream(ns, true, new RemoteCertificateValidationCallback((o, cert, chain, errors) => errors == SslPolicyErrors.None)); ;
 #if NETSTANDARD2_0
             sns.AuthenticateAsClient(this.ConnConfig.Host);
 #else
