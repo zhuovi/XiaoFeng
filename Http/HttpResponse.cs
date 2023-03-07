@@ -344,30 +344,37 @@ namespace XiaoFeng.Http
                 /*GZIP处理*/
                 if (ContentEncoding.IsNotNullOrEmpty())
                 {
-                    if (ContentEncoding.Equals("gzip", StringComparison.InvariantCultureIgnoreCase))
+                    try
                     {
-                        /*开始读取流并设置编码方式*/
-                        using (var zip = new GZipStream(stream, CompressionMode.Decompress))
+                        if (ContentEncoding.Equals("gzip", StringComparison.InvariantCultureIgnoreCase))
                         {
-                            var bytes = new byte[zip.Length];
-                            await zip.ReadAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
-                            await _stream.WriteAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
-                            //await zip.CopyToAsync(_stream).ConfigureAwait(false);
-                         }
-                    }
-                    else if (ContentEncoding.Equals("deflate", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        using (var deflate = new DeflateStream(stream, CompressionMode.Decompress)) await deflate.CopyToAsync(_stream).ConfigureAwait(false);
-                    }
+                            /*开始读取流并设置编码方式*/
+                            using (var zip = new GZipStream(stream, CompressionMode.Decompress))
+                            {
+                                var bytes = new byte[zip.Length];
+                                await zip.ReadAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
+                                await _stream.WriteAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
+                                //await zip.CopyToAsync(_stream).ConfigureAwait(false);
+                            }
+                        }
+                        else if (ContentEncoding.Equals("deflate", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            using (var deflate = new DeflateStream(stream, CompressionMode.Decompress)) await deflate.CopyToAsync(_stream).ConfigureAwait(false);
+                        }
 #if !NETFRAMEWORK && !NETSTANDARD2_0
-                    else if (ContentEncoding.Equals("br", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        using (var br = new BrotliStream(stream, CompressionMode.Decompress))await br.CopyToAsync(_stream).ConfigureAwait(false);
-                    }
+                        else if (ContentEncoding.Equals("br", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            using (var br = new BrotliStream(stream, CompressionMode.Decompress)) await br.CopyToAsync(_stream).ConfigureAwait(false);
+                        }
 #endif
-                    else
-                        /*开始读取流并设置编码方式*/
-                        stream.CopyTo(_stream);
+                        else
+                            /*开始读取流并设置编码方式*/
+                            stream.CopyTo(_stream);
+                    }
+                    catch (Exception ex)
+                    {
+                        LogHelper.Error(ex, "解压出错.");
+                    }
                 }
                 else
                     /*开始读取流并设置编码方式*/

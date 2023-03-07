@@ -181,8 +181,8 @@ namespace XiaoFeng.Net
             if (SocketClient == null || !SocketClient.Connected) return;
             if (this.CancelToken.IsCancellationRequested)
             {
-                SocketException ex = new SocketException();
-                LogHelper.Error(ex, "取消连接[Socket]");
+                //SocketException ex = new SocketException();
+                //LogHelper.Error(ex, "取消连接[Socket]");
                 lock (this.ConnectionSocket)
                 {
                     if (this.ConnectionSocket == null || this.ConnectionSocket.RemoteEndPoint == null) return;
