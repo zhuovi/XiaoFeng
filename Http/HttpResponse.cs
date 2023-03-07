@@ -90,10 +90,6 @@ namespace XiaoFeng.Http
         /// 是否分块响应
         /// </summary>
         public Boolean IsChunked { get; set; } = false;
-		/// <summary>
-		/// 获取请求返回的内容的长度。
-		/// </summary>
-		public long ContentLength { get; set; }
         /// <summary>
         /// 结果字节集
         /// </summary>
