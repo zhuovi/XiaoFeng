@@ -42,7 +42,7 @@ namespace XiaoFeng.Http
 		/// <summary>
 		/// 请求内容长度
 		/// </summary>
-		int ContentLength { get; set; }
+		long ContentLength { get; set; }
 		/// <summary>
 		/// 开始请求时间
 		/// </summary>

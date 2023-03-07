@@ -63,10 +63,6 @@ namespace XiaoFeng.Http
         /// </summary>
         string ContentEncoding { get; set; }
         /// <summary>
-        /// 获取请求返回的内容的长度。
-        /// </summary>
-        long ContentLength { get; set; }
-        /// <summary>
         /// 结果字节集
         /// </summary>
         byte[] Data { get; set; }
