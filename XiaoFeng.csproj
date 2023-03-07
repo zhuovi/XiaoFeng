@@ -24,7 +24,7 @@
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageReleaseNotes>优化HttpSocket请求中增加ContentLength;优化Redis连接串;优化Redis连接;Memcached连接;</PackageReleaseNotes>
+		<PackageReleaseNotes>优化HttpSocket请求中增加ContentLength;优化Redis连接串;优化Redis连接;Memcached连接;优化HttpSocket;</PackageReleaseNotes>
 		<DelaySign>False</DelaySign>
 		<IsPackable>true</IsPackable>
 		<PackageProjectUrl>https://github.com/zhuovi/XiaoFeng</PackageProjectUrl>
@@ -36,6 +36,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="Data\DataMapping.cs" />
+	  <Compile Remove="Http\HttpSocket - 复制.cs" />
 	  <Compile Remove="Log\Logger - 复制.cs" />
 	  <Compile Remove="Net\WebClientHelper.cs" />
 	  <Compile Remove="Xml\XmlParser.cs" />

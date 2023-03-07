@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
@@ -238,14 +239,40 @@ namespace XiaoFeng.Http
 
 			byte[] buffer;
 			var buffers = new MemoryStream();
-			while (true)
+
+			if (this.NetStream is NetworkStream ns)
+			{
+				do
+				{
+					buffer = new byte[1024];
+					var length = await ns.ReadAsync(buffer, 0, buffer.Length).ConfigureAwait(false);
+					if (length == 0) break;
+					await buffers.WriteAsync(buffer, 0, length).ConfigureAwait(false);
+				} while (ns.DataAvailable);
+			}
+			else
+			{
+				var ssl = this.NetStream as SslStream;
+				do
+				{
+					buffer = new byte[1024];
+					var length = await ssl.ReadAsync(buffer, 0, buffer.Length).ConfigureAwait(false);
+					if (length == 0) break;
+					await buffers.WriteAsync(buffer, 0, length).ConfigureAwait(false);
+
+					var array = buffers.ToArray();
+					if (array.Length >= 7 && array.Skip(array.Length - 7).Take(7).ToArray().GetString(this.Request.Encoding) == "\r\n0\r\n\r\n") break;
+				} while (ssl.CanRead);
+			}
+			/*while (true)
 			{
 				buffer = new byte[1024];
 				var length = await this.NetStream.ReadAsync(buffer, 0, buffer.Length);
 				if (length == 0) break;
 				await buffers.WriteAsync(buffer, 0, length);
-				if (length < buffer.Length) break;
-			}
+				//if (length < buffer.Length) break;
+			}*/
+			
 			var Headers = this.GetResponseHeaders(buffers);
 			if (Headers.TryGetValue("Location", out var location))
 			{
@@ -293,8 +320,11 @@ namespace XiaoFeng.Http
 								if (BlockLine.Length == 0) continue;
 								var length = Convert.ToInt32(BlockLine.ToArray().GetString(this.Request.Encoding), 16);
 								if (length == 0) break;
+								var BodyBytes = new byte[length];
+								await buffers.ReadAsync(BodyBytes, 0, BodyBytes.Length);
+								await BodyStream.WriteAsync(BodyBytes, 0, length);
 								BlockLine.SetLength(0);
-								Body = true;
+								Body = false;
 							}
 							End = false;
 						}
@@ -379,7 +409,7 @@ namespace XiaoFeng.Http
 						else
 						{
 							var _line = BlockLine.ToArray().GetString(this.Request.Encoding);
-							if (_line.StartsWith($"{uri.Scheme.ToUpper()}/{this.Request.ProtocolVersion}"))
+							if (_line.StartsWith($"HTTP/{this.Request.ProtocolVersion}"))
 							{
 								var httpStatus = _line.GetMatchs($@"^{uri.Scheme.ToUpper()}/{this.Request.ProtocolVersion}\s+(?<a>\d+)\s+(?<b>.*?)$");
 								if (httpStatus.TryGetValue("a", out var a))
@@ -393,9 +423,11 @@ namespace XiaoFeng.Http
 							}
 							else
 							{
-								var _lines = _line.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
-								if (_lines.Length == 2)
-									Headers.Add(_lines[0].Trim(), _lines[1].Trim());
+								var kvs = _line.GetMatchs(@"^(?<k>[^:]+):\s+(?<v>[\s\S]*)$");
+								if (kvs != null && kvs.Count > 0 && kvs.TryGetValue("k", out var k) && kvs.TryGetValue("v", out var v) && !Headers.ContainsKey(k))
+								{
+									Headers.Add(k, v);
+								}
 							}
 							BlockLine.SetLength(0);
 						}

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -270,7 +271,7 @@ namespace XiaoFeng.Http
 			this.Method = (HttpMethod)this.Request.Method;
 			if (this.Headers.TryGetValue("Last-Modified", out var LastModified))
 			{
-                this.LastModified = new DateTimeOffset(LastModified.ToCast<DateTime>());
+                this.LastModified = new DateTimeOffset(DateTime.Parse(LastModified,CultureInfo.InvariantCulture));
 			}
 			//获取CookieCollection
 			if (this.CookieContainer == null) this.CookieContainer = new CookieContainer();
@@ -350,7 +351,13 @@ namespace XiaoFeng.Http
                     if (ContentEncoding.Equals("gzip", StringComparison.InvariantCultureIgnoreCase))
                     {
                         /*开始读取流并设置编码方式*/
-                        using (var zip = new GZipStream(stream, CompressionMode.Decompress)) await zip.CopyToAsync(_stream).ConfigureAwait(false);
+                        using (var zip = new GZipStream(stream, CompressionMode.Decompress))
+                        {
+                            var bytes = new byte[zip.Length];
+                            await zip.ReadAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
+                            await _stream.WriteAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
+                            //await zip.CopyToAsync(_stream).ConfigureAwait(false);
+                         }
                     }
                     else if (ContentEncoding.Equals("deflate", StringComparison.InvariantCultureIgnoreCase))
                     {
@@ -372,7 +379,7 @@ namespace XiaoFeng.Http
                 /*获取Byte*/
                 ResponseByte = _stream.ToArray();
             }
-            return ResponseByte;
+            return await Task.FromResult(ResponseByte);
         }
         #endregion
 
