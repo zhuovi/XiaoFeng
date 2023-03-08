@@ -227,9 +227,13 @@ Matches 当前扩展方法返回的是使用指定的匹配选项在指定的输
 这三个方法是最原始最底层的方法，其它扩展都基于当前三个方法中的一个或两个来实现的。
 
 GetMatch 扩展方法返回结果是：提取符合模式的数据所匹配的第一个匹配项所匹配的第一项或a组的数据
+
 GetPatterns 扩展方法返回结果是：提取符合模式的数据所有匹配的第一项数据或a组数据
+
 GetMatchs 扩展方法返回结果是：提取符合模式的数据所匹配的第一项中所有组数据
+
 GetMatches 扩展方法返回结果是：提取符合模式的数据所有匹配项或所有组数据
+
 提取的数据量对比：GetMatch < GetMatchs < GetPatterns < GetMatches
 
 ReplacePattern 扩展方法用途是 使用 正则达式 来替换数据
@@ -376,6 +380,9 @@ set.Debug = false;
 set.Save();
 ```
 
+# XiaoFeng.Cache 缓存类
+
+
 # XiaoFeng.Redis
 
 Redis提供了友好的访问API。Redis中间件,支持.NET框架、.NET内核和.NET标准库,一种非常方便操作的客户端工具。实现了Hash,Key,String,ZSet,Stream,Log,订阅发布,线程池功能。
@@ -385,8 +392,9 @@ Redis提供了友好的访问API。Redis中间件,支持.NET框架、.NET内核�
 Redis连接串 
 
 ```csharp
-redis://7092734@127.0.0.1:6379/0?ConnectionTimeout=3000&ReadTimeout=3000&SendTimeout=3000&pool=3
+redis://redisname:7092734@127.0.0.1:6379/0?ConnectionTimeout=3000&ReadTimeout=3000&SendTimeout=3000&pool=3
 ```
+redisname   用户名
 
 7092734	    密码
 
@@ -703,7 +711,7 @@ var sizes = memcached.StatsSizes();
 var flushall = memcached.FulshAll();
 ```
 
-# XiaoFeng.HttpHelper 网络请求库
+# XiaoFeng.Http.HttpHelper 网络请求库
 
 HttpHelper 是Http模拟请求库。提供了三种内核，HttpClient,HttpWebRequest,HttpSocket
 默认用的是HttpClient内核
@@ -838,7 +846,7 @@ await XiaoFeng.Http.HttpHelper.Instance.DownFileAsync(new XiaoFeng.Http.HttpRequ
 
 ```
 
-# 数据库操作 DataHelper
+# XiaoFeng.Data.DataHelper 数据库操作
 
 * XiaoFeng.Data.DataHelper，当前类库支持SQLSERVER,MYSQL,ORACLE,达梦,SQLITE,ACCESS,OLEDB,ODBC等数十种数据库。
 
@@ -913,68 +921,6 @@ var data2 = data.ExecuteDataTable("select * from F_Tb_Account where Account=@Acc
 ```csharp
 var models = data.QueryList<Account>("select * from F_Tb_Account");
 var model = data.Query<Account>("select * from F_Tb_Account");
-```
-
-# 正则表达式 扩展方法
-
-字符串匹配，提取，是否符合规则，替换，移除等都可用是正则表达式来实现的。
-
-## 使用说明
-
-* IsMatch 扩展方法 主要是当前字符串是否匹配上正则表达式，比如，匹配当前字符串是否是QQ号码，代码如下：
-
-```csharp
-if("7092734".IsMatch(@"^\d{5-11}$"))
-    Console.WriteLine("是QQ号码格式.");
-else
-    Console.WriteLine("非QQ号码格式.");
-```
-
-输出结果为：是QQ号码格式。
-
-因为字符串 "7092734"确实是QQ号码。
-
-IsNotMatch 扩展方法其实就是 !IsMatch,用法和IsMatch用法一样。
-
-Match 扩展方法返回的是Match,使用指定的匹配选项在输入字符串中搜索指定的正则表达式的第一个匹配项。
-
-Matches 当前扩展方法返回的是使用指定的匹配选项在指定的输入字符串中搜索指定的正则表达式的所有匹配项。
-
-这三个方法是最原始最底层的方法，其它扩展都基于当前三个方法中的一个或两个来实现的。
-
-GetMatch 扩展方法返回结果是：提取符合模式的数据所匹配的第一个匹配项所匹配的第一项或a组的数据。
-
-GetPatterns 扩展方法返回结果是：提取符合模式的数据所有匹配的第一项数据或a组数据。
-
-GetMatchs 扩展方法返回结果是：提取符合模式的数据所匹配的第一项中所有组数据。
-
-GetMatches 扩展方法返回结果是：提取符合模式的数据所有匹配项或所有组数据。
-
-提取的数据量对比：GetMatch<GetMatchs<GetPatterns<GetMatches 。
-
-ReplacePattern 扩展方法用途是使用正则达式来替换数据。
-
-下边通过实例来讲解这几个方法的使用及返回结果的区别：
-
-```csharp
-var a = "abc4d5e6hh5654".GetMatch(@"\d+");
-a的值为："4";
-var b = "abc4d5e6hh5654".GetPatterns(@"\d+");
-b的值为：["4","5","6","5654"];
-var c = "abc4d5e6hh5654".GetMatchs(@"(?<a>[a-z]+)(?<b>\d+)");
-c的值为：{{"a","abc"},{"b","4"}};
-var d = "abc4d5e6hh5654".GetMatches(@"(?<a>[a-z]+)(?<b>\d+)");
-d的值为：[{{"a","abc"},{"b","4"}},{{"a","d"},{"b","5"}},{{"a","e"},{"b","6"}},{{"a","hh"},{"b","5654"}}]
-var g = "a6b9c53".ReplacePattern(@"\d+","g");
-g的值为："agbgcg";
-var h = "a6b7c56".RemovePattern(@"\d+");
-h的值为："abc";
-var i = "a1b2c3".ReplacePattern(@"\d+",m=>{
-   var a = a.Groups["a"].Value;
-    if(a == "1")return "a1";
-    else return "a2";
-});
-i的值为："aa1ba2ca2";
 ```
 
 # XiaoFeng.Threading.JobScheduler 作业调度
@@ -1063,7 +1009,7 @@ job.Start();
 
 当前作业为，5分钟后运行，然后每周的周一，周四的两点执行一次。
 
-# XiaoFeng.Ftp Ftp客户同端库
+# XiaoFeng.Ftp Ftp客户端库
 
 FTP客户端
 
