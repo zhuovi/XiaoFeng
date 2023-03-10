@@ -78,7 +78,7 @@ namespace XiaoFeng
             else
                 if (upperType == UpperType.Money) sbr.Append("整");
             /*小数*/
-            for (var i = 0; i < Digits.Length; i++)
+            for (var i = 1; i <= Digits.Length; i++)
             {
                 sbr.Append(UpperChars[i]);
                 if (upperType == UpperType.Money) sbr.Append(UpperMoney[i]);
@@ -86,7 +86,7 @@ namespace XiaoFeng
             return sbr.ToString();
         }
         /// <summary>
-        /// 大写数字转换阿拉伯数字
+        /// 大写数字转换阿拉伯数字或数字转换带逗号格式
         /// </summary>
         /// <param name="chineseNumber">大写数字</param>
         /// <param name="isComma">是否加逗号</param>
@@ -95,20 +95,27 @@ namespace XiaoFeng
         {
             if (chineseNumber.IsNullOrEmpty()) return String.Empty;
             var sbr = new StringBuilder();
-            chineseNumber = chineseNumber.RemovePattern($@"({UpperUnits.Join("|").Trim('|')}|整)");
-            chineseNumber = chineseNumber.Replace("点", ".");
-            if (chineseNumber.IsMatch(@"(圆|元)"))
-                chineseNumber = chineseNumber.ReplacePattern(@"(圆|元)", ".").TrimEnd('.');
-            chineseNumber = chineseNumber.RemovePattern($@"({UpperMoney.Join("|")})");
-            for (var i = 0; i < chineseNumber.Length; i++)
+            if (chineseNumber.IsMatch(@"^[0-9,\.]+$"))
             {
-                var v = chineseNumber[i].ToString();
-                if (v == ".")
+                sbr.Append(chineseNumber.RemovePattern(@",+"));
+            }
+            else
+            {
+                chineseNumber = chineseNumber.RemovePattern($@"({UpperUnits.Join("|").Trim('|')}|整)");
+                chineseNumber = chineseNumber.Replace("点", ".");
+                if (chineseNumber.IsMatch(@"(圆|元)"))
+                    chineseNumber = chineseNumber.ReplacePattern(@"(圆|元)", ".").TrimEnd('.');
+                chineseNumber = chineseNumber.RemovePattern($@"({UpperMoney.Join("|")})");
+                for (var i = 0; i < chineseNumber.Length; i++)
                 {
-                    sbr.Append(".");
-                    continue;
+                    var v = chineseNumber[i].ToString();
+                    if (v == ".")
+                    {
+                        sbr.Append(".");
+                        continue;
+                    }
+                    sbr.Append(UpperChars.IndexOf(v));
                 }
-                sbr.Append(UpperChars.IndexOf(v));
             }
             var Sbr = new StringBuilder();
             if (isComma)

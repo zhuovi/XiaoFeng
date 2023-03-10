@@ -260,6 +260,30 @@ var i = "a1b2c3".ReplacePattern(@"\d+",m=>{
 i的值为："aa1ba2ca2";
 ```
 
+## 数字转换成大写数字 ToChineseNumber和ToNumber
+
+### 用法实例
+
+``` csharp
+var a = "123456789.1234";
+//转换成大写
+var b = a.ToChineseNumber();
+//输出结果为 壹亿贰仟叁佰肆拾伍万陆仟柒佰捌拾玖点壹贰叁肆
+//转换成大写人民币
+var c = a.ToChineseNumber(UpperType.Money);
+//输出结果为 壹亿贰仟叁佰肆拾伍万陆仟柒佰捌拾玖圆壹分贰厘叁毫肆微
+//大写转换成数字
+var d = c.ToNumber();
+//输出结果为 123456789.1234
+//大写转换成数字并增加,格式
+var e = c.ToNumber(true);
+//输出结果为 123,456,789.1234
+//数字转换成带,格式的数字
+var f = "123456789.1235684".ToNumber(true);
+//输出结果为 123,456,789.1235684
+```
+
+
 # 配置管理器 XiaoFeng.Config.ConfigSet<>
 
 通过继承当前类可以轻松实现配置文件的操作，缓存，增，删，改，查等功能.
