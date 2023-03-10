@@ -42,7 +42,7 @@ namespace XiaoFeng
         /// <param name="num">阿拉伯数字</param>
         /// <param name="upperType">数字类型</param>
         /// <returns>大写数字</returns>
-        public static string ToChineseNumber(string num = "", UpperType upperType = UpperType.Number)
+        public static string ToChineseNumber(this string num, UpperType upperType = UpperType.Number)
         {
             if (num.IsNullOrEmpty()) return String.Empty;
             var value = num;
@@ -91,7 +91,7 @@ namespace XiaoFeng
         /// <param name="chineseNumber">大写数字</param>
         /// <param name="isComma">是否加逗号</param>
         /// <returns>阿拉伯数字</returns>
-        public static string ToNumber(string chineseNumber, Boolean isComma = false)
+        public static string ToNumber(this string chineseNumber, Boolean isComma = false)
         {
             if (chineseNumber.IsNullOrEmpty()) return String.Empty;
             var sbr = new StringBuilder();
