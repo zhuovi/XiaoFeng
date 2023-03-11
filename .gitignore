@@ -16,7 +16,6 @@ bld/
 [Oo]bj/
 /packages
 *.user
-/Data
 *.log
 *.htm
 *.nuspec
