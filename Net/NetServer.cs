@@ -261,8 +261,9 @@ namespace XiaoFeng.Net
         {
             try
             {
-                /*定义一个套接字用于监听客户端发来的消息,包含三个参数（IP4寻址协议，流式连接，Tcp协议）*/
-                ClientSocket = new Socket(this.AddressFamily, this.SocketType, this.ProtocolType)
+                this.CancelToken = new CancellationTokenSource();
+				/*定义一个套接字用于监听客户端发来的消息,包含三个参数（IP4寻址协议，流式连接，Tcp协议）*/
+				ClientSocket = new Socket(this.AddressFamily, this.SocketType, this.ProtocolType)
                 {
                     NoDelay = this.NoDelay,
                     ReceiveTimeout = this.ReceiveTimeout,
@@ -299,9 +300,12 @@ namespace XiaoFeng.Net
                         OnStop?.Invoke(this, EventArgs.Empty);
                         /*清空队列*/
                         this.ClearQueue();
-                        ClientSocket.Shutdown(SocketShutdown.Both);
-                        ClientSocket.Disconnect(false);
-                        ClientSocket.Close(3);
+                        if (ClientSocket != null && ClientSocket.Connected)
+                        {
+                            ClientSocket.Shutdown(SocketShutdown.Both);
+                            ClientSocket.Disconnect(false);
+                            ClientSocket.Close(3);
+                        }
                         break;
                     }
                     try
