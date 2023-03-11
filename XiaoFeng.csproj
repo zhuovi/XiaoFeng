@@ -24,7 +24,7 @@
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageReleaseNotes>优化HttpSocket请求中增加ContentLength;优化Redis连接串;优化Redis连接;Memcached连接;优化HttpSocket;优化Socket服务端关闭事件;数字转换为大写，大写转换数字改成扩展方法;</PackageReleaseNotes>
+		<PackageReleaseNotes>优化HttpSocket请求中增加ContentLength;优化Redis连接串;优化Redis连接;Memcached连接;优化HttpSocket;优化Socket服务端关闭事件;数字转换为大写，大写转换数字改成扩展方法;增加websocket连接成功，断开连接，连接失败事件;</PackageReleaseNotes>
 		<DelaySign>False</DelaySign>
 		<IsPackable>true</IsPackable>
 		<PackageProjectUrl>https://github.com/zhuovi/XiaoFeng</PackageProjectUrl>
@@ -35,11 +35,11 @@
 		<DefineConstants Condition="'$(TargetFramework)'=='netstandard2.1'">$(DefineConstants);NETCORE;</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
-	  <Compile Remove="Data\DataMapping.cs" />
-	  <Compile Remove="Http\HttpSocket - 复制.cs" />
-	  <Compile Remove="Log\Logger - 复制.cs" />
-	  <Compile Remove="Net\WebClientHelper.cs" />
-	  <Compile Remove="Xml\XmlParser.cs" />
-	  <Compile Remove="Xml\XmlValueX.cs" />
+		<Compile Remove="Data\DataMapping.cs" />
+		<Compile Remove="Http\HttpSocket - 复制.cs" />
+		<Compile Remove="Log\Logger - 复制.cs" />
+		<Compile Remove="Net\WebClientHelper.cs" />
+		<Compile Remove="Xml\XmlParser.cs" />
+		<Compile Remove="Xml\XmlValueX.cs" />
 	</ItemGroup>
 </Project>

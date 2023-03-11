@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net.Sockets;
 using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,6 +27,22 @@ namespace XiaoFeng.Http
     /// </summary>
     /// <param name="msg">错误信息</param>
     public delegate void ErrorEventHandler(string msg);
+    /// <summary>
+    /// 连接成功
+    /// </summary>
+    /// <param name="socket">连接对象</param>
+    public delegate void SuccessEventHandler(WebSocket socket);
+	/// <summary>
+	/// 连接失败
+	/// </summary>
+	/// <param name="socket">连接对象</param>
+    /// <param name="message">错误消息</param>
+	public delegate void ConnectErrorEventHandler(WebSocket socket,string message);
+	/// <summary>
+	/// 断开连接
+	/// </summary>
+	/// <param name="socket">连接对象</param>
+	public delegate void DisconnectErrorEventHandler(WebSocket socket);
     /// <summary>
     /// WebSocket客户端
     /// </summary>
@@ -73,6 +90,18 @@ namespace XiaoFeng.Http
         /// 错误事件
         /// </summary>
         public event ErrorEventHandler OnError;
+        /// <summary>
+        /// 连接成功事件
+        /// </summary>
+        public event SuccessEventHandler OnSuccess;
+        /// <summary>
+        /// 连接错误
+        /// </summary>
+        public event ConnectErrorEventHandler OnConnectError;
+        /// <summary>
+        /// 断开连接
+        /// </summary>
+        public event DisconnectErrorEventHandler OnDisconnectError;
         #endregion
 
         #region 方法
@@ -87,14 +116,16 @@ namespace XiaoFeng.Http
             try
             {
                 /*连接*/
-                await this.Client.ConnectAsync(this.ServerUri, this.CancelToken);
+                await this.Client.ConnectAsync(this.ServerUri, this.CancelToken).ConfigureAwait(false);
+                /*连接成功*/
+                this.OnSuccess?.Invoke(this.Client);
                 /*接收*/
                 HandleMessage().ConfigureAwait(false).GetAwaiter();
             }
             catch (Exception ex)
             {
                 this.ClientState = this.Client.State;
-                this.OnError?.Invoke(ex.Message);
+                this.OnConnectError?.Invoke(this.Client, ex.Message);
             }
         }
         /// <summary>
@@ -120,6 +151,7 @@ namespace XiaoFeng.Http
                     this.OnReceiveMessage?.Invoke(ms.ToArray());
                 }
             } while (this.Client.State == WebSocketState.Open && !result.CloseStatus.HasValue);
+            this.OnDisconnectError?.Invoke(this.Client);
         }
         /// <summary>
         /// 关闭连接
