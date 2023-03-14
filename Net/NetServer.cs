@@ -995,7 +995,8 @@ namespace XiaoFeng.Net
                 finally { this.RWLock.ExitWriteLock(); }
                 GC.SuppressFinalize(this);
             }
-            this.SocketState = SocketState.Stop;
+            AlreadyDisposed = false;
+			this.SocketState = SocketState.Stop;
         }
         #endregion
 

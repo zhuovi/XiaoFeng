@@ -31,41 +31,41 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 3.4.1
+$ dotnet add package XiaoFeng --version 3.4.2
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 3.4.1
+PM> Install-Package XiaoFeng -Version 3.4.2
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="3.4.1" />
+<PackageReference Include="XiaoFeng" Version="3.4.2" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 3.4.1
+> paket add XiaoFeng --version 3.4.2
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 3.4.1"
+> #r "nuget: XiaoFeng, 3.4.2"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=3.4.1
+#addin nuget:?package=XiaoFeng&version=3.4.2
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=3.4.1
+#tool nuget:?package=XiaoFeng&version=3.4.2
 ```
 # XiaoFeng 扩展方法
 
@@ -417,6 +417,11 @@ Redis连接串
 
 ```csharp
 redis://redisname:7092734@127.0.0.1:6379/0?ConnectionTimeout=3000&ReadTimeout=3000&SendTimeout=3000&pool=3
+
+[<protocol>]://[[<username>:<password>@]<host>:<port>][/<database>][?<p1>=<v1>[&<p2>=<v2>]]
+|----------|---|-----------|-----------|------|------|------------|-----------------------|
+| protocol |   | username  | password  | host | port |  database  |  params               |
+
 ```
 redisname   用户名
 
@@ -637,6 +642,11 @@ Memcached连接串
 
 ```csharp
 memcached://memcached:123456@127.0.0.1:11211?ConnectionTimeout=3000&ReadTimeout=3000&SendTimeout=3000&pool=3
+
+[<protocol>]://[[<username>:<password>@]<host>:<port>][/<database>][?<p1>=<v1>[&<p2>=<v2>]]
+|----------|---|-----------|-----------|------|------|------------|-----------------------|
+| protocol |   | username  | password  | host | port |  database  |  params               |
+
 ```
 
 memcached   帐号

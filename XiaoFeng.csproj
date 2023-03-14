@@ -8,7 +8,7 @@
 		<Copyright>CopyRight @ 2008-2024 魔法精灵(www.fayelf.com) QQ:7092734 Email:jacky@fayelf.com</Copyright>
 		<Company>魔法精灵</Company>
 		<VersionPrefix>3.4</VersionPrefix>
-		<VersionSuffix>1</VersionSuffix>
+		<VersionSuffix>2</VersionSuffix>
 		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
 		<FileVersion>$(Version)</FileVersion>
 		<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
@@ -24,7 +24,7 @@
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageReleaseNotes>优化HttpSocket请求中增加ContentLength;优化Redis连接串;优化Redis连接;Memcached连接;优化HttpSocket;优化Socket服务端关闭事件;数字转换为大写，大写转换数字改成扩展方法;增加websocket连接成功，断开连接，连接失败事件;修复NetServer停止后再启动无法接受新连接的bug;</PackageReleaseNotes>
+		<PackageReleaseNotes>修复socket服务端停止后再启动再停止不断开客户端连接bug;</PackageReleaseNotes>
 		<DelaySign>False</DelaySign>
 		<IsPackable>true</IsPackable>
 		<PackageProjectUrl>https://github.com/zhuovi/XiaoFeng</PackageProjectUrl>
