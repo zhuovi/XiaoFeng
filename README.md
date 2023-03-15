@@ -70,7 +70,7 @@ Cake
 
 # XiaoFeng 类库包含库
 | 命名空间 | 说明 | 包含功能 | 所属类库 | 开源状态 |
-| :----| :----: | :---- | :----: |
+| :----| :----: | :---- | :----: | :----: |
 | XiaoFeng.Prototype | 扩展库 | ToCase 类型转换<br/>ToTimestamp,ToTimestamps 时间转时间戳<br/>GetBasePath 获取文件绝对路径,支持Linux,Windows<br/>GetFileName 获取文件名称<br/>GetMatch,GetMatches,GetMatchs,IsMatch,ReplacePatten,RemovePattern 正则表达式操作<br/> | XiaoFeng.Core | √ |
 | XiaoFeng.Net | 网络库 | XiaoFeng网络库，封装了Socket客户端，服务端（Socket,WebSocket），根据当前库可轻松实现订阅，发布等功能。  | XiaoFeng.Net | √ |
 | XiaoFeng.Http | 模拟请求库 | 模拟网络请求 |
