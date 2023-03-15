@@ -55,22 +55,22 @@ namespace XiaoFeng
         /// <returns>返回中文文本的拼音</returns>
         public static string GetPinyin(string text, Boolean IsFirstUpper = false)
         {
-            foreach (DictionaryEntry de in PhraseSpecial)
+            PhraseSpecial.Each<KeyValuePair<string,string>>(a =>
             {
-                text = text.Replace(de.Key.ToString(), de.Value.ToString());
-            }
-            StringBuilder sbPinyin = new StringBuilder();
+				text = text.Replace(a.Key.ToString(), a.Value.ToString());
+			});
+            StringBuilder pinyin = new StringBuilder();
             for (var i = 0; i < text.Length; ++i)
             {
                 string py = GetPinyin(text[i]);
-                if (py != "") sbPinyin.Append(py);
-                sbPinyin.Append(" ");
+                if (py != "") pinyin.Append(py);
+                pinyin.Append(" ");
             }
-            PhraseSpecial.Each<DictionaryEntry>(a =>
+            PhraseSpecial.Each<KeyValuePair<string,string>>(a =>
             {
-                sbPinyin = sbPinyin.Replace(a.Value.ToString().ToCharArray().Join(" "), a.Value.ToString());
+                pinyin = pinyin.Replace(a.Value.ToString().ToCharArray().Join(" "), a.Value.ToString());
             });
-            var _ = sbPinyin.ToString().Trim();
+            var _ = pinyin.ToString().Trim();
             if (IsFirstUpper) _ = _.ToUpperFirst();
             return _;
         }
@@ -165,23 +165,28 @@ namespace XiaoFeng
         /// <summary>
         /// 设置或获取包含例外词组读音的键/值对的组合
         /// </summary>
-        private static Hashtable _PhraseSpecial = new Hashtable();
+        private static IDictionary _PhraseSpecial = new Dictionary<string,string>();
         /// <summary>
         /// 设置或获取包含例外词组读音的键/值对的组合
         /// </summary>
-        public static Hashtable PhraseSpecial
+        public static IDictionary PhraseSpecial
         {
             get
             {
                 if (_PhraseSpecial == null || _PhraseSpecial.Count == 0)
                 {
-                    _PhraseSpecial = new Hashtable
-                    {
+                    _PhraseSpecial = new Dictionary<string,string>
+					{
                         { "重庆", "chong qing" },
                         { "银行", "yin hang" },
                         { "了解", "liao jie" },
                         { "行家","hang jia" },
-                        { "便宜", "pian yi" },
+                        { "一行","yi hang" },
+                        { "两行","liang hang" },
+                        { "三行","san hang" },
+                        { "四行","si hang" },
+                        { "行行","hang hang" },
+						{ "便宜", "pian yi" },
                         { "提防", "di fang" },
                         { "人参", "ren shen" },
                         { "朝夕", "zhao xi" },
@@ -203,7 +208,11 @@ namespace XiaoFeng
                         { "城堡", "cheng bao" },
                         { "桥头堡", "qiao tou bao" },
                         { "星宿", "xing xiu" },
-
+                        { "都不", "dou bu" },
+                        { "都是", "dou shi" },
+                        { "都行", "dou xing" },
+                        { "都中", "dou zhong" },
+                        { "都好", "dou hao" },
                     };
                     /*
                      

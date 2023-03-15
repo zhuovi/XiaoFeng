@@ -8,7 +8,7 @@
 		<Copyright>CopyRight @ 2008-2024 魔法精灵(www.fayelf.com) QQ:7092734 Email:jacky@fayelf.com</Copyright>
 		<Company>魔法精灵</Company>
 		<VersionPrefix>3.4</VersionPrefix>
-		<VersionSuffix>2</VersionSuffix>
+		<VersionSuffix>3</VersionSuffix>
 		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
 		<FileVersion>$(Version)</FileVersion>
 		<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
@@ -24,7 +24,7 @@
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageReleaseNotes>修复socket服务端停止后再启动再停止不断开客户端连接bug;</PackageReleaseNotes>
+		<PackageReleaseNotes>优化汉字转拼音多音字;</PackageReleaseNotes>
 		<DelaySign>False</DelaySign>
 		<IsPackable>true</IsPackable>
 		<PackageProjectUrl>https://github.com/zhuovi/XiaoFeng</PackageProjectUrl>

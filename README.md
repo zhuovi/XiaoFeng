@@ -31,42 +31,66 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 3.4.2
+$ dotnet add package XiaoFeng --version 3.4.3
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 3.4.2
+PM> Install-Package XiaoFeng -Version 3.4.3
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="3.4.2" />
+<PackageReference Include="XiaoFeng" Version="3.4.3" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 3.4.2
+> paket add XiaoFeng --version 3.4.3
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 3.4.2"
+> #r "nuget: XiaoFeng, 3.4.3"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=3.4.2
+#addin nuget:?package=XiaoFeng&version=3.4.3
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=3.4.2
+#tool nuget:?package=XiaoFeng&version=3.4.3
 ```
+
+# XiaoFeng 类库包含库
+| 命名空间 | 说明 | 包含功能 |
+| :----| :----: | :---- |
+| XiaoFeng.Prototype | 扩展库 | ToCase 类型转换<br/>ToTimestamp,ToTimestamps 时间转时间戳<br/>GetBasePath 获取文件绝对路径,支持Linux,Windows<br/>GetFileName 获取文件名称<br/>GetMatch,GetMatches,GetMatchs,IsMatch,ReplacePatten,RemovePattern 正则表达式操作<br/> |
+| XiaoFeng.Net | 网络库 | XiaoFeng网络库，封装了Socket客户端，服务端（Socket,WebSocket），根据当前库可轻松实现订阅，发布等功能。  |
+| XiaoFeng.Http | 模拟请求库 | 模拟网络请求 |
+| XiaoFeng.Data | 数据库操作库 | 支持SQLSERVER,MYSQL,ORACLE,达梦,SQLITE,ACCESS,OLEDB,ODBC等数十种数据库  |
+| XiaoFeng.Cache | 缓存库 |  内存缓存,Redis,MemcachedCache,MemoryCache,FileCache缓存 |
+| XiaoFeng.Config | 配置文件库 | 通过创建模型自动生成配置文件，可为xml,json,ini文件格式  |
+| XiaoFeng.Cryptography | 加密算法库 | AES,DES,RSA,MD5,DES3,SHA,HMAC,RC4加密算法  |
+| XiaoFeng.Excel | Excel操作库 | Excel操作，创建excel,编辑excel,读取excel内容，边框，字体，样式等功能  |
+| XiaoFeng.Ftp | FTP请求库 | FTP客户端  |
+| XiaoFeng.IO | 文件操作库 | 文件读写操作  |
+| XiaoFeng.Json | Json序列化，反序列化库 | Json序列化，反序列化库 |
+| XiaoFeng.Xml | Xml序列化，反序列化库 | Xml序列化，反序列化库 |
+| XiaoFeng.Log | 日志库 | 写日志文件,数据库 |
+| XiaoFeng.Memcached | Memcached缓存库 | Memcached中间件,支持.NET框架、.NET内核和.NET标准库,一种非常方便操作的客户端工具。实现了Set,Add,Replace,PrePend,Append,Cas,Get,Gets,Gat,Gats,Delete,Touch,Stats,Stats Items,Stats Slabs,Stats Sizes,Flush_All,Increment,Decrement,线程池功能。 |
+| XiaoFeng.Redis | Redis缓存库 | Redis中间件,支持.NET框架、.NET内核和.NET标准库,一种非常方便操作的客户端工具。实现了Hash,Key,String,ZSet,Stream,Log,List,订阅发布,线程池功能; |
+| XiaoFeng.Threading | 线程库 | 线程任务,线程队列  |
+| XiaoFeng.Proxy | 代理库 | 开发中 |
+| XiaoFeng.TDengine | TDengine 客户端 | 开发中 |
+| XiaoFeng.GB28181 | 视频监控库，SIP类库 | 开发中 |
+
 # XiaoFeng 扩展方法
 
 ## 万能的类型转换扩展方法 ToCast<T>()
