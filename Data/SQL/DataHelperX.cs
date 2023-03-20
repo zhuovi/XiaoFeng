@@ -1110,7 +1110,10 @@ namespace XiaoFeng.Data.SQL
         public int Count()
         {
             if (this.DataSQL.Columns != null) this.DataSQL.Columns.Clear();
-            string SQLString = String.Empty;
+			//this.DataSQL.ClearColumns("count(0)");
+            //string SQLString = this.DataSQL.GetSQLString();
+            
+			string SQLString = String.Empty;
             if (this.DataSQL.Columns != null && this.DataSQL.Columns.Count == 0)
             {
                 this.DataSQL.SetColumns("count(0)");
