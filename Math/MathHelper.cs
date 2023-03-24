@@ -111,6 +111,86 @@ namespace XiaoFeng
         }
         #endregion
 
+        #region 计算标准偏差
+        /// <summary>
+        /// 计算标准偏差
+        /// </summary>
+        /// <param name="values">数据</param>
+        /// <returns></returns>
+        public static double StDev(IEnumerable<double> values)
+        {
+            var length = values.Count();
+            if (length > 1)
+            {
+                var avg = values.Average();
+                //计算各数值与平均数的差值的平方,然后求和 
+                double sum = values.Sum(d => Math.Pow(d - avg, 2));
+                //除以数量-1,然后开方
+                return Math.Sqrt(sum / (length - 1));
+            }
+            return 0;
+        }
+        /// <summary>
+        /// 计算标准偏差
+        /// </summary>
+        /// <param name="values">数据</param>
+        /// <returns></returns>
+        public static float StDev(IEnumerable<float> values)
+        {
+            var length = values.Count();
+            if (length > 1)
+            {
+                var avg = values.Average();
+                //计算各数值与平均数的差值的平方,然后求和 
+                var sum = values.Sum(d => Convert.ToSingle(Math.Pow(d - avg, 2)));
+                //除以数量-1,然后开方
+                return Convert.ToSingle(Math.Sqrt(sum / (length - 1)));
+            }
+            return 0;
+        }
+        #endregion
+
+        #region 计算标准差
+        /// <summary>
+        /// 计算标准差
+        /// </summary>
+        /// <param name="values">数据</param>
+        /// <returns></returns>
+        public static double StDevp(IEnumerable<double> values)
+        {
+            var length = values.Count();
+            if (length > 1)
+            {
+                //计算平均值
+                double avg = values.Average();
+                //计算各数值与平均数的差值的平方,然后求和 
+                double sum = values.Sum(d => Math.Pow(d - avg, 2));
+                //除以数量,然后开方
+                return Math.Sqrt(sum / length);
+            }
+            return 0;
+        }
+        /// <summary>
+        /// 计算标准差
+        /// </summary>
+        /// <param name="values">数据</param>
+        /// <returns></returns>
+        public static float StDevp(IEnumerable<float> values)
+        {
+            var length = values.Count();
+            if (length > 1)
+            {
+                //计算平均值
+                var avg = values.Average();
+                //计算各数值与平均数的差值的平方,然后求和 
+                var sum = values.Sum(d => Convert.ToSingle(Math.Pow(d - avg, 2)));
+                //除以数量,然后开方
+                return Convert.ToSingle(Math.Sqrt(sum / length));
+            }
+            return 0;
+        }
+        #endregion
+
         #endregion
     }
 

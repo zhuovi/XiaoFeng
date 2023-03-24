@@ -91,7 +91,9 @@ namespace XiaoFeng.Data
                         {"DivideSQL","{0} / {1}"},
                         {"BetweenSQL","{0} BETWEEN {1} AND {2}"},
                         {"AvgSQL","AVG({0})" },
-                        {"CastSQL","CAST({0} as {1})" }
+                        {"CastSQL","CAST({0} as {1})" },
+                        {"StDevSQL","STDEV({0})" },
+                        {"StDevpSQL","STDEVP({0})" }
                     };
                 }
                 return this._MsSqlFun;
@@ -166,7 +168,9 @@ namespace XiaoFeng.Data
                         {"DivideSQL","{0} / {1}"},
                         {"BetweenSQL","{0} BETWEEN {1} AND {2}"},
                         {"AvgSQL","AVG({0})" },
-                        {"CastSQL","CAST({0} as {1})" }
+                        {"CastSQL","CAST({0} as {1})" },
+                        {"StDevSQL","STDEV({0})" },
+                        {"StDevpSQL","STDEVP({0})" }
                     };
                 }
                 return this._MsSqlUnFun;
@@ -244,7 +248,9 @@ namespace XiaoFeng.Data
                         {"DivideSQL","{0} / {1}"},
                         {"BetweenSQL","{0} BETWEEN {1} AND {2}"},
                         {"AvgSQL","AVG({0})" },
-                        {"CastSQL","CAST({0} as {1})" }
+                        {"CastSQL","CAST({0} as {1})" },
+                        {"StDevSQL","STDEV({0})" },
+                        {"StDevpSQL","STDEVP({0})" }
                     };
                 }
                 return this._SQLiteFun;
@@ -319,7 +325,9 @@ namespace XiaoFeng.Data
                         {"DivideSQL","{0} / {1}"},
                         {"BetweenSQL","{0} BETWEEN {1} AND {2}"},
                         {"AvgSQL","AVG({0})" },
-                        {"CastSQL","CAST({0} as {1})" }
+                        {"CastSQL","CAST({0} as {1})" },
+                        {"StDevSQL","STDEV({0})" },
+                        {"StDevpSQL","STDEVP({0})" }
                     };
                 }
                 return this._SQLiteUnFun;
@@ -397,7 +405,9 @@ namespace XiaoFeng.Data
                         {"DivideSQL","{0} / {1}"},
                         {"BetweenSQL","{0} BETWEEN {1} AND {2}"},
                         {"AvgSQL","AVG({0})" },
-                        {"CastSQL","CAST({0} as {1})" }
+                        {"CastSQL","CAST({0} as {1})" },
+                        {"StDevSQL","STDEV({0})" },
+                        {"StDevpSQL","STDEVP({0})" }
                     };
                 }
                 return this._MySqlFun;
@@ -472,7 +482,9 @@ namespace XiaoFeng.Data
                         {"DivideSQL","{0} / {1}"},
                         {"BetweenSQL","{0} BETWEEN {1} AND {2}"},
                         {"AvgSQL","AVG({0})" },
-                        {"CastSQL","CAST({0} as {1})" }
+                        {"CastSQL","CAST({0} as {1})" },
+                        {"StDevSQL","STDEV({0})" },
+                        {"StDevpSQL","STDEVP({0})" }
                     };
                 }
                 return this._MySqlUnFun;
@@ -550,7 +562,9 @@ namespace XiaoFeng.Data
                         {"DivideSQL","{0} / {1}"},
                         {"BetweenSQL","{0} BETWEEN {1} AND {2}"},
                         {"AvgSQL","AVG({0})" },
-                        {"CastSQL","CAST({0} as {1})" }
+                        {"CastSQL","CAST({0} as {1})" },
+                        {"StDevSQL","STDEV({0})" },
+                        {"StDevpSQL","STDEVP({0})" }
                     };
                 }
                 return this._OracleFun;
@@ -625,7 +639,9 @@ namespace XiaoFeng.Data
                         {"DivideSQL","{0} / {1}"},
                         {"BetweenSQL","{0} BETWEEN {1} AND {2}"},
                         {"AvgSQL","AVG({0})" },
-                        {"CastSQL","CAST({0} as {1})" }
+                        {"CastSQL","CAST({0} as {1})" },
+                        {"StDevSQL","STDEV({0})" },
+                        {"StDevpSQL","STDEVP({0})" }
                     };
                 }
                 return this._OracleUnFun;
@@ -703,7 +719,9 @@ namespace XiaoFeng.Data
                         {"DivideSQL","{0} / {1}"},
                         {"BetweenSQL","{0} BETWEEN {1} AND {2}"},
                         {"AvgSQL","AVG({0})" },
-                        {"CastSQL","CAST({0} as {1})" }
+                        {"CastSQL","CAST({0} as {1})" },
+                        {"StDevSQL","STDEV({0})" },
+                        {"StDevpSQL","STDEVP({0})" }
                     };
                 }
                 return this._OledbFun;
@@ -778,7 +796,9 @@ namespace XiaoFeng.Data
                         {"DivideSQL","{0} / {1}"},
                         {"BetweenSQL","{0} BETWEEN {1} AND {2}"},
                         {"AvgSQL","AVG({0})" },
-                        {"CastSQL","CAST({0} as {1})" }
+                        {"CastSQL","CAST({0} as {1})" },
+                        {"StDevSQL","STDEV({0})" },
+                        {"StDevpSQL","STDEVP({0})" }
                     };
                 }
                 return this._OledbUnFun;
@@ -856,7 +876,9 @@ namespace XiaoFeng.Data
                         {"DivideSQL","{0} / {1}"},
                         {"BetweenSQL","{0} BETWEEN {1} AND {2}"},
                         {"AvgSQL","AVG({0})" },
-                        {"CastSQL","CAST({0} as {1})" }
+                        {"CastSQL","CAST({0} as {1})" },
+                        {"StDevSQL","STDEV({0})" },
+                        {"StDevpSQL","STDEVP({0})" }
                     };
                 }
                 return this._DamengFun;
@@ -931,7 +953,9 @@ namespace XiaoFeng.Data
                         {"DivideSQL","{0} / {1}"},
                         {"BetweenSQL","{0} BETWEEN {1} AND {2}"},
                         {"AvgSQL","AVG({0})" },
-                        {"CastSQL","CAST({0} as {1})" }
+                        {"CastSQL","CAST({0} as {1})" },
+                        {"StDevSQL","STDEV({0})" },
+                        {"StDevpSQL","STDEVP({0})" }
                     };
                 }
                 return this._DamengUnFun;
@@ -984,7 +1008,7 @@ namespace XiaoFeng.Data
         /// <summary>
         /// SQL 函数
         /// </summary>
-        public static string[] SQLFun = new string[] { "Upper","UCASE", "Lower","LCASE","MID", "Trim", "Substring", "Stuff", "Reverse","StrReverse", "Replicate", "Replace", "Len", "Right", "Left", "Round", "Ceiling", "Floor","FIX", "Abs","INT", "Charindex", "Date_Format","FORMAT", "INSTR", "DatePart", "DateDiff", "DATE_ADD","DATEADD", "Patindex", "CONVERT", "RTRIM", "LTRIM","ISNULL", "TIMESTAMPDIFF" };
+        public static string[] SQLFun = new string[] { "Upper","UCASE", "Lower","LCASE","MID", "Trim", "Substring", "Stuff", "Reverse","StrReverse", "Replicate", "Replace", "Len", "Right", "Left", "Round", "Ceiling", "Floor","FIX", "Abs","INT", "Charindex", "Date_Format","FORMAT", "INSTR", "DatePart", "DateDiff", "DATE_ADD","DATEADD", "Patindex", "CONVERT", "RTRIM", "LTRIM","ISNULL", "TIMESTAMPDIFF","STDEV","STDEVP" };
         #endregion
     }
 }

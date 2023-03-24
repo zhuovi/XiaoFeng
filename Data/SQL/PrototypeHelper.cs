@@ -491,6 +491,26 @@ namespace XiaoFeng.Data.SQL
         public static T AvgSQL<T>(this T field) => field;
         #endregion
 
+        #region 扩展SQL STDEV
+        /// <summary>
+        /// 扩展SQL STDEV
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="field">字段</param>
+        /// <returns></returns>
+        public static float StDevSQL<T>(this T field) => 0;
+        #endregion
+
+        #region 扩展SQL STDEVP
+        /// <summary>
+        /// 扩展SQL STDEVP
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="field">字段</param>
+        /// <returns></returns>
+        public static float StDevpSQL<T>(this T field) => 0;
+        #endregion
+
         #region 设置字段别名
         /// <summary>
         /// 设置字段别名

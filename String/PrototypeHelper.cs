@@ -21,6 +21,7 @@ namespace XiaoFeng
     /// </summary>
     public partial class PrototypeHelper
     {
+        #region 扩展String IndexOf
         /// <summary>
         /// 扩展String IndexOf
         /// </summary>
@@ -33,6 +34,9 @@ namespace XiaoFeng
 #else
             _.IndexOf(value);
 #endif
+        #endregion
+
+        #region 扩展String LastIndexOf
         /// <summary>
         /// 扩展String LastIndexOf
         /// </summary>
@@ -45,6 +49,9 @@ namespace XiaoFeng
 #else
             _.LastIndexOf(value);
 #endif
+        #endregion
+
+        #region 扩展String Substring
         /// <summary>
         /// 扩展String Substring
         /// </summary>
@@ -63,6 +70,9 @@ namespace XiaoFeng
 #endif
                 ;
         }
+        #endregion
+
+        #region 扩展String Substring
         /// <summary>
         /// 扩展String Substring
         /// </summary>
@@ -70,6 +80,9 @@ namespace XiaoFeng
         /// <param name="start">开始位置</param>
         /// <returns></returns>
         public static string SubstringX(this string _, int start) => _.SubstringX(start, _.Length - start);
+        #endregion
+
+        #region 扩展String Replace
         /// <summary>
         /// 扩展String Replace
         /// </summary>
@@ -95,6 +108,9 @@ namespace XiaoFeng
             return _.Replace(oldValue, newValue);
 #endif
         }
+        #endregion
+
+        #region 字符串是否闭合
         /// <summary>
         /// 字符串是否闭合
         /// </summary>
@@ -154,5 +170,6 @@ namespace XiaoFeng
             if (Current == null) return false;
             return index > -1 ? Current.IsPair && _.Substring(index + 1).IsNullOrEmpty() : Current.IsPair;
         }
+        #endregion
     }
 }
