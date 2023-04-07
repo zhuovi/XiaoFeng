@@ -95,9 +95,56 @@ namespace XiaoFeng.Data.SQL
         /// </summary>
         public Type ModelType { get; set; }
         /// <summary>
+        /// 分表配置
+        /// </summary>
+        public ITableSplit TableSplit { get; set; }
+        /// <summary>
         /// 表名
         /// </summary>
-        public string TableName { get; set; }
+        private string _TableName;
+        /// <summary>
+        /// 表名
+        /// </summary>
+        public string TableName {
+            get
+            {
+                if (this._TableName.IsNullOrEmpty())
+                {
+                    TableAttribute Table = this.ModelType.GetTableAttribute();
+                    if (Table == null)
+                        this._TableName = this.ModelType.Name;
+                    else
+                        this._TableName = Table.Name ?? this.ModelType.Name;
+                    var tables = TableSplitConfig.Current.List;
+                    if (tables.Any())
+                    {
+                        var table = tables.FirstOrDefault(a => a.Name.EqualsIgnoreCase(this._TableName));
+                        if (table != null)
+                        {
+                            this.TableSplit = table;
+                        }
+                    }
+                }
+                return this._TableName;
+            }
+            set
+            {
+                var val = value;
+                if (val.IndexOf(" ") == -1)
+                {
+                    var tables = TableSplitConfig.Current.List;
+                    if (tables.Any())
+                    {
+                        var table = tables.FirstOrDefault(a => a.Name.EqualsIgnoreCase(val));
+                        if (table != null)
+                        {
+                            this.TableSplit = table;
+                        }   
+                    }
+                }
+                this._TableName = val;
+            }
+        }
         /// <summary>
         /// SQL语句
         /// </summary>
@@ -228,9 +275,9 @@ namespace XiaoFeng.Data.SQL
         {
             if (where.IsNullOrEmpty()) return;
             if (this.WhereString.IsNullOrEmpty()) this.WhereString = "";
-            //where = where.RemovePattern(@"\s*where\s*");
             if (where.IsNotNullOrEmpty()) where = where.RemovePattern(@"^\s*(and|where|or)\s*");
             this.WhereString += "{0}{1}".format(this.WhereString == "" ? "" : " AND ", where);
+
         }
         #endregion
 
@@ -265,14 +312,7 @@ namespace XiaoFeng.Data.SQL
                 SQL = this.SQLString; return SQL;
             }
             string SQLTemplate = "", TableName = this.TableName, Columns = this.GetColumns(), _Columns = Columns.ReplacePattern(@"(\s+as\s+[^\s]+)(,|$)", "$2"), OrderByString = this.GetOrderBy();
-            if (TableName.IsNullOrEmpty())
-            {
-                TableAttribute Table = this.ModelType.GetTableAttribute();
-                if (Table == null)
-                    TableName = this.ModelType.Name;
-                else
-                    TableName = Table.Name ?? this.ModelType.Name;
-            }
+
             switch (this.SQLType)
             {
                 case SQLType.select:

@@ -38,6 +38,11 @@ namespace XiaoFeng.Data.SQL
     /// <typeparam name="T">类型</typeparam>
     public interface IQueryableX<T> : IQueryableX
     {
+        /// <summary>
+        /// SQL配置
+        /// </summary>
+        DataSQL DataSQL { get; set; }
+
         #region 插入数据
         /// <summary>
         /// 插入数据

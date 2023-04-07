@@ -29,6 +29,10 @@ namespace XiaoFeng.Data
         /// </summary>
         DbProviderType ProviderType { get; set; }
         /// <summary>
+        /// 数据库连接串配置
+        /// </summary>
+        ConnectionConfig ConnConfig { get; set; }
+        /// <summary>
         /// 获取当前库的所有表
         /// </summary>
         /// <returns></returns>

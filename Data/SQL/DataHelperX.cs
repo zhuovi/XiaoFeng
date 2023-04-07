@@ -1534,7 +1534,12 @@ namespace XiaoFeng.Data.SQL
                 }
             }
             data = this.DataHelper.ExecuteDataTable(_SQLString.SQLFormat(this.DataHelper.ProviderType), CommandType.Text, this.GetDbParameters(SQLString)).ToEntity<TResult>();
-
+            if (data != null)
+            {
+                /*设置分表*/
+                var p = typeof(TResult).GetProperty("TableName", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+                if (data != null) p?.SetValue(data, this.DataSQL.TableName);
+            }
             SetForeignKey<TResult>(data);
             /*
              * 移除QueryableX中的缓存 统一用基类DataHelper中的缓存
@@ -1609,7 +1614,12 @@ namespace XiaoFeng.Data.SQL
                 }
             }
             data = this.DataHelper.ExecuteDataTable(_SQLString.SQLFormat(this.DataHelper.ProviderType), CommandType.Text, this.GetDbParameters(SQLString)).ToEntity(type);
-
+            if (data != null)
+            {
+                /*设置分表*/
+                var p = type.GetProperty("TableName", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+                p?.SetValue(data, this.DataSQL.TableName);
+            }
             SetForeignKey(data);
             
             sTime.Stop();
@@ -1734,7 +1744,93 @@ namespace XiaoFeng.Data.SQL
             _SQLString = _SQLString.SQLFormat(this.DataHelper.ProviderType);
             if (type == ValueTypes.Class || type == ValueTypes.Struct || type == ValueTypes.Anonymous)
             {
-                data = this.DataHelper.ExecuteDataTable(_SQLString, CommandType.Text, this.GetDbParameters(SQLString)).ToEntity<T>();
+                if (this.DataSQL.TableName.IndexOf("_FB_") > -1)
+                {
+                    data = this.DataHelper.ExecuteDataTable(_SQLString, CommandType.Text, this.GetDbParameters(SQLString)).ToEntity<T>();
+                }
+                else
+                {
+                    /*查询分表*/
+                    var tbls = TableSplitConfig.Current.List?.Find(a => a.Name.EqualsIgnoreCase(this.DataSQL.TableName));
+                    if (tbls != null)
+                    {
+                        var a = _SQLString.GetMatch(@"(\s|\()" + this.DataSQL.FieldFormat(tbls.SplitField).ToRegexEscape() + @"\s*=\s*(?<a>@[a-z_0-9]+)");
+                        if (a.IsNullOrEmpty())
+                        {
+                            tbls.TableNames.Reverse();
+                            tbls.TableNames.Each(b =>
+                            {
+                                data = this.DataHelper.ExecuteDataTable(_SQLString.Replace(tbls.Name, b.Name), CommandType.Text, this.GetDbParameters(SQLString)).ToEntity<T>();
+                                if (data != null)
+                                {
+                                    this.DataSQL.TableName = b.Name;
+                                    return false;
+                                }
+
+                                return true;
+                            });
+                        }
+                        else
+                        {
+                            if (this.DataSQL.Parameters.TryGetValue(a, out var val))
+                            {
+                                var _ = val.ToString();
+                                if (_.IndexOf(":") > -1)
+                                {
+                                    var _val = _.ToDateTime();
+                                    var tb = tbls.TableNames.Find(b => b.Begin.ToCast<DateTime>() <= _val && b.End.ToCast<DateTime>() > _val);
+                                    if (tb == null)
+                                        data = this.DataHelper.ExecuteDataTable(_SQLString, CommandType.Text, this.GetDbParameters(SQLString)).ToEntity<T>();
+                                    else
+                                    {
+                                        data = this.DataHelper.ExecuteDataTable(_SQLString.Replace(tbls.Name, tb.Name), CommandType.Text, this.GetDbParameters(SQLString)).ToEntity<T>();
+                                        this.DataSQL.TableName = tb.Name;
+                                    }
+                                }
+                                else if (_.IsNumberic())
+                                {
+                                    if (tbls.SplitType == TableSplitType.AutoID)
+                                    {
+                                        var _val = _.ToLong();
+                                        var tb = tbls.TableNames.Find(b => b.Begin.ToLong() <= _val && b.End.ToString().ToLong() > _val);
+                                        if (tb == null)
+                                            data = this.DataHelper.ExecuteDataTable(_SQLString, CommandType.Text, this.GetDbParameters(SQLString)).ToEntity<T>();
+                                        else
+                                        {
+                                            data = this.DataHelper.ExecuteDataTable(_SQLString.Replace(tbls.Name, tb.Name), CommandType.Text, this.GetDbParameters(SQLString)).ToEntity<T>();
+                                            this.DataSQL.TableName = tb.Name;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var _val = _.ToDateTime().ToTimeStamp();
+                                        var tb = tbls.TableNames.Find(b => b.Begin.ToDateTime().ToTimeStamp() <= _val && b.End.ToString().ToDateTime().ToTimeStamp() > _val);
+                                        if (tb == null)
+                                            data = this.DataHelper.ExecuteDataTable(_SQLString, CommandType.Text, this.GetDbParameters(SQLString)).ToEntity<T>();
+                                        else
+                                        {
+                                            data = this.DataHelper.ExecuteDataTable(_SQLString.Replace(tbls.Name, tb.Name), CommandType.Text, this.GetDbParameters(SQLString)).ToEntity<T>();
+                                            this.DataSQL.TableName = tb.Name;
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                                data = default(T);
+                        }
+                    }
+                    else
+                    {
+                        data = this.DataHelper.ExecuteDataTable(_SQLString, CommandType.Text, this.GetDbParameters(SQLString)).ToEntity<T>();
+                    }
+                }
+                
+                if (data != null)
+                {
+                    /*设置分表*/
+                    var p = typeof(T).GetProperty("TableName", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+                    p?.SetValue(data, this.DataSQL.TableName);
+                }
             }
             else if (type == ValueTypes.Enum || type == ValueTypes.String || type == ValueTypes.Value)
             {
@@ -1836,6 +1932,16 @@ namespace XiaoFeng.Data.SQL
                 }
             }
             data = this.DataHelper.ExecuteDataTable(_SQLString.SQLFormat(this.DataHelper.ProviderType), CommandType.Text, this.GetDbParameters(SQLString)).ToList<T>();
+            if (data != null)
+            {
+                /*设置分表*/
+                var p = typeof(T).GetProperty("TableName", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+                data.Each(a =>
+                {
+                    p?.SetValue(a, this.DataSQL.TableName);
+                    SetForeignKey(a);
+                });
+            }
             /*
              * 移除QueryableX中的缓存 统一用基类DataHelper中的缓存
              * if (this.DataSQL.IsCache(cacheData))
@@ -2013,10 +2119,16 @@ namespace XiaoFeng.Data.SQL
                 }
             }
             data = this.DataHelper.ExecuteDataTable(_SQLString.SQLFormat(this.DataHelper.ProviderType), CommandType.Text, this.GetDbParameters(SQLString)).ToList<TResult>();
-            data.Each(a =>
+            if (data != null)
             {
-                SetForeignKey<TResult>(a);
-            });
+                /*设置分表*/
+                var p = typeof(T).GetProperty("TableName", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+                data.Each(a =>
+                {
+                    p?.SetValue(a, this.DataSQL.TableName);
+                    SetForeignKey(a);
+                });
+            }
             /*
              * 移除QueryableX中的缓存 统一用基类DataHelper中的缓存
             if (this.DataSQL.IsCache(cacheData))
@@ -2095,11 +2207,17 @@ namespace XiaoFeng.Data.SQL
                 }
             }
             data = this.DataHelper.ExecuteDataTable(_SQLString.SQLFormat(this.DataHelper.ProviderType), CommandType.Text, this.GetDbParameters(SQLString)).ToList(type);
-            data.Each(a =>
+            if (data != null)
             {
-                SetForeignKey(a);
-            });
-            
+                /*设置分表*/
+                var p = typeof(T).GetProperty("TableName", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+                data.Each(a =>
+                {
+                    p?.SetValue(a, this.DataSQL.TableName);
+                    SetForeignKey(a);
+                });
+            }
+
             sTime.Stop();
             this.DataSQL.RunSQLTime += sTime.ElapsedMilliseconds;
             if (this.SQLCallBack != null) this.SQLCallBack.Invoke(this.DataSQL);
@@ -2403,6 +2521,21 @@ namespace XiaoFeng.Data.SQL
         {
             if (model == null) return false;
             this.InsertQ(model);
+            /*判断当前表有没有分表*/
+            var tblsplit = TableSplitConfig.Current;
+            var tbls = tblsplit.List?.Find(a => a.Name.EqualsIgnoreCase(this.DataSQL.TableName));
+            if (tbls != null)
+            {
+                /*创建分表*/
+                var tblName = tbls.GetTableName();
+                if (!tbls.Exists(tblName))
+                {
+                    this.DataHelper.ExecuteNonQuery(tbls.CreateTableSQL.format(tblName));
+                    tbls.AddTableSplit(tblName);
+                    tblsplit.Save();
+                }
+                this.DataSQL.TableName = tblName;
+            }
             string SQLString = this.DataSQL.GetSQLString();
             Stopwatch sTime = new Stopwatch();
             sTime.Start();

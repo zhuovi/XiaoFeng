@@ -37,7 +37,7 @@ namespace XiaoFeng
         /// <param name="connIndex">数据库索引</param>
         public static void CreateModel(this IDbHelper data, string path, string tableName = "", string @namespace = "XiaoFeng.Models", string connName = "", int connIndex = 0)
         {
-            using (var make = new Model.MakeModel() { DataHelper = data, Namespace = @namespace }) make.CreateModel(path, tableName, connName, connIndex);
+            using (var make = new Model.MakeModel() { DataHelper = data, Namespace = @namespace }) make.CreateModel(path, tableName, connName.Multivariate(data.ConnConfig.AppKey), connIndex);
         }
         #endregion
 

@@ -102,7 +102,7 @@ namespace XiaoFeng.Threading
         [JsonIgnore] 
         public Action<IJob> SuccessCallBack { get; set; } = null;
         /// <summary>
-        /// 当前任务执行完成后再进入计时队列 此方法最后一定要设置job的状态等待
+        /// 当前任务执行完成后再进入计时队列
         /// </summary>
         [JsonIgnore] 
         public Action<IJob> CompleteCallBack { get; set; } = null;
@@ -148,11 +148,24 @@ namespace XiaoFeng.Threading
         /// 定时器类型
         /// </summary>
         [JsonConverter(typeof(DescriptionConverter))]
-        public TimerType TimerType { get; set; } = TimerType.Once;
+        public TimerType TimerType { get; set; } = TimerType.UnKnow;
         /// <summary>
         /// 时间
         /// </summary>
-        public Time Time { get; set; } = null;
+        private Time _Time = null;
+        /// <summary>
+        /// 时间
+        /// </summary>
+        public Time Time
+        {
+            get { return this._Time; }
+            set
+            {
+                this._Time = value;
+                //if (this.Times == null) this.Times = new List<Times>();
+                //this.Times.Add(new Times(value));
+            }
+        }
         /// <summary>
         /// 几点，几号，周几（周日为一周的第一天）,可用负数，-1代表一天中最后一小时即23点，一周内最后一天即周六，一月内最后一天
         /// </summary>
@@ -167,12 +180,48 @@ namespace XiaoFeng.Threading
             {
                 this._DayOrWeekOrHour = value;
                 Array.Sort(this._DayOrWeekOrHour);
+                if (this.Times == null) this.Times = new List<Times>();
+                if (!(TimerType.Hour| TimerType.Day| TimerType.Week| TimerType.Month| TimerType.Year).HasFlag(this.TimerType)) return;
+            }
+        }
+        /// <summary>
+        /// 时间集 几点，几号，周几（周日为一周的第一天）, 可用负数，-1代表一天中最后一小时即23点，一周内最后一天即周六，一月内最后一天 代替 Time+DayOrWeekOrHour ;
+        /// </summary>
+        private List<Times> _Times;
+        /// <summary>
+        /// 时间集 几点，几号，周几（周日为一周的第一天）, 可用负数，-1代表一天中最后一小时即23点，一周内最后一天即周六，一月内最后一天 代替 Time+DayOrWeekOrHour;
+        /// </summary>
+        public List<Times> Times
+        {
+            get { return this._Times; }
+            set
+            {
+                this._Times = value;
+            }
+        }
+        /// <summary>
+        /// 执行任务时间偏差 单位为毫秒 默认是1s 建议不要超过10s;
+        /// </summary>
+        private long _Deviation = 1000;
+        /// <summary>
+        /// 执行任务时间偏差 单位为毫秒 默认是1s 建议不要超过10s;
+        /// </summary>
+        public long Deviation
+        {
+            get { return this._Deviation; }
+            set
+            {
+                this._Deviation = value;
+                if (this._Deviation <= 0)
+                    this._Deviation = 0;
+                else if (this._Deviation >= 60 * 1000)
+                    this._Deviation = 1000;
             }
         }
         /// <summary>
         /// 间隔 单位毫秒
         /// </summary>
-        public int Period { get; set; }
+        public long Period { get; set; }
         #endregion
 
         #region 方法

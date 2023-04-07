@@ -154,7 +154,7 @@ select {Limits} row_number() over({OrderBy}) as TempID, * from
             }
             string Columns = this.GetColumns(), Jointype = this.JoinTypes[this.JoinType], OrderBy = this.GetOrderBy(), OnString = this.GetOn();
             int Top = this.Top ?? 0;
-            string Column = Columns.ReplacePattern(@"[a-z]+\.\[[a-z0-9_-]+\]\s+as\s+([a-z-0-9_-]+)\s*", "$1");
+            string Column = Columns.ReplacePattern(@"[a-z]+\.\[[a-z0-9_-]+\]\s+as\s+\[([a-z-0-9_-]+)\]\s*", "$1");
             /*处理结果集Where*/
             string WhereStrings = "";
             /*判断表是否有条件*/
@@ -197,7 +197,9 @@ select {Limits} row_number() over({OrderBy}) as TempID, * from
                                     break;
                                 case JoinType.Union:
                                 case JoinType.Full:
-                                    this.TableName[w.Key] = "select * from {0} where {1}".format(FieldFormat(TableName), w.Value);
+                                    Columns = Columns.ReplacePattern(@"(^|\s|,)[a-z]+\.\[", "$1[");
+                                    Column = "*";
+                                    this.TableName[w.Key] = "select {0} from {1} where {2}".format(Columns, FieldFormat(TableName), w.Value);
                                     break;
                                 case JoinType.Left:
                                 default:

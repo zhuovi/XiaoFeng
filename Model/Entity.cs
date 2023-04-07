@@ -237,7 +237,7 @@ namespace XiaoFeng.Model
         [JsonIgnore]
         [XmlIgnore]
         [FieldIgnore]
-        private string TableName { get; set; }
+        public string TableName { get; set; }
         /// <summary>
         /// 表属性
         /// </summary>
@@ -384,7 +384,9 @@ namespace XiaoFeng.Model
             {
                 data.ClearDirty();
                 data.SubDataBase(this.DataBaseName, this.DataBaseNum);
+                if (data.TableName.StartsWith(this.TableName)) this.TableName = data.TableName;
                 if (this.TableName != data.TableName) data.TableName = this.TableName;
+
             }
             return data;
         }

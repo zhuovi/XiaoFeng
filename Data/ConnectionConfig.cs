@@ -57,6 +57,7 @@ namespace XiaoFeng.Data
             var conns = db[connectionStringKey];
             if (conns == null || !conns.Any()) return;
             conns.FirstOrDefault().CopyTo(this);
+            this.AppKey = connectionStringKey;
         }
         #endregion
 
@@ -112,7 +113,7 @@ namespace XiaoFeng.Data
         /// 事务级别
         /// </summary>
         [Description("事务级别 DbNull 空级别,Serializable 串行读,RepeatableRead 可重复读,ReadCommitted 提交读,ReadUncommitted 未提交读,Snapshot 隔离未提交读,Chaos 混乱读,Unspecified 未指定")]
-        [JsonConverter(typeof(StringEnumConverter))] 
+        [JsonConverter(typeof(StringEnumConverter))]
         public IsolationLevel IsolationLevel { get; set; } = IsolationLevel.Unspecified;
         /// <summary>
         /// 是否启用连接池
@@ -125,9 +126,15 @@ namespace XiaoFeng.Data
         [Description("连接池最大数量")]
         public int MaxPool { get; set; } = 100;
         /// <summary>
-        /// 字符串大小写敏感
+        /// 字段名大小写敏感
         /// </summary>
+        [Description("字段名大小写敏感")]
         public Boolean IgnoreCase { get; set; } = true;
+        /// <summary>
+        /// 配置Key
+        /// </summary>
+        [Description("配置Key")]
+        public string AppKey { get; set; }
         #endregion
 
         #region 方法

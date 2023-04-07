@@ -19,42 +19,48 @@ namespace XiaoFeng.Threading
     /// <summary>
     /// 定时器类型
     /// </summary>
+    [Flags]
     public enum TimerType
     {
+        /// <summary>
+        /// 未知
+        /// </summary>
+        [Description("未知")]
+        UnKnow = 1 << 0,
         /// <summary>
         /// 一次
         /// </summary>
         [Description("一次")]
-        Once = 0,
+        Once = 1 << 1,
         /// <summary>
         /// 每时
         /// </summary>
         [Description("每时")]
-        Hour = 1,
+        Hour = 1 << 2,
         /// <summary>
         /// 每天
         /// </summary>
         [Description("每天")]
-        Day = 2,
+        Day = 1 << 3,
         /// <summary>
         /// 每周
         /// </summary>
         [Description("每周")]
-        Week = 3,
+        Week = 1 << 4,
         /// <summary>
         /// 每月
         /// </summary>
         [Description("每月")]
-        Month = 4,
+        Month = 1 << 5,
         /// <summary>
         /// 每年
         /// </summary>
         [Description("每年")]
-        Year = 5,
+        Year = 1 << 6,
         /// <summary>
         /// 间隔
         /// </summary>
         [Description("间隔")]
-        Interval = 6
+        Interval = 1 << 7
     }
 }

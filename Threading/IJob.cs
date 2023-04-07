@@ -71,7 +71,7 @@ namespace XiaoFeng.Threading
         /// </summary>
         Action<IJob> SuccessCallBack { get; set; }
         /// <summary>
-        /// 当前任务执行完成后再进入计时队列 此方法最后一定要设置job的状态等待
+        /// 当前任务执行完成后再进入计时队列
         /// </summary>
         Action<IJob> CompleteCallBack { get; set; }
         /// <summary>
@@ -117,11 +117,20 @@ namespace XiaoFeng.Threading
         /// <summary>
         /// 间隔 单位毫秒
         /// </summary>
-        int Period { get; set; }
+        long Period { get; set; }
         /// <summary>
         /// 几点，几号，周几（周日为一周的第一天）,可用负数，-1代表一天中最后一小时即23点，一周内最后一天即周六，一月内最后一天
         /// </summary>
+        [Obsolete("以后升级会移除当前属性")]
         int[] DayOrWeekOrHour { get; set; }
+        /// <summary>
+        /// 时间集 几点，几号，周几（周日为一周的第一天）,可用负数，-1代表一天中最后一小时即23点，一周内最后一天即周六，一月内最后一天 代替 Time+DayOrWeekOrHour;
+        /// </summary>
+        List<Times> Times { get; set; }
+        /// <summary>
+        /// 执行任务时间偏差 单位为毫秒 默认是1s 建议不要超过10s;
+        /// </summary>
+        long Deviation { get; set; }
         #endregion
 
         #region 启动作业
