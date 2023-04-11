@@ -54,18 +54,39 @@ namespace XiaoFeng.Config
         [Description("消费日志空闲时长")]
         public int IdleSeconds { get; set; } = 60;
         /// <summary>
-        /// 任务队列执行任务超时时间
+        /// 调度最小等待时长 单位为秒
+        /// </summary>
+        private int _JobSchedulerWaitTimeout = 60 * 60;
+        /// <summary>
+        /// 调度最小等待时长 单位为秒
+        /// </summary>
+        [Description("调度最小等待时长")]
+        public int JobSchedulerWaitTimeout
+        {
+            get
+            {
+                if (this._JobSchedulerWaitTimeout <= 0) this._JobSchedulerWaitTimeout = 60 * 60;
+                return this._JobSchedulerWaitTimeout;
+            }
+            set
+            {
+                if (value <= 0) value = 60 * 60;
+                this._JobSchedulerWaitTimeout = value;
+            }
+        }
+        /// <summary>
+        /// 任务队列执行任务超时时间 单位为秒
         /// </summary>
         private int _TaskWaitTimeout = 5 * 60;
         /// <summary>
-        /// 任务队列执行任务超时时间
+        /// 任务队列执行任务超时时间 单位为秒
         /// </summary>
         [Description("任务队列执行任务超时时间")]
         public int TaskWaitTimeout {
             get
             {
-                if (this._TaskWaitTimeout  == 0)
-                    this._TaskWaitTimeout  = 10 * 1000;
+                if (this._TaskWaitTimeout == 0)
+                    this._TaskWaitTimeout = 300;
                 return this._TaskWaitTimeout ;
             }
             set

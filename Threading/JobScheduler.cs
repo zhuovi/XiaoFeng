@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Security;
 using System.Collections.Concurrent;
+using XiaoFeng.Config;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -311,20 +312,17 @@ namespace XiaoFeng.Threading
                     Thread.CurrentThread.Name = this.Name;
                 while (!this.CancelToken.IsCancellationRequested)
                 {
+                    var set = Setting.Current;
                     if (this.SchedulerJobs.Count == 0)
                     {
-                        this.Period = 1 * 60 * 60 * 1000;
+                        this.Period = set.JobSchedulerWaitTimeout * 1000;
                         this.CancelToken.Cancel();
-                        //this.MainTask = null;
-                        //Console.ForegroundColor = ConsoleColor.Magenta;
                         LogHelper.Warn($"-- 暂无作业任务,终止调度器[{this.Name}]. --");
-                        //Console.ResetColor();
                         break;
-                    }else
-                        this.Period = 10 * 1000;
+                    }
+                    else
+                        this.Period = set.JobSchedulerWaitTimeout * 1000;
                     var now = DateTime.Now;
-                    /*转换成并行计算*/
-                    //Parallel.ForEach(this.SchedulerJobs.Values, job =>
                     this.SchedulerJobs.Values.Each(job =>
                     {
                         long period = 0;
@@ -355,24 +353,20 @@ namespace XiaoFeng.Threading
                                         _job.Status = JobStatus.Waiting;
                                 }, job, CancellationTokenSource.CreateLinkedTokenSource(this.CancelToken.Token, job.CancelToken.Token).Token);
                             }
-                            /*计算一下下次运行时长*/
+                            /*计算下次运行时长*/
                             this.CheckTimes(job, DateTime.Now.AddSeconds(1), out period);
                         }
-                        //else
-                        {
-                            if (period == 0) period = 1000;
-                            if (period > 0)
-                                Synchronized.Run(() =>
-                                {
-                                    this.Period = Math.Min(this.Period, period);
-                                });
-                            LogHelper.Warn($"-- 下一次运行作业时间为:{DateTime.Now.AddMilliseconds(this.Period):yyyy-MM-dd HH:mm:ss.fff} --");
-                            //Console.WriteLine("最小算出间隔" + this.Period);
-                        }
+
+                        if (period > 0)
+                            Synchronized.Run(() =>
+                            {
+                                this.Period = Math.Min(this.Period, period);
+                            });
+                        LogHelper.Warn($"-- 下一次运行作业时间为:{DateTime.Now.AddMilliseconds(this.Period):yyyy-MM-dd HH:mm:ss.fff} --");
                     });
                     if (this.Manual == null) this.Manual = new ManualResetEventSlim(false);
                     Manual.Reset();
-                    Manual.Wait(TimeSpan.FromMilliseconds(this.Period < 0 ? 0 : this.Period));
+                    Manual.Wait(TimeSpan.FromMilliseconds(this.Period < 0 ? 10 : this.Period));
                 }
             }, CancelToken.Token, TaskCreationOptions.LongRunning).Start();
         }
