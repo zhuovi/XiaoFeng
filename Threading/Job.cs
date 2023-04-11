@@ -202,7 +202,7 @@ namespace XiaoFeng.Threading
         /// <summary>
         /// 执行任务时间偏差 单位为毫秒 默认是1s 建议不要超过10s;
         /// </summary>
-        private long _Deviation = 1000;
+        private long _Deviation = 2000;
         /// <summary>
         /// 执行任务时间偏差 单位为毫秒 默认是1s 建议不要超过10s;
         /// </summary>

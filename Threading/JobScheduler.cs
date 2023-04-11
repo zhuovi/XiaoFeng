@@ -335,7 +335,7 @@ namespace XiaoFeng.Threading
                                 });
                             job.Status = JobStatus.Runing;
                             job.LastTime = now;
-                            LogHelper.Warn($"开始运行作业 {job.Name} - {this.SchedulerJobs.Count} - {job.NextTime:yyyy-MM-dd HH:mm:ss.ffff}");
+                            LogHelper.Warn($"开始运行作业 [{job.Name}] - {this.SchedulerJobs.Count}");
                             if (job.CompleteCallBack == null) job.Status = JobStatus.Waiting;
                             if (!job.Async)
                                 Execute(job);
@@ -345,7 +345,6 @@ namespace XiaoFeng.Threading
                                  * Date:2022-04-01
                                  * 优化调度执行完成后再间隔时间
                                  */
-                                //new Task(this.Execute, job, CancellationTokenSource.CreateLinkedTokenSource(this.CancelToken.Token, job.CancelToken.Token).Token, TaskCreationOptions.LongRunning).Start();
                                 Task.Factory.StartNew(this.Execute, job, CancellationTokenSource.CreateLinkedTokenSource(this.CancelToken.Token, job.CancelToken.Token).Token, TaskCreationOptions.LongRunning, TaskScheduler.Current).ContinueWith((t, j) =>
                                 {
                                     var _job = (IJob)j;
@@ -354,16 +353,17 @@ namespace XiaoFeng.Threading
                                 }, job, CancellationTokenSource.CreateLinkedTokenSource(this.CancelToken.Token, job.CancelToken.Token).Token);
                             }
                             /*计算下次运行时长*/
-                            this.CheckTimes(job, DateTime.Now.AddSeconds(1), out period);
+                            this.CheckTimes(job, DateTime.Now.AddMilliseconds(job.Deviation * 2), out period);
                         }
-
+                        //LogHelper.Warn($"计算出间隔:{period}");
                         if (period > 0)
                             Synchronized.Run(() =>
                             {
                                 this.Period = Math.Min(this.Period, period);
                             });
-                        LogHelper.Warn($"-- 下一次运行作业时间为:{DateTime.Now.AddMilliseconds(this.Period):yyyy-MM-dd HH:mm:ss.fff} --");
+                        LogHelper.Warn($"-- 下一次运行作业时间为:{now.AddMilliseconds(this.Period):yyyy-MM-dd HH:mm:ss.ffff} --");
                     });
+                    //LogHelper.Warn($"等待间隔:{this.Period}");
                     if (this.Manual == null) this.Manual = new ManualResetEventSlim(false);
                     Manual.Reset();
                     Manual.Wait(TimeSpan.FromMilliseconds(this.Period < 0 ? 10 : this.Period));
@@ -429,7 +429,7 @@ namespace XiaoFeng.Threading
         private void Success(IJob job)
         {
             job.Message.Add("执行作业[{0}]成功.[{1}]".format(job.Name, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")));
-            LogHelper.Warn($"执行作业 {job.Name} 完成.");
+            LogHelper.Warn($"执行作业 [{job.Name}] 完成.");
             job.SuccessCount++;
             if (job.TimerType == TimerType.Once || job.IsDestroy || (job.MaxCount.HasValue && job.SuccessCount + job.FailureCount >= job.MaxCount))
             {
@@ -688,16 +688,16 @@ namespace XiaoFeng.Threading
         private Boolean CheckTimes(IJob job, DateTime now, out long period)
         {
             period = -1;
-            if (job.Status == JobStatus.Runing) return false;
+            //if (job.Status == JobStatus.Runing) return false;
             if ((job.MaxCount.HasValue && job.Count >= job.MaxCount) ||
             (job.ExpireTime.HasValue && job.ExpireTime < now))
             {
                 this.Remove(job);
                 return false;
             }
-            if (job.NextTime.HasValue && job.NextTime >= now)
+            if (job.NextTime.HasValue && job.NextTime.Value >= now)
             {
-                var ts = (long)(job.NextTime.Value - now).TotalMilliseconds;
+                var ts = (long)(job.NextTime.Value - now).TotalSeconds * 1000;
                 if (ts <= job.Deviation)
                 {
                     return true;
@@ -708,7 +708,8 @@ namespace XiaoFeng.Threading
                     return false;
                 }
             }
-            var f = false;
+            var MatchFlag = false;
+            var SetFlag = false;
             var i = 0;
             var _now = new Time(now);
             switch (job.TimerType)
@@ -724,7 +725,7 @@ namespace XiaoFeng.Threading
                             job.NextTime = now.AddMilliseconds(job.Period);
                             return true;
                         }
-                        period = (long)(job.NextTime.Value - now).TotalMilliseconds;
+                        period = (long)(job.NextTime.Value - now).TotalSeconds * 1000;
                         if (period <= job.Deviation) return true;
                         return false;
                     }
@@ -737,7 +738,7 @@ namespace XiaoFeng.Threading
                 case TimerType.Once:
                     if (job.NextTime.HasValue)
                     {
-                        period = (long)(job.NextTime.Value - now).TotalMilliseconds;
+                        period = (long)(job.NextTime.Value - now).TotalSeconds * 1000;
                         job.Period = period;
                         return period <= job.Deviation;
                     }
@@ -763,23 +764,24 @@ namespace XiaoFeng.Threading
                             job.NextTime = new DateTime(now.Year, now.Month, now.Day, now.Hour, hts[i].Minute, hts[i].Second);
                             if (i == 0) job.NextTime = job.NextTime.Value.AddHours(1);
                             job.Period = (long)Math.Abs((job.NextTime.Value - now).TotalMilliseconds);
-                            f = true;
+                            MatchFlag = true;
                             return false;
                         }
                         else
                         {
                             job.Period = t;
                             job.NextTime = now.AddMilliseconds(job.Period);
+                            SetFlag = true;
                             return false;
                         }
                     });
-                    if (!f && i >= hts.Count)
+                    if (!MatchFlag && !SetFlag && i >= hts.Count)
                     {
                         job.NextTime = new DateTime(now.Year, now.Month, now.Day, now.Hour, hts[0].Minute, hts[0].Second).AddHours(1);
                         job.Period = (long)Math.Abs((job.NextTime.Value - now).TotalMilliseconds);
                     }
                     period = job.Period;
-                    return f;
+                    return MatchFlag;
                 case TimerType.Day:
                     if (job.Times == null || job.Times.Count == 0)
                     {
@@ -797,26 +799,28 @@ namespace XiaoFeng.Threading
                         {
                             if (i == dts.Count)
                                 i = 0;
-                            job.NextTime =new DateTime(now.Year,now.Month,now.Day, dts[i].Hour.GetValueOrDefault(), dts[i].Minute, dts[i].Second);
+                            job.NextTime = new DateTime(now.Year, now.Month, now.Day, dts[i].Hour.GetValueOrDefault(), dts[i].Minute, dts[i].Second);
                             if (i == 0) job.NextTime = job.NextTime.Value.AddHours(1);
                             job.Period = (long)Math.Abs((job.NextTime.Value - now).TotalMilliseconds);
-                            f = true;
+                            MatchFlag = true;
                             return false;
                         }
                         else
                         {
                             job.Period = t;
                             job.NextTime = now.AddMilliseconds(job.Period);
+                            SetFlag = true;
                             return false;
                         }
                     });
-                    if (!f && i >= dts.Count)
+                    if (!MatchFlag && !SetFlag && i >= dts.Count)
                     {
                         job.NextTime = new DateTime(now.Year, now.Month, now.Day, dts[0].Hour.GetValueOrDefault(), dts[0].Minute, dts[0].Second).AddDays(1);
                         job.Period = (long)Math.Abs((job.NextTime.Value - now).TotalMilliseconds);
                     }
                     period = job.Period;
-                    return f;
+                    //LogHelper.Warn($"now={now:yyyy-MM-dd HH:mm:ss.fff}-NOW={DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}");
+                    return MatchFlag;
                 case TimerType.Week:
                     if (job.Times == null || job.Times.Count == 0)
                     {
@@ -848,13 +852,14 @@ namespace XiaoFeng.Threading
                                     job.NextTime = job.NextTime.Value.AddDays(wts[i].Week.GetValueOrDefault() - CurrentWeek);
                                 }
                                 job.Period = (long)Math.Abs((job.NextTime.Value - now).TotalMilliseconds);
-                                f = true;
+                                MatchFlag = true;
                                 return false;
                             }
                             else
                             {
                                 job.Period = t;
                                 job.NextTime = now.AddMilliseconds(job.Period);
+                                SetFlag = true;
                                 return false;
                             }
                         }
@@ -862,6 +867,7 @@ namespace XiaoFeng.Threading
                         {
                             job.NextTime = new DateTime(now.Year, now.Month, now.Day, wts[i].Hour.GetValueOrDefault(), wts[i].Minute, wts[i].Second).AddDays(a.Week.Value - CurrentWeek);
                             job.Period = (long)Math.Abs((job.NextTime.Value - now).TotalMilliseconds);
+                            SetFlag = true;
                             return false;
                         }
                         else
@@ -869,13 +875,13 @@ namespace XiaoFeng.Threading
                             return true;
                         }
                     });
-                    if (!f && i >= wts.Count)
+                    if (!MatchFlag && !SetFlag && i >= wts.Count)
                     {
                         job.NextTime = new DateTime(now.Year, now.Month, now.Day, wts[0].Hour.GetValueOrDefault(), wts[0].Minute, wts[0].Second).AddDays(7 - CurrentWeek + wts.First().Week.Value);
                         job.Period = (long)Math.Abs((job.NextTime.Value - now).TotalMilliseconds);
                     }
                     period = job.Period;
-                    return f;
+                    return MatchFlag;
                 case TimerType.Month:
                     if (job.Times == null || job.Times.Count == 0)
                     {
@@ -899,13 +905,14 @@ namespace XiaoFeng.Threading
                                 job.NextTime = new DateTime(now.Year, now.Month, mts[i].Day.Value, mts[i].Hour.GetValueOrDefault(), mts[i].Minute, mts[i].Second);
                                 if (i == 0) job.NextTime = job.NextTime.Value.AddMonths(1);
                                 job.Period = (long)Math.Abs((job.NextTime.Value - now).TotalMilliseconds);
-                                f = true;
+                                MatchFlag = true;
                                 return false;
                             }
                             else
                             {
                                 job.Period = t;
                                 job.NextTime = now.AddMilliseconds(job.Period);
+                                SetFlag = true;
                                 return false;
                             }
                         }
@@ -913,6 +920,7 @@ namespace XiaoFeng.Threading
                         {
                             job.NextTime = new DateTime(now.Year, now.Month, a.Day.Value, mts[i].Hour.GetValueOrDefault(), mts[i].Minute, mts[i].Second);
                             job.Period = (long)Math.Abs((job.NextTime.Value - now).TotalMilliseconds);
+                            SetFlag = true;
                             return false;
                         }
                         else
@@ -920,14 +928,14 @@ namespace XiaoFeng.Threading
                             return true;
                         }
                     });
-                    if (!f && i >= mts.Count)
+                    if (!MatchFlag && !SetFlag && i >= mts.Count)
                     {
                         job.NextTime = new DateTime(now.Year, now.Month, mts[0].Day.Value, mts[0].Hour.GetValueOrDefault(), mts[0].Minute, mts[0].Second);
                         job.NextTime = job.NextTime.Value.AddMonths(1);
                         job.Period = (long)Math.Abs((job.NextTime.Value - now).TotalMilliseconds);
                     }
                     period = job.Period;
-                    return f;
+                    return MatchFlag;
                 case TimerType.Year:
                     if (job.Times == null || job.Times.Count == 0)
                     {
@@ -945,7 +953,7 @@ namespace XiaoFeng.Threading
                         {
                             if (a.Day == CurrentDay)
                             {
-                                var t = (a.TotalSeconds - _now.TotalSeconds) * 1000;
+                                var t = (long)(a.TotalSeconds - _now.TotalSeconds) * 1000;
                                 if (t < 0)
                                     return true;
                                 else if (t <= job.Deviation)
@@ -955,7 +963,7 @@ namespace XiaoFeng.Threading
                                     job.NextTime = new DateTime(now.Year, yts[i].Month.Value, yts[i].Day.Value, yts[i].Hour.GetValueOrDefault(), yts[i].Minute, yts[i].Second);
                                     if (i == 0) job.NextTime = job.NextTime.Value.AddYears(1);
                                     job.Period = (long)Math.Abs((job.NextTime.Value - now).TotalMilliseconds);
-                                    f = true;
+                                    MatchFlag = true;
                                     return false;
                                 }
                                 else
@@ -975,17 +983,19 @@ namespace XiaoFeng.Threading
                         {
                             job.NextTime = new DateTime(now.Year, a.Month.Value, a.Day.Value, a.Hour.Value, a.Minute, a.Second);
                             job.Period = (long)Math.Abs((job.NextTime.Value - now).TotalMilliseconds);
+                            SetFlag = true;
+                            return false;
                         }
                         return true;
                     });
-                    if (!f && i >= yts.Count)
+                    if (!MatchFlag && !SetFlag && i >= yts.Count)
                     {
                         job.NextTime = new DateTime(now.Year, yts[0].Month.Value, yts[0].Day.Value, yts[0].Hour.GetValueOrDefault(), yts[0].Minute, yts[0].Second);
                         job.NextTime = job.NextTime.Value.AddYears(1);
                         job.Period = (long)Math.Abs((job.NextTime.Value - now).TotalMilliseconds);
                     }
                     period = job.Period;
-                    return f;
+                    return MatchFlag;
                 default: return false;
             }
         }
