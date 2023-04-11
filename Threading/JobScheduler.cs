@@ -321,7 +321,7 @@ namespace XiaoFeng.Threading
                         //Console.ResetColor();
                         break;
                     }else
-                        this.Period = 1 * 60 * 60 * 1000;
+                        this.Period = 10 * 1000;
                     var now = DateTime.Now;
                     /*转换成并行计算*/
                     //Parallel.ForEach(this.SchedulerJobs.Values, job =>
@@ -710,7 +710,7 @@ namespace XiaoFeng.Threading
                 }
                 else
                 {
-                    period = ts * 1000;
+                    period = ts;
                     return false;
                 }
             }

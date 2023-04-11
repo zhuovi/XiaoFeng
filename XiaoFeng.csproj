@@ -8,7 +8,7 @@
 		<Copyright>CopyRight @ 2008-2024 魔法精灵(www.fayelf.com) QQ:7092734 Email:jacky@fayelf.com</Copyright>
 		<Company>魔法精灵</Company>
 		<VersionPrefix>3.5</VersionPrefix>
-		<VersionSuffix>0</VersionSuffix>
+		<VersionSuffix>1</VersionSuffix>
 		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
 		<FileVersion>$(Version)</FileVersion>
 		<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
@@ -24,7 +24,7 @@
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageReleaseNotes>增加计算标准差值及计算标准偏差值函数;增加IQueryableX的StDev(计算标准偏差)，StDevp(计算标准差)函数;配置文件增加AppKey配置Key;修复unionall;IQueryableX增加分页查询;升级JobScheduler;</PackageReleaseNotes>
+		<PackageReleaseNotes>修复JobScheduler时间不精确的bug;</PackageReleaseNotes>
 		<DelaySign>False</DelaySign>
 		<IsPackable>true</IsPackable>
 		<PackageProjectUrl>https://github.com/zhuovi/XiaoFeng</PackageProjectUrl>
