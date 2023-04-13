@@ -262,5 +262,10 @@ namespace XiaoFeng.Threading
         /// </summary>
         /// <param name="v">值</param>
         public static explicit operator Times(Time v) => new Times(v);
+        /// <summary>
+        /// 强制转换
+        /// </summary>
+        /// <param name="v">值</param>
+        public static explicit operator Time(string v) => new Time(v);
     }
 }

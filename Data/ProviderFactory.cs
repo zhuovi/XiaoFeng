@@ -106,6 +106,10 @@ namespace XiaoFeng.Data
                     {
                         providerName = "Microsoft.Data.Sqlite.SqliteFactory,Microsoft.Data.Sqlite";
                         type = Type.GetType(providerName);
+                    }else if(providerType == DbProviderType.MySql)
+                    {
+                        providerName = "MySqlConnector.MySqlConnectorFactory,MySqlConnector";
+                        type = Type.GetType(providerName);
                     }
                 }
                 if (type == null)
