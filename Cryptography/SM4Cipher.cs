@@ -72,22 +72,14 @@ namespace XiaoFeng.Cryptography
         /// </summary>
         public override void GenerateKey()
         {
-            this.Key = new byte[this.KeySize];
-            this.Key.For(0, this.KeySize, i =>
-            {
-                this.Key[i] = (byte)RandomHelper.GetRandomInt(0, 255);
-            });
+            this.Key = RandomHelper.GetRandomBytes(16);
         }
         /// <summary>
         /// 生成用于该算法的随机初始化向量 
         /// </summary>
         public override void GenerateIV()
         {
-            this.IV = new byte[this.BlockSize];
-            this.IV.For(0, this.BlockSize, i =>
-            {
-                this.IV[i] = (byte)RandomHelper.GetRandomInt(0, 255);
-            });
+            this.IV = RandomHelper.GetRandomBytes(16);
         }
         #endregion
     }
