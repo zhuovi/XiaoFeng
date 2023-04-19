@@ -26,8 +26,8 @@ namespace XiaoFeng.Cryptography
         /// </summary>
         public SM4Cipher()
         {
-            this.KeySize = 16;
-            this.BlockSize = 16;
+            this.KeySize = 128;
+            this.BlockSize = 128;
             this.Mode = CipherMode.ECB;
             this.Padding = PaddingMode.PKCS7;
         }
