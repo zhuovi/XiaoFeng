@@ -329,6 +329,21 @@ namespace XiaoFeng
         }
         #endregion
 
+        #region SM4
+        /// <summary>AES加密</summary>
+        /// <param name="_">明文</param>
+        /// <param name="key">密钥</param>
+        /// <param name="iv">向量</param>
+        /// <returns></returns>
+        public static string SM4Encrypt(this string _, string key, string iv) => _.IsNullOrEmpty() ? string.Empty : new SM4Encryption().Encrypt(_, key, iv, OutputMode.Base64);
+        /// <summary>AES解密</summary>
+        /// <param name="_">密文</param>
+        /// <param name="key">密钥</param>
+        /// <param name="iv">向量</param>
+        /// <returns></returns>
+        public static string SM4Decrypt(this string _, string key, string iv) => _.IsNullOrEmpty() ? string.Empty : new SM4Encryption().Decrypt(_, key, iv, OutputMode.Base64);
+        #endregion
+
         #region 转字符串
         /// <summary>
         /// 转字符串

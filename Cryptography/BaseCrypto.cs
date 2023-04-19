@@ -94,7 +94,7 @@ namespace XiaoFeng.Cryptography
         /// <returns></returns>
         protected virtual byte[] GetKey(byte[] key)
         {
-            if (key == null) return Array.Empty<byte>();
+            if (key == null) key = this.Key.GetBytes();
             return this.GetKey(key.GetString(this.Encoding)).GetBytes();
         }
         #endregion
