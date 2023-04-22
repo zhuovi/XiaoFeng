@@ -29,10 +29,10 @@ namespace XiaoFeng
         /// 数字单位
         /// </summary>
         private static string[] UpperUnits = new string[] { "","拾", "佰", "仟", "万","拾","佰","仟", "亿" ,"拾","佰","仟", "兆", "拾", "佰", "仟", "京", "拾", "佰", "仟", "垓", "拾", "佰", "仟", "秭", "拾", "佰", "仟", "穣", "拾", "佰", "仟", "沟", "拾", "佰", "仟", "涧", "拾", "佰", "仟", "正", "拾", "佰", "仟", "载", "拾", "佰", "仟", "极", "拾", "佰", "仟", "恒河沙", "拾", "佰", "仟", "阿僧只", "拾", "佰", "仟", "那由他", "拾", "佰", "仟", "不可思议", "拾", "佰", "仟", "无量大数", "拾", "佰", "仟" };
-        /// <summary>
-        /// 金额单位
-        /// </summary>
-        private static string[] UpperMoney = new string[] { "角", "分", "厘", "毫", "微", "纳", "皮" };
+		/// <summary>
+		/// 金额单位
+		/// </summary>
+		private static string[] UpperMoney = new string[] { "角", "分", "厘", "毫", "微", "纳", "皮" };
         #endregion
 
         #region 方法
@@ -49,7 +49,7 @@ namespace XiaoFeng
             value = value.RemovePattern(",");
             if (!value.IsFloat()) return String.Empty;
             if (num.IsNotNullOrEmpty()) value = num;
-            value = value.ReplacePattern(@"(.\d*?)(0+)$", m => m.Groups[1].Value).RemovePattern(@"(^0+|,|\.$)");
+            value = value.ReplacePattern(@"(\.\d*?)(0+)$", m => m.Groups[1].Value).RemovePattern(@"(^0+|,|\.$)");
             string Integral = "", Spot = "", Digits = "";
             if (value.IndexOf(".") > -1)
             {
@@ -70,17 +70,37 @@ namespace XiaoFeng
                 var v = Integral[Integral.Length - i - 1].ToString();
                 var unit = UpperUnits[i];
                 if (upperType == UpperType.Money && unit.IsNullOrEmpty()) unit = "圆";
-                sbr.Insert(0, UpperChars[v.ToCast<int>()] + unit);
+                var vs = UpperChars[v.ToCast<int>()];
+                sbr.Insert(0, vs+ unit);
             }
+            /*
+             * 修正
+             * 1.中间多个零的合并
+             */
+            var val = sbr.ToString().RemovePattern(@"零[仟佰拾]");
+            val = val.ReplacePattern(@"(?<a>[^拾]?)(?<b>[壹贰叁肆伍陆柒捌玖](无量大数|不可思议|那由他|阿僧只|恒河沙|极|载|正|涧|沟|穣|秭|垓|京|兆|亿|万|圆))", m=>
+            {
+                var a = m.Groups["a"].Value;
+
+				return a + "零" + m.Groups["b"].Value;
+            });
+            /*去掉最后的零*/
+            val = val.ReplacePattern(@"零+(?<a>(无量大数|不可思议|那由他|阿僧只|恒河沙|极|载|正|涧|沟|穣|秭|垓|京|兆)?)", m =>
+            {
+                return m.Groups["a"].Value;
+            });
+            if (val.IsNullOrEmpty()) val = "零";
+            sbr = new StringBuilder(val);
             /*点*/
             if (Spot.IsNotNullOrEmpty())
                 sbr.Append(upperType == UpperType.Number ? "点" : "");
             else
                 if (upperType == UpperType.Money) sbr.Append("整");
             /*小数*/
-            for (var i = 1; i <= Digits.Length; i++)
+            for (var i = 0; i < Digits.Length; i++)
             {
-                sbr.Append(UpperChars[i]);
+                var v = Digits[i].ToString().ToCast<int>();
+                sbr.Append(UpperChars[v]);
                 if (upperType == UpperType.Money) sbr.Append(UpperMoney[i]);
             }
             return sbr.ToString();
