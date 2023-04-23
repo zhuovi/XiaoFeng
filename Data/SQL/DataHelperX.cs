@@ -2210,7 +2210,7 @@ namespace XiaoFeng.Data.SQL
             if (data != null)
             {
                 /*设置分表*/
-                var p = typeof(T).GetProperty("TableName", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+                var p = type.GetProperty("TableName", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
                 data.Each(a =>
                 {
                     p?.SetValue(a, this.DataSQL.TableName);
@@ -2818,7 +2818,7 @@ namespace XiaoFeng.Data.SQL
                                 {
                                     ColumnAttribute column = p.GetCustomAttribute<ColumnAttribute>();
                                     var ParamName = "@" + p.Name;
-                                    if (column != null && (column.PrimaryKey || column.AutoIncrement))
+                                    if ((column != null && (column.PrimaryKey || column.AutoIncrement))|| p.Name.EqualsIgnoreCase("ID"))
                                         Where = "{0} = {1}".format(FieldFormat(column.Name), value == null ? "null" : ParamName/*(DbProviderType.Dameng | DbProviderType.MySql).HasFlag(this.DataHelper.ProviderType) ? "?" : ParamName*/);
                                     else
                                         this.DataSQL.SetUpdateColumns("{0} = {1}".format(FieldFormat(p.Name), value == null ? "null" : ParamName));

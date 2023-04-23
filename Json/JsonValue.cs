@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -1462,7 +1463,7 @@ namespace XiaoFeng.Json
             if (types != ValueTypes.Dictionary) return null;
             if (jsonValue.Type == JsonType.Array)
             {
-                Dictionary<string, JsonValue> list = new Dictionary<string, JsonValue>();
+                Dictionary<string, JsonValue> list = new Dictionary<string, JsonValue>(StringComparer.OrdinalIgnoreCase);
                 var _list = jsonValue.AsArray();
                 _list.Each(a =>
                 {

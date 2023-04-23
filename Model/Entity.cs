@@ -305,6 +305,8 @@ namespace XiaoFeng.Model
         /// <returns></returns>
         public virtual Boolean Update()
         {
+            if (this.EntityType != this.Data.DataSQL.ModelType)
+                this.Data.DataSQL.ModelType = this.EntityType;
             var b = this.Data.Update(this);
             this.Dirtys.Clear();
             return b;
