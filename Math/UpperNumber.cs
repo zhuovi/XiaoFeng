@@ -28,82 +28,140 @@ namespace XiaoFeng
         /// <summary>
         /// 数字单位
         /// </summary>
-        private static string[] UpperUnits = new string[] { "","拾", "佰", "仟", "万","拾","佰","仟", "亿" ,"拾","佰","仟", "兆", "拾", "佰", "仟", "京", "拾", "佰", "仟", "垓", "拾", "佰", "仟", "秭", "拾", "佰", "仟", "穣", "拾", "佰", "仟", "沟", "拾", "佰", "仟", "涧", "拾", "佰", "仟", "正", "拾", "佰", "仟", "载", "拾", "佰", "仟", "极", "拾", "佰", "仟", "恒河沙", "拾", "佰", "仟", "阿僧只", "拾", "佰", "仟", "那由他", "拾", "佰", "仟", "不可思议", "拾", "佰", "仟", "无量大数", "拾", "佰", "仟" };
-		/// <summary>
-		/// 金额单位
-		/// </summary>
-		private static string[] UpperMoney = new string[] { "角", "分", "厘", "毫", "微", "纳", "皮" };
+        private static string[] UpperUnits = new string[] { "", "拾", "佰", "仟", "万", "拾", "佰", "仟", "亿", "拾", "佰", "仟", "兆", "拾", "佰", "仟", "京", "拾", "佰", "仟", "垓", "拾", "佰", "仟", "秭", "拾", "佰", "仟", "穣", "拾", "佰", "仟", "沟", "拾", "佰", "仟", "涧", "拾", "佰", "仟", "正", "拾", "佰", "仟", "载", "拾", "佰", "仟", "极", "拾", "佰", "仟", "恒河沙", "拾", "佰", "仟", "阿僧只", "拾", "佰", "仟", "那由他", "拾", "佰", "仟", "不可思议", "拾", "佰", "仟", "无量大数", "拾", "佰", "仟" };
+        /// <summary>
+        /// 人民币基本单位
+        /// </summary>
+        private static string[] MoneyRadice = new string[] { "", "拾", "佰", "仟" };
+        /// <summary>
+        /// 大写基本单位
+        /// </summary>
+        private static string[] UpperRadice = new string[] { "", "十", "百", "千" };
+        /// <summary>
+        /// 整型单位
+        /// </summary>
+        private static string[] IntUnits = new string[] { "", "万", "亿", "兆", "京", "垓", "秭", "穣", "沟", "涧", "正", "载", "极", "恒河沙", "阿僧只", "那由他", "不可思议", "无量大数" };
+        /// <summary>
+        /// 整
+        /// </summary>
+        private static string Integer = "整";
+        /// <summary>
+        /// 圆
+        /// </summary>
+        private static string IntLast = "圆";
+        /// <summary>
+        /// 金额单位
+        /// </summary>
+        private static string[] UpperMoney = new string[] { "角", "分", "厘", "毫", "微", "纳", "皮" };
+        /// <summary>
+        /// 最大数字
+        /// </summary>
+        private static double Max = 8999999999999999999.9999;
+        /// <summary>
+        /// 数字字典
+        /// </summary>
+        private static Dictionary<string, long> UpperNumberDict = new Dictionary<string, long>
+        {
+            {"零",0 },
+            {"壹",1 },
+            {"贰",2 },
+            {"叁",3 },
+            {"肆",4 },
+            {"伍",5 },
+            {"陆",6 },
+            {"柒",7 },
+            {"捌",8 },
+            {"玖",9 },
+            {"拾",10 },
+            {"十",10 },
+            {"百",100 },
+            {"佰",100 },
+            {"千",1000 },
+            {"仟",1000 },
+            {"万",10000 },
+            {"亿",100000000 },
+            {"兆",1000000000000 },
+            {"京",10000000000000000 }
+        };
         #endregion
 
         #region 方法
         /// <summary>
         /// 阿拉伯数字转换大写数字
         /// </summary>
-        /// <param name="num">阿拉伯数字</param>
+        /// <param name="number">阿拉伯数字</param>
         /// <param name="upperType">数字类型</param>
         /// <returns>大写数字</returns>
-        public static string ToChineseNumber(this string num, UpperType upperType = UpperType.Number)
+        public static string NumberToChinese(this string number, UpperType upperType = UpperType.Money)
         {
-            if (num.IsNullOrEmpty()) return String.Empty;
-            var value = num;
-            value = value.RemovePattern(",");
-            if (!value.IsFloat()) return String.Empty;
-            if (num.IsNotNullOrEmpty()) value = num;
-            value = value.ReplacePattern(@"(\.\d*?)(0+)$", m => m.Groups[1].Value).RemovePattern(@"(^0+|,|\.$)");
-            string Integral = "", Spot = "", Digits = "";
-            if (value.IndexOf(".") > -1)
+            var val = number.ToCast<double>();
+            if (val > Max) return "";
+            if (val == 0) return "零" + (upperType == UpperType.Money ? "圆整" : "");
+            var IntegerNum = "";
+            var DecimalNum = "";
+            var _ = new StringBuilder();
+            if (number.IndexOf(".") == -1)
             {
-                var vals = value.Split('.');
-                Integral = vals[0];
-                Spot = ".";
-                Digits = vals[1];
+                IntegerNum = number;
             }
-            else Integral = value;
-            var sbr = new StringBuilder();
-            if (Integral.StartsWith("-")) {
-                Integral = Integral.TrimStart('-');
-                sbr.Append("负");
-            }
-            /*整数*/
-            for (var i = 0; i < Integral.Length; i++)
-            {
-                var v = Integral[Integral.Length - i - 1].ToString();
-                var unit = UpperUnits[i];
-                if (upperType == UpperType.Money && unit.IsNullOrEmpty()) unit = "圆";
-                var vs = UpperChars[v.ToCast<int>()];
-                sbr.Insert(0, vs+ unit);
-            }
-            /*
-             * 修正
-             * 1.中间多个零的合并
-             */
-            var val = sbr.ToString().RemovePattern(@"零[仟佰拾]");
-            val = val.ReplacePattern(@"(?<a>[^拾]?)(?<b>[壹贰叁肆伍陆柒捌玖](无量大数|不可思议|那由他|阿僧只|恒河沙|极|载|正|涧|沟|穣|秭|垓|京|兆|亿|万|圆))", m=>
-            {
-                var a = m.Groups["a"].Value;
-
-				return a + "零" + m.Groups["b"].Value;
-            });
-            /*去掉最后的零*/
-            val = val.ReplacePattern(@"零+(?<a>(无量大数|不可思议|那由他|阿僧只|恒河沙|极|载|正|涧|沟|穣|秭|垓|京|兆)?)", m =>
-            {
-                return m.Groups["a"].Value;
-            });
-            if (val.IsNullOrEmpty()) val = "零";
-            sbr = new StringBuilder(val);
-            /*点*/
-            if (Spot.IsNotNullOrEmpty())
-                sbr.Append(upperType == UpperType.Number ? "点" : "");
             else
-                if (upperType == UpperType.Money) sbr.Append("整");
-            /*小数*/
-            for (var i = 0; i < Digits.Length; i++)
             {
-                var v = Digits[i].ToString().ToCast<int>();
-                sbr.Append(UpperChars[v]);
-                if (upperType == UpperType.Money) sbr.Append(UpperMoney[i]);
+                var parts = number.Split('.');
+                IntegerNum = parts[0];
+                DecimalNum = parts[1];
             }
-            return sbr.ToString();
+            var Radice = upperType == UpperType.Money ? MoneyRadice : UpperRadice;
+            //整数部分
+            if (IntegerNum.ToCast<long>() > 0)
+            {
+                var ZeroCount = 0;
+                var IntLength = IntegerNum.Length;
+                for (var i = 0; i < IntLength; i++)
+                {
+                    var n = IntegerNum[i];
+                    var p = IntLength - i - 1;
+                    var q = p / 4;
+                    var m = p % 4;
+                    if (n == '0')
+                        ZeroCount++;
+                    else
+                    {
+                        if (ZeroCount > 0)
+                            _.Append(UpperChars[0]);
+                        ZeroCount = 0;
+                        _.Append(UpperChars[n.ToString().ToCast<int>()] + Radice[m]);
+                    }
+                    if (m == 0 && ZeroCount < 4)
+                        _.Append(IntUnits[q]);
+                }
+                if (upperType == UpperType.Money) _.Append(IntLast);
+            }
+            else
+            {
+                if (upperType == UpperType.Number) _.Append("零");
+            }
+            if (upperType == UpperType.Number) _.Append("点");
+            //小数部分
+            if (DecimalNum.IsNotNullOrEmpty())
+            {
+                var decLength = DecimalNum.Length;
+                if (decLength > 7 && upperType == UpperType.Money) decLength = 7;
+                for (var i = 0; i < decLength; i++)
+                {
+                    var n = DecimalNum[i];
+                    if (n != '0')
+                    {
+                        _.Append(UpperChars[n.ToString().ToCast<int>()]);
+                        if (upperType == UpperType.Money)
+                            _.Append(UpperMoney[i]);
+                    }
+                }
+            }
+            if (_.Length == 0)
+                return "零" + (upperType == UpperType.Money ? "圆整" : "");
+            if (upperType == UpperType.Money && DecimalNum.IsNullOrEmpty())
+                _.Append(Integer);
+            return _.ToString().TrimEnd('点');
         }
         /// <summary>
         /// 大写数字转换阿拉伯数字或数字转换带逗号格式
@@ -111,53 +169,80 @@ namespace XiaoFeng
         /// <param name="chineseNumber">大写数字</param>
         /// <param name="isComma">是否加逗号</param>
         /// <returns>阿拉伯数字</returns>
-        public static string ToNumber(this string chineseNumber, Boolean isComma = false)
+        public static string ChineseToNumber(this string chineseNumber, Boolean isComma = false)
         {
-            if (chineseNumber.IsNullOrEmpty()) return String.Empty;
-            var sbr = new StringBuilder();
-            if (chineseNumber.IsMatch(@"^[0-9,\.]+$"))
+            if (chineseNumber.IsNullOrEmpty()) return "0";
+            var _ = 0D;
+            //先把圆角分厘去掉
+            chineseNumber = chineseNumber.Replace("圆", "点");
+            chineseNumber = chineseNumber.RemovePattern(@"[整零" + UpperMoney.Join() + "@]").TrimEnd('点');
+            chineseNumber = chineseNumber.Replace("拾", "十").Replace("佰", "百").Replace("仟", "千");
+
+            var IntegerNum = "";
+            var DecimalNum = "";
+            if (chineseNumber.IndexOf("点") == -1)
             {
-                sbr.Append(chineseNumber.RemovePattern(@",+"));
+                IntegerNum = chineseNumber;
             }
             else
             {
-                chineseNumber = chineseNumber.RemovePattern($@"({UpperUnits.Join("|").Trim('|')}|整)");
-                chineseNumber = chineseNumber.Replace("点", ".");
-                if (chineseNumber.IsMatch(@"(圆|元)"))
-                    chineseNumber = chineseNumber.ReplacePattern(@"(圆|元)", ".").TrimEnd('.');
-                chineseNumber = chineseNumber.RemovePattern($@"({UpperMoney.Join("|")})");
-                for (var i = 0; i < chineseNumber.Length; i++)
-                {
-                    var v = chineseNumber[i].ToString();
-                    if (v == ".")
-                    {
-                        sbr.Append(".");
-                        continue;
-                    }
-                    sbr.Append(UpperChars.IndexOf(v));
-                }
+                var parts = chineseNumber.Split('点');
+                IntegerNum = parts[0];
+                DecimalNum = parts[1];
             }
-            var Sbr = new StringBuilder();
-            if (isComma)
+            if (IntegerNum.IsNotNullOrEmpty())
             {
-                var _ = sbr.ToString();
-                var vs = _.Split('.');
-                for (var i = 0; i < vs[0].Length; i++)
+                //整数部分
+                var units = new char[] { '京', '兆', '亿', '万' };
+                //先把上边单位拆出来计算
+                units.Each(u =>
                 {
-                    var v = vs[0].Length - i - 1;
-                    if (i > 0 && i % 3 == 0)
-                        Sbr.Insert(0, ",");
-                    Sbr.Insert(0, vs[0][v].ToString());
-                }
-                if (vs.Length > 1)
-                {
-                    Sbr.Append(".");
-                    Sbr.Append(vs[1]);
-                }
-                sbr.Clear();
+                    if (IntegerNum.IndexOf(u) == -1) return;
+                    var _parts = IntegerNum.Split(new char[] { u }, StringSplitOptions.RemoveEmptyEntries);
+                    var tempNumber = _parts[0];
+                    _ += J(tempNumber) * UpperNumberDict[u.ToString()];
+                    if (_parts.Length > 1)
+                        IntegerNum = _parts[1];
+                    else IntegerNum = "";
+                });
             }
-            else Sbr = sbr;
-            return Sbr.ToString();
+            if (IntegerNum.IsNotNullOrEmpty())
+                _ += J(IntegerNum);
+            //计算小数部分
+            if (DecimalNum.IsNotNullOrEmpty())
+            {
+                var d = "0.";
+                DecimalNum.Each(a =>
+                {
+                    d += UpperNumberDict[a.ToString()];
+                });
+                _ += d.ToCast<double>();
+            }
+            return isComma ? _.ToString("N2") : _.ToString();
+        }
+        /// <summary>
+        /// 转换千百十
+        /// </summary>
+        /// <param name="part">数据</param>
+        /// <returns></returns>
+        private static double J(string part)
+        {
+            var _ = 0D;
+            var units = new char[] { '千', '百', '十' };
+            units.Each(u =>
+            {
+                if (part.IndexOf(u) == -1) return;
+                var _parts = part.Split(new char[] { u }, StringSplitOptions.RemoveEmptyEntries);
+                var temp = _parts[0];
+                _ += UpperNumberDict[temp].ToCast<long>() * UpperNumberDict[u.ToString()];
+                if (_parts.Length > 1)
+                {
+                    part = _parts[1];
+                }
+            });
+            if (part.IsNotNullOrEmpty())
+                _ += UpperNumberDict[part];
+            return _;
         }
         #endregion
     }
