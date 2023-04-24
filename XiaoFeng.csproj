@@ -21,13 +21,14 @@
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 		<RepositoryUrl>https://github.com/zhuovi/XiaoFeng</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
+		<PackageProjectUrl>https://www.eelf.cn</PackageProjectUrl>
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReleaseNotes>修复JobScheduler时间不精确的bug;增加调度等待最小时长的配置;DataHelper增加mysql的MySqlConnector驱动;增加SM4加密算法;修复数字转大写数字时的bug;</PackageReleaseNotes>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<DelaySign>False</DelaySign>
 		<IsPackable>true</IsPackable>
-		<PackageProjectUrl>https://github.com/zhuovi/XiaoFeng</PackageProjectUrl>
 		<Title>XiaoFeng</Title>
 	</PropertyGroup>
 	<PropertyGroup>
@@ -35,10 +36,10 @@
 		<DefineConstants Condition="'$(TargetFramework)'=='netstandard2.1'">$(DefineConstants);NETCORE;</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="\"/>
+	</ItemGroup>
+	<ItemGroup>
 		<Compile Remove="Data\DataMapping.cs" />
-		<Compile Remove="Http\HttpSocket - 复制.cs" />
-		<Compile Remove="Log\Logger - 复制.cs" />
-		<Compile Remove="Net\WebClientHelper.cs" />
 		<Compile Remove="Xml\XmlParser.cs" />
 		<Compile Remove="Xml\XmlValueX.cs" />
 	</ItemGroup>

@@ -4,4 +4,9 @@
     <ShowAllFiles>false</ShowAllFiles>
     <AutoRefresh>false</AutoRefresh>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Update="Net\WebClientHelper.cs">
+      <SubType>Component</SubType>
+    </Compile>
+  </ItemGroup>
 </Project>
