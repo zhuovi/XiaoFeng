@@ -8,7 +8,7 @@
 		<Copyright>CopyRight @ 2008-2024 魔法精灵(www.fayelf.com) QQ:7092734 Email:jacky@fayelf.com</Copyright>
 		<Company>魔法精灵</Company>
 		<VersionPrefix>3.5</VersionPrefix>
-		<VersionSuffix>1</VersionSuffix>
+		<VersionSuffix>2</VersionSuffix>
 		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
 		<FileVersion>$(Version)</FileVersion>
 		<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
@@ -25,7 +25,7 @@
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageReleaseNotes>修复JobScheduler时间不精确的bug;增加调度等待最小时长的配置;DataHelper增加mysql的MySqlConnector驱动;增加SM4加密算法;修复数字转大写数字时的bug;</PackageReleaseNotes>
+		<PackageReleaseNotes>优化DataHelperX;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<DelaySign>False</DelaySign>
 		<IsPackable>true</IsPackable>

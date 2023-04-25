@@ -1614,7 +1614,8 @@ namespace XiaoFeng.Data.SQL
                 }
             }
             data = this.DataHelper.ExecuteDataTable(_SQLString.SQLFormat(this.DataHelper.ProviderType), CommandType.Text, this.GetDbParameters(SQLString)).ToEntity(type);
-            if (data != null)
+            var baseType = type.GetValueType();
+            if (data != null && (baseType == ValueTypes.Class || baseType == ValueTypes.Class || baseType == ValueTypes.Anonymous))
             {
                 /*设置分表*/
                 var p = type.GetProperty("TableName", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
@@ -1824,8 +1825,7 @@ namespace XiaoFeng.Data.SQL
                         data = this.DataHelper.ExecuteDataTable(_SQLString, CommandType.Text, this.GetDbParameters(SQLString)).ToEntity<T>();
                     }
                 }
-                
-                if (data != null)
+               if (data != null)
                 {
                     /*设置分表*/
                     var p = typeof(T).GetProperty("TableName", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
@@ -1932,7 +1932,9 @@ namespace XiaoFeng.Data.SQL
                 }
             }
             data = this.DataHelper.ExecuteDataTable(_SQLString.SQLFormat(this.DataHelper.ProviderType), CommandType.Text, this.GetDbParameters(SQLString)).ToList<T>();
-            if (data != null)
+            var type = typeof(T);
+            var baseType = type.GetValueType();
+            if (data != null && (baseType == ValueTypes.Class || baseType == ValueTypes.Class || baseType == ValueTypes.Anonymous))
             {
                 /*设置分表*/
                 var p = typeof(T).GetProperty("TableName", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
@@ -2119,10 +2121,12 @@ namespace XiaoFeng.Data.SQL
                 }
             }
             data = this.DataHelper.ExecuteDataTable(_SQLString.SQLFormat(this.DataHelper.ProviderType), CommandType.Text, this.GetDbParameters(SQLString)).ToList<TResult>();
-            if (data != null)
+            var type = typeof(TResult);
+            var baseType = type.GetValueType();
+            if (data != null && (baseType == ValueTypes.Class || baseType == ValueTypes.Class || baseType == ValueTypes.Anonymous))
             {
                 /*设置分表*/
-                var p = typeof(T).GetProperty("TableName", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+                var p = type.GetProperty("TableName", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
                 data.Each(a =>
                 {
                     p?.SetValue(a, this.DataSQL.TableName);
@@ -2207,7 +2211,8 @@ namespace XiaoFeng.Data.SQL
                 }
             }
             data = this.DataHelper.ExecuteDataTable(_SQLString.SQLFormat(this.DataHelper.ProviderType), CommandType.Text, this.GetDbParameters(SQLString)).ToList(type);
-            if (data != null)
+            var baseType = type.GetValueType();
+            if (data != null && (baseType == ValueTypes.Class || baseType == ValueTypes.Class || baseType == ValueTypes.Anonymous))
             {
                 /*设置分表*/
                 var p = type.GetProperty("TableName", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
