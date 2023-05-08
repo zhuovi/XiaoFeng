@@ -87,18 +87,21 @@ namespace XiaoFeng
         /// 实例化一个静态方法
         /// </summary>
         /// <returns></returns>
-        public static SnowFlake Instance()
+        public static SnowFlake Instance
         {
-            if (Snowflake == null)
-                Snowflake = new SnowFlake();
-            return Snowflake;
+            get
+            {
+                if (Snowflake == null)
+                    Snowflake = new SnowFlake();
+                return Snowflake;
+            }
         }
         #endregion
 
-        #region 构造器
-        /// <summary>
-        /// 构造器
-        /// </summary>
+            #region 构造器
+            /// <summary>
+            /// 构造器
+            /// </summary>
         public SnowFlake()
         {
             SnowFlakes(0L, -1);
