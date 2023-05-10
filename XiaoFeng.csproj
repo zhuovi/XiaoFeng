@@ -25,7 +25,7 @@
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageReleaseNotes>优化DataHelperX;</PackageReleaseNotes>
+		<PackageReleaseNotes>优化DataHelperX;优化ToCast Byte转SByte;优化ResponseMessage为空的字段不显示;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<DelaySign>False</DelaySign>
 		<IsPackable>true</IsPackable>

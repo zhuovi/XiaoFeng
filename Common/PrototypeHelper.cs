@@ -1872,10 +1872,10 @@ namespace XiaoFeng
                         return Convert.ToInt16(_val, 8).GetValue(targetType, out isGeneric);
                     }
                     else if (targetType == typeof(sbyte))*/
-                    return (sbyte)o;
+                    return Convert.ToSByte(o);
                 }
                 else if (sourceType == typeof(sbyte) && targetType == typeof(byte))
-                    return (byte)o;
+                    return Convert.ToByte(o);
                 if (_val.IsMatch(@"^(true|false)$"))
                 {
                     return Convert.ChangeType(_val.Trim().EqualsIgnoreCase("true") ? 1 : 0, targetType);

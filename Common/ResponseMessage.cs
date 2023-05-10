@@ -91,6 +91,7 @@ namespace XiaoFeng
         /// </summary>
         [DataMember]
         [JsonElement("other")]
+        [OmitEmptyNode]
         [XmlElement("other")]
         [Description("备用数据")]
         public object Other { get; set; }
@@ -115,6 +116,7 @@ namespace XiaoFeng
         /// </summary>
         [DataMember]
         [JsonElement("counts")]
+        [OmitEmptyNode]
         [XmlElement("counts")]
         [Description("条数")]
         public int? Counts { get; set; }
