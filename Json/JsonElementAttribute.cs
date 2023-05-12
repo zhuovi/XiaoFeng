@@ -20,13 +20,13 @@ namespace XiaoFeng.Json
     /// json 节点
     /// </summary>
     [AttributeUsage(AttributeTargets.All)]
-    public class JsonElement : Attribute
+    public class JsonElementAttribute : Attribute
     {
         #region 构造器
         /// <summary>
         /// 无参构造器
         /// </summary>
-        public JsonElement()
+        public JsonElementAttribute()
         {
 
         }
@@ -34,7 +34,7 @@ namespace XiaoFeng.Json
         /// 设置节点名称
         /// </summary>
         /// <param name="name">节点名称</param>
-        public JsonElement(string name) => this.Name = name;
+        public JsonElementAttribute(string name) => this.Name = name;
         #endregion
 
         #region 属性

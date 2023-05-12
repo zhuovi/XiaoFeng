@@ -243,9 +243,9 @@ namespace XiaoFeng.Json
                     {
                         object val = null;
                         var name = m.Name;
-                        if (m.IsDefined(typeof(JsonElement), false))
+                        if (m.IsDefined(typeof(JsonElementAttribute), false))
                         {
-                            var element = m.GetCustomAttribute<JsonElement>();
+                            var element = m.GetCustomAttribute<JsonElementAttribute>();
                             if (element.Name.IsNotNullOrEmpty()) name = element.Name;
                         }
                         var _f = list.ContainsKey(name);

@@ -288,8 +288,11 @@ namespace XiaoFeng.Json
                 string name = m.Name;
                 keys.Add(name);
 
-                var element = m.GetCustomAttribute<JsonElement>(false);
-                if (element != null && element.Name.IsNotNullOrEmpty()) name = element.Name;
+                if (!this.SerializerSetting.IgnoreJsonElement)
+                {
+                    var element = m.GetCustomAttribute<JsonElementAttribute>(false);
+                    if (element != null && element.Name.IsNotNullOrEmpty()) name = element.Name;
+                }
                 object value = null;
                 Type mType = m.DeclaringType;
                 try

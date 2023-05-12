@@ -60,6 +60,10 @@ namespace XiaoFeng.Json
         /// 忽略空节点
         /// </summary>
         public bool OmitEmptyNode { get; set; } = false;
+        /// <summary>
+        /// 忽略自定义节点
+        /// </summary>
+        public bool IgnoreJsonElement { get; set; } = false;
         #endregion
     }
 }

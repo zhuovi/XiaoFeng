@@ -102,7 +102,7 @@ namespace XiaoFeng
         /// <summary>
         /// Json
         /// </summary>
-        public const string Json = @"^(({[\s\S]+})|(\[[\s\S]+\]))$";
+        public const string Json = @"^[\s\r\n\t]*(({[\s\S]+})|(\[[\s\S]+\]))[\s\r\n\t]*$";
         /// <summary>
         /// Xml
         /// </summary>
