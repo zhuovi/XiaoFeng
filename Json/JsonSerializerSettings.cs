@@ -64,6 +64,10 @@ namespace XiaoFeng.Json
         /// 忽略自定义节点
         /// </summary>
         public bool IgnoreJsonElement { get; set; } = false;
+        /// <summary>
+        /// 长整型数字序列化成字符串（超过9007199254740992(2的53次方)的数字则前端会把后边数字给变成0）
+        /// </summary>
+        public bool LongSerializeString { get; set; } = false;
         #endregion
     }
 }

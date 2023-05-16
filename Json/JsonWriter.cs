@@ -137,14 +137,29 @@ namespace XiaoFeng.Json
                 return;
             }
             if (
-                value is int || value is long || value is double ||
-                value is decimal || value is Single || value is float ||
-                value is byte || value is short ||
-                value is sbyte || value is ushort ||
-                value is uint || value is ulong
+                value is int || value is double || value is decimal || 
+                value is Single || value is float || value is byte || 
+                value is short || value is sbyte || value is ushort ||
+                value is uint
             )
             {
                 Builder.Append(((IConvertible)value).ToString(NumberFormatInfo.InvariantInfo));
+                return;
+            }
+            if(value is long l)
+            {
+                if (this.SerializerSetting.LongSerializeString && (l < -9007199254740992 || l > 9007199254740992))
+                    Builder.Append("\"" + value + "\"");
+                else
+                    Builder.Append(((IConvertible)value).ToString(NumberFormatInfo.InvariantInfo));
+                return;
+            }
+            if(value is ulong ul)
+            {
+                if (this.SerializerSetting.LongSerializeString && ul > 9007199254740992)
+                    Builder.Append("\"" + value + "\"");
+                else
+                    Builder.Append(((IConvertible)value).ToString(NumberFormatInfo.InvariantInfo));
                 return;
             }
             if (value is DateTime dateTime)
@@ -601,9 +616,9 @@ namespace XiaoFeng.Json
                 case JsonType.Char:
                 case JsonType.Guid:
                 case JsonType.Null:
-                case JsonType.Number:
                 case JsonType.String:
                 case JsonType.Type:
+                case JsonType.Number:
                     WriteValue(jsonValue.value); break;
             }
         }
