@@ -247,10 +247,10 @@ namespace XiaoFeng.Data
                 if (this._MySql == null)
                 {
                     this._MySql = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase){
-                        { "Boolean","TINYINT"},
-                        { "bit","TINYINT"},
-                        { "sbyte","TINYINT" },
-                        { "byte","TINYINT" },
+                        { "Boolean","BIT"},
+                        { "bit","BIT"},
+                        { "sbyte","INT" },
+                        { "byte","INT" },
                         { "Int16","SMALLINT" },
                         { "smallint","SMALLINT" },
                         { "Int32","INT" },

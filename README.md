@@ -1092,6 +1092,30 @@ job.Start();
 
 当前作业为，5分钟后运行，然后每周的周一10点12分13秒和11点12分13秒各执行一次。
 
+### 新写法
+
+```csharp
+ new Job().SetCompleteCallBack(job=>{
+   //作业内容  
+ }).SetInterval(2*1000).Start();
+ 
+ //也可以继承 IJobWorker 实现
+ public class MyJob : IJobWoker
+ {
+     //作业内容
+     public async Task Invoke()
+     {
+         Console.WriteLine("运行作业" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fffffff"));
+         await Task.CompletedTask;
+     }
+ }
+ 下边三种都可以增加调度，效果是一样的。
+ new Job<MyJob>().SetInterval(2*1000).Start();
+ new Job().Worker<MyJob>().SetInterval(2*1000).Start();
+ JobScheduler.Default.Worker<MyJob>().Interval(2*1000).Start();
+
+```
+
 # XiaoFeng.Ftp Ftp客户端库
 
 FTP客户端

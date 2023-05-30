@@ -156,5 +156,116 @@ namespace XiaoFeng.Threading
         /// <param name="scheduler">调度</param>
         void Stop(IJobScheduler scheduler);
         #endregion
+
+        #region 扩展属性
+        /// <summary>
+        /// 设置作业名称
+        /// </summary>
+        /// <param name="name">作业名称</param>
+        /// <returns></returns>
+        IJob SetName(string name);
+        /// <summary>
+        /// 设置作业ID
+        /// </summary>
+        /// <param name="id">作业ID</param>
+        /// <returns></returns>
+        IJob SetID(Guid id);
+        /// <summary>
+        /// 间隔多长时间执行
+        /// </summary>
+        /// <param name="period">间隔时长</param>
+        /// <returns>作业</returns>
+        IJob Interval(long period);
+        /// <summary>
+        /// 设置开始运行时间
+        /// </summary>
+        /// <param name="startTime">运行时间</param>
+        /// <returns>作业</returns>
+        IJob SetStartTime(DateTime startTime);
+        /// <summary>
+        /// 每小时几分运行
+        /// </summary>
+        /// <param name="times">几分运行</param>
+        /// <returns>作业</returns>
+        IJob EveryHour(List<Time> times);
+        /// <summary>
+        /// 每小时几分运行
+        /// </summary>
+        /// <param name="times">几分运行</param>
+        /// <returns>作业</returns>
+        IJob EveryHour(List<Times> times);
+        /// <summary>
+        /// 每天几点几分运行
+        /// </summary>
+        /// <param name="times">几点几分</param>
+        /// <returns>作业</returns>
+        IJob EveryDay(List<Time> times);
+        /// <summary>
+        /// 每天几点几分运行
+        /// </summary>
+        /// <param name="times">几点几分</param>
+        /// <returns>作业</returns>
+        IJob EveryDay(List<Times> times);
+        /// <summary>
+        /// 每周周几几点几分运行
+        /// </summary>
+        /// <param name="times">周几几点几分</param>
+        /// <returns>作业</returns>
+        IJob EveryWeek(List<Times> times);
+        /// <summary>
+        /// 每月几号几点几分运行
+        /// </summary>
+        /// <param name="times">几号几点几分</param>
+        /// <returns>作业</returns>
+        IJob EveryMonth(List<Times> times);
+        /// <summary>
+        /// 每年几月几号几点几分运行
+        /// </summary>
+        /// <param name="times">几月几号几点几分</param>
+        /// <returns>作业</returns>
+        IJob EveryYear(List<Times> times);
+        /// <summary>
+        /// 设置作业执行完成再执行调度
+        /// </summary>
+        /// <param name="job">作业内容</param>
+        /// <returns>作业</returns>
+        IJob SetCompleteCallBack(Action<IJob> job);
+        /// <summary>
+        /// 设置执行成功回调
+        /// </summary>
+        /// <param name="job">作业内容</param>
+        /// <returns>作业</returns>
+        IJob SetSuccessCallBack(Action<IJob> job);
+        /// <summary>
+        /// 设置作业停止回调
+        /// </summary>
+        /// <param name="job">作业内容</param>
+        /// <returns>作业</returns>
+        IJob SetStopCallBack(Action<IJob> job);
+        /// <summary>
+        /// 设置失败回调
+        /// </summary>
+        /// <param name="job">作业内容</param>
+        /// <returns>作业</returns>
+        IJob SetFailureCallBack(Action<IJob, Exception> job);
+        /// <summary>
+        /// 添加工作作业
+        /// </summary>
+        /// <typeparam name="T">作业</typeparam>
+        /// <returns></returns>
+        IJob Worker<T>() where T : IJobWoker;
+        /// <summary>
+        /// 添加工作作业
+        /// </summary>
+        /// <typeparam name="T">作业</typeparam>
+        /// <returns></returns>
+        IJob SuccessWorker<T>() where T : IJobWoker;
+        /// <summary>
+        /// 添加工作作业
+        /// </summary>
+        /// <typeparam name="T">作业</typeparam>
+        /// <returns></returns>
+        IJob CompleteWorker<T>() where T : IJobWoker;
+        #endregion
     }
 }

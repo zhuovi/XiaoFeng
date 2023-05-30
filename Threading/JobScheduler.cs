@@ -1068,6 +1068,18 @@ namespace XiaoFeng.Threading
         public IEnumerable<IJob> GetJobs() => this.SchedulerJobs.Values;
         #endregion
 
+        #region 扩展属性
+        /// <summary>
+        /// 添加作业调度
+        /// </summary>
+        /// <typeparam name="T">作业</typeparam>
+        /// <returns></returns>
+        public IJob Worker<T>() where T : IJobWoker
+        {
+            return new Job().Worker<T>();
+        }
+        #endregion
+
         #endregion
     }
 }

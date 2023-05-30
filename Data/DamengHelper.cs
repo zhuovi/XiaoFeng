@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
+using XiaoFeng.Model;
 /****************************************************************
 *  Copyright © (2021) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -59,7 +60,7 @@ namespace XiaoFeng.Data
             /*
              * 1.SELECT TABLE_NAME FROM DBA_TABLES WHERE DBA_TABLES.OWNER='模式名称' ORDER BY TABLE_NAME;
              * 2.SELECT TABLE_NAME FROM ALL_TABLES WHERE ALL_TABLES.OWNER='模式名称' ORDER BY TABLE_NAME;        
-             * 3.SELECT TABLE_NAME FROM ALL_OBJECTS WHERE OBJECT_TYPE='TABLE' AND ALL_OBJECTS.OWNER='模式名称' ORDER BY TABLE_NAME; 
+             * 3.SELECT OBJECT_NAME FROM ALL_OBJECTS WHERE OBJECT_TYPE='TABLE' AND ALL_OBJECTS.OWNER='模式名称' ORDER BY TABLE_NAME; 
              * 4.SELECT TABLE_NAME FROM USER_TABLES ORDER BY TABLE_NAME;
              */
             //var Schema = this.ConnConfig.ConnectionString.GetMatch(@"SCHEMA=(?<a>[\s\S]*);").Trim();
@@ -206,8 +207,9 @@ ON A.CONSTRAINT_NAME = B.CONSTRAINT_NAME
         /// 创建数据库表
         /// </summary>
         /// <param name="modelType">表model类型</param>
+        /// <param name="tableName">表名</param>
         /// <returns></returns>
-        public virtual Boolean CreateTable(Type modelType)
+        public virtual Boolean CreateTable(Type modelType, string tableName = "")
         {
             string SQLString = @"
 DROP TABLE IF EXISTS `{0}`;
@@ -225,12 +227,19 @@ select 1;
             DataType dType = new DataType(this.ProviderType);
             modelType.GetProperties(BindingFlags.Public | BindingFlags.IgnoreCase| BindingFlags.Instance).Each(p =>
             {
+                if (p.GetCustomAttribute<FieldIgnoreAttribute>() != null) return;
                 if (",ConnectionString,ConnectionTimeOut,CommandTimeOut,ProviderType,IsTransaction,ErrorMessage,tableName,QueryableX,".IndexOf("," + p.Name + ",") == -1)
                 {
                     ColumnAttribute Column = p.GetColumnAttribute(false);
                     Column = Column ?? new ColumnAttribute { AutoIncrement = false, IsIndex = false, IsNullable = true, IsUnique = false, PrimaryKey = false, Length = 0, DefaultValue = "" };
                     Column.Name = (Column.Name == null || Column.Name.IsNullOrEmpty()) ? p.Name : Column.Name;
                     Column.DataType = Column.DataType.IsNullOrEmpty() ? dType[p.PropertyType] : Column.DataType;
+
+                    if (Column.Length == 0 && ",varchar,nvarchar,".IndexOf("," + Column.DataType.ToString() + ",", StringComparison.OrdinalIgnoreCase) > -1)
+                    {
+                        Column.Length = 2000;
+                    }
+
                     if (Column.AutoIncrement && Column.PrimaryKey)
                     {
                         string type = "int", DefaultValue = "";
@@ -282,15 +291,133 @@ select 1;
             {
                 Indexs = "KEY `{0}Index` ({1})".format(Table.Name, Indexs);
             }
-            return base.ExecuteScalar(SQLString.format(Table.Name, Fields.TrimEnd(','), PrimaryKey, Indexs, Table.Description.IsNullOrEmpty() ? Table.Name : Table.Description)).ToString().ToInt16() == 1;
+            var SbrIndexs = new StringBuilder();
+            var tableIndexs = modelType.GetTableIndexAttributes();
+            if (tableIndexs == null || tableIndexs.Length == 0)
+            {
+                Indexs = Indexs.TrimEnd(',');
+                if (Indexs.IsNotNullOrEmpty())
+                {
+                    SbrIndexs.Append(",INDEX `IX_{0}Index` ({1}) USING BTREE".format(Table.Name, Indexs));
+                }
+            }
+            else
+            {
+                tableIndexs.Each(index =>
+                {
+                    SbrIndexs.AppendLine($@",INDEX {index.TableIndexType.ToString().ToUpper()} {index.Name} ({(from a in index.Keys select a.Substring(a.IndexOf(","))).Join(",")}) USING BTREE");
+                });
+            }
+
+            return base.ExecuteScalar(SQLString.format(Table.Name, Fields.TrimEnd(','), PrimaryKey, SbrIndexs.ToString(), Table.Description.IsNullOrEmpty() ? Table.Name : Table.Description)).ToString().ToInt16() == 1;
         }
         /// <summary>
         /// 创建数据库表 属性用 TableAttribute,ColumnAttribute
         /// </summary>
         /// <typeparam name="T">类型</typeparam>
+        /// <param name="tableName">表名</param>
         /// <returns></returns>
-        public virtual Boolean CreateTable<T>() => CreateTable(typeof(T));
+        public virtual Boolean CreateTable<T>(string tableName = "") => CreateTable(typeof(T), tableName);
         #endregion
+
+        #region 创建视图
+        /// <summary>
+        /// 创建视图
+        /// </summary>
+        /// <param name="modelType">类型</param>
+        /// <param name="viewName">视图名称</param>
+        /// <returns></returns>
+        public Boolean CreateView(Type modelType, string viewName = "")
+        {
+            var type = modelType;
+            var view = modelType.GetViewAttribute(false);
+            var table = modelType.GetTableAttribute(false);
+            if (view == null && table == null) return false;
+            if (table != null && table.ModelType != ModelType.View) return false;
+            if (view == null) return false;
+            if (viewName.IsNotNullOrEmpty()) view.Name = viewName;
+            if (view.Definition.IsNullOrEmpty()) return false;
+            else
+            {
+                if (view.Definition.IsNullOrEmpty()) return false;
+                else
+                {
+                    var count = this.ExecuteScalar($@"SELECT COUNT(0) FROM USER_VIEWS WHERE VIEW_NAMEE='{table.Name}';").ToCast<int>();
+                    if (count > 0) return false;
+                    else return this.ExecuteNonQuery($@"CREATE VIEW {view.Name} AS
+    {view.Definition};") > 0;
+                }
+            }
+        }
+        #endregion
+
+        #region 当前表的所有索引
+        /// <summary>
+        /// 当前表的所有索引
+        /// </summary>
+        /// <param name="tbName">表名</param>
+        /// <returns></returns>
+        public List<TableIndexAttribute> GetTableIndexs(string tbName)
+        {
+            if (tbName.IsNullOrEmpty()) return null;
+            var dt = this.ExecuteDataTable(@"select A.INDEX_TYPE,A.TABLE_NAME,A.TABLE_TYPE,A.UNIQUENESS,B.COLUMN_NAME,B.DESCEND FROM ""USER_INDEXES"" as A left join USER_IND_COLUMNS as B on A.INDEX_NAME=B.INDEX_NAME where A.TABLE_NAME=@tbname;
+", CommandType.Text, new DbParameter[]
+            {
+                this.MakeParam(@"tbname",tbName)
+            });
+            if (dt == null || dt.Rows.Count == 0) return null;
+            var list = new List<TableIndexAttribute>();
+            dt.Rows.Each<DataRow>(a =>
+            {
+                var indexName = a["INDEX_NAME"].ToString();
+                var index = new TableIndexAttribute
+                {
+                    TableName = tbName,
+                    Name = indexName
+                };
+                if (list.Count > 0)
+                {
+                    var findex = list.Find(b => b.Name == indexName);
+                    if (findex != null) index = findex;
+                }
+                else
+                {
+                    var UNIQUE = a["UNIQUENESS"].ToCast<int>();
+                    index.TableIndexType = UNIQUE == 0 ? TableIndexType.Unique : TableIndexType.NonClustered;
+                }
+                if (index.Keys == null) index.Keys = new List<string>();
+                var key = a["COLUMN_NAME"].ToString();
+                index.Keys.Add(key + "," + a["DESCEND"] +"," + a["INDEX_TYPE"].ToString());
+                list.Add(index);
+            });
+            return list;
+        }
+        #endregion
+
+        #region 是否存在表或视图
+        /// <summary>
+        /// 是否存在表或视图
+        /// </summary>
+        /// <param name="tableName">表或视图名</param>
+        /// <param name="modelType">类型</param>
+        /// <returns></returns>
+        public Boolean ExistsTable(string tableName, ModelType modelType = ModelType.Table)
+        {
+            var sql = "";
+            if (modelType == ModelType.Table)
+                sql = "SELECT count(0) FROM USER_TABLES WHERE TABLE_NAME=@tbName;";
+            else if (modelType == ModelType.View)
+                sql = "SELECT COUNT(0) FROM USER_VIEWS WHERE VIEW_NAMEE=@tbName;";
+            else if (ModelType.Procedure == modelType)
+                sql = "SELECT COUNT(0) FROM USER_PROCEDURES WHERE OBJECT_NAME=@tbName;";
+            else if (modelType == ModelType.Function)
+                sql = "select count(0) FROM USER_OBJECTS WHERE OBJECT_TYPE='FUNCTION' OBJECT_NAME=@tbName;";
+            return this.ExecuteScalar(sql, CommandType.Text, new DbParameter[]{
+                this.MakeParam(@"tbName",tableName)
+            }).ToCast<int>() > 0;
+        }
+        #endregion
+
         #endregion
     }
     /// <summary>

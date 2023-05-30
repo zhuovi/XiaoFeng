@@ -60,17 +60,39 @@ namespace XiaoFeng.Data
         /// <returns></returns>
         DataColumnCollection GetDataColumns(string tableName);
         /// <summary>
+        /// 当前表的所有索引
+        /// </summary>
+        /// <param name="tbName">表名</param>
+        /// <returns></returns>
+        List<TableIndexAttribute> GetTableIndexs(string tbName);
+        /// <summary>
+        /// 是否存在表或视图
+        /// </summary>
+        /// <param name="tableName">表或视图名</param>
+        /// <param name="modelType">类型</param>
+        /// <returns></returns>
+        Boolean ExistsTable(string tableName, ModelType modelType = ModelType.Table);
+        /// <summary>
         /// 创建表
         /// </summary>
         /// <param name="modelType">表model类型</param>
+        /// <param name="tableName">表名</param>
         /// <returns></returns>
-        Boolean CreateTable(Type modelType);
+        Boolean CreateTable(Type modelType, string tableName = "");
+        /// <summary>
+        /// 创建视图
+        /// </summary>
+        /// <param name="modelType">类型</param>
+        /// <param name="viewName">视图名称</param>
+        /// <returns></returns>
+        Boolean CreateView(Type modelType, string viewName = "");
         /// <summary>
         /// 创建表
         /// </summary>
         /// <typeparam name="T">类型</typeparam>
+        /// <param name="tableName">表名</param>
         /// <returns></returns>
-        Boolean CreateTable<T>();
+        Boolean CreateTable<T>(string tableName = "");
         /// <summary>
         /// 分页查询数据
         /// </summary>

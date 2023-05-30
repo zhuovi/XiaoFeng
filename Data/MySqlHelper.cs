@@ -5,6 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
+using System.Data.Common;
+using XiaoFeng.Model;
+
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -204,8 +207,9 @@ where A.TABLE_NAME = '{0}' and A.TABLE_SCHEMA = database();".format(tableName)).
         /// 创建数据库表
         /// </summary>
         /// <param name="modelType">表model类型</param>
+        /// <param name="tableName">表名</param>
         /// <returns></returns>
-        public virtual Boolean CreateTable(Type modelType)
+        public virtual Boolean CreateTable(Type modelType, string tableName = "")
         {
             /*DROP TABLE IF EXISTS `aaa`;
 CREATE TABLE `aaa` (
@@ -224,8 +228,7 @@ CREATE TABLE `aaa` (
 
             string SQLString = @"
 DROP TABLE IF EXISTS `{0}`;
-CREATE TABLE `{0}` (
-   {1}
+CREATE TABLE `{0}` ({1}
    {2}
    {3}
 )ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='{4}';
@@ -234,75 +237,227 @@ select 1;
             TableAttribute Table = modelType.GetTableAttribute();
             Table = Table ?? new TableAttribute();
             string Fields = "", Indexs = "", PrimaryKey = "";
-            Table.Name = (Table.Name == null || Table.Name.IsNullOrEmpty()) ? modelType.Name : Table.Name;
+
+            if (tableName.IsNullOrEmpty())
+                Table.Name = (Table.Name == null || Table.Name.IsNullOrEmpty()) ? modelType.Name : Table.Name;
+            else Table.Name = tableName;
+
             DataType dType = new DataType(this.ProviderType);
-            modelType.GetProperties(BindingFlags.Public | BindingFlags.IgnoreCase| BindingFlags.Instance).Each(p =>
+            modelType.GetProperties(BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance).Each(p =>
             {
-                if (",ConnectionString,ConnectionTimeOut,CommandTimeOut,ProviderType,IsTransaction,ErrorMessage,tableName,QueryableX,".IndexOf("," + p.Name + ",") == -1)
+                if (p.GetCustomAttribute<FieldIgnoreAttribute>() != null) return;
+                if (",ConnectionString,ConnectionTimeOut,CommandTimeOut,ProviderType,IsTransaction,ErrorMessage,tableName,QueryableX,".IndexOf("," + p.Name + ",", StringComparison.OrdinalIgnoreCase) > -1) return;
+                ColumnAttribute Column = p.GetColumnAttribute();
+                Column = Column ?? new ColumnAttribute { AutoIncrement = false, IsIndex = false, IsNullable = true, IsUnique = false, PrimaryKey = false, Length = 0, DefaultValue = "" };
+                Column.Name = (Column.Name == null || Column.Name.IsNullOrEmpty()) ? p.Name : Column.Name;
+                Column.DataType = Column.DataType.IsNullOrEmpty() ? dType[p.PropertyType] : Column.DataType;
+
+                if (Column.Length == 0)
                 {
-                    ColumnAttribute Column = p.GetColumnAttribute();
-                    Column = Column ?? new ColumnAttribute { AutoIncrement = false, IsIndex = false, IsNullable = true, IsUnique = false, PrimaryKey = false, Length = 0, DefaultValue = "" };
-                    Column.Name = (Column.Name == null || Column.Name.IsNullOrEmpty()) ? p.Name : Column.Name;
-                    Column.DataType = Column.DataType.IsNullOrEmpty() ? dType[p.PropertyType] : Column.DataType;
-                    if (Column.AutoIncrement && Column.PrimaryKey)
+                    switch (Column.DataType.ToString().ToUpper())
                     {
-                        string type = "int", DefaultValue = "";
-                        if (Column.DataType.ToString() == "bigint" || Column.DataType.ToString() == "int")
-                        {
-                            type = "int(11)";
-                            DefaultValue = "AUTO_INCREMENT";
-                        }
-                        else if (Column.DataType.ToString() == "uniqueidentifier")
-                        {
-                            type = "STRING";
-                            DefaultValue = "";
-                        }
-                        else
-                        {
-                            type = Column.DataType.ToString();
-                            DefaultValue = "DEFAULT '{0}' ".format(Column.DefaultValue);
-                        }
-                        Fields += "`{0}` {1} NOT NULL {2} COMMENT '{3}',".format(Column.Name, type, DefaultValue, Column.Description);
+                        case "CHAR":
+                            Column.Length = 255;
+                            break;
+                        case "VARCHAR":
+                        case "NVARCHAR":
+                            Column.Length = 3000;
+                            break;
+                        case "TEXT":
+                            Column.Length = 65534;
+                            break;
+                        case "LONGTEXT":
+                            Column.Length = 4294967295;
+                            break;
+                        case "MEDIUMTEXT":
+                            Column.Length = 16777215;
+                            break;
+                        case "BLOB":
+                            Column.Length = 65534;
+                            break;
+                        case "TINYBLOB":
+                            Column.Length = 254;
+                            break;
+                        case "MEDIUMBLOB":
+                            Column.Length = 16777215;
+                            break;
+                        case "LONGBLOB":
+                            Column.Length = 4294967295;
+                            break;
+                    }
+                }
+
+                if (Column.AutoIncrement && Column.PrimaryKey)
+                {
+                    string type = "int", DefaultValue = "";
+                    if (",INTEGER,bigint,int,".IndexOf("," + Column.DataType.ToString() + ",", StringComparison.OrdinalIgnoreCase) > -1)
+                    {
+                        type = "bigint";
+                        DefaultValue = "AUTO_INCREMENT";
+                    }
+                    else if (Column.DataType.ToString() == "uniqueidentifier")
+                    {
+                        type = "varchar(50)";
+                        DefaultValue = "";
                     }
                     else
                     {
-                        string DefaultValue = Column.DefaultValue.ToString();
-                        if (DefaultValue == "now()" || DefaultValue == "getdate()") DefaultValue = "0000-00-00 00:00:00";
-                        else if (Column.Name.ToLower().IndexOf("timestamp") > -1)
-                        {
-                            DefaultValue = "CURRENT_TIMESTAMP";
-                        }
-                        var FieldType = dType[p.PropertyType.GetBaseType()];
-                        Fields += String.Format(@"
-                        `{0}` {1}{2}{3},",
-                        Column.Name,
-                        FieldType,
-                        ((Column.Length == 0 || ",datetime,".IndexOf("," + FieldType.ToString().ToLower() + ",") > -1) ? " " : ("(" + Column.Length + ") ")) + ((Column.IsNullable && !Column.PrimaryKey) ? "NULL" : "NOT NULL") + (Column.DefaultValue.IsNullOrEmpty() ? "" : (" DEFAULT " + (DefaultValue.IsNumberic() ? Column.DefaultValue : ((DefaultValue.StartsWith("'") && DefaultValue.EndsWith("'")) || DefaultValue.ToLower() == "datetime('now','localtime')" || Column.Name.ToLower().IndexOf("timestamp") > -1) ? DefaultValue : ("'" + DefaultValue + "'")) + "")),
-                         " COMMENT '{0}'".format(Column.Description));
+                        type = Column.DataType.ToString();
+                        DefaultValue = "DEFAULT '{0}' ".format(Column.DefaultValue);
                     }
-                    if (Column.PrimaryKey)
+                    Fields += "`{0}` {1} NOT NULL {2} COMMENT '{3}',".format(Column.Name, type, DefaultValue, Column.Description);
+                }
+                else
+                {
+                    string DefaultValue = Column.DefaultValue.ToString();
+                    if (DefaultValue == "NOW") DefaultValue = "CURRENT_TIMESTAMP";
+                    else if (DefaultValue == "UUID" || DefaultValue == "TIMESTAMP")
                     {
-                        PrimaryKey = ",PRIMARY KEY (`{0}`)".format(Column.Name);
+                        DefaultValue = "";
                     }
-                    if (Column.IsIndex)
-                    {
-                        Indexs += ",`{0}`".format(Column.Name);
-                    }
+                    //var FieldType = dType[p.PropertyType.GetBaseType()];
+                    var FieldType = Column.DataType;
+                    Fields += String.Format(@"
+    `{0}` {1}{2}{3},",
+                    Column.Name,
+                    FieldType,
+                    ((Column.Length == 0 || ",datetime,".IndexOf("," + FieldType.ToString().ToLower() + ",") > -1) ? " " : ("(" + Column.Length + ") ")) + ((Column.IsNullable && !Column.PrimaryKey) ? "NULL" : "NOT NULL") + (DefaultValue.IsNullOrEmpty() ? "" : (" DEFAULT " + (DefaultValue.IsNumberic() ? DefaultValue : ((DefaultValue.StartsWith("'") && DefaultValue.EndsWith("'")) || DefaultValue == "CURRENT_TIMESTAMP" || Column.Name.ToLower().IndexOf("timestamp") > -1) ? DefaultValue : ("'" + DefaultValue + "'")) + "")),
+                     " COMMENT '{0}'".format(Column.Description));
+                }
+                if (Column.PrimaryKey)
+                {
+                    PrimaryKey = ",PRIMARY KEY (`{0}`) USING BTREE".format(Column.Name);
+                }
+                if (Column.IsIndex)
+                {
+                    Indexs += ",`{0}`".format(Column.Name);
                 }
             });
-            Indexs = Indexs.TrimEnd(',');
-            if (Indexs.IsNotNullOrEmpty())
+            var SbrIndexs = new StringBuilder();
+            var tableIndexs = modelType.GetTableIndexAttributes();
+            if (tableIndexs == null || tableIndexs.Length == 0)
             {
-                Indexs = "KEY `{0}Index` ({1})".format(Table.Name, Indexs);
+                Indexs = Indexs.TrimEnd(',');
+                if (Indexs.IsNotNullOrEmpty())
+                {
+                    SbrIndexs.Append(",INDEX `IX_{0}Index` ({1}) USING BTREE".format(Table.Name, Indexs));
+                }
             }
-            return base.ExecuteScalar(SQLString.format(Table.Name, Fields.TrimEnd(','), PrimaryKey, Indexs, Table.Description.IsNullOrEmpty() ? Table.Name : Table.Description)).ToString().ToInt16() == 1;
+            else
+            {
+                tableIndexs.Each(index =>
+                {
+                    SbrIndexs.AppendLine($@",{(index.TableIndexType == TableIndexType.Unique ? "UNIQUE" : "")} INDEX {index.Name} ({(from a in index.Keys select "`" + a.Substring(0, a.IndexOf(",")) + "`").Join(",")}) USING BTREE");
+                });
+            }
+            var sql = SQLString.format(Table.Name, Fields.TrimEnd(','), PrimaryKey, SbrIndexs.ToString(), Table.Description.IsNullOrEmpty() ? Table.Name : Table.Description);
+            return base.ExecuteScalar(sql).ToString().ToInt16() == 1;
         }
         /// <summary>
         /// 创建数据库表 属性用 TableAttribute,ColumnAttribute
         /// </summary>
         /// <typeparam name="T">类型</typeparam>
+        /// <param name="tableName">表名</param>
         /// <returns></returns>
-        public virtual Boolean CreateTable<T>()=> CreateTable(typeof(T));
+        public virtual Boolean CreateTable<T>(string tableName = "")=> CreateTable(typeof(T), tableName);
+        #endregion
+
+        #region 创建视图
+        /// <summary>
+        /// 创建视图
+        /// </summary>
+        /// <param name="modelType">类型</param>
+        /// <param name="viewName">视图名称</param>
+        /// <returns></returns>
+        public Boolean CreateView(Type modelType, string viewName = "")
+        {
+            var type = modelType;
+            var view = modelType.GetViewAttribute(false);
+            var table = modelType.GetTableAttribute(false);
+            if (view == null && table == null) return false;
+            if (table != null && table.ModelType != ModelType.View) return false;
+            if (view == null) return false;
+            if (viewName.IsNotNullOrEmpty()) view.Name = viewName;
+            if (view.Definition.IsNullOrEmpty()) return false;
+            else
+            {
+                if (view.Definition.IsNullOrEmpty()) return false;
+                else
+                {
+                    var count = this.ExecuteScalar($@"select count(0) from information_schema.views where table_schema = database() and table_name='{table.Name}';").ToCast<int>();
+                    if (count > 0) return false;
+                    else return this.ExecuteNonQuery($@"CREATE VIEW {view.Name} AS
+    {view.Definition};") > 0;
+                }
+            }
+        }
+        #endregion
+
+        #region 当前表的所有索引
+        /// <summary>
+        /// 当前表的所有索引
+        /// </summary>
+        /// <param name="tbName">表名</param>
+        /// <returns></returns>
+        public List<TableIndexAttribute> GetTableIndexs(string tbName)
+        {
+            if (tbName.IsNullOrEmpty()) return null;
+            var dt = this.ExecuteDataTable("select NON_UNIQUE,INDEX_NAME,COLUMN_NAME,INDEX_TYPE from information_schema.STATISTICS where TABLE_NAME=@tbname;", CommandType.Text, new DbParameter[]
+            {
+                this.MakeParam(@"tbname",tbName)
+            });
+            if (dt == null || dt.Rows.Count == 0) return null;
+            var list = new List<TableIndexAttribute>();
+            dt.Rows.Each<DataRow>(a =>
+            {
+                var indexName = a["INDEX_NAME"].ToString();
+                var index = new TableIndexAttribute
+                {
+                    TableName = tbName,
+                    Name = indexName
+                };
+                var findex = list.Find(b => b.Name == indexName);
+                if (findex != null)
+                {
+                    index = findex;
+                }
+                else
+                {
+                    if (index.Name == "PRIMARY") index.Primary = true;
+                    var UNIQUE = a["NON_UNIQUE"].ToCast<int>();
+                    index.TableIndexType = UNIQUE == 0 ? TableIndexType.Unique : TableIndexType.NonClustered;
+                    list.Add(index);
+                }
+                if (index.Keys == null) index.Keys = new List<string>();
+                var key = a["COLUMN_NAME"].ToString();
+                index.Keys.Add(key + ",ASC," + a["INDEX_TYPE"].ToString());
+            });
+            return list;
+        }
+        #endregion
+
+        #region 是否存在表或视图
+        /// <summary>
+        /// 是否存在表或视图
+        /// </summary>
+        /// <param name="tableName">表或视图名</param>
+        /// <param name="modelType">类型</param>
+        /// <returns></returns>
+        public Boolean ExistsTable(string tableName, ModelType modelType = ModelType.Table)
+        {
+            var sql = "";
+            if (modelType == ModelType.Table)
+                sql = "select count(0) from information_schema.tables where table_schema = database() and (table_type='base table' or table_type='BASE TABLE') and table_name=@tbName;";
+            else if (modelType == ModelType.View)
+                sql = "select count(0) from information_schema.views where table_schema = database() and table_name=@tbName;";
+            else if (ModelType.Procedure == modelType)
+                sql = "select count(0) from mysql.proc where db = database() and name=@tbName;";
+            else if (modelType == ModelType.Function)
+                sql = "select count(0) from mysql.func where name=@tbName;";
+            return this.ExecuteScalar(sql, CommandType.Text, new DbParameter[]{
+                this.MakeParam(@"tbName",tableName)
+            }).ToCast<int>() > 0;
+        }
         #endregion
 
         #endregion

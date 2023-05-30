@@ -69,7 +69,7 @@ namespace XiaoFeng
         /// <summary>
         /// 字段长度
         /// </summary>
-        public int Length { get; set; }
+        public long Length { get; set; }
         /// <summary>
         /// 字段说明
         /// </summary>

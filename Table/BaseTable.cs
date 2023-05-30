@@ -64,6 +64,7 @@ namespace XiaoFeng.Table
         }
         #endregion
 
+        #region 获取字段定义
         /// <summary>
         /// 获取字段定义
         /// </summary>
@@ -73,11 +74,13 @@ namespace XiaoFeng.Table
         public virtual string GetField(ColumnAttribute column,DbProviderType providerType)
         {
             if (column == null) return "";
-            var FieldFormat = "[{0}] [{1}]{2} {3} {4}," + Environment.NewLine;
+            var FieldFormat = "{0}  {1}{2}  {3} {4}," + Environment.NewLine;
             var dbType = column.DataType.ToString();
             var tLength = "";
+            var NotNull = "{0} NULL".format(column.IsNullable ? "" : "NOT");
             string DefaultValue;
             /*
+             * SQLSERVER 
              * [ID] [bigint] IDENTITY(1,1) NOT NULL,
              * [Column1] [varchar](50) NULL,
              * [Column2] [nvarchar](50) NOT NULL,
@@ -90,6 +93,22 @@ namespace XiaoFeng.Table
              * [Column9] [timestamp] NULL,
              * [Column10] [varchar](max) NULL,
              * [Column11] [datetime] NULL,
+             * 
+             * SQLite
+             * 
+             * ID           INTEGER       CONSTRAINT ID PRIMARY KEY ASC ON CONFLICT ROLLBACK AUTOINCREMENT
+             *                            CONSTRAINT ID UNIQUE ON CONFLICT ROLLBACK
+             *                            NOT NULL ON CONFLICT ROLLBACK,
+             * Name         VARCHAR (50)  NOT NULL ON CONFLICT ROLLBACK,
+             * ParentID     INTEGER       DEFAULT (0),
+             * Icon         VARCHAR (200),
+             * Url          VARCHAR (200),
+             * AuthID       VARCHAR (50),
+             * SortID       INTEGER       DEFAULT (100000),
+             * Pass         BOOLEAN       DEFAULT (1),
+             * IsDelete     BOOLEAN       DEFAULT (0),
+             * AddDate      DATETIME      DEFAULT (datetime('now', 'localtime') ),
+             * AddTimeStamp INTEGER       DEFAULT (strftime('%s', 'now') - strftime('%s', '2023-01-01') ) 
              */
             if (",varchar,nvarchar,".IndexOf("," + dbType + ",",StringComparison.OrdinalIgnoreCase) > -1)
             {
@@ -102,17 +121,26 @@ namespace XiaoFeng.Table
             {
                 dbType = "BIT";
             }
-            if (column.AutoIncrement)
+            if (column.PrimaryKey)
             {
                 var defaultValue = column.DefaultValue.ToString().Trim('\'');
                 switch (providerType)
                 {
                     case DbProviderType.SqlServer:
                         dbType = "BIGINT";
-                        tLength = " IDENTITY({0},1)".format(defaultValue.IsNumberic() ? defaultValue : "1");
+                        if (column.AutoIncrement)
+                            tLength = " IDENTITY({0},{1})".format(defaultValue.IsNumberic() ? defaultValue : "1", column.AutoIncrementStep);
+                        NotNull = " Primary key ";
                         break;
                     case DbProviderType.SQLite:
-                        dbType = "INTEGER"; break;
+                        dbType = "INTEGER";
+                        if (column.AutoIncrement)
+                            NotNull = @"CONSTRAINT ID PRIMARY KEY ASC ON CONFLICT ROLLBACK AUTOINCREMENT
+                CONSTRAINT ID UNIQUE ON CONFLICT ROLLBACK
+                NOT NULL ON CONFLICT ROLLBACK";
+                        else
+                            NotNull = "AUTOINCREMENT";
+                        break;
                     default: dbType = "INTEGER"; break;
                 }
                 DefaultValue = "";
@@ -131,62 +159,16 @@ namespace XiaoFeng.Table
                 }
                 else if (column.DefaultValue.ToString() == "''")
                     defaultValue = "''";
-                else
-                    defaultValue = GetDefaultValue(column.DefaultValue.ToString().Trim('\''), providerType);
-                DefaultValue = DefaultValue.format(defaultValue);
+                //else
+                    //defaultValue = GetDefaultValue(column.DefaultValue.ToString().Trim('\''), providerType);
+                //DefaultValue = DefaultValue.format(defaultValue);
             }
-            return FieldFormat.format(column.Name, dbType, tLength, "{0} NULL".format(column.IsNullable ? "" : "NOT"), DefaultValue);
+            return FieldFormat.format(column.Name, dbType, tLength, NotNull, DefaultValue);
         }
-        /// <summary>
-        /// 获取默认值
-        /// </summary>
-        /// <param name="defaultValue">默认值</param>
-        /// <param name="providerType">驱动类型</param>
-        /// <returns></returns>
-        public string GetDefaultValue(string defaultValue,DbProviderType providerType)
-        {
-            if (defaultValue == null) return string.Empty;
-            else if (defaultValue.EqualsIgnoreCase("UUID"))
-            {
-                switch (providerType)
-                {
-                    case DbProviderType.SqlServer:
-                        return "newid()";
-                    case DbProviderType.SQLite:
-                        return "'' || hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-' || '4' || substr(hex(randomblob(2)), 2) || '-' || substr('AB89', 1 + (abs(random()) % 4), 1) || substr(hex(randomblob(2)), 2) || '-' || hex(randomblob(6)) || ''";
-                    default: return "";
-                }
-            }
-            else if (defaultValue.EqualsIgnoreCase("NOW"))
-            {
-                switch (providerType)
-                {
-                    case DbProviderType.SqlServer:
-                        return "getdate()";
-                    case DbProviderType.SQLite:
-                        return "datetime('now', 'localtime')";
-                    case DbProviderType.OleDb:
-                        return "now()";
-                    default: return "CURRENT_TIMESTAMP()";
-                }
-            }
-            else if (defaultValue.EqualsIgnoreCase("TIMESTAMP"))
-            {
-                var date = defaultValue.GetMatch(@"\d{4}-\d{2}-\d{2}");
-                if (date.IsNullOrEmpty()) date = "1970-01-01";
-                switch (providerType)
-                {
-                    case DbProviderType.SqlServer:
-                        return $"datediff(second,getdate(),'{date}')";
-                    case DbProviderType.SQLite:
-                        return $"strftime('%s', 'now') - strftime('%s', '{date}')";
-                    case DbProviderType.OleDb:
-                        return $"datediff('s', now(),'{date}')";
-                    default: return "CURRENT_TIMESTAMP()";
-                }
-            }
-            return $"'{defaultValue}'";
-        }
+        #endregion
+
+        
+
         #endregion
     }
 }

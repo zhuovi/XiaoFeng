@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using XiaoFeng.Data;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -20,6 +21,10 @@ namespace XiaoFeng.Table
     /// </summary>
     public interface ITable
     {
+        /// <summary>
+        /// 数据库连接配置
+        /// </summary>
+        ConnectionConfig Config { get; set; }
         /// <summary>
         /// 创建表
         /// </summary>

@@ -75,5 +75,14 @@ namespace XiaoFeng.Threading
         /// <returns></returns>
         IEnumerable<IJob> GetJobs();
         #endregion
+
+        #region 扩展属性
+        /// <summary>
+        /// 添加作业调度
+        /// </summary>
+        /// <typeparam name="T">作业</typeparam>
+        /// <returns></returns>
+        IJob Worker<T>() where T : IJobWoker;
+        #endregion
     }
 }

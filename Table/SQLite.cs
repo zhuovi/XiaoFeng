@@ -19,20 +19,20 @@ using XiaoFeng.Data.SQL;
 namespace XiaoFeng.Table
 {
     /// <summary>
-    /// SqlServer
+    /// SQLite
     /// </summary>
-    public class SqlServer : BaseTable, ITable
+    public class SQLite : BaseTable, ITable
     {
         #region 构造器
         /// <summary>
         /// 无参构造器
         /// </summary>
-        public SqlServer() { this.Config = new ConnectionConfig { ProviderType = DbProviderType.SqlServer }; }
+        public SQLite() { this.Config = new ConnectionConfig { ProviderType = DbProviderType.SQLite }; }
         /// <summary>
         /// 设置数据库连接
         /// </summary>
         /// <param name="config"></param>
-        public SqlServer(ConnectionConfig config)
+        public SQLite(ConnectionConfig config)
         {
             this.Config = config;
         }
@@ -66,40 +66,37 @@ namespace XiaoFeng.Table
                 if (view.Definition.IsNullOrEmpty()) return table.Name + "$2";
                 else
                 {
-                    var count = data.ExecuteScalar($@"SELECT count(0) FROM sys.sql_modules AS m INNER JOIN sys.all_objects AS o ON m.object_id = o.object_id WHERE o.[type] = 'v' and o.Name = '{table.Name}'").ToCast<int>();
+                    var count = data.ExecuteScalar($@"SELECT COUNT(0) FROM sqlite_master WHERE type='view' and name='{table.Name}';").ToCast<int>();
                     if (count > 0) return table.Name + "$0";
-                    else data.ExecuteNonQuery($@"CREATE VIEW [dbo].[{table.Name}] AS
-    {view.Definition.ReplacePattern(@"ifnull", "ISNULL")};");
+                    else data.ExecuteNonQuery($@"CREATE VIEW {table.Name} AS
+    {view.Definition};");
                     return table.Name + "$1";
                 }
             }
             var SqlFormat = @"
-IF NOT EXISTS (SELECT * FROM SYSOBJECTS WHERE ID = OBJECT_ID(N'[dbo].[{0}]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-BEGIN 
-IF EXISTS (SELECT * FROM SYSINDEXES WHERE NAME='PK_{0}')
-    DROP INDEX {0}.PK_{0};
-IF EXISTS (SELECT * FROM SYSINDEXES WHERE NAME='IX_{0}')
-    DROP INDEX {0}.IX_{0};
+PRAGMA foreign_keys = off;
+BEGIN TRANSACTION;
 
-CREATE TABLE [dbo].[{0}](
-{1}
-) ON [PRIMARY];
-
-CREATE NONCLUSTERED INDEX IX_{0}
-ON {0}({2});
-
-{3}
+-- 表：{0}
+DROP TABLE IF EXISTS {0};
+-- 创建表
+CREATE TABLE {0} (
+    {1}
+);
+-- 创建索引
+{2}
 
 SELECT 1;
-END;
+COMMIT TRANSACTION;
+PRAGMA foreign_keys = on;
 ";
             table = base.GetTableAttribute(type, tableName, connName, connIndex);
-            var dbType = new DataType(DbProviderType.SqlServer);
+            var dbType = new DataType(this.Config.ProviderType);
             var Fields = "";
-            var PrimaryKey = "";
             var Indexs = new List<string>();
             var Description = "";
             var Unique = "";
+            
             type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase).Each(p =>
             {
                 if (p.GetCustomAttribute<FieldIgnoreAttribute>() != null) return;
@@ -108,24 +105,16 @@ END;
                 if (columnAttr.Name.IsNullOrEmpty()) columnAttr.Name = p.Name;
                 if (columnAttr.DataType.IsNullOrEmpty()) columnAttr.DataType = dbType[p.PropertyType];
                 if (columnAttr.Description.IsNullOrEmpty()) columnAttr.Description = p.Name;
-                Fields += this.GetField(columnAttr);
+                //Fields += new FieldPacket(table, this.Config.ProviderType, columnAttr).ToString();
                 if (columnAttr.IsIndex) Indexs.Add( columnAttr.Name);
                 if (columnAttr.PrimaryKey)
                 {
-                    //PrimaryKey = $"[{columnAttr.Name}] ASC,";
+                    //PrimaryKey = $"{columnAttr.Name} PRIMARY KEY ASC,";
                     if(!Indexs.Contains(columnAttr.Name)) Indexs.Add(columnAttr.Name);
                 }
                 if (columnAttr.IsUnique) Unique += columnAttr.Name + ",";
-                Description += @"
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'{0}' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'{1}', @level2type=N'COLUMN',@level2name=N'{2}';{3}".format(columnAttr.Description, table.Name, columnAttr.Name, Environment.NewLine);
             });
-            //PrimaryKey = PrimaryKey.TrimEnd(',');
-            Unique = Unique.TrimEnd(',');
-            if (Unique.IsNotNullOrEmpty()) Fields += "CONSTRAINT [UN_{0}] UNIQUE ({1}),{2}".format(table.Name, Unique, Environment.NewLine);
-            //if (PrimaryKey.IsNullOrEmpty()) PrimaryKey = "ID";
-            //if (PrimaryKey.IsNotNullOrEmpty()) Fields += @"CONSTRAINT [PK_{0}] PRIMARY KEY CLUSTERED({1})
-//WITH(PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON[PRIMARY]".format(table.Name, PrimaryKey);
-            SqlFormat = SqlFormat.format(table.Name, Fields, Indexs.Join(","), Description);
+            SqlFormat = SqlFormat.format(table.Name, Fields.TrimEnd(','), Indexs.Join(","), Description);
             if (table.ConnName.IsMatch(@"(^ZW:|;)"))
             {
                 this.Config.ConnectionString = table.ConnName;
@@ -157,7 +146,7 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'{0}' , @level0
         /// <returns></returns>
         public string GetField(ColumnAttribute column)
         {
-            return base.GetField(column, DbProviderType.SqlServer);
+            return base.GetField(column, DbProviderType.SQLite);
         }
         #endregion
     }

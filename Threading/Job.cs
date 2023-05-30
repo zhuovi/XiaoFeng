@@ -269,6 +269,212 @@ namespace XiaoFeng.Threading
         }
         #endregion
 
+        #region 扩展属性
+        /// <summary>
+        /// 设置作业名称
+        /// </summary>
+        /// <param name="name">作业名称</param>
+        /// <returns></returns>
+        public IJob SetName(string name)
+        {
+            if (name.IsNullOrEmpty()) return this;
+            this.Name = name;
+            return this;
+        }
+        /// <summary>
+        /// 设置作业ID
+        /// </summary>
+        /// <param name="id">作业ID</param>
+        /// <returns></returns>
+        public IJob SetID(Guid id)
+        {
+            if (id.IsNullOrEmpty()) return this;
+            this.ID = id;
+            return this;
+        }
+        /// <summary>
+        /// 间隔多长时间执行
+        /// </summary>
+        /// <param name="period">间隔时长</param>
+        /// <returns>作业</returns>
+        public IJob Interval(long period)
+        {
+            if (period < 1) return this;
+            this.TimerType = TimerType.Interval;
+            this.Period = period;
+            return this;
+        }
+        /// <summary>
+        /// 设置开始运行时间
+        /// </summary>
+        /// <param name="startTime">运行时间</param>
+        /// <returns>作业</returns>
+        public IJob SetStartTime(DateTime startTime)
+        {
+            if (startTime == null || startTime < DateTime.Now) return this;
+            this.StartTime = startTime;
+            return this;
+        }
+        /// <summary>
+        /// 每小时几分运行
+        /// </summary>
+        /// <param name="times">几分运行</param>
+        /// <returns>作业</returns>
+        public IJob EveryHour(List<Time> times)
+        {
+            if (times == null || times.Count == 0) return this;
+            this.TimerType = TimerType.Hour;
+            this.Times = (from t in times select (Times)t).ToList();
+            return this;
+        }
+        /// <summary>
+        /// 每小时几分运行
+        /// </summary>
+        /// <param name="times">几分运行</param>
+        /// <returns>作业</returns>
+        public IJob EveryHour(List<Times> times)
+        {
+            if (times == null || times.Count == 0) return this;
+            this.TimerType = TimerType.Hour;
+            this.Times = times;
+            return this;
+        }
+        /// <summary>
+        /// 每天几点几分运行
+        /// </summary>
+        /// <param name="times">几点几分</param>
+        /// <returns>作业</returns>
+        public IJob EveryDay(List<Time> times)
+        {
+            if (times == null || times.Count == 0) return this;
+            this.TimerType = TimerType.Day;
+            this.Times = (from t in times select (Times)t).ToList();
+            return this;
+        }
+        /// <summary>
+        /// 每天几点几分运行
+        /// </summary>
+        /// <param name="times">几点几分</param>
+        /// <returns>作业</returns>
+        public IJob EveryDay(List<Times> times)
+        {
+            if (times == null || times.Count == 0) return this;
+            this.TimerType = TimerType.Day;
+            this.Times = times;
+            return this;
+        }
+        /// <summary>
+        /// 每周周几几点几分运行
+        /// </summary>
+        /// <param name="times">周几几点几分</param>
+        /// <returns>作业</returns>
+        public IJob EveryWeek(List<Times> times)
+        {
+            if (times == null || times.Count == 0) return this;
+            this.TimerType = TimerType.Week;
+            this.Times = times;
+            return this;
+        }
+        /// <summary>
+        /// 每月几号几点几分运行
+        /// </summary>
+        /// <param name="times">几号几点几分</param>
+        /// <returns>作业</returns>
+        public IJob EveryMonth(List<Times> times)
+        {
+            if (times == null || times.Count == 0) return this;
+            this.TimerType = TimerType.Month;
+            this.Times = times;
+            return this;
+        }
+        /// <summary>
+        /// 每年几月几号几点几分运行
+        /// </summary>
+        /// <param name="times">几月几号几点几分</param>
+        /// <returns>作业</returns>
+        public IJob EveryYear(List<Times> times)
+        {
+            if (times == null || times.Count == 0) return this;
+            this.TimerType = TimerType.Year;
+            this.Times = times;
+            return this;
+        }
+        /// <summary>
+        /// 设置作业执行完成再执行调度
+        /// </summary>
+        /// <param name="job">作业内容</param>
+        /// <returns>作业</returns>
+        public IJob SetCompleteCallBack(Action<IJob> job)
+        {
+            if (job == null) job = a => { };
+            this.CompleteCallBack = job;
+            return this;
+        }
+        /// <summary>
+        /// 设置执行成功回调
+        /// </summary>
+        /// <param name="job">作业内容</param>
+        /// <returns>作业</returns>
+        public IJob SetSuccessCallBack(Action<IJob> job)
+        {
+            if (job == null) job = a => { };
+            this.SuccessCallBack = job;
+            return this;
+        }
+        /// <summary>
+        /// 设置作业停止回调
+        /// </summary>
+        /// <param name="job">作业内容</param>
+        /// <returns>作业</returns>
+        public IJob SetStopCallBack(Action<IJob> job)
+        {
+            if (job == null) job = a => { };
+            this.StopCallBack = job;
+            return this;
+        }
+        /// <summary>
+        /// 设置失败回调
+        /// </summary>
+        /// <param name="job">作业内容</param>
+        /// <returns>作业</returns>
+        public IJob SetFailureCallBack(Action<IJob,Exception> job)
+        {
+            if (job == null) job = (a, e) => { };
+            this.FailureCallBack = job;
+            return this;
+        }
+        /// <summary>
+        /// 添加工作作业
+        /// </summary>
+        /// <typeparam name="T">作业</typeparam>
+        /// <returns></returns>
+        public IJob Worker<T>() where T : IJobWoker
+        {
+            this.SuccessCallBack = job => (Activator.CreateInstance<T>() as IJobWoker).Invoke();
+            return this;
+        }
+        /// <summary>
+        /// 添加工作作业
+        /// </summary>
+        /// <typeparam name="T">作业</typeparam>
+        /// <returns></returns>
+        public IJob SuccessWorker<T>() where T : IJobWoker
+        {
+            this.SuccessCallBack = job => (Activator.CreateInstance<T>() as IJobWoker).Invoke();
+            return this;
+        }
+        /// <summary>
+        /// 添加工作作业
+        /// </summary>
+        /// <typeparam name="T">作业</typeparam>
+        /// <returns></returns>
+        public IJob CompleteWorker<T>() where T : IJobWoker
+        {
+            this.CompleteCallBack = job => (Activator.CreateInstance<T>() as IJobWoker).Invoke();
+            return this;
+        }
+        #endregion
+
         #region 释放资源
         /// <summary>
         /// 释放资源
@@ -280,5 +486,19 @@ namespace XiaoFeng.Threading
         #endregion
 
         #endregion
+    }
+    /// <summary>
+    /// 设置作业
+    /// </summary>
+    /// <typeparam name="T">类型</typeparam>
+    public class Job<T> : Job where T : IJobWoker
+    {
+        /// <summary>
+        /// 构造器
+        /// </summary>
+        public Job()
+        {
+            this.Worker<T>();
+        }
     }
 }

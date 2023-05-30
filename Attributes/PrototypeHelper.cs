@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Reflection;
 using System.ComponentModel;
 using System.Collections;
+using XiaoFeng.Data;
 
 namespace XiaoFeng
 {
@@ -26,6 +27,18 @@ namespace XiaoFeng
     public static partial class PrototypeHelper
     {
         #region 方法
+        /// <summary>
+        /// 获取表索引值
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="t">对象</param>
+        /// <param name="inherit">是否向父类查找</param>
+        /// <returns></returns>
+        public static TableIndexAttribute[] GetTableIndexAttributes<T>(this T t,bool inherit = true)
+        {
+            Type type = t is Type ? t as Type : typeof(T);
+            return type.GetCustomAttributes<TableIndexAttribute>(inherit)?.ToArray();
+        }
         /// <summary>
         /// 获取自定义属性
         /// </summary>
@@ -149,7 +162,9 @@ namespace XiaoFeng
         /// <returns></returns>
         public static string GetDescription(this Enum _, bool inherit = true)
         {
-            return _.GetType().GetMember(_.ToString())[0].GetDescription(inherit);
+            var d = _.GetType().GetMember(_.ToString());
+            if (d.Length == 0) return String.Empty;
+            return d[0].GetDescription(inherit);
         }
         /// <summary>
         /// 获取指定属性的DefaultValue

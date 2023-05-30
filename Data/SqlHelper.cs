@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Data;
 using System.Reflection;
 using System.Data.Common;
+using XiaoFeng.Model;
+using XiaoFeng.Excel;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -323,54 +325,71 @@ select 1;
         /// 创建数据库表
         /// </summary>
         /// <param name="modelType">表model类型</param>
+        /// <param name="tableName">表名</param>
         /// <returns></returns>
-        public virtual Boolean CreateTable(Type modelType)
+        public virtual Boolean CreateTable(Type modelType, string tableName = "")
         {
             string SQLString = @"
 IF EXISTS (SELECT * FROM SYSOBJECTS WHERE ID = OBJECT_ID(N'[dbo].[{0}]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
     DROP TABLE [{0}];
 IF EXISTS (SELECT * FROM SYSINDEXES WHERE NAME='PK_{0}')
     DROP INDEX {0}.PK_{0};
-IF EXISTS (SELECT * FROM SYSINDEXES WHERE NAME='IX_{0}')
-    DROP INDEX {0}.IX_{0};
 
-CREATE TABLE [dbo].[{0}](
-{1}
+CREATE TABLE [dbo].[{0}]({1}
 ) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX IX_{0}
-ON {0}({2})
+{2}
 WITH FILLFACTOR = 30;
 
 {3}
 ";
             TableAttribute Table = modelType.GetTableAttribute();
             Table = Table ?? new TableAttribute();
-            Table.Name = (Table == null || Table.Name == null || Table.Name.IsNullOrEmpty()) ? modelType.Name : Table.Name;
+            if (tableName.IsNullOrEmpty())
+                Table.Name = (Table.Name == null || Table.Name.IsNullOrEmpty()) ? modelType.Name : Table.Name;
+            else Table.Name = tableName;
             string Fields = "", PrimaryKey = "", Indexs = "", Description = "", Unique = "";
             DataType dType = new DataType(this.ProviderType);
             modelType.GetProperties(BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance).Each(p =>
             {
+                if (p.GetCustomAttribute<FieldIgnoreAttribute>() != null) return;
                 if (",ConnectionString,ConnectionTimeOut,CommandTimeOut,ProviderType,IsTransaction,ErrorMessage,tableName,QueryableX,".IndexOf("," + p.Name + ",") == -1)
                 {
                     ColumnAttribute Column = p.GetCustomAttribute<ColumnAttribute>();
                     Column = Column ?? new ColumnAttribute { AutoIncrement = false, IsIndex = false, IsNullable = true, IsUnique = false, PrimaryKey = false, Length = 0, DefaultValue = "" };
                     Column.Name = (Column.Name == null || Column.Name.IsNullOrEmpty()) ? p.Name : Column.Name;
                     Column.DataType = Column.DataType.IsNullOrEmpty() ? dType[p.PropertyType] : Column.DataType;
+
+                    var defaultValue = Column.DefaultValue.ToString();
+                    switch (defaultValue.ToUpper())
+                    {
+                        case "UUID":
+                            defaultValue = "newid()";
+                            break;
+                        case "NOW":
+                            defaultValue = "getdate()";
+                            break;
+                    }
+
+                    if (Column.Length == 0 && ",varchar,nvarchar,".IndexOf("," + Column.DataType.ToString() + ",", StringComparison.OrdinalIgnoreCase) > -1)
+                    {
+                        Column.Length = 2000;
+                    }
+
                     if (Column.AutoIncrement && Column.DataType.ToString().ToLower() != "uniqueidentifier")
                     {
                         Fields += String.Format(@"
-                    [{0}] {1} IDENTITY({2},1) NOT NULL,", Column.Name, Column.DataType, (Column.DefaultValue.IsNullOrEmpty() ? 1 : Column.DefaultValue));
+    [{0}] {1} IDENTITY({2},{3}) NOT NULL,", Column.Name, Column.DataType, (defaultValue.IsNullOrEmpty() ? 1 : defaultValue.ToCast<int>()), Column.AutoIncrementStep);
                     }
                     else
                         Fields += String.Format(@"
-                        [{0}] {1}{2},",
+    [{0}] {1}{2},",
                                       Column.Name,
                                       Column.DataType,
                                       (((Column.Length == 0 && ",varchar,nvarchar,".IndexOf("," + Column.DataType.ToString().ToLower() + ",") == -1) ||
-                                      ",int,bigint,smallint,".IndexOf("," + Column.DataType.ToString().ToLower() + ",") > -1
+                                      ",int,bigint,smallint,tinyint,".IndexOf("," + Column.DataType.ToString().ToLower() + ",") > -1
                                       ) ? " " : ("(" + (Column.Length == 0 ? 20 : Column.Length) + ") ")) +
-                                      ((Column.IsNullable && !Column.PrimaryKey) ? "NULL" : "NOT NULL") + (Column.DefaultValue.IsNullOrEmpty() ? "" : (" DEFAULT (" + ((",int,bigint,smallint,".IndexOf("," + Column.DataType.ToString().ToLower() + ",") > -1 || (Column.DefaultValue.ToString().StartsWith("'") && Column.DefaultValue.ToString().EndsWith("'")) || Column.DefaultValue.ToString().ToLower() == "newid()" || Column.DefaultValue.ToString().ToLower() == "getdate()") ? Column.DefaultValue : ("'" + Column.DefaultValue + "'")) + ")")));
+                                      ((Column.IsNullable && !Column.PrimaryKey) ? "NULL" : "NOT NULL") + (defaultValue.IsNullOrEmpty() ? "" : (" DEFAULT (" + ((",int,bigint,smallint,tinyint,".IndexOf("," + Column.DataType.ToString().ToLower() + ",") > -1 || (defaultValue.StartsWith("'") && defaultValue.EndsWith("'")) || defaultValue == "newid()" || defaultValue.ToString().ToLower() == "getdate()") ? defaultValue : ("'" + defaultValue + "'")) + ")")));
                     if (Column.PrimaryKey)
                     {
                         PrimaryKey = String.Format(@"
@@ -391,7 +410,28 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'{0}' , @level0
             if (PrimaryKey.IsNullOrEmpty()) PrimaryKey = "ID";
             if (PrimaryKey.IsNotNullOrEmpty()) Fields += @"CONSTRAINT [PK_{0}] PRIMARY KEY CLUSTERED({1})
 WITH(PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON[PRIMARY]".format(Table.Name, PrimaryKey);
-            SQLString = SQLString.format(Table.Name, Fields, Indexs, Description);
+            var tableIndexs = modelType.GetTableIndexAttributes();
+            var SbrIndexs = new StringBuilder();
+            if (tableIndexs == null || tableIndexs.Length == 0)
+            {
+                SbrIndexs.AppendLine($@"
+IF EXISTS (SELECT * FROM SYSINDEXES WHERE NAME='IX_{Table.Name}')
+    DROP INDEX {Table.Name}.IX_{Table.Name};
+CREATE NONCLUSTERED INDEX IX_{Table.Name}
+ON {Table.Name}({Indexs})");
+            }
+            else
+            {
+                tableIndexs.Each(index =>
+                {
+                    SbrIndexs.AppendLine($@"
+IF EXISTS (SELECT * FROM SYSINDEXES WHERE NAME='{index.Name}')
+    DROP INDEX {Table.Name}.{index.Name};
+CREATE {index.TableIndexType.ToString().ToUpper()} INDEX {index.Name}
+ON {Table.Name}({(from a in index.Keys select a.RemovePattern(@",[a-z]*$").Replace(",", " ")).Join(",")})");
+                });
+            }
+            SQLString = SQLString.format(Table.Name, Fields, SbrIndexs.ToString(), Description);
 
             return base.ExecuteScalar(SQLString).ToString().ToInt16() == 1;
         }
@@ -400,7 +440,97 @@ WITH(PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_
         /// </summary>
         /// <typeparam name="T">类型</typeparam>
         /// <returns></returns>
-        public virtual Boolean CreateTable<T>()=> CreateTable(typeof(T));
+        public virtual Boolean CreateTable<T>(string tableName = "") => CreateTable(typeof(T), tableName);
+        #endregion
+
+        #region 当前表的所有索引
+        /// <summary>
+        /// 获取表所有索引
+        /// </summary>
+        /// <param name="tbName">表名</param>
+        /// <returns></returns>
+        public List<TableIndexAttribute> GetTableIndexs(string tbName)
+        {
+            if (tbName.IsNullOrEmpty()) return null;
+            var dt = this.ExecuteDataTable("sp_helpindex", CommandType.StoredProcedure, new DbParameter[]
+            {
+                this.MakeParam(@"objname",tbName)
+            });
+            if (dt == null || dt.Rows.Count == 0) return null;
+            var list = new List<TableIndexAttribute>();
+            dt.Rows.Each<DataRow>(a =>
+            {
+                var index = new TableIndexAttribute
+                {
+                    TableName = tbName,
+                    Name = a["index_name"].ToString()
+                };
+                var description = a["index_description"].ToString();
+                var keys = a["index_keys"].ToString();
+                var indexType = description.IsMatch(@"nonclustered") ? TableIndexType.NonClustered : TableIndexType.Clustered;
+                if (description.IsMatch(@"primary key"))
+                {
+                    index.Primary = true;
+                    if (description.IsMatch(@"unique"))
+                        index.TableIndexType = TableIndexType.Unique;
+                }
+                index.Keys = (from b in keys.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries) select b.EndsWith("(-)") ? b.Replace("(-)", ",DESC,") : (b + ",ASC,")).ToList();
+                list.Add(index);
+            });
+            return list;
+        }
+        #endregion
+
+        #region 是否存在表或视图
+        /// <summary>
+        /// 是否存在表或视图
+        /// </summary>
+        /// <param name="tableName">表或视图名</param>
+        /// <param name="modelType">类型</param>
+        /// <returns></returns>
+        public Boolean ExistsTable(string tableName, ModelType modelType = ModelType.Table)
+        {
+            var xtype = "";
+            if (modelType == ModelType.Table)
+                xtype = "U";
+            else if (modelType == ModelType.View)
+                xtype = "V";
+            else if (ModelType.Procedure == modelType)
+                xtype = "P";
+            else if (modelType == ModelType.Function)
+                xtype = "FN";
+            return this.ExecuteScalar("select count(0) from SysObjects where xtype=@xtype and name=@tbName;", CommandType.Text, new DbParameter[]{
+                this.MakeParam(@"xtype",xtype),
+                this.MakeParam(@"tbName",tableName)
+            }).ToCast<int>() > 0;
+        }
+        #endregion
+
+        #region 创建视图
+        /// <summary>
+        /// 创建视图
+        /// </summary>
+        /// <param name="modelType">类型</param>
+        /// <param name="viewName">视图名称</param>
+        /// <returns></returns>
+        public Boolean CreateView(Type modelType, string viewName = "")
+        {
+            var type = modelType;
+            var view = modelType.GetViewAttribute(false);
+            var table = modelType.GetTableAttribute(false);
+            if (view == null && table == null) return false;
+            if (table != null && table.ModelType != ModelType.View) return false;
+            if (view == null) return false;
+                if (viewName.IsNotNullOrEmpty()) view.Name = viewName;
+            if (view.Definition.IsNullOrEmpty()) return false;
+            else
+            {
+                var count = this.ExecuteScalar($@"SELECT count(0) FROM sys.sql_modules AS m INNER JOIN sys.all_objects AS o ON m.object_id = o.object_id WHERE o.[type] = 'v' and o.Name = '{view.Name}'").ToCast<int>();
+                if (count > 0) return true;
+                else return this.ExecuteNonQuery($@"CREATE VIEW [dbo].[{view.Name}] AS
+    {view.Definition.ReplacePattern(@"ifnull", "ISNULL")};") > 0;
+            }
+        }
         #endregion
 
         #endregion

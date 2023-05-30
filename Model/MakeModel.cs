@@ -105,7 +105,7 @@ namespace {namespace}
     /// QQ : 7092734
     /// Site : www.zhuovi.com
     /// Update Time : {Time}
-    /// </summary>{ViewAttribute}
+    /// </summary>{IndexAttribute}{ViewAttribute}
     [Table(Name = ""{TableFullName}"", PrimaryKey = ""{PrimaryKey}"", ModelType = ModelType.{modelType}, ConnName = ""{ConnName}"", ConnIndex = {ConnIndex})]
     public class {TableName} : Entity<{TableName}>
 	{
@@ -217,8 +217,26 @@ namespace {namespace}
                     { "ProviderType", "DbProviderType." + providerType.ToString() },
                     { "ConnName", connName },
                     { "ConnIndex", connIndex.ToString() },
-                    { "ViewAttribute",table.ModelType== ModelType.Table?"":(Environment.NewLine+ $@"    [View(Name = ""{tbName}"", Definition = ""{Views.First(a=>a.Name == tbName)?.Definition.RemovePattern(@"^Create\s+view\s+[a-z0-9-_]*?\s+AS\s+").RemovePattern(@"[\r\n""]+").ReplacePattern(@"\s{2,}"," ")}"")]")  }
+                    { "ViewAttribute",table.ModelType== ModelType.Table?"":(Environment.NewLine+ $@"    [View(Name = ""{tbName}"", Definition = ""{Views.First(a=>a.Name == tbName)?.Definition.RemovePattern(@"^Create\s+view\s+[a-z0-9-_]*?\s+AS\s+").ReplacePattern(@"[\r\n""]+"," ").ReplacePattern(@"\s{2,}"," ")}"")]")  },
+                    { "IndexAttribute","" }
                 };
+                /*当前表的所有索引*/
+                var Indexs = this.DataHelper.GetTableIndexs(tbName);
+                if(Indexs!=null && Indexs.Any())
+                {
+                    var index = new StringBuilder();
+                    Indexs.Each(i =>
+                    {
+                        index.Append($@"{Environment.NewLine}    [TableIndex(""{i.TableName}"", ""{i.Name}"", TableIndexType.{i.TableIndexType}, {i.Primary.ToString().ToLower()}");
+                        i.Keys.Each(k =>
+                        {
+                            index.Append($@", ""{k}""");
+                        });
+                        index.Append(")]");
+                    });
+                    keys["IndexAttribute"] = index.ToString();
+                }
+
                 IList<DataColumns> Columns = this.DataHelper.GetColumns(table.Name);
                 string ColumnString = "";
                 var PrimaryKey = "";
