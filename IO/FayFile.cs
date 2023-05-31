@@ -73,7 +73,17 @@ namespace XiaoFeng.IO
         /// 删除目录
         /// </summary>
         /// <returns></returns>
-        public void DeleteDirectory() => FileHelper.DeleteDirectory(this.Path);
+        public void DeleteDirectory() => this.Path.ToDirectoryInfo().Delete(true);
+        /// <summary>
+        /// 获取文件字节
+        /// </summary>
+        /// <returns>文件字节</returns>
+        public byte[] GetBytes() => FileHelper.OpenBytes(this.Path);
+        /// <summary>
+        /// 获取文件内容文本
+        /// </summary>
+        /// <returns>文件内容文本</returns>
+        public string GetText() => FileHelper.OpenText(this.Path);
         #endregion
     }
 }

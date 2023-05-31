@@ -1285,7 +1285,7 @@ namespace XiaoFeng
             return o.ToString();
         }
         /// <summary>
-        /// 格式化数据[数据库用]
+        /// 格式化数据[存入数据库用]
         /// </summary>
         /// <param name="_">对象</param>
         /// <returns></returns>

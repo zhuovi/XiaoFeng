@@ -115,7 +115,9 @@ namespace XiaoFeng.Config
         {
             var attr = this.ConfigFileAttribute;
             if (attr == null) return false;
-            if (!Directory.Exists(Path.GetDirectoryName(attr.FileName))) Directory.CreateDirectory(Path.GetDirectoryName(attr.FileName));
+            var configPath = base.GetConfigPath(attr.FileName);
+            var dirPath = attr.FileName.GetDirectoryName();
+            if (!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
             string val = "";
             if (attr.Format == ConfigFormat.Json)
             {
@@ -135,7 +137,7 @@ namespace XiaoFeng.Config
             }
             if (val.IsNotNullOrEmpty())
             {
-                var f = FileHelper.WriteText(attr.FileName, val, Encoding.UTF8);
+                var f = FileHelper.WriteText(configPath, val, Encoding.UTF8);
                 /*
                 * 更新缓存,有延迟,故直接清除缓存
                 * Cache.CacheHelper.Set(attr.CacheKey, this as TConfig, attr.FileName);

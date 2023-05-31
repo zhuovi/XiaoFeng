@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
@@ -27,6 +28,24 @@ namespace XiaoFeng.Config
         /// <param name="reload">是否强制从文件中读取 默认否</param>
         /// <returns></returns>
         TConfig Get(Boolean reload = false);
+        /// <summary>
+        /// 获取配置
+        /// </summary>
+        /// <param name="func">条件</param>
+        /// <returns></returns>
+        TConfig GetEntity(Func<TConfig, Boolean> func);
+        /// <summary>
+        /// 获取数据列表
+        /// </summary>
+        /// <param name="func">条件</param>
+        /// <returns></returns>
+        IEnumerable<TConfig> GetEntities(Func<TConfig, Boolean> func);
+        /// <summary>
+        /// 获取泛路径配置
+        /// </summary>
+        /// <param name="value">泛值</param>
+        /// <returns></returns>
+        TConfig GetEntity(object value);
         #endregion
     }
     /// <summary>

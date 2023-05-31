@@ -72,6 +72,12 @@ namespace XiaoFeng.Config
         /// </summary>
         /// <returns></returns>
         public static TConfig Get() => new TConfig().Get(true);
+        /// <summary>
+        /// 获取泛配置
+        /// </summary>
+        /// <param name="value">泛值</param>
+        /// <returns></returns>
+        public static TConfig Get(object value) => new TConfig().GetEntity(value);
 
         #region 获取配置
         /// <summary>
@@ -94,6 +100,19 @@ namespace XiaoFeng.Config
             if (func == null) func = a => true;
             return new List<TConfig>() { this as TConfig }.Where(func);
         }
+        /// <summary>
+        /// 获取泛路径配置
+        /// </summary>
+        /// <param name="value">泛值</param>
+        /// <returns></returns>
+        public virtual TConfig GetEntity(object value)
+        {
+            var attr = this.ConfigFileAttribute;
+            if (attr == null) return default(TConfig);
+            if (IsGenericPath(attr.FileName))
+                this[GetGenericKey(attr.FileName)] = value;
+            return this.Get(true);
+        }
         #endregion
 
         #region 读取内容
@@ -105,9 +124,11 @@ namespace XiaoFeng.Config
         {
             var attr = this.ConfigFileAttribute;
             if (attr == null) return string.Empty;
-            if (File.Exists(attr.FileName))
+            if (IsGenericPath(attr.FileName) && this[GetGenericKey(attr.FileName)].IsNullOrEmpty()) return string.Empty;
+            var configPath = this.GetConfigPath(attr.FileName);
+            if (File.Exists(configPath))
             {
-                return this.OpenFile(attr.FileName);
+                return this.OpenFile(configPath);
             }
             else
             {
@@ -140,9 +161,11 @@ namespace XiaoFeng.Config
             if (attr == null) return null;
             var Reload = false;
             var cache = CacheFactory.Create(CacheType.Memory);
+            var cacheKey = this.GetConfigPath(attr.CacheKey);
+            var configPath = this.GetConfigPath(attr.FileName);
             if (!reload)
             {
-                var val = cache.Get(attr.CacheKey);
+                var val = cache.Get(cacheKey);
                 if (val == null || val == default(TConfig))
                     Reload = true;
                 else
@@ -169,7 +192,7 @@ namespace XiaoFeng.Config
 
                 }
                 if (this.ConfigFileAttribute == null) this.ConfigFileAttribute = attr;
-                if (Reload) cache.Set(attr.CacheKey, this as TConfig, attr.FileName);
+                if (Reload) cache.Set(cacheKey, this as TConfig, configPath);
             }
             return this as TConfig;
         }
@@ -185,7 +208,10 @@ namespace XiaoFeng.Config
         {
             var attr = this.ConfigFileAttribute;
             if (attr == null) return false;
-            if (!Directory.Exists(Path.GetDirectoryName(attr.FileName))) Directory.CreateDirectory(Path.GetDirectoryName(attr.FileName));
+            if (IsGenericPath(attr.FileName) && this[GetGenericKey(attr.FileName)].IsNullOrEmpty()) return false;
+            var configPath = this.GetConfigPath(attr.FileName);
+            var dirPath = configPath.GetDirectoryName();
+            if (!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
             string val = "";
             if (attr.Format == ConfigFormat.Json)
             {
@@ -205,12 +231,12 @@ namespace XiaoFeng.Config
             }
             if (val.IsNotNullOrEmpty())
             {
-                var f = FileHelper.WriteText(attr.FileName, val, Encoding.UTF8);
+                var f = FileHelper.WriteText(configPath, val, Encoding.UTF8);
                 /*
                  * 更新缓存,有延迟,故直接清除缓存
                  * Cache.CacheHelper.Set(attr.CacheKey, this as TConfig, attr.FileName);
                  */
-                CacheFactory.Create(CacheType.Memory).Remove(attr.CacheKey);
+                CacheFactory.Create(CacheType.Memory).Remove(this.GetConfigPath(attr.CacheKey));
                 return f;
             }
             return false;
@@ -227,9 +253,10 @@ namespace XiaoFeng.Config
         {
             var flag = "Encrypt";
             var content = string.Empty;
-            if (!FileHelper.Exists(path)) return string.Empty;
+            var configPath = this.GetConfigPath(path);
+            if (!FileHelper.Exists(configPath)) return string.Empty;
 
-            using (var fs = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+            using (var fs = new FileStream(configPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
             {
                 /*长度少于加密标识,说明一定不会加密,直接返回数据*/
                 if (fs.Length <= flag.Length)
@@ -319,15 +346,59 @@ namespace XiaoFeng.Config
         {
             var attr = this.ConfigFileAttribute;
             var cache = CacheFactory.Create(CacheType.Memory);
-            cache.Remove(attr.CacheKey);
+            cache.Remove(this.GetConfigPath(attr.CacheKey));
             if (attr == null) return false;
-            if (File.Exists(attr.FileName))
-                return FileHelper.DeleteFile(attr.FileName);
+            var configPath = this.GetConfigPath(attr.FileName);
+            if (File.Exists(configPath))
+                return FileHelper.DeleteFile(configPath);
             return false;
         }
         #endregion
 
+        #region 获取配置文件路径
+        /// <summary>
+        /// 是否是泛路径
+        /// </summary>
+        /// <param name="path">路径</param>
+        /// <returns></returns>
+        public Boolean IsGenericPath(string path) => path.IsMatch(@"\{[a-z0-9_-]+\}");
+        /// <summary>
+        /// 获取泛key
+        /// </summary>
+        /// <param name="path">路径</param>
+        /// <returns></returns>
+        public string GetGenericKey(string path) => IsGenericPath(path) ? path.GetMatch(@"(?<a>\{[a-z0-9_-]+\})").Trim(new char[] { '{', '}' }) : string.Empty;
+        /// <summary>
+        /// 获取配置文件路径
+        /// </summary>
+        /// <param name="path">配置文件路径</param>
+        /// <returns>配置文件路径</returns>
+        public string GetConfigPath(string path)
+        {
+            return IsGenericPath(path) ?
+                 path.ReplacePattern(@"(?<a>\{[a-z0-9_-]+\})", m => GetValue(this[m.Groups["a"].Value.Trim(new char[] {'{','}'})])) : path;
+        }
         #endregion
 
+        #region 转换为路径格式
+        /// <summary>
+        /// 转换为路径格式
+        /// </summary>
+        /// <param name="o">数据</param>
+        /// <returns></returns>
+        public string GetValue(object o)
+        {
+            if (o == null) return "";
+            Type t = o.GetType();
+            if (t.IsEnum) return t.IsDefined(typeof(FlagsAttribute)) ? o.ToString() : ((int)o).ToString();
+            if (t == typeof(string)) return o.ToString().RemovePattern(@"(\r|\n|\t|\s|:|\\|\/|\*|\?|\""|\>|\<|\|)+");
+            if (t == typeof(Guid)) return new Guid(o.ToString()).ToString("N");
+            if (t == typeof(DateTime)) return ((DateTime)o).ToString("yyyyMMddHHmmssfffffff");
+            if (t == typeof(bool)) return o.ToString().ToLower();
+            return o.ToString();
+        }
+        #endregion
+
+        #endregion
     }
 }
