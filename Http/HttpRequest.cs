@@ -913,7 +913,7 @@ namespace XiaoFeng.Http
         /// <param name="value">值</param>
         /// <param name="formType">类型</param>
         /// <returns></returns>
-        public IHttpRequest AddFormData(string key, string value, FormType formType)
+        public IHttpRequest AddFormData(string key, string value, FormType formType = FormType.Text)
         {
             return this.AddFormData(new Http.FormData(key, value, formType));
         }

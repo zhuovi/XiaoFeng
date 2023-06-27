@@ -25,7 +25,7 @@
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageReleaseNotes>删除过渡命名空间XiaoFeng.Model.Core;优化通过模型生成数据表;新增索引属性TableIndexAttribute;新增模型索引属性;新增获取模型索引属性;新增查找数据库表是否存在;修复获取枚举GetDescription时无当前枚举时报错;增加调度作业Ijob中参数可通过方法分步设置;设置作业任务接口IJobWorker;增加FayFile的GetBytes,GetText()方法;ConfigSet增加泛路径设置,一个配置模型匹配多个配置文件;</PackageReleaseNotes>
+		<PackageReleaseNotes>删除过渡命名空间XiaoFeng.Model.Core;优化通过模型生成数据表;新增索引属性TableIndexAttribute;新增模型索引属性;新增获取模型索引属性;新增查找数据库表是否存在;修复获取枚举GetDescription时无当前枚举时报错;增加调度作业Ijob中参数可通过方法分步设置;设置作业任务接口IJobWorker;增加FayFile的GetBytes,GetText()方法;ConfigSet增加泛路径设置,一个配置模型匹配多个配置文件;修改FileHelper中DeleteFile参数为params可以同时删除多个文件操作;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<DelaySign>False</DelaySign>
 		<IsPackable>true</IsPackable>

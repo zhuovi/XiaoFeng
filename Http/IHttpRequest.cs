@@ -204,7 +204,7 @@ namespace XiaoFeng.Http
         /// <param name="value">值</param>
         /// <param name="formType">类型</param>
         /// <returns></returns>
-        IHttpRequest AddFormData(string key, string value, FormType formType);
+        IHttpRequest AddFormData(string key, string value, FormType formType = FormType.Text);
         /// <summary>
         /// 添加formdata
         /// </summary>

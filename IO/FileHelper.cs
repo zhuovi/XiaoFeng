@@ -343,11 +343,12 @@ MIDI (mid)，文件头：4D546864
         /// </summary>
         /// <param name="path">文件路径</param>
         /// <returns></returns>
-        public static Boolean DeleteFile(string path)
+        public static Boolean DeleteFile(params string[] path)
         {
+            if(path.Length == 0) return false;
             try
             {
-                Delete(path, FileAttribute.File);
+                path.Each(p => Delete(p, FileAttribute.File));                
                 return true;
             }
             catch (Exception ex)
@@ -397,11 +398,12 @@ MIDI (mid)，文件头：4D546864
         /// 删除目录
         /// </summary>
         /// <param name="path">目录路径</param>
-        public static void DeleteDirectory(string path)
+        public static void DeleteDirectory(params string[] path)
         {
+            if (path.Length == 0) return;
             try
             {
-                Delete(path, FileAttribute.Directory);
+                path.Each(p => Delete(p, FileAttribute.Directory));
             }
             catch (Exception ex)
             {
