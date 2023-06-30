@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Security;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices.ComTypes;
 using System.Security.Cryptography.X509Certificates;
@@ -259,7 +260,7 @@ namespace XiaoFeng.Http
         /// <summary>
         /// 获取响应数据
         /// </summary>
-        /// <returns></returns>
+        /// <returns>响应数据</returns>
         public async Task<HttpResponse> GetResponseAsync()
         {
             if (this.Address.IsNullOrEmpty() || !this.Address.IsSite()) return null;
@@ -498,7 +499,7 @@ namespace XiaoFeng.Http
         /// <summary>
         /// 获取响应数据
         /// </summary>
-        /// <returns></returns>
+        /// <returns>响应数据</returns>
         public HttpResponse GetResponse() => this.GetResponseAsync().ConfigureAwait(false).GetAwaiter().GetResult();
         #endregion
 
@@ -506,7 +507,7 @@ namespace XiaoFeng.Http
         /// <summary>
         /// 获取响应数据
         /// </summary>
-        /// <returns></returns>
+        /// <returns>响应数据</returns>
         private async Task<HttpResponse> GetHttpResponseAsync()
         {
             var Response = new HttpResponse();
@@ -626,14 +627,14 @@ namespace XiaoFeng.Http
             }
             return Response;
         }
-		#endregion
+        #endregion
 
-		#region 获取响应数据 Socket
-		/// <summary>
-		/// 获取响应数据
-		/// </summary>
-		/// <returns></returns>
-		public async Task<HttpResponse> GetHttpSocketResponseAsync()
+        #region 获取响应数据 Socket
+        /// <summary>
+        /// 获取响应数据
+        /// </summary>
+        /// <returns>响应数据</returns>
+        public async Task<HttpResponse> GetHttpSocketResponseAsync()
         {
             var httpSocket = new HttpSocket(this);
             return await httpSocket.SendRequestAsync().ConfigureAwait(false);
@@ -666,14 +667,14 @@ namespace XiaoFeng.Http
             var f = m.GetMethod("IdleServicePointTimeoutCallback", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
             f.Invoke(null, new object[] { null, 0, servicePoint });*/
         }
-		#endregion
+        #endregion
 
-		#region 获取请求Body
-		/// <summary>
-		/// 获取请求Body
-		/// </summary>
-		/// <returns></returns>
-		public byte[] GetReuqestBody()
+        #region 获取请求Body
+        /// <summary>
+        /// 获取请求Body
+        /// </summary>
+        /// <returns>请求Body</returns>
+        public byte[] GetReuqestBody()
         {
 			byte[] RequestData = Array.Empty<byte>();
 			if (",POST,GET,DELETE,PUT,".IndexOf("," + this.Method.Method.ToUpper() + ",", StringComparison.OrdinalIgnoreCase) > -1)
@@ -827,13 +828,13 @@ namespace XiaoFeng.Http
         /// </summary>
         /// <param name="name">名称</param>
         /// <param name="value">值</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         public IHttpRequest AddCookie(string name, string value) => this.AddCookie(new Cookie(name, value));
         /// <summary>
         /// 添加Cookie
         /// </summary>
         /// <param name="cookie">cookie</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         public IHttpRequest AddCookie(Cookie cookie)
         {
             if (cookie.Domain.IsNullOrEmpty() && this.Address.IsNotNullOrEmpty())
@@ -846,7 +847,7 @@ namespace XiaoFeng.Http
         /// 添加Cookie
         /// </summary>
         /// <param name="collection">cookie集</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         public IHttpRequest AddCookie(CookieCollection collection)
         {
             if (this.CookieContainer == null) this.CookieContainer = new CookieContainer();
@@ -861,7 +862,7 @@ namespace XiaoFeng.Http
         /// </summary>
         /// <param name="key">key</param>
         /// <param name="value">值</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         public IHttpRequest AddParameter(string key, string value)
         {
             if (this.Data == null) this.Data = new Dictionary<string, string>();
@@ -875,7 +876,7 @@ namespace XiaoFeng.Http
         /// 添加参数
         /// </summary>
         /// <param name="data">数据</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         public IHttpRequest AddParameter(Dictionary<string, string> data)
         {
             if (this.Data == null) { this.Data = data; return this; }
@@ -888,6 +889,30 @@ namespace XiaoFeng.Http
             });
             return this;
         }
+        /// <summary>
+        /// 添加参数
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="model">值</param>
+        /// <returns>请求对象</returns>
+        public IHttpRequest AddParameter<T>(T model) where T : new()
+        {
+            if (model == null) return this;
+            if (this.Data == null) this.Data = new Dictionary<string, string>();
+            model.GetType().GetPropertiesAndFields().Each(m =>
+            {
+                if(m is PropertyInfo p)
+                {
+                    this.Data.Add(m.Name, p.GetValue(model).getValue());
+                }
+                else
+                {
+                    var f = m as FieldInfo;
+                    this.Data.Add(m.Name,f.GetValue(model).getValue());
+                }
+            });
+            return this;
+        }
         #endregion
 
         #region 添加formdata
@@ -895,7 +920,7 @@ namespace XiaoFeng.Http
         /// 添加formdata
         /// </summary>
         /// <param name="formData">formdata</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         public IHttpRequest AddFormData(FormData formData)
         {
             if (this.FormData == null) this.FormData = new List<FormData>();
@@ -912,7 +937,7 @@ namespace XiaoFeng.Http
         /// <param name="key">名称</param>
         /// <param name="value">值</param>
         /// <param name="formType">类型</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         public IHttpRequest AddFormData(string key, string value, FormType formType = FormType.Text)
         {
             return this.AddFormData(new Http.FormData(key, value, formType));
@@ -921,7 +946,7 @@ namespace XiaoFeng.Http
         /// 添加formdata
         /// </summary>
         /// <param name="forms">formdata集合</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         public IHttpRequest AddFormData(List<FormData> forms)
         {
             forms.Each(f =>
@@ -941,8 +966,18 @@ namespace XiaoFeng.Http
         /// 设置请求类型
         /// </summary>
         /// <param name="method">请求类型</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         public IHttpRequest SetMethod(HttpMethod method)
+        {
+            this.Method = method;
+            return this;
+        }
+        /// <summary>
+        /// 设置请求类型
+        /// </summary>
+        /// <param name="method">请求类型</param>
+        /// <returns>请求对象</returns>
+        public IHttpRequest SetMethod(System.Net.Http.HttpMethod method)
         {
             this.Method = method;
             return this;
@@ -954,7 +989,7 @@ namespace XiaoFeng.Http
         /// 设置编码
         /// </summary>
         /// <param name="encoding">编码</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         public IHttpRequest SetEncoding(Encoding encoding)
         {
             this.Encoding = encoding;
@@ -967,7 +1002,7 @@ namespace XiaoFeng.Http
         /// 设置请求内容
         /// </summary>
         /// <param name="httpContent">请求内容</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         public IHttpRequest SetHttpContent(HttpContent httpContent)
         {
             this.HttpContent = httpContent;
@@ -980,7 +1015,7 @@ namespace XiaoFeng.Http
         /// 设置内容类型
         /// </summary>
         /// <param name="contentType">内容类型</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         public IHttpRequest SetContentType(string contentType)
         {
             this.ContentType = contentType;
@@ -1005,10 +1040,20 @@ namespace XiaoFeng.Http
         /// 设置超时
         /// </summary>
         /// <param name="timeout">超时时间 单位为毫秒</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         public IHttpRequest SetTimeout(int timeout)
         {
             this.Timeout = timeout;
+            return this;
+        }
+        /// <summary>
+        /// 设置超时
+        /// </summary>
+        /// <param name="timeSpan">时间间隔</param>
+        /// <returns>请求对象</returns>
+        public IHttpRequest SetTimeout(TimeSpan timeSpan)
+        {
+            this.Timeout = (int)timeSpan.TotalMilliseconds;
             return this;
         }
         #endregion
@@ -1018,7 +1063,7 @@ namespace XiaoFeng.Http
         /// 设置代理
         /// </summary>
         /// <param name="proxy">代理</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         public IHttpRequest SetWebProxy(WebProxy proxy)
         {
             this.WebProxy = proxy;
@@ -1029,7 +1074,7 @@ namespace XiaoFeng.Http
         /// </summary>
         /// <param name="host">主机</param>
         /// <param name="port">端口</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         public IHttpRequest SetWebProxy(string host, int port) => this.SetWebProxy(new WebProxy(host, port));
         #endregion
 
@@ -1038,7 +1083,7 @@ namespace XiaoFeng.Http
         /// 设置请求将跟随的重定向的最大数目
         /// </summary>
         /// <param name="count">数目</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         public IHttpRequest SetMaximumAutomaticRedirections(int count)
         {
             if (count <= 0)
@@ -1057,7 +1102,7 @@ namespace XiaoFeng.Http
         /// 设置请求标头
         /// </summary>
         /// <param name="accept">请求标头</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         public IHttpRequest SetAccept(string accept)
         {
             this.Accept = accept;
@@ -1070,7 +1115,7 @@ namespace XiaoFeng.Http
         /// 设置地址
         /// </summary>
         /// <param name="url">地址</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         public IHttpRequest SetAddress(string url)
         {
             this.Address = url;
@@ -1081,7 +1126,7 @@ namespace XiaoFeng.Http
         /// </summary>
         /// <param name="url">地址</param>
         /// <param name="method">请求类型</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         public IHttpRequest SetAddress(string url, HttpMethod method)
         {
             this.Address = url;
@@ -1096,13 +1141,25 @@ namespace XiaoFeng.Http
         /// </summary>
         /// <param name="data">数据</param>
         /// <param name="contentType">内容类型</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         public IHttpRequest SetBodyData(string data, string contentType = "application/json")
         {
             this.Method = HttpMethod.Post;
             this.ContentType = contentType;
             this.BodyData = data;
             return this;
+        }
+        /// <summary>
+        /// 设置Body数据
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="model">数据</param>
+        /// <param name="contentType">内容类型</param>
+        /// <returns>请求对象</returns>
+        public IHttpRequest SetBodyData<T>(T model, string contentType = "application/json") where T : new()
+        {
+            if (model == null) return this;
+            return this.SetBodyData(model.ToJson(), contentType);
         }
         #endregion
 
@@ -1111,7 +1168,7 @@ namespace XiaoFeng.Http
         /// 设置 User-agent HTTP 标头的值
         /// </summary>
         /// <param name="userAgent">User-agent HTTP 标头的值</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         public IHttpRequest SetUserAgent(string userAgent)
         {
             this.UserAgent = userAgent;
@@ -1124,7 +1181,7 @@ namespace XiaoFeng.Http
         /// 设置请求的身份验证信息
         /// </summary>
         /// <param name="credentials">请求的身份验证信息</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         public IHttpRequest SetCredentials(ICredentials credentials)
         {
             this.Credentials = credentials;
@@ -1137,7 +1194,7 @@ namespace XiaoFeng.Http
         /// 设置 Referer HTTP 标头的值
         /// </summary>
         /// <param name="referer">Referer HTTP 标头的值</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         public IHttpRequest SetReferer(string referer)
         {
             this.Referer = referer;
@@ -1151,7 +1208,7 @@ namespace XiaoFeng.Http
         /// </summary>
         /// <param name="path">证书路径</param>
         /// <param name="password">证书密码</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         public IHttpRequest SetCert(string path, string password)
         {
             this.CertPath = path;
@@ -1166,8 +1223,8 @@ namespace XiaoFeng.Http
         /// </summary>
         /// <param name="key">key</param>
         /// <param name="value">值</param>
-        /// <returns></returns>
-        public IHttpRequest AddHeader(string key,string value)
+        /// <returns>请求对象</returns>
+        public IHttpRequest AddHeader(string key, string value)
         {
             if (key.IsNullOrEmpty()) return this;
             if (this.Headers == null) this.Headers = new Dictionary<string, string>();
@@ -1202,7 +1259,7 @@ namespace XiaoFeng.Http
         /// 设置请求内核
         /// </summary>
         /// <param name="httpCore">请求内核</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         public IHttpRequest SetHttpCore(HttpCore httpCore)
         {
             this.HttpCore = httpCore;

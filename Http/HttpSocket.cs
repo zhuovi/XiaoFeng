@@ -488,13 +488,18 @@ namespace XiaoFeng.Http
 				}
 			}
 			var uri = new Uri(this.Request.Address);
-			ssl.AuthenticateAsClient(uri.Host, this.Request.ClentCertificates, System.Security.Authentication.SslProtocols.Tls12, false);
+			if (this.Request.ClentCertificates != null && this.Request.ClentCertificates.Count > 0)
+			{
+				ssl.AuthenticateAsClient(uri.Host, this.Request.ClentCertificates, System.Security.Authentication.SslProtocols.Tls12, false);
+			}
+			else
+				ssl.AuthenticateAsClient(uri.Host);
 			if (ssl.IsAuthenticated)
 			{
 				return ssl;
 			}
 			else
-			{
+			{ 
 				throw new Exception("认证失败.");
 			}
 		}

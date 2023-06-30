@@ -151,12 +151,12 @@ namespace XiaoFeng.Http
         /// <summary>
         /// 获取响应数据
         /// </summary>
-        /// <returns></returns>
+        /// <returns>响应对像</returns>
         Task<HttpResponse> GetResponseAsync();
         /// <summary>
         /// 获取响应数据
         /// </summary>
-        /// <returns></returns>
+        /// <returns>响应对像</returns>
         HttpResponse GetResponse();
         /// <summary>
         /// 取消请求
@@ -167,35 +167,45 @@ namespace XiaoFeng.Http
         /// </summary>
         /// <param name="name">名称</param>
         /// <param name="value">值</param>
+        /// <returns>请求对象</returns>
         IHttpRequest AddCookie(string name, string value);
         /// <summary>
         /// 添加Cookie
         /// </summary>
         /// <param name="cookie">cookie</param>
+        /// <returns>请求对象</returns>
         IHttpRequest AddCookie(Cookie cookie);
         /// <summary>
         /// 添加Cookie
         /// </summary>
         /// <param name="collection">cookie集</param>
+        /// <returns>请求对象</returns>
         IHttpRequest AddCookie(CookieCollection collection);
         /// <summary>
         /// 添加参数
         /// </summary>
         /// <param name="key">key</param>
         /// <param name="value">值</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         IHttpRequest AddParameter(string key, string value);
         /// <summary>
         /// 添加参数
         /// </summary>
         /// <param name="data">数据</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         IHttpRequest AddParameter(Dictionary<string, string> data);
+        /// <summary>
+        /// 添加参数
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="model">值</param>
+        /// <returns>请求对象</returns>
+        IHttpRequest AddParameter<T>(T model) where T : new();
         /// <summary>
         /// 添加formdata
         /// </summary>
         /// <param name="formData">formdata</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         IHttpRequest AddFormData(FormData formData);
         /// <summary>
         /// 添加formdata
@@ -203,20 +213,26 @@ namespace XiaoFeng.Http
         /// <param name="key">名称</param>
         /// <param name="value">值</param>
         /// <param name="formType">类型</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         IHttpRequest AddFormData(string key, string value, FormType formType = FormType.Text);
         /// <summary>
         /// 添加formdata
         /// </summary>
         /// <param name="forms">formdata集合</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         IHttpRequest AddFormData(List<FormData> forms);
         /// <summary>
         /// 设置请求类型
         /// </summary>
         /// <param name="method">请求类型</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         IHttpRequest SetMethod(HttpMethod method);
+        /// <summary>
+        /// 设置请求类型
+        /// </summary>
+        /// <param name="method">请求类型</param>
+        /// <returns>请求对象</returns>
+        IHttpRequest SetMethod(System.Net.Http.HttpMethod method);
         /// <summary>
         /// 设置编码
         /// </summary>
@@ -233,90 +249,96 @@ namespace XiaoFeng.Http
         /// 设置超时
         /// </summary>
         /// <param name="timeout">超时时间 单位为毫秒</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         IHttpRequest SetTimeout(int timeout);
+        /// <summary>
+        /// 设置超时
+        /// </summary>
+        /// <param name="timeSpan">时间间隔</param>
+        /// <returns>请求对象</returns>
+        IHttpRequest SetTimeout(TimeSpan timeSpan);
         /// <summary>
         /// 设置代理
         /// </summary>
         /// <param name="proxy">代理</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         IHttpRequest SetWebProxy(WebProxy proxy);
         /// <summary>
         /// 设置代理
         /// </summary>
         /// <param name="host">主机</param>
         /// <param name="port">端口</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         IHttpRequest SetWebProxy(string host, int port);
         /// <summary>
         /// 设置请求将跟随的重定向的最大数目
         /// </summary>
         /// <param name="count">数目</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         IHttpRequest SetMaximumAutomaticRedirections(int count);
         /// <summary>
         /// 设置请求标头
         /// </summary>
         /// <param name="accept">请求标头</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         IHttpRequest SetAccept(string accept);
         /// <summary>
         /// 设置地址
         /// </summary>
         /// <param name="url">地址</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         IHttpRequest SetAddress(string url);
         /// <summary>
         /// 设置地址
         /// </summary>
         /// <param name="url">地址</param>
         /// <param name="method">请求类型</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         IHttpRequest SetAddress(string url, HttpMethod method);
         /// <summary>
         /// 设置Body数据
         /// </summary>
         /// <param name="data">数据</param>
         /// <param name="contentType">内容类型</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         IHttpRequest SetBodyData(string data, string contentType = "application/json");
         /// <summary>
         /// 设置 User-agent HTTP 标头的值
         /// </summary>
         /// <param name="userAgent">User-agent HTTP 标头的值</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         IHttpRequest SetUserAgent(string userAgent);
         /// <summary>
         /// 设置请求的身份验证信息
         /// </summary>
         /// <param name="credentials">请求的身份验证信息</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         IHttpRequest SetCredentials(ICredentials credentials);
         /// <summary>
         /// 设置 Referer HTTP 标头的值
         /// </summary>
         /// <param name="referer">Referer HTTP 标头的值</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         IHttpRequest SetReferer(string referer);
         /// <summary>
         /// 设置请求证书
         /// </summary>
         /// <param name="path">证书路径</param>
         /// <param name="password">证书密码</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         IHttpRequest SetCert(string path, string password);
         /// <summary>
         /// 设置内容类型
         /// </summary>
         /// <param name="contentType">内容类型</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         IHttpRequest SetContentType(string contentType);
         /// <summary>
         /// 设置头信息
         /// </summary>
         /// <param name="key">key</param>
         /// <param name="value">值</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         IHttpRequest AddHeader(string key, string value);
         /// <summary>
         /// 设置头信息
@@ -328,7 +350,8 @@ namespace XiaoFeng.Http
         /// 设置请求内核
         /// </summary>
         /// <param name="httpCore">请求内核</param>
-        /// <returns></returns>
+        /// <returns>请求对象</returns>
         IHttpRequest SetHttpCore(HttpCore httpCore);
+        
     }
 }
