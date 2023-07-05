@@ -28,7 +28,7 @@ namespace XiaoFeng.Collections
         /// <summary>
         /// 无参构造器
         /// </summary>
-        private ConnectionPool() { this.TimeOut = 10; }
+        private ConnectionPool() { this.TimeOut = 10 * 60; }
         /// <summary>
         /// 设置应用池名称
         /// </summary>
@@ -47,7 +47,7 @@ namespace XiaoFeng.Collections
             this.Max = Math.Max(Environment.ProcessorCount, this.Max);
             this.Min = Environment.ProcessorCount;
             if (poolName.IsNullOrEmpty())
-                this.Name = $"Pool<ConnectionPool>[{this.ConnectionString}]";
+                this.Name = $"Pool<ConnectionPool>[{this.ConnectionString.ReplacePattern(@"((password|pwd)=)([^;]*)(;|$)", "$1******$4")}]";
             //this.Init();
         }
         /// <summary>
@@ -62,7 +62,7 @@ namespace XiaoFeng.Collections
             this.Max = Math.Max(Environment.ProcessorCount, config.MaxPool);
             this.Min = Environment.ProcessorCount;
             if (poolName.IsNullOrEmpty())
-                this.Name = $"Pool<ConnectionPool>[{this.ConnectionString.ReplacePattern(@"((password|pwd)=)([\s\S]*)(;|$)","$1******$4")}]";
+                this.Name = $"Pool<ConnectionPool>[{this.ConnectionString.ReplacePattern(@"((password|pwd)=)([^;]*)(;|$)","$1******$4")}]";
             //this.Init();
         }
         #endregion
@@ -113,12 +113,13 @@ namespace XiaoFeng.Collections
                             Name = this.Name,
                             Async = true,
                             TimerType = TimerType.Interval,
-                            Period = Math.Min(this.TimeOut, 60) * 1000,
+                            Period = Math.Min(this.TimeOut, 1 * 60 * 60) * 1000,
                             SuccessCallBack = Work,
-                            StopCallBack = job => {
+                            StopCallBack = job =>
+                            {
                                 this.Job = null;
                                 //Console.ForegroundColor = ConsoleColor.Magenta;
-                                LogHelper.Warn($"-- 等待时长超过连接等待时长 {Math.Min(this.TimeOut, 60)}S 限制,终止当前作业[{this.Name}]. --");
+                                LogHelper.Warn($"-- 等待时长超过连接等待时长 {Math.Min(this.TimeOut, 1 * 60 * 60)}S 限制,终止当前作业[{this.Name}]. --");
                                 //Console.ResetColor();
                             }
                         };

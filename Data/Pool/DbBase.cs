@@ -66,7 +66,7 @@ namespace XiaoFeng.Data.Pool
                 if (_Pool != null) return _Pool;
                 //lock (obj)
                 {
-                    return _Pool = new ConnectionPool(this.Config, $"Pool<ConnectionPool>[{this.Config.ConnectionString}]");
+                    return _Pool = new ConnectionPool(this.Config, $"Pool<ConnectionPool>[{this.Config.ConnectionString.ReplacePattern(@"((password|pwd)=)([^;]*)(;|$)", "$1******$4")}]");
                 }
             }
         }
