@@ -267,8 +267,8 @@ MIDI (mid)，文件头：4D546864
             if (path.IsNullOrEmpty()) return false;
             var _path = GetBasePath(path);
             Create(_path.GetDirectoryName(), FileAttribute.Directory);
-            //try
-            //{
+            try
+            {
                 using (var fs = new FileStream(_path, offset == 0 ? FileMode.Create : FileMode.Append, FileAccess.Write, FileShare.Read,4096))
                 {
                     if (offset == 0)
@@ -293,12 +293,12 @@ MIDI (mid)，文件头：4D546864
                     fs.Dispose();
                 }
                 return true;
-            //}
-            //catch (Exception e)
-            //{
-            //    LogHelper.Error(e);
-            //    return false;
-            //}
+            }
+            catch (Exception e)
+            {
+                LogHelper.Error(e);
+                return false;
+            }
         }
         #endregion
 

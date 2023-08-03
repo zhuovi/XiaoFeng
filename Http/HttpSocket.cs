@@ -482,15 +482,15 @@ namespace XiaoFeng.Http
 				if (File.Exists(cert))
 				{
 					var x509 = this.Request.CertPassWord.IsNullOrEmpty() ? new X509Certificate2(cert) : new X509Certificate2(cert, this.Request.CertPassWord);
-					if (this.Request.ClentCertificates == null) this.Request.ClentCertificates = new X509Certificate2Collection(x509);
+					if (this.Request.ClientCertificates == null) this.Request.ClientCertificates = new X509Certificate2Collection(x509);
 					else
-						this.Request.ClentCertificates.Add(x509);
+						this.Request.ClientCertificates.Add(x509);
 				}
 			}
 			var uri = new Uri(this.Request.Address);
-			if (this.Request.ClentCertificates != null && this.Request.ClentCertificates.Count > 0)
+			if (this.Request.ClientCertificates != null && this.Request.ClientCertificates.Count > 0)
 			{
-				ssl.AuthenticateAsClient(uri.Host, this.Request.ClentCertificates, System.Security.Authentication.SslProtocols.Tls12, false);
+				ssl.AuthenticateAsClient(uri.Host, this.Request.ClientCertificates, System.Security.Authentication.SslProtocols.Tls12, false);
 			}
 			else
 				ssl.AuthenticateAsClient(uri.Host);

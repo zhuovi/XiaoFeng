@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 /****************************************************************
@@ -40,6 +42,22 @@ namespace XiaoFeng.Net
         /// 接收数据
         /// </summary>
         byte[] ReceivedDataBuffer { get; set; }
+        /// <summary>
+        /// 协议版本
+        /// </summary>
+        SslProtocols SslProtocols { get; set; }
+        /// <summary>
+        /// SSL证书
+        /// </summary>
+        X509Certificate Certificate { get; set; }
+        /// <summary>
+        /// 读超时
+        /// </summary>
+        int ReadTimeout { get; set; }
+        /// <summary>
+        /// 写超时
+        /// </summary>
+        int WriteTimeout { get; set; }
 
         #region 委托
         /// <summary>
@@ -78,6 +96,10 @@ namespace XiaoFeng.Net
         /// </summary>
         /// <param name="status">状态</param>
         void ManageHandshake(IAsyncResult status);
+        /// <summary>
+        /// 启动
+        /// </summary>
+        void Start();
 		#endregion
 	}
 }

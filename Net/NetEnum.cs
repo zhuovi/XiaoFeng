@@ -88,4 +88,25 @@ namespace XiaoFeng.Net
         Stop = 2
     }
     #endregion
+
+    #region 连接类型
+    /// <summary>
+    /// 连接类型
+    /// </summary>
+    public enum ConnectionType
+    {
+        /// <summary>
+        /// Socket
+        /// </summary>
+        Socket = 0,
+        /// <summary>
+        /// WebSocket
+        /// </summary>
+        WebSocket = 1,
+        /// <summary>
+        /// Http
+        /// </summary>
+        Http = 2
+    }
+    #endregion
 }

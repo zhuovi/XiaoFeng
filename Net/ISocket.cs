@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 /****************************************************************
@@ -65,10 +67,18 @@ namespace XiaoFeng.Net
 		/// 获取或设置一个值，该值指定 System.Net.Sockets.Socket 发送缓冲区的大小。System.Int32，它包含发送缓冲区的大小（以字节为单位）。 默认值为 8192。
 		/// </summary>
 		int SendBufferSize { get; set; }
-		/// <summary>
-		/// 启动
-		/// </summary>
-		void Start();
+        /// <summary>
+        /// 协议版本
+        /// </summary>
+        SslProtocols SslProtocols { get; set; }
+        /// <summary>
+        /// SSL证书
+        /// </summary>
+        X509Certificate Certificate { get; set; }
+        /// <summary>
+        /// 启动
+        /// </summary>
+        void Start();
         /// <summary>
         /// 停止
         /// </summary>

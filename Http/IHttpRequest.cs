@@ -79,7 +79,7 @@ namespace XiaoFeng.Http
         /// <summary>
         /// 设置509证书集合
         /// </summary>
-        X509Certificate2Collection ClentCertificates { get; set; }
+        X509Certificate2Collection ClientCertificates { get; set; }
         /// <summary>
         /// 获取和设置IfModifiedSince，默认为当前日期和时间
         /// </summary>

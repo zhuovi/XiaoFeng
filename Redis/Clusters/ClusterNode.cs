@@ -1,58 +1,64 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Net;
-using System.Net.Sockets;
+using System.Text;
+
 /****************************************************************
-*  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
+*  Copyright © (2023) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
 *  QQ : 7092734                                                 *
 *  Email : jacky@fayelf.com                                     *
 *  Site : www.fayelf.com                                        *
-*  Create Time : 2017-10-31 14:18:38                            *
+*  Create Time : 2023-07-12 15:45:05                            *
 *  Version : v 1.0.0                                            *
 *  CLR Version : 4.0.30319.42000                                *
 *****************************************************************/
-namespace XiaoFeng.Sockets
+namespace XiaoFeng.Redis.Clusters
 {
     /// <summary>
-    /// 客户端连接存储对象
-    /// Verstion : 1.0.0
-    /// Create Time : 2018/2/5 11:57:59
-    /// Update Time : 2018/2/5 11:57:59
+    /// 集群节点
     /// </summary>
-    public class ClientSocketData
+    public class ClusterNode
     {
         #region 构造器
         /// <summary>
         /// 无参构造器
         /// </summary>
-        public ClientSocketData() { this.ConnectTime = DateTime.Now; Buffer = new byte[1024 * 1024]; this.IsWebSocket = false; }
+        public ClusterNode()
+        {
+            
+        }
         #endregion
 
         #region 属性
         /// <summary>
-        /// 连接
+        /// 标识ID
         /// </summary>
-        public Socket ClientSocket { get; set; }
+        public string ID { get; set; }
         /// <summary>
-        /// 网络接点
+        /// 节点
         /// </summary>
-        public IPEndPoint EndPoint { get; set; }
+        public RedisEndPoint EndPoint { get; set; }
         /// <summary>
-        /// 是否是WebSocket
+        /// 主节点
         /// </summary>
-        public Boolean IsWebSocket { get; set; }
+        public RedisEndPoint MainPoint { get; set; }
         /// <summary>
-        /// 连接时间
+        /// 从节点集合
         /// </summary>
-        public DateTime ConnectTime { get; set; }
+        public IList<ClusterNode> Slaves { get; set; }
+
+        #endregion
+
+        #region 方法
         /// <summary>
-        /// 接收的数据
+        /// 节点地址
         /// </summary>
-        public byte[] Buffer { get; set; }
-        #endregion        
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return this.EndPoint.ToString();
+        }
+        #endregion
     }
 }

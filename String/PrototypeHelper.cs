@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using XiaoFeng.Data.SQL;
@@ -171,5 +172,20 @@ namespace XiaoFeng
             return index > -1 ? Current.IsPair && _.Substring(index + 1).IsNullOrEmpty() : Current.IsPair;
         }
         #endregion
+
+#if NETSTANDARD2_0
+        /// <summary>
+        /// 根据提供的字符分隔符将字符串拆分为多个子字符串。
+        /// </summary>
+        /// <param name="_">字符串</param>
+        /// <param name="separator">一个字符，用于分隔此字符串中的子字符串</param>
+        /// <param name="options">枚举值之一，用于确定拆分操作是否应省略返回值中的空子字符串</param>
+        /// <returns>一个数组，其元素包含此实例中的子字符串，这些子字符串由 separator 分隔</returns>
+        public static string[] Split(this String _, char separator, StringSplitOptions options = StringSplitOptions.None)
+        {
+            if (_.IsNullOrEmpty()) return Array.Empty<string>();
+            return _.Split(new char[] { separator }, options);
+        }
+#endif
     }
 }

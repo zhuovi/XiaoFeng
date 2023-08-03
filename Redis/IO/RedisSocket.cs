@@ -140,7 +140,7 @@ namespace XiaoFeng.Redis.IO
 #if NETSTANDARD2_0
             sns.AuthenticateAsClient(this.ConnConfig.Host);
 #else
-            sns.AuthenticateAsClientAsync(this.ConnConfig.Host).Wait();
+            sns.AuthenticateAsClient(this.ConnConfig.Host);
 #endif
             this.Stream = sns;
             return sns;

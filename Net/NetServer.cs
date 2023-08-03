@@ -10,6 +10,8 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using XiaoFeng.Config;
+using System.Security.Cryptography.X509Certificates;
+using System.Security.Authentication;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -184,6 +186,14 @@ namespace XiaoFeng.Net
             get { return this._ServerLocation.IsNullOrEmpty() ? string.Format("WebSocket地址: ws://{0}:{1}\nSocket地址:{0}:{1}", this.IP.ToString() == "0.0.0.0" ? GetLocalmachineIPAddress() : this.IP, this.Port) : this._ServerLocation; }
             set { this._ServerLocation = value; }
         }
+        /// <summary>
+        /// 协议版本
+        /// </summary>
+        public SslProtocols SslProtocols { get; set; } = SslProtocols.None;
+        /// <summary>
+        /// SSL证书
+        /// </summary>
+        public X509Certificate Certificate { get; set; }
         #endregion
 
         #region 事件
@@ -338,6 +348,10 @@ namespace XiaoFeng.Net
                                 IsNewLine = this.IsNewLine,
                                 ConnectionTime = DateTime.Now,
                                 SocketAuth = this.SocketAuth,
+                                SslProtocols = this.SslProtocols,
+                                Certificate = this.Certificate,
+                                ReadTimeout = this.ReceiveTimeout,
+                                WriteTimeout = this.SendTimeout,
                                 //SetSocketType = this.UpdateQueue
                             };
                             session.OnNewConnection += (o,e)=>
@@ -372,9 +386,9 @@ namespace XiaoFeng.Net
                                 //this.OnDisconnected?.Invoke(sender, EventArgs.Empty);
                             });
                             session.OnSessionError += this.OnClientError;
-                            //session.SocketAuth = this.SocketAuth;
-                            //session.SetSocketType = this.UpdateQueue;
-                            session.ConnectionSocket.BeginReceive(
+                            /*增加SSL*/
+                            //session.Start();
+                            /**/session.ConnectionSocket.BeginReceive(
                                 session.ReceivedDataBuffer,
                                 0,
                                 session.ReceivedDataBuffer.Length,

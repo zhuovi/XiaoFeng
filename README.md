@@ -31,44 +31,85 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 3.5.2
+$ dotnet add package XiaoFeng --version 4.0.0
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 3.5.2
+PM> Install-Package XiaoFeng -Version 4.0.0
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="3.5.2" />
+<PackageReference Include="XiaoFeng" Version="4.0.0" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 3.5.2
+> paket add XiaoFeng --version 4.0.0
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 3.5.2"
+> #r "nuget: XiaoFeng, 4.0.0"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=3.5.2
+#addin nuget:?package=XiaoFeng&version=4.0.0
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=3.5.2
+#tool nuget:?package=XiaoFeng&version=4.0.0
 ```
 
 # 更新日志
+
+## 2023-08-03   v 4.0.0
+
+1.删除过渡命名空间XiaoFeng.Model.Core;
+
+2.优化通过模型生成数据表;
+
+3.新增索引属性TableIndexAttribute;
+
+4.新增模型索引属性;
+
+5.新增获取模型索引属性;
+
+6.新增查找数据库表是否存在;
+
+7.修复获取枚举GetDescription时无当前枚举时报错;
+
+8.增加调度作业Ijob中参数可通过方法分步设置;
+
+9.设置作业任务接口IJobWorker;
+
+10.增加FayFile的GetBytes,GetText()方法;
+
+11.ConfigSet增加泛路径设置,一个配置模型匹配多个配置文件;
+
+12.修改FileHelper中DeleteFile参数为params可以同时删除多个文件操作;
+
+13.增加HttpHelper的SetMethod,SetBodyData方法,优化没有证书时的ssl请求;
+
+14.更新线程池清除过期时间长度为10分钟;
+
+15.修复在NETSTANDARD 2.0下没有Split(char )方法;
+
+16.修复mysql中date_format格式;
+
+17.修复HttpRequest中ClentCertificates改为ClientCertificates;
+
+18.WebClientHelper帮助类移除,它已被HttpHelper替代;
+
+19.增加Socket库,SocketServer,WebSocketServer,SocketClient,WebSocketClient当前类库支持SSL;
+
 
 ## 2023-05-16   v 3.5.2 
 

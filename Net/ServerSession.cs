@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net.Security;
 using System.Net.Sockets;
+using System.Security.Authentication;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 /****************************************************************
@@ -135,6 +140,26 @@ namespace XiaoFeng.Net
         /// 端口号
         /// </summary>
         public int Port { get; set; }
+        /// <summary>
+        /// 协议版本
+        /// </summary>
+        public SslProtocols SslProtocols { get; set; }
+        /// <summary>
+        /// SSL证书
+        /// </summary>
+        public X509Certificate Certificate { get; set; }
+        /// <summary>
+        /// 读超时
+        /// </summary>
+        public int ReadTimeout { get; set; }
+        /// <summary>
+        /// 写超时
+        /// </summary>
+        public int WriteTimeout { get; set; }
+        /// <summary>
+        /// SSL流
+        /// </summary>
+        public SslStream SslStream { get; set; }
         #endregion
 
         #region 委托
@@ -463,7 +488,7 @@ namespace XiaoFeng.Net
                 }
             }
             if (HandshakeLength == 0 || HandshakeLength - 8 < 0) return;
-            Array.Copy(ReceivedDataBuffer, HandshakeLength - 8, last8Bytes, 0, 8);
+            
             /*现在使用的是比较新的WebSocket协议*/
             if (RawClientHandshake.IndexOf(header) != -1)
             {
@@ -484,6 +509,7 @@ namespace XiaoFeng.Net
                     ConnectionSocket.BeginSend(NewHandshakeText, 0, NewHandshakeText.Length, 0, HandshakeFinished, null);
                 return;
             }
+            Array.Copy(ReceivedDataBuffer, HandshakeLength - 8, last8Bytes, 0, 8);
             string ClientHandshake = decoder.GetString(ReceivedDataBuffer, 0, HandshakeLength - 8);
             string[] ClientHandshakeLines = ClientHandshake.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
             /*连接成功*/
@@ -653,6 +679,239 @@ namespace XiaoFeng.Net
         }
         #endregion
 
+        /// <summary>
+        /// 启动
+        /// </summary>
+        public void Start()
+        {
+            var netStream = new NetworkStream(this.ConnectionSocket);
+            if (this.ReadTimeout > 0) netStream.ReadTimeout = this.ReadTimeout;
+            if (this.WriteTimeout > 0) netStream.WriteTimeout = this.WriteTimeout;
+            if (this.SslProtocols != SslProtocols.None && this.Certificate.IsNotNullOrEmpty())
+            {
+                this.SslStream = new SslStream(netStream, false, (sender, cert, chain, errors) =>
+                {
+                    
+                    return errors == SslPolicyErrors.None;
+                }, (sender, targethost, localcert, remotecert, acceptableissuers) =>
+                {
+                    return this.Certificate;
+                }, EncryptionPolicy.RequireEncryption);
+                this.SslStream = new SslStream(netStream, true);
+                this.SslStream.ReadTimeout = netStream.ReadTimeout;
+                
+                this.SslStream.WriteTimeout = netStream.WriteTimeout;
+                this.SslStream.AuthenticateAsServer(this.Certificate, false, this.SslProtocols, true);
+                //this.SslStream.AuthenticateAsServer(this.Certificate);
+                this.ReceiveMessage(this.SslStream, true);
+            }
+            else
+                this.ReceiveMessage(netStream, true);
+        }
+        /// <summary>
+        /// 接收数据
+        /// </summary>
+        /// <param name="stream">流</param>
+        /// <param name="first">是否是第一次连接</param>
+        private void ReceiveMessage(Stream stream, Boolean first = false)
+        {
+            if (stream == null) return;
+            int readsize = -1;
+            var buffer = new MemoryStream();
+            do
+            {
+                readsize = stream.Read(this.ReceivedDataBuffer, 0, this.ReceivedDataBuffer.Length);
+                if (readsize <= 0) break;
+                buffer.Write(this.ReceivedDataBuffer, 0,readsize);
+            } while (readsize > 0);
+            if (buffer.Length == 0) return;
+            var bytes = buffer.ToArray();
+            buffer.Close();
+            buffer.Dispose();
+            if (first)
+            {
+                /*验证用户的合法性 */
+                if (this.SocketAuth != null && !this.SocketAuth(this))
+                {
+                    if (this.OnDisconnected != null &&
+                        this.ConnectionSocket != null &&
+                        this.ConnectionSocket.RemoteEndPoint != null)
+                        this.OnDisconnected(this, EventArgs.Empty);
+                    return;
+                }
+                var msg = bytes.GetString(this.Encoding);
+                if (msg.Contains("Sec-WebSocket-Key"))
+                {
+                    this.SocketType = SocketTypes.WebSocket;
+                    string header = "Sec-WebSocket-Version:";
+                    /*现在使用的是比较新的WebSocket协议*/
+                    if (msg.IndexOf(header) != -1)
+                    {
+                        this.IsDataMasked = true;
+                        string[] rawClientHandshakeLines = msg.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                        string acceptKey = "";
+                        foreach (string Line in rawClientHandshakeLines)
+                        {
+                            if (Line.Contains("Sec-WebSocket-Key:"))
+                            {
+                                acceptKey = ComputeWebSocketHandshakeSecurityHash09(Line.Substring(Line.IndexOf(":") + 2));
+                                break;
+                            }
+                        }
+                        NewHandshake = NewHandshake.format(acceptKey);
+                        byte[] NewHandshakeText = NewHandshake.GetBytes(Encoding.UTF8);
+                        stream.Write(NewHandshakeText, 0, NewHandshakeText.Length);
+                        return;
+                    }
+                    var last8Bytes = new byte[8];
+                    Array.Copy(bytes, bytes.Length - 8, last8Bytes, 0, 8);
+                    string ClientHandshake = bytes.GetString(this.Encoding, 0, bytes.Length - 8);
+                    string[] ClientHandshakeLines = ClientHandshake.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                    /*连接成功*/
+                    ClientHandshakeLines.Each(Line =>
+                    {
+                        if (Line.Contains("Sec-WebSocket-Key1:"))
+                            BuildServerPartialKey(1, Line.Substring(Line.IndexOf(":") + 2));
+                        if (Line.Contains("Sec-WebSocket-Key2:"))
+                            BuildServerPartialKey(2, Line.Substring(Line.IndexOf(":") + 2));
+                        if (Line.Contains("Origin:"))
+                            try
+                            {
+                                this.Handshake = this.Handshake.format(Line.Substring(Line.IndexOf(":") + 2));
+                            }
+                            catch
+                            {
+                                this.Handshake = this.Handshake.format("null");
+                            }
+                    });
+                    /*创建响应头信息*/
+                    byte[] HandshakeText = Handshake.GetBytes(Encoding.UTF8);
+                    byte[] serverHandshakeResponse = new byte[HandshakeText.Length + 16];
+                    byte[] serverKey = BuildServerFullKey(last8Bytes);
+                    Array.Copy(HandshakeText, serverHandshakeResponse, HandshakeText.Length);
+                    Array.Copy(serverKey, 0, serverHandshakeResponse, HandshakeText.Length, 16);
+                    /*发送握手信息*/
+                    stream.Write(serverHandshakeResponse, 0, serverHandshakeResponse.Length);
+                    this.ReceiveWebSocketMessage(stream);
+                }
+                else
+                {
+                    this.SocketType = SocketTypes.Socket;
+                    this.ReceiveMessage(stream);
+                }
+            }
+            else
+            {
+                this.OnMessageByte?.Invoke(this, bytes, EventArgs.Empty);
+                this.OnMessage?.Invoke(this, bytes.GetString(this.Encoding), EventArgs.Empty);
+            }
+        }
+        /// <summary>
+        /// 接收网络流
+        /// </summary>
+        /// <param name="stream">网络流</param>
+        public void ReceiveWebSocketMessage(Stream stream)
+        {
+            if (!ConnectionSocket.Connected) return;
+            if (this.CancelToken.IsCancellationRequested)
+            {
+                SocketException ex = new SocketException();
+                LogHelper.Error(ex, "取消连接[WebSocket]");
+                lock (this.ConnectionSocket)
+                {
+                    if (this.ConnectionSocket == null || this.ConnectionSocket.RemoteEndPoint == null) return;
+                    OnDisconnected?.Invoke(this, EventArgs.Empty);
+                }
+                return;
+            }
+            string messageReceived = string.Empty;
+            var buffer = new MemoryStream();
+            int readsize = 0;
+            do
+            {
+                readsize = stream.Read(this.ReceivedDataBuffer, 0, this.ReceivedDataBuffer.Length);
+                if (readsize <= 0) break;
+                buffer.Write(this.ReceivedDataBuffer, 0, readsize);
+            } while (readsize > 0);
+            if (buffer.Length == 0) return;
+            var bytes = buffer.ToArray();
+            buffer.Close();
+            buffer.Dispose();
+            DataFrame dr = new DataFrame(bytes)
+            {
+                Encoding = this.Encoding,
+                DataType = this.DataType
+            };
+            this.OpCode = dr.Opcode;
+            if (this.OpCode == OpCode.Ping)
+            {
+                this.Send(new DataFrame(dr.Text, this.Encoding, OpCode.Pong, this.DataType).GetBytes());
+                return;
+            }
+            try
+            {
+                var EndIndex = 0;
+                if (!this.IsDataMasked)
+                {
+                    /*Web Socket protocol: messages are sent with 0x00 and 0xFF as padding bytes*/
+                    UTF8Encoding decoder = new UTF8Encoding();
+                    int startIndex = 0;
+                    int endIndex = 0;
+                    /*搜索开始字节*/
+                    while (ReceivedDataBuffer[startIndex] == FirstByte[0]) startIndex++;
+                    /*搜索结束字节*/
+                    endIndex = startIndex + 1;
+                    while (ReceivedDataBuffer[endIndex] != LastByte[0] && endIndex != MaxBufferSize - 1) endIndex++;
+                    if (endIndex == MaxBufferSize - 1) endIndex = MaxBufferSize;
+                    EndIndex = endIndex;
+                    /*获取消息*/
+                    if (this.DataType == SocketDataType.HexString)
+                        messageReceived = ReceivedDataBuffer.ByteToHexString(startIndex, endIndex - startIndex);
+                    else
+                        messageReceived = ReceivedDataBuffer.GetString(this.Encoding, startIndex, endIndex - startIndex);
+                }
+                else
+                {
+                    messageReceived = dr.Text;
+                    EndIndex = (messageReceived.GetBytes() ?? new byte[0]).Length;
+                }
+                if (messageReceived.Length == 0 || messageReceived.Length == MaxBufferSize && messageReceived[0] == Convert.ToChar(65533))
+                {
+                    if (this.ConnectionSocket != null)
+                    {
+                        OnDisconnected?.Invoke(this, EventArgs.Empty);
+                    }
+                }
+                else
+                {
+                    OnMessage?.Invoke(this, messageReceived, EventArgs.Empty);
+                    OnMessageByte?.Invoke(this, this.GetBytes(messageReceived), EventArgs.Empty);
+                    /*if (OnMessageByte != null)
+                    {
+                        byte[] msgBytes = new byte[EndIndex];
+                        Buffer.BlockCopy(ReceivedDataBuffer, 0, msgBytes, 0, EndIndex);
+                        OnMessageByte?.Invoke(this, msgBytes, EventArgs.Empty);
+                    }*/
+                    Array.Clear(ReceivedDataBuffer, 0, ReceivedDataBuffer.Length);
+                    if (ConnectionSocket == null || !ConnectionSocket.Connected)
+                    {
+                        OnDisconnected?.Invoke(this, EventArgs.Empty);
+                        return;
+                    }
+                    this.ReceiveWebSocketMessage(stream);
+                }
+            }
+            catch (SocketException ex)
+            {
+                LogHelper.Error(ex, "接收信息失败[WebSocket]");
+                lock (this.ConnectionSocket)
+                {
+                    if (this.ConnectionSocket == null || this.ConnectionSocket.RemoteEndPoint == null) return;
+                    OnDisconnected?.Invoke(this, EventArgs.Empty);
+                    OnSessionError?.Invoke(this, ex);
+                }
+            }
+        }
         #endregion
     }
     #endregion

@@ -658,7 +658,7 @@ namespace XiaoFeng.Data.SQL
                         var b = args.Last();
                         args.RemoveAt(args.Count - 1);
                         var dfType = this.GetParamValue(b).ToString().ToLower();
-                        if ((DbProviderType.MySql | DbProviderType.Oracle | DbProviderType.Dameng).HasFlag(this.DataHelper.ProviderType))
+                        if ((DbProviderType.Oracle | DbProviderType.Dameng).HasFlag(this.DataHelper.ProviderType))
                         {
                             if (dfType == "yy" || dfType == "yyyy")
                                 dfType = "YEAR";
@@ -678,6 +678,33 @@ namespace XiaoFeng.Data.SQL
                                 dfType = "SECOND";
                             else if (dfType == "ms")
                                 dfType = "MICROSECOND";
+                        }
+                        else if (this.DataHelper.ProviderType == DbProviderType.MySql)
+                        {
+                            if (dfType == "yy")
+                                dfType = "'%y'";
+                            else if (dfType == "yyyy")
+                                dfType = "'%Y'";
+                            else if (dfType == "qq" || dfType == "q")
+                                dfType = "QUARTER";
+                            else if (dfType == "mm" || dfType == "m")
+                                dfType = "'%m'";
+                            else if (dfType == "dd")
+                                dfType = "'%D'";
+                            else if (dfType == "d")
+                                dfType = "'%d'";
+                            else if (dfType == "wk" || dfType == "ww" || dfType == "w")
+                                dfType = "'%U'";
+                            else if (dfType == "hh")
+                                dfType = "'%k'";
+                            else if (dfType == "h")
+                                dfType = "'%l'";
+                            else if (dfType == "mi" || dfType == "n")
+                                dfType = "'%i'";
+                            else if (dfType == "ss" || dfType == "s")
+                                dfType = "'%S'";
+                            else if (dfType == "ms")
+                                dfType = "'%f'";
                         }
                         this.RemoveParam(b);
                         if (!MethodName.EqualsIgnoreCase("DateAddSQL") && this.DataHelper.ProviderType == DbProviderType.Dameng)
@@ -930,7 +957,7 @@ namespace XiaoFeng.Data.SQL
                         var b = args.Last();
                         args.RemoveAt(args.Count - 1);
                         var dfType = this.GetParamValue(b).ToString().ToLower();
-                        if (this.DataHelper.ProviderType == DbProviderType.MySql || this.DataHelper.ProviderType == DbProviderType.Oracle)
+                        if (this.DataHelper.ProviderType == DbProviderType.Oracle)
                         {
                             if (dfType == "yy" || dfType == "yyyy")
                                 dfType = "YEAR";
@@ -950,6 +977,33 @@ namespace XiaoFeng.Data.SQL
                                 dfType = "SECOND";
                             else if (dfType == "ms")
                                 dfType = "MICROSECOND";
+                        }
+                        else if (this.DataHelper.ProviderType == DbProviderType.MySql)
+                        {
+                            if (dfType == "yy")
+                                dfType = "'%y'";
+                            else if (dfType == "yyyy")
+                                dfType = "'%Y'";
+                            else if (dfType == "qq" || dfType == "q")
+                                dfType = "QUARTER";
+                            else if (dfType == "mm" || dfType == "m")
+                                dfType = "'%m'";
+                            else if (dfType == "dd")
+                                dfType = "'%D'";
+                            else if (dfType == "d")
+                                dfType = "'%d'";
+                            else if (dfType == "wk" || dfType == "ww" || dfType == "w")
+                                dfType = "'%U'";
+                            else if (dfType == "hh")
+                                dfType = "'%k'";
+                            else if (dfType == "h")
+                                dfType = "'%l'";
+                            else if (dfType == "mi" || dfType == "n")
+                                dfType = "'%i'";
+                            else if (dfType == "ss" || dfType == "s")
+                                dfType = "'%S'";
+                            else if (dfType == "ms")
+                                dfType = "'%f'";
                         }
                         this.RemoveParam(b);
                         if (this.DataHelper.ProviderType == DbProviderType.Dameng)
@@ -1191,7 +1245,7 @@ namespace XiaoFeng.Data.SQL
                         var b = args.Last();
                         args.RemoveAt(args.Count - 1);
                         var dfType = this.GetParamValue(b).ToString().ToLower();
-                        if (this.DataHelper.ProviderType == DbProviderType.MySql || this.DataHelper.ProviderType == DbProviderType.Oracle)
+                        if (this.DataHelper.ProviderType == DbProviderType.Oracle)
                         {
                             if (dfType == "yy" || dfType == "yyyy")
                                 dfType = "YEAR";
@@ -1211,6 +1265,33 @@ namespace XiaoFeng.Data.SQL
                                 dfType = "SECOND";
                             else if (dfType == "ms")
                                 dfType = "MICROSECOND";
+                        }
+                        else if (this.DataHelper.ProviderType == DbProviderType.MySql)
+                        {
+                            if (dfType == "yy")
+                                dfType = "'%y'";
+                            else if (dfType == "yyyy")
+                                dfType = "'%Y'";
+                            else if (dfType == "qq" || dfType == "q")
+                                dfType = "QUARTER";
+                            else if (dfType == "mm" || dfType == "m")
+                                dfType = "'%m'";
+                            else if (dfType == "dd")
+                                dfType = "'%D'";
+                            else if (dfType == "d")
+                                dfType = "'%d'";
+                            else if (dfType == "wk" || dfType == "ww" || dfType == "w")
+                                dfType = "'%U'";
+                            else if (dfType == "hh")
+                                dfType = "'%k'";
+                            else if (dfType == "h")
+                                dfType = "'%l'";
+                            else if (dfType == "mi" || dfType == "n")
+                                dfType = "'%i'";
+                            else if (dfType == "ss" || dfType == "s")
+                                dfType = "'%S'";
+                            else if (dfType == "ms")
+                                dfType = "'%f'";
                         }
                         this.RemoveParam(b);
                         if (this.DataHelper.ProviderType == DbProviderType.Dameng)

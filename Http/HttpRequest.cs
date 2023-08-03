@@ -179,7 +179,7 @@ namespace XiaoFeng.Http
         /// <summary>
         /// 设置509证书集合
         /// </summary>
-        public X509Certificate2Collection ClentCertificates { get; set; }
+        public X509Certificate2Collection ClientCertificates { get; set; }
         /// <summary>
         /// 获取和设置IfModifiedSince，默认为当前日期和时间
         /// </summary>
@@ -792,9 +792,9 @@ namespace XiaoFeng.Http
         private void SetCerList()
         {
             var ClientCerts = this.HttpCore == HttpCore.HttpClient ? this.ClientHandler.ClientCertificates : this.RequestHttp.ClientCertificates;
-            if (this.ClentCertificates != null && this.ClentCertificates.Count > 0)
+            if (this.ClientCertificates != null && this.ClientCertificates.Count > 0)
             {
-                foreach (X509Certificate2 c in this.ClentCertificates)
+                foreach (X509Certificate2 c in this.ClientCertificates)
                     ClientCerts.Add(c);
             }
             if (this.Address.IsMatch(@"^https://"))

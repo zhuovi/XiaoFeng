@@ -103,6 +103,7 @@ namespace XiaoFeng.Net
             {
                 _Content = new byte[_Header.Length];
                 Buffer.BlockCopy(buffer, _Extend.Length + _Mask.Length + 2 , _Content, 0, _Content.Length);
+                
             }
             else if (_Extend.Length == 2)
             {
@@ -124,6 +125,43 @@ namespace XiaoFeng.Net
             }
             if (_Header.HasMask) _Content = Mask(_Content, _Mask);
             this.Opcode = (OpCode)_Header.OpCode;
+        }
+        /// <summary>
+        /// 打包消息
+        /// </summary>
+        /// <param name="bytes">数据</param>
+        /// <param name="opcode">命令</param>
+        public DataFrame(byte[] bytes, OpCode opcode = OpCode.Text)
+        {
+            if (bytes == null) bytes = new byte[0];
+            int length = bytes.Length;
+            _Content = bytes;
+            if (length < 126)
+            {
+                _Extend = new byte[0];
+                _Header = new DataFrameHeader(true, false, false, false, (sbyte)opcode, false, length);
+            }
+            else if (length < 65536)
+            {
+                _Extend = new byte[2];
+                _Header = new DataFrameHeader(true, false, false, false, (sbyte)opcode, false, 126);
+                _Extend[0] = (byte)(length / 256);
+                _Extend[1] = (byte)(length % 256);
+            }
+            else
+            {
+                _Extend = new byte[8];
+                _Header = new DataFrameHeader(true, false, false, false, (sbyte)opcode, false, 127);
+                int left = length;
+                int unit = 256;
+                for (int i = 7; i > 1; i--)
+                {
+                    _Extend[i] = (byte)(left % unit);
+                    left /= unit;
+                    if (left == 0)
+                        break;
+                }
+            }
         }
         /// <summary>
         /// 设置消息
@@ -187,6 +225,10 @@ namespace XiaoFeng.Net
         #endregion
 
         #region 消息
+        /// <summary>
+        /// Body
+        /// </summary>
+        public byte[] Body => this._Content;
         /// <summary>
         /// 消息
         /// </summary>

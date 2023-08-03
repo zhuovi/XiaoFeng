@@ -1,38 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+
 /****************************************************************
-*  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
+*  Copyright © (2023) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
 *  QQ : 7092734                                                 *
 *  Email : jacky@fayelf.com                                     *
 *  Site : www.fayelf.com                                        *
-*  Create Time : 2017-10-31 14:18:38                            *
+*  Create Time : 2023-08-03 11:47:44                            *
 *  Version : v 1.0.0                                            *
 *  CLR Version : 4.0.30319.42000                                *
 *****************************************************************/
-namespace XiaoFeng.Sockets
+namespace XiaoFeng.Net
 {
-    #region Socket状态
     /// <summary>
-    /// Socket状态
+    /// WebSocketClient接口
     /// </summary>
-    public enum SocketState
+    public interface IWebSocketClient : ISocketClient
     {
         /// <summary>
-        /// 空闲
+        /// Uri地址
         /// </summary>
-        Idle = 0,
+        Uri Uri { get; set; }
         /// <summary>
-        /// 运行中
+        /// 是否自动Ping
         /// </summary>
-        Runing = 1,
+        Boolean IsPing { get; set; }
         /// <summary>
-        /// 停止
+        /// ping间隔 单位为秒
         /// </summary>
-        Stop = 2
+        int PingTime { get; set; }
     }
-    #endregion
 }
