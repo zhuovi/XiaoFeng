@@ -106,7 +106,7 @@ namespace XiaoFeng.Net
                 Period = this.PongTime * 1000,
                 SuccessCallBack = job =>
                 {
-                    this.Clients.Values.Each(async c => await c.SendPongAsync().ConfigureAwait(false));
+                    this.Clients.Each(async c => await c.SendPongAsync().ConfigureAwait(false));
                 }
             };
             Job.Start();

@@ -19,11 +19,15 @@ using System.Threading.Tasks;
 namespace XiaoFeng.Net
 {
     /// <summary>
-    /// ISocketServer说明
+    /// SocketServer接口
     /// </summary>
     public interface ISocketServer : INetSocket
     {
         #region 属性
+        /// <summary>
+        /// 客户端列表
+        /// </summary>
+        ICollection<ISocketClient> Clients { get; }
         /// <summary>
         /// SSL证书
         /// </summary>
@@ -160,7 +164,7 @@ namespace XiaoFeng.Net
         /// </summary>
         /// <param name="buffers">数据</param>
         /// <param name="channel">频道</param>
-        void Send(byte[] buffers, string channel);
+        void Send(byte[] buffers, params string[] channel);
         /// <summary>
         /// 针对特定的key value的客户端发送数据
         /// </summary>
@@ -202,7 +206,7 @@ namespace XiaoFeng.Net
         /// <param name="buffers">数据</param>
         /// <param name="channel">频道</param>
         /// <returns>Task</returns>
-        Task SendAsync(byte[] buffers, string channel);
+        Task SendAsync(byte[] buffers, params string[] channel);
         /// <summary>
         /// 异步针对特定的key value的客户端发送数据
         /// </summary>

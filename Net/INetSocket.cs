@@ -32,7 +32,7 @@ namespace XiaoFeng.Net
         /// <summary>
         /// 激活状态
         /// </summary>
-        Boolean Active { get; set; }
+        Boolean Active { get; }
         /// <summary>
         /// Socket状态
         /// </summary>

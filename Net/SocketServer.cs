@@ -119,8 +119,12 @@ namespace XiaoFeng.Net
         public SslProtocols SslProtocols { get; set; } = SslProtocols.None;
         ///<inheritdoc/>
         public X509Certificate Certificate { get; set; }
+        /// <summary>
+        /// 激活状态
+        /// </summary>
+        private Boolean _Active = false;
         ///<inheritdoc/>
-        public bool Active { get; set; }
+        public Boolean Active { get => this._Active; }
         /// <summary>
         /// 服务端SOCKET
         /// </summary>
@@ -159,9 +163,13 @@ namespace XiaoFeng.Net
         ///<inheritdoc/>
         public SocketState SocketState { get; set; } = SocketState.Idle;
         /// <summary>
+        /// 客户端列表
+        /// </summary>
+        public ICollection<ISocketClient> Clients => this._Clients?.Values ?? null;
+        /// <summary>
         /// 连接列表
         /// </summary>
-        public ConcurrentDictionary<IPEndPoint, ISocketClient> Clients { get; private set; } = new ConcurrentDictionary<IPEndPoint, ISocketClient>();
+        private ConcurrentDictionary<IPEndPoint, ISocketClient> _Clients { get; set; } = new ConcurrentDictionary<IPEndPoint, ISocketClient>();
         /// <summary>
         /// 主任务
         /// </summary>
@@ -235,7 +243,7 @@ namespace XiaoFeng.Net
                 Stop();
                 throw ex;
             }
-            this.Active = true;
+            this._Active = true;
         }
         /// <inheritdoc/>
         public virtual void Start()
@@ -250,7 +258,7 @@ namespace XiaoFeng.Net
         {
             if (this.Active)
             {
-                this.Active = false;
+                this._Active = false;
                 this.Dispose(true);
             }
             this.OnStop?.Invoke(this, EventArgs.Empty);
@@ -264,9 +272,9 @@ namespace XiaoFeng.Net
         public virtual void Send(byte[] buffers)
         {
             if (buffers == null || buffers.Length == 0) return;
-            if (this.Clients == null) { this.Clients = new ConcurrentDictionary<IPEndPoint, ISocketClient>(); return; }
+            if (this.Clients == null) { this._Clients = new ConcurrentDictionary<IPEndPoint, ISocketClient>(); return; }
             if (this.Clients.Count == 0) return;
-            this.Clients.Values.Each(a => a.Send(buffers));
+            this.Clients.Each(a => a.Send(buffers));
         }
         ///<inheritdoc/>
         public virtual void Send(byte[] buffers, ISocketClient client)
@@ -284,20 +292,25 @@ namespace XiaoFeng.Net
             this.Send(buffer, client);
         }
         ///<inheritdoc/>
-        public virtual void Send(byte[] buffers, string channel)
+        public virtual void Send(byte[] buffers, params string[] channel)
         {
             if (buffers == null || buffers.Length == 0) return;
-            if (this.Clients == null) { this.Clients = new ConcurrentDictionary<IPEndPoint, ISocketClient>(); return; }
+            if (this.Clients == null) { this._Clients = new ConcurrentDictionary<IPEndPoint, ISocketClient>(); return; }
             if (this.Clients.Count == 0) return;
-            this.Clients.Values.Where(a => a.ContainsChannel(channel)).Each(c => c.Send(buffers));
+            if (channel.IsNullOrEmpty())
+            {
+                this.Send(buffers);
+                return;
+            }
+            this.Clients.Where(a => a.ContainsChannel(channel)).Each(c => c.Send(buffers));
         }
         ///<inheritdoc/>
         public virtual void Send(byte[] buffers, string key, object value)
         {
             if (buffers == null || buffers.Length == 0) return;
-            if (this.Clients == null) { this.Clients = new ConcurrentDictionary<IPEndPoint, ISocketClient>(); return; }
+            if (this.Clients == null) { this._Clients = new ConcurrentDictionary<IPEndPoint, ISocketClient>(); return; }
             if (this.Clients.Count == 0) return;
-            this.Clients.Values.Where(a => a.GetData(key) == value).Each(c => c.Send(buffers));
+            this.Clients.Where(a => a.GetData(key) == value).Each(c => c.Send(buffers));
         }
         ///<inheritdoc/>
         public virtual async Task SendAsync(string message) => await this.SendAsync(message.GetBytes(this.Encoding));
@@ -305,9 +318,9 @@ namespace XiaoFeng.Net
         public virtual Task SendAsync(byte[] buffers)
         {
             if (buffers == null || buffers.Length == 0) return Task.CompletedTask;
-            if (this.Clients == null) { this.Clients = new ConcurrentDictionary<IPEndPoint, ISocketClient>(); return Task.CompletedTask; }
+            if (this.Clients == null) { this._Clients = new ConcurrentDictionary<IPEndPoint, ISocketClient>(); return Task.CompletedTask; }
             if (this.Clients.Count == 0) return Task.CompletedTask;
-            this.Clients.Values.Each(async a => await a.SendAsync(buffers).ConfigureAwait(false));
+            this.Clients.Each(async a => await a.SendAsync(buffers).ConfigureAwait(false));
             return Task.CompletedTask;
         }
         ///<inheritdoc/>
@@ -327,21 +340,21 @@ namespace XiaoFeng.Net
             await this.SendAsync(buffer, client);
         }
         ///<inheritdoc/>
-        public virtual Task SendAsync(byte[] buffers, string channel)
+        public virtual Task SendAsync(byte[] buffers, params string[] channel)
         {
             if (buffers == null || buffers.Length == 0) return Task.CompletedTask;
-            if (this.Clients == null) { this.Clients = new ConcurrentDictionary<IPEndPoint, ISocketClient>(); return Task.CompletedTask; }
+            if (this.Clients == null) { this._Clients = new ConcurrentDictionary<IPEndPoint, ISocketClient>(); return Task.CompletedTask; }
             if (this.Clients.Count == 0) return Task.CompletedTask;
-            this.Clients.Values.Where(a => a.ContainsChannel(channel)).Each(async c => await c.SendAsync(buffers));
+            this.Clients.Where(a => a.ContainsChannel(channel)).Each(async c => await c.SendAsync(buffers));
             return Task.CompletedTask;
         }
         ///<inheritdoc/>
         public virtual Task SendAsync(byte[] buffers, string key, object value)
         {
             if (buffers == null || buffers.Length == 0) return Task.CompletedTask;
-            if (this.Clients == null) { this.Clients = new ConcurrentDictionary<IPEndPoint, ISocketClient>(); return Task.CompletedTask; }
+            if (this.Clients == null) { this._Clients = new ConcurrentDictionary<IPEndPoint, ISocketClient>(); return Task.CompletedTask; }
             if (this.Clients.Count == 0) return Task.CompletedTask;
-            this.Clients.Values.Where(a => a.GetData(key) == value).Each(async c => await c.SendAsync(buffers));
+            this.Clients.Where(a => a.GetData(key) == value).Each(async c => await c.SendAsync(buffers));
             return Task.CompletedTask;
         }
         #endregion
@@ -577,18 +590,8 @@ namespace XiaoFeng.Net
         private void AddQueue(ISocketClient client)
         {
             if (client == null || client.SocketState != SocketState.Runing || !client.Connected) return;
-            if (this.Clients == null) this.Clients = new ConcurrentDictionary<IPEndPoint, ISocketClient>();
-            this.Clients.TryAdd(client.EndPoint, client);
-            //string Message = session.ReceivedDataBuffer.GetString(this.Encoding);
-            //if (!Message.Contains("Sec-WebSocket-Key"))
-            {
-                //session.SocketType = SocketTypes.Socket;
-                /*连接成功*/
-                //OnNewConnection?.Invoke(session, EventArgs.Empty);
-            }
-            //else
-            //session.SocketType = SocketTypes.WebSocket;
-            //OnNewConnection?.Invoke(session, EventArgs.Empty);
+            if (this.Clients == null) this._Clients = new ConcurrentDictionary<IPEndPoint, ISocketClient>();
+            this._Clients.TryAdd(client.EndPoint, client);
         }
         /// <summary>
         /// 移除队列
@@ -600,12 +603,10 @@ namespace XiaoFeng.Net
             OnDisconnected?.Invoke(client, EventArgs.Empty);
             try
             {
-                lock (this.Clients)
+                lock (this._Clients)
                 {
-                    this.Clients.TryRemove(client.EndPoint, out client);
+                    this._Clients.TryRemove(client.EndPoint, out client);
                 }
-                //if (client != null && client.Connected)
-                //    client.Stop();
             }
             catch (Exception ex)
             {
@@ -626,9 +627,9 @@ namespace XiaoFeng.Net
             try
             {
                 ISocketClient client;
-                lock (this.Clients)
+                lock (this._Clients)
                 {
-                    this.Clients.TryRemove(endPoint, out client);
+                    this._Clients.TryRemove(endPoint, out client);
                 }
                 if (client.Connected)
                 {
@@ -653,13 +654,13 @@ namespace XiaoFeng.Net
             if (this.Clients != null && this.Clients.Count > 0)
             {
                 //先断开所有连接
-                this.Clients.Values.ToArray().Each(a =>
+                this.Clients.Each(a =>
                 {
                     a.Stop();
                     OnDisconnected?.Invoke(a, EventArgs.Empty);
                 });
-                this.Clients.Clear();
-                this.Clients = new ConcurrentDictionary<IPEndPoint, ISocketClient>();
+                this._Clients.Clear();
+                this._Clients = new ConcurrentDictionary<IPEndPoint, ISocketClient>();
             }
         }
         /// <summary>
@@ -672,8 +673,8 @@ namespace XiaoFeng.Net
             if (socket == null) return null;
             ISocketClient _val = null;
             var point = socket.RemoteEndPoint.ToIPEndPoint();
-            if (this.Clients != null && this.Clients.Count > 0 && this.Clients.ContainsKey(point))
-                this.Clients.TryGetValue(point, out _val);
+            if (this.Clients != null && this.Clients.Count > 0 && this._Clients.ContainsKey(point))
+                this._Clients.TryGetValue(point, out _val);
             return _val;
         }
         /// <summary>
@@ -684,7 +685,7 @@ namespace XiaoFeng.Net
         private ISocketClient GetQueue(Func<ISocketClient, bool> func)
         {
             if (this.Clients == null || this.Clients.Count == 0 || func == null) return null;
-            return this.Clients.Values.Where(func).FirstOrDefault();
+            return this.Clients.Where(func).FirstOrDefault();
         }
         /// <summary>
         /// 获取队列数

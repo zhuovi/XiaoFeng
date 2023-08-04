@@ -230,7 +230,7 @@ namespace XiaoFeng.Net
         /// </summary>
         /// <param name="channel">频道</param>
         /// <returns>是否订阅过频道 true订阅过 false 未订阅</returns>
-        Boolean ContainsChannel(string channel);
+        Boolean ContainsChannel(params string[] channel);
         #endregion
 
         #region 设置Socket

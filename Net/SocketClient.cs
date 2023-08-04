@@ -95,8 +95,12 @@ namespace XiaoFeng.Net
         /// 标签数据
         /// </summary>
         private Dictionary<string, object> TagsData = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+        /// <summary>
+        /// 激活状态
+        /// </summary>
+        private Boolean _Active = false;
         ///<inheritdoc/>
-        public Boolean Active { get; set; }
+        public Boolean Active { get; }
         ///<inheritdoc/>
         public SocketState SocketState { get; set; } = SocketState.Idle;
         ///<inheritdoc/>
@@ -236,14 +240,14 @@ namespace XiaoFeng.Net
                                     throw ex;
                                 }
                             }
-                            this.Active = true;
+                            this._Active = true;
                             break;
                         }
                         else if (address.AddressFamily == AddressFamily.Unknown)
                         {
                             this.Connect(new IPEndPoint(address, port));
                             this.EndPoint = new IPEndPoint(address, port);
-                            this.Active = true;
+                            this._Active = true;
                             break;
                         }
                     }
@@ -280,7 +284,7 @@ namespace XiaoFeng.Net
             }
             this.EndPoint = remoteEP;
             this.Client.Connect(remoteEP);
-            this.Active = true;
+            this._Active = true;
             this.SocketState = SocketState.Runing;
         }
         ///<inheritdoc/>
@@ -291,7 +295,7 @@ namespace XiaoFeng.Net
 
             this.Client.Connect(ipAddresses, port);
             this.EndPoint = this.Client.RemoteEndPoint.ToIPEndPoint();
-            this.Active = true;
+            this._Active = true;
             this.SocketState = SocketState.Runing;
         }
         ///<inheritdoc/>
@@ -333,7 +337,7 @@ namespace XiaoFeng.Net
         {
             await task.ConfigureAwait(false);
             this.EndPoint = this.Client.RemoteEndPoint.ToIPEndPoint();
-            this.Active = true;
+            this._Active = true;
             this.SocketState = SocketState.Runing;
         }
         #endregion
@@ -359,7 +363,7 @@ namespace XiaoFeng.Net
             this.OnStop?.Invoke(this, EventArgs.Empty);
             if (this.Active)
             {
-                this.Active = false;
+                this._Active = false;
                 this.Dispose(true);
             }
         }
@@ -568,16 +572,16 @@ namespace XiaoFeng.Net
                     //断开了
                     break;
                 }
-                string receivemsg;
+                string ReceiveMessage;
                 if (this.IsServer)
                 {
                     if (HandshakesCount == 0)
                     {
-                        receivemsg = bytes.GetString(this.Encoding);
-                        if (receivemsg.IndexOf("Sec-WebSocket-Key", StringComparison.OrdinalIgnoreCase) > -1)
+                        ReceiveMessage = bytes.GetString(this.Encoding);
+                        if (ReceiveMessage.IndexOf("Sec-WebSocket-Key", StringComparison.OrdinalIgnoreCase) > -1)
                         {
                             this.ConnectionType = ConnectionType.WebSocket;
-                            this._RequestHeader = receivemsg;
+                            this._RequestHeader = ReceiveMessage;
                         }
                         else
                         {
@@ -596,7 +600,7 @@ namespace XiaoFeng.Net
                         if (this.ConnectionType == ConnectionType.WebSocket)
                         {
                             //开始握手
-                            var packet = new WebSocketPacket(this, receivemsg)
+                            var packet = new WebSocketPacket(this, ReceiveMessage)
                             {
                                 Encoding = this.Encoding,
                                 DataType = this.DataType
@@ -630,9 +634,36 @@ namespace XiaoFeng.Net
                         if (bytes.Length == 0) continue;
                     }
                 }
-                receivemsg = bytes.GetString(this.Encoding);
+                ReceiveMessage = bytes.GetString(this.Encoding);
 
-                this.OnMessage?.Invoke(this, receivemsg, EventArgs.Empty);
+                if (ReceiveMessage.StartsWith("SUBSCRIBE#", StringComparison.OrdinalIgnoreCase))
+                {
+                    var msg = ReceiveMessage.RemovePattern("^SUBSCRIBE#");
+                    var index = msg.IndexOf(":");
+                    if (index > -1)
+                    {
+                        var type = msg.Substring(0, index);
+                        var data = msg.Substring(index + 1);
+                        switch (type.ToUpper())
+                        {
+                            case "ADD":
+                                this.AddChannel(data.Split(',', StringSplitOptions.RemoveEmptyEntries));
+                                ReceiveMessage = "订阅频道:" + data;
+                                break;
+                            case "DEL":
+                                this.RemoveChannel(data.Split(',', StringSplitOptions.RemoveEmptyEntries));
+                                ReceiveMessage = "取消订阅频道:" + data;
+                                break;
+                            case "CLS":
+                                this.ClearChannel();
+                                ReceiveMessage = "取消所有订阅频道";
+                                break;
+                        }
+                        bytes = ReceiveMessage.GetBytes(this.Encoding);
+                    }
+                }
+
+                this.OnMessage?.Invoke(this, ReceiveMessage, EventArgs.Empty);
                 this.OnMessageByte?.Invoke(this, bytes, EventArgs.Empty);
 
             } while (!this.CancelToken.IsCancellationRequested && this.Connected);
@@ -764,7 +795,7 @@ namespace XiaoFeng.Net
         public void SetSocket(Socket socket, Func<ISocketClient, bool> authentication = null, X509Certificate certificate = null)
         {
             this.Client = socket;
-            this.Active = true;
+            this._Active = true;
             this.SocketState = SocketState.Runing;
             this.EndPoint = socket.RemoteEndPoint as IPEndPoint;
             this._IsServer = true;
@@ -776,7 +807,7 @@ namespace XiaoFeng.Net
 
         #region 处理定义数据
         ///<inheritdoc/>
-        public void AddChannel(params string[] channel)
+        public virtual void AddChannel(params string[] channel)
         {
             if (this.TagsData == null) this.TagsData = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
             var list = new List<string>();
@@ -791,9 +822,13 @@ namespace XiaoFeng.Net
                 if (!list.Contains(c, StringComparer.OrdinalIgnoreCase))
                     list.Add(c);
             });
+            if (!this.IsServer)
+            {
+                this.SendPing($"SUBCRIBE#ADD:{channel.Join(",")}".GetBytes(this.Encoding));
+            }
         }
         ///<inheritdoc/>
-        public void RemoveChannel(params string[] channel)
+        public virtual void RemoveChannel(params string[] channel)
         {
             if (this.TagsData == null) { this.TagsData = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase); return; }
             if (!this.TagsData.ContainsKey(CHANNEL_KEY)) return;
@@ -801,16 +836,26 @@ namespace XiaoFeng.Net
             {
                 var list = cs as List<string>;
                 channel.Each(c => list.Remove(c));
+                if (!this.IsServer)
+                {
+                    this.SendPing($"SUBCRIBE#DEL:{channel.Join(",")}".GetBytes(this.Encoding));
+                }
             }
         }
         ///<inheritdoc/>
-        public void ClearChannel()
+        public virtual void ClearChannel()
         {
             if (this.TagsData.ContainsKey(CHANNEL_KEY))
+            {
                 this.TagsData[CHANNEL_KEY] = new List<string>();
+                if (!this.IsServer)
+                {
+                    this.SendPing($"SUBCRIBE#CLS:".GetBytes(this.Encoding));
+                }
+            }
         }
         ///<inheritdoc/>
-        public IList<string> GetChannel()
+        public virtual IList<string> GetChannel()
         {
             if (this.TagsData == null) { this.TagsData = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase); return null; }
             if (!this.TagsData.ContainsKey(CHANNEL_KEY)) return null;
@@ -819,7 +864,7 @@ namespace XiaoFeng.Net
             return null;
         }
         ///<inheritdoc/>
-        public Boolean ContainsChannel(string channel)
+        public virtual Boolean ContainsChannel(params string[] channel)
         {
             if (channel.IsNotNullOrEmpty() && this.TagsData != null && this.TagsData.Count > 0)
             {
@@ -828,21 +873,22 @@ namespace XiaoFeng.Net
                     if (cs.IsNotNullOrEmpty())
                     {
                         var list = cs as List<string>;
-                        return list.Contains(channel, StringComparer.Ordinal);
+                        foreach (var c in channel)
+                            if (list.Contains(c, StringComparer.OrdinalIgnoreCase)) return true;
                     }
                 }
             }
             return false;
         }
         ///<inheritdoc/>
-        public object GetData(string key)
+        public virtual object GetData(string key)
         {
             if (this.TagsData.TryGetValue(key, out var data))
                 return data;
             else return null;
         }
         ///<inheritdoc/>
-        public void AddData(string key, object value)
+        public virtual void AddData(string key, object value)
         {
             if (key.IsNullOrEmpty() || key.EqualsIgnoreCase(CHANNEL_KEY)) return;
             if (this.TagsData == null) this.TagsData = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
@@ -851,15 +897,15 @@ namespace XiaoFeng.Net
             else this.TagsData.Add(key, value);
         }
         ///<inheritdoc/>
-        public void RemoveData(string key)
+        public virtual void RemoveData(string key)
         {
             if (this.ContainsData(key))
                 this.TagsData.Remove(key);
         }
         ///<inheritdoc/>
-        public void ClearData() => this.TagsData?.Clear();
+        public virtual void ClearData() => this.TagsData?.Clear();
         ///<inheritdoc/>
-        public Boolean ContainsData(string key) => key.IsNotNullOrEmpty() && this.TagsData != null && this.TagsData.Count != 0 && this.TagsData.ContainsKey(key);
+        public virtual Boolean ContainsData(string key) => key.IsNotNullOrEmpty() && this.TagsData != null && this.TagsData.Count != 0 && this.TagsData.ContainsKey(key);
         #endregion
 
         #region 释放
@@ -891,7 +937,7 @@ namespace XiaoFeng.Net
             this.SslStream?.Close();
             this.SslStream?.Dispose();
             this.SslStream = null;
-            this.Active = false;
+            this._Active = false;
             this.CancelToken = new CancellationTokenSource();
             base.Dispose(disposing);
         }
