@@ -100,8 +100,9 @@ namespace XiaoFeng.Net
     /// 错误信息委托
     /// </summary>
     /// <param name="client">对象</param>
+    /// <param name="endPoint">客户端端点</param>
     /// <param name="e">事件</param>
-    public delegate void OnClientErrorEventHandler(ISocketClient client, Exception e);
+    public delegate void OnClientErrorEventHandler(ISocketClient client, IPEndPoint endPoint, Exception e);
     /// <summary>
     /// 停止服务委托
     /// </summary>

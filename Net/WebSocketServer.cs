@@ -70,18 +70,6 @@ namespace XiaoFeng.Net
         /// 网络地址
         /// </summary>
         public Uri Uri { get; set; }
-        /// <summary>
-        /// 是否自动Pong
-        /// </summary>
-        public Boolean IsPong { get; set; }
-        /// <summary>
-        /// pong间隔 单位为秒
-        /// </summary>
-        public int PongTime { get; set; } = 120;
-        /// <summary>
-        /// 定时作业
-        /// </summary>
-        private IJob Job { get; set; }
         #endregion
 
         #region 方法
@@ -98,23 +86,10 @@ namespace XiaoFeng.Net
                 return false;
             };
             base.Start(backlog);
-            if (!this.IsPong) return;
-            Job = new Job()
-            {
-                Name = "WebSocketServer定时pong",
-                TimerType = TimerType.Interval,
-                Period = this.PongTime * 1000,
-                SuccessCallBack = job =>
-                {
-                    this.Clients.Each(async c => await c.SendPongAsync().ConfigureAwait(false));
-                }
-            };
-            Job.Start();
         }
         /// <inheritdoc/>
         public override void Stop()
         {
-            if (this.IsPong) Job.Stop();
             base.Stop();
         }
         #endregion

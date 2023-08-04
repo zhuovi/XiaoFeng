@@ -62,11 +62,23 @@ namespace XiaoFeng.Net
         /// 请求头
         /// </summary>
         string RequestHeader { get; }
+        /// <summary>
+        /// 是否自动ping
+        /// </summary>
+        Boolean IsPing { get; set; }
+        /// <summary>
+        /// 每次ping的时间 单位为秒
+        /// </summary>
+        int PingTime { get; set; }
         #endregion
 
         #region 方法
 
         #region 连接
+        /// <summary>
+        /// 将客户端连接到指定主机上的指定端口。
+        /// </summary>
+        void Connect();
         /// <summary>
         /// 将客户端连接到指定主机上的指定端口。
         /// </summary>
@@ -90,6 +102,10 @@ namespace XiaoFeng.Net
         /// <param name="ipAddresses">主机</param>
         /// <param name="port">端口</param>
         void Connect(IPAddress[] ipAddresses, int port);
+        /// <summary>
+        /// 将客户端连接到指定主机上的指定端口。
+        /// </summary>
+        Task ConnectAsync();
         /// <summary>
         /// 将客户端连接到指定主机上的指定端口
         /// </summary>
@@ -278,7 +294,7 @@ namespace XiaoFeng.Net
         /// 客户端事件回调
         /// </summary>
         /// <param name="e">错误信息</param>
-        void ClientErrorEventHandler(Exception e);
+        void ClientErrorEventHandler(IPEndPoint endPoint, Exception e);
         /// <summary>
         /// 接收消息事件回调
         /// </summary>

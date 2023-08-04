@@ -11,6 +11,7 @@ using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Collections.Concurrent;
 using System.Linq;
+using XiaoFeng.Threading;
 
 /****************************************************************
 *  Copyright © (2023) www.fayelf.com All Rights Reserved.       *
@@ -157,7 +158,7 @@ namespace XiaoFeng.Net
             }
         }
         /// <summary>
-        /// 允许网络地址转换
+        /// 允许网络地址转换Thank you very much. You are a wonderful person. Do you have whatsapp or telegram? Or are you using your mail actively?
         /// </summary>
         private Boolean? _AllowNatTraversal;
         ///<inheritdoc/>
@@ -170,6 +171,18 @@ namespace XiaoFeng.Net
         /// 连接列表
         /// </summary>
         private ConcurrentDictionary<IPEndPoint, ISocketClient> _Clients { get; set; } = new ConcurrentDictionary<IPEndPoint, ISocketClient>();
+        /// <summary>
+        /// 是否自动Pong
+        /// </summary>
+        public Boolean IsPong { get; set; }
+        /// <summary>
+        /// pong间隔 单位为秒
+        /// </summary>
+        public int PongTime { get; set; } = 120;
+        /// <summary>
+        /// 定时作业
+        /// </summary>
+        private IJob Job { get; set; }
         /// <summary>
         /// 主任务
         /// </summary>
@@ -237,6 +250,7 @@ namespace XiaoFeng.Net
                 /*启动事件*/
                 OnStart?.Invoke(this, EventArgs.Empty);
                 this.AcceptSocketClient();
+                this.RunPongAsync().ConfigureAwait(false);
             }
             catch (SocketException ex)
             {
@@ -573,7 +587,7 @@ namespace XiaoFeng.Net
         ///<inheritdoc/>
         public void DisconnectedEventHandler(ISocketClient client) => OnDisconnected?.Invoke(client, EventArgs.Empty);
         ///<inheritdoc/>
-        public void ClientErrorEventHandler(ISocketClient client,Exception e) => OnClientError?.Invoke(client, e);
+        public void ClientErrorEventHandler(ISocketClient client, IPEndPoint endPoint, Exception e) => OnClientError?.Invoke(client, endPoint, e);
         ///<inheritdoc/>
         public void MessageEventHandler(ISocketClient client, string message) => OnMessage?.Invoke(client, message, EventArgs.Empty);
         ///<inheritdoc/>
@@ -759,6 +773,32 @@ namespace XiaoFeng.Net
         }
         #endregion
 
+        #region 启动pong功能
+        /// <summary>
+        /// 启动pong功能
+        /// </summary>
+        /// <returns></returns>
+        private Task RunPongAsync()
+        {
+            if (!this.IsPong) return Task.CompletedTask;
+            if (this.PongTime <= 3) this.PongTime = 10;
+            //if (this.Clients == null || !this.Clients.Any()) return Task.CompletedTask;
+            this.Job = new Job().SetName("SocketServer自动Pong作业").Interval(this.PongTime * 1000).SetCompleteCallBack(job =>
+            {
+                this.Clients.Each(a =>
+                {
+                    a.SendPongAsync(new
+                    {
+                        type = "pong",
+                        time = DateTime.Now.ToTimeStamp()
+                    }.ToJson().GetBytes(a.Encoding)).ConfigureAwait(false);
+                });
+            });
+            this.Job.Start();
+            return Task.CompletedTask;
+        }
+        #endregion
+
         #region 释放
         /// <summary>
         /// 释放
@@ -785,6 +825,11 @@ namespace XiaoFeng.Net
             this.SocketState = SocketState.Stop;
             this.CancelToken = new CancellationTokenSource();
             this.ClearQueue();
+            if (this.Job != null)
+            {
+                this.Job.Stop();
+                this.Job = null;
+            }
             base.Dispose(disposing);
         }
         /// <summary>

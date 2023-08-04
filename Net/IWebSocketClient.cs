@@ -23,13 +23,5 @@ namespace XiaoFeng.Net
         /// Uri地址
         /// </summary>
         Uri Uri { get; set; }
-        /// <summary>
-        /// 是否自动Ping
-        /// </summary>
-        Boolean IsPing { get; set; }
-        /// <summary>
-        /// ping间隔 单位为秒
-        /// </summary>
-        int PingTime { get; set; }
     }
 }

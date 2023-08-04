@@ -49,12 +49,6 @@ namespace XiaoFeng.Net
         #region 属性
         ///<inheritdoc/>
         public Uri Uri { get; set; }
-        ///<inheritdoc/>
-        public Boolean IsPing { get; set; }
-        ///<inheritdoc/>
-        public int PingTime { get; set; } = 120;
-        ///<inheritdoc/>
-        private IJob Job { get; set; }
         #endregion
 
         #region 方法
@@ -83,7 +77,7 @@ namespace XiaoFeng.Net
             var stream = base.GetSslStream();
             if (stream == null)
             {
-                ClientErrorEventHandler(new Exception(stream is NetworkStream ? "请求网络流失败." : "注册SSL失败."));
+                ClientErrorEventHandler(this.EndPoint, new Exception(stream is NetworkStream ? "请求网络流失败." : "注册SSL失败."));
                 base.Stop();
                 return;
             }
@@ -104,7 +98,7 @@ namespace XiaoFeng.Net
             packet = new WebSocketPacket(this, msg);
             if (packet.SecWebSocketAccept.IsNullOrEmpty() || packet.SecWebSocketAccept != AcceptCode)
             {
-                ClientErrorEventHandler(new Exception("握手失败."));
+                ClientErrorEventHandler(this.EndPoint, new Exception("握手失败."));
                 base.Stop();
             }
             base.StartEventHandler();
@@ -113,23 +107,6 @@ namespace XiaoFeng.Net
                 this.ReceviceDataAsync().ConfigureAwait(false);
             }, this.CancelToken.Token);
             if (!this.IsPing) return;
-            Job = new Job()
-            {
-                Name = "WebSocketServer定时ping",
-                TimerType = TimerType.Interval,
-                Period = this.PingTime * 1000,
-                SuccessCallBack = async job =>
-                {
-                    await this.SendPingAsync().ConfigureAwait(false);
-                }
-            };
-            Job.Start();
-        }
-        /// <inheritdoc/>
-        public override void Stop()
-        {
-            if (this.IsPing) this.Job.Stop();
-            base.Stop();
         }
         #endregion
     }

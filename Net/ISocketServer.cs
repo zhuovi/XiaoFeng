@@ -40,6 +40,14 @@ namespace XiaoFeng.Net
         /// 验证Socket请求的合法性
         /// </summary>
         Func<ISocketClient, Boolean> Authentication { get; set; }
+        /// <summary>
+        /// 是否自动Pong
+        /// </summary>
+        Boolean IsPong { get; set; }
+        /// <summary>
+        /// pong间隔 单位为秒
+        /// </summary>
+        int PongTime { get; set; }
         #endregion
 
         #region 事件
@@ -69,7 +77,7 @@ namespace XiaoFeng.Net
         /// </summary>
         /// <param name="client">客户端</param>
         /// <param name="e">错误</param>
-        void ClientErrorEventHandler(ISocketClient client, Exception e);
+        void ClientErrorEventHandler(ISocketClient client, IPEndPoint endPoint, Exception e);
         /// <summary>
         /// 接收到客户端消息回调
         /// </summary>
