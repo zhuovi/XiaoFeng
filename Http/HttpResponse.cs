@@ -344,7 +344,7 @@ namespace XiaoFeng.Http
                 /*GZIP处理*/
                 if (ContentEncoding.IsNotNullOrEmpty())
                 {
-                    try
+                    //try
                     {
                         if (ContentEncoding.Equals("gzip", StringComparison.InvariantCultureIgnoreCase))
                         {
@@ -371,9 +371,9 @@ namespace XiaoFeng.Http
                             /*开始读取流并设置编码方式*/
                             stream.CopyTo(_stream);
                     }
-                    catch (Exception ex)
+                    //catch (Exception ex)
                     {
-                        LogHelper.Error(ex, "解压出错.");
+                        //LogHelper.Error(ex, "解压出错.");
                     }
                 }
                 else

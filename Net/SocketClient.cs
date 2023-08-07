@@ -14,6 +14,7 @@ using XiaoFeng.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using XiaoFeng.Threading;
+using System.Security.Cryptography;
 
 /****************************************************************
 *  Copyright © (2023) www.fayelf.com All Rights Reserved.       *
@@ -533,6 +534,80 @@ namespace XiaoFeng.Net
         #endregion
 
         #region 接收数据
+        ///<inheritdoc/>
+        public virtual async Task<int?> ReceviceByteAsync()
+        {
+            var stream = this.GetSslStream();
+            if (stream == null) return null;
+            try
+            {
+                return await Task.FromResult(stream.ReadByte());
+            }
+            catch (SocketException ex)
+            {
+                this.OnClientError?.Invoke(this, this.EndPoint, ex);
+                return null;
+            }
+            catch (IOException ex)
+            {
+                if (ex.InnerException is SocketException err)
+                {
+                    this.OnClientError?.Invoke(this, this.EndPoint, err);
+                    this.OnStop?.Invoke(this, EventArgs.Empty);
+                }
+                else
+                    this.OnClientError?.Invoke(this, this.EndPoint, ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                if (ex.InnerException is SocketException err)
+                    this.OnClientError?.Invoke(this, this.EndPoint, err);
+                else
+                    this.OnClientError?.Invoke(this, this.EndPoint, ex);
+                return null;
+            }
+        }
+        ///<inheritdoc/>
+        public virtual async Task<byte[]> ReceviceMessageAsync(byte[] bytes, int offset = -1, int count = -1)
+        {
+            if (bytes == null || bytes.Length == 0 || bytes.Length <= offset || bytes.Length <= count + offset) return Array.Empty<byte>();
+            if (offset < 0) offset = 0;
+            if (count <= 0) count = bytes.Length - offset;
+            var stream = this.GetSslStream();
+            if (stream == null) return Array.Empty<byte>();
+            try
+            {
+                var dataBuffer = new byte[count];
+                var readsize = await stream.ReadAsync(dataBuffer, 0, count, this.CancelToken.Token);
+                Array.Copy(dataBuffer, 0, bytes, offset, readsize);
+            }
+            catch (SocketException ex)
+            {
+                this.OnClientError?.Invoke(this, this.EndPoint, ex);
+                return Array.Empty<byte>();
+            }
+            catch (IOException ex)
+            {
+                if (ex.InnerException is SocketException err)
+                {
+                    this.OnClientError?.Invoke(this, this.EndPoint, err);
+                    this.OnStop?.Invoke(this, EventArgs.Empty);
+                }
+                else
+                    this.OnClientError?.Invoke(this, this.EndPoint, ex);
+                return Array.Empty<byte>();
+            }
+            catch (Exception ex)
+            {
+                if (ex.InnerException is SocketException err)
+                    this.OnClientError?.Invoke(this, this.EndPoint, err);
+                else
+                    this.OnClientError?.Invoke(this, this.EndPoint, ex);
+                return Array.Empty<byte>();
+            }
+            return bytes;
+        }
         /// <inheritdoc/>
         public virtual async Task<byte[]> ReceviceMessageAsync()
         {

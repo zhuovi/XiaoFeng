@@ -9,6 +9,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using XiaoFeng.IO;
+using XiaoFeng.Net;
 
 /****************************************************************
 *  Copyright © (2023) www.fayelf.com All Rights Reserved.       *
@@ -185,6 +186,8 @@ namespace XiaoFeng.Http
 		}
 		#endregion
 
+		public ISocketClient Client { get; set; }
+
 		#region 发送请求
 		/// <summary>
 		/// 发送请求
@@ -203,8 +206,8 @@ namespace XiaoFeng.Http
 			}
 			this.RequestUri = new Uri(url);
 
-			var NetStream = this.CreateNetStream();
-			this.NetStream = this.RequestUri.Scheme.ToUpper() == "HTTP" ? NetStream as Stream : this.GetSslStream(NetStream);
+			/*var NetStream = this.CreateNetStream();
+			this.NetStream = this.RequestUri.Scheme.ToUpper() == "HTTP" ? NetStream as Stream : this.GetSslStream(NetStream);*/
 
 			this.Response.Request = this.Request;
 			this.Response.SetBeginTime();
@@ -228,8 +231,19 @@ namespace XiaoFeng.Http
 			}
 			var RequestHeader = this.CreateRequestHeader(requestUri);
 			var bytes = RequestHeader.ToString().GetBytes(this.Request.Encoding);
+			this.Client = new SocketClient(requestUri.Host, requestUri.Port);
+			this.Client.ReceiveTimeout = this.Request.ReadWriteTimeout;
+			this.Client.SendTimeout = this.Request.ReadWriteTimeout;
+			this.Client.NoDelay = true;
+			await this.Client.ConnectAsync();
+			if (this.RequestUri.Scheme == "https") this.Client.HostName = this.RequestUri.Host;
+			await this.Client.SendAsync(bytes);
+			await this.Client.SendAsync(RequestBody);
+			var resonseBytes = await this.Client.ReceviceMessageAsync();
+			
+			var buffers = new MemoryStream(resonseBytes);
 			//发送头
-			await this.NetStream.WriteAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
+			/*await this.NetStream.WriteAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
 			if (RequestBody.Length > 0)
 			{
 				//发送body
@@ -263,7 +277,7 @@ namespace XiaoFeng.Http
 					var array = buffers.ToArray();
 					if (array.Length >= 7 && array.Skip(array.Length - 7).Take(7).ToArray().GetString(this.Request.Encoding) == "\r\n0\r\n\r\n") break;
 				} while (ssl.CanRead);
-			}
+			}*/
 			/*while (true)
 			{
 				buffer = new byte[1024];
@@ -291,7 +305,7 @@ namespace XiaoFeng.Http
 					}
 					else
 					{
-						throw new Exception("转向地址次数超过了设置最大数量.");
+						throw new Exception("转向地址次数超过了设置的最大数量.");
 					}
 				}
 			}

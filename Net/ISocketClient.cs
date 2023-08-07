@@ -197,6 +197,19 @@ namespace XiaoFeng.Net
 
         #region 接收数据
         /// <summary>
+        /// 接收一个字节
+        /// </summary>
+        /// <returns>一个字节</returns>
+        Task<int?> ReceviceByteAsync();
+        /// <summary>
+        /// 接收消息数据到指定数组
+        /// </summary>
+        /// <param name="bytes">数组</param>
+        /// <param name="offset">开始位置</param>
+        /// <param name="count">长度</param>
+        /// <returns>接收到的数据</returns>
+        Task<byte[]> ReceviceMessageAsync(byte[] bytes, int offset = -1, int count = -1);
+        /// <summary>
         /// 接收一条数据
         /// </summary>
         /// <returns>接收数据</returns>
