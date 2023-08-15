@@ -31,44 +31,57 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 4.0.0
+$ dotnet add package XiaoFeng --version 4.0.1
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 4.0.0
+PM> Install-Package XiaoFeng -Version 4.0.1
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="4.0.0" />
+<PackageReference Include="XiaoFeng" Version="4.0.1" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 4.0.0
+> paket add XiaoFeng --version 4.0.1
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 4.0.0"
+> #r "nuget: XiaoFeng, 4.0.1"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=4.0.0
+#addin nuget:?package=XiaoFeng&version=4.0.1
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=4.0.0
+#tool nuget:?package=XiaoFeng&version=4.0.1
 ```
 
 # 更新日志
+
+## 2023-08-14   v 4.0.1
+
+1.修复网络库添加订阅功能;
+
+2.SocketClient增加Connect(),ConnectAsync()方法;
+
+3.SocketClient增加自动ping功能,SocketServer增加自动pong功能;
+
+4.SocketClient增加ReceviceMessageAsync(byte[] bytes,int offset,int count),自定义接收指定长度的数据;
+
+5.SocketClient增加ReceviceByteAsync(),可接收一个字节数据;
+
 
 ## 2023-08-03   v 4.0.0
 

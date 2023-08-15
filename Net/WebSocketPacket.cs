@@ -101,13 +101,19 @@ namespace XiaoFeng.Net
         /// 设置数据
         /// </summary>
         /// <param name="client">网络流</param>
-        public WebSocketPacket(ISocketClient client)
+        /// <param name="options">请求配置</param>
+        public WebSocketPacket(ISocketClient client, WebSocketRequestOptions options = null)
         {
             this.Client = client;
+            if (options != null) this.WebSocketRequestOptions = options;
         }
         #endregion
 
         #region 属性
+        /// <summary>
+        /// 请求配置
+        /// </summary>
+        private WebSocketRequestOptions WebSocketRequestOptions { get; set; }
         /// <summary>
         /// 数据
         /// </summary>
@@ -140,6 +146,10 @@ namespace XiaoFeng.Net
         /// WebSocketAccept
         /// </summary>
         public string SecWebSocketAccept { get; set; }
+        /// <summary>
+        /// 请求地址
+        /// </summary>
+        public Uri Uri { get; set; }
         /// <summary>
         /// 数据类型
         /// </summary>
@@ -178,6 +188,13 @@ namespace XiaoFeng.Net
         public string GetRequestData()
         {
             this.OpCode = OpCode.Text;
+            if (this.WebSocketRequestOptions == null)
+                this.WebSocketRequestOptions = new WebSocketRequestOptions()
+                {
+                    Uri = this.Uri,
+                    SecWebSocketKey = this.SecWebSocketKey
+                };
+            return this.WebSocketRequestOptions.ToString();
             StringBuilder sbr = new StringBuilder();
             sbr.AppendLine($"GET {this.RequestUri} HTTP/1.1");
             sbr.AppendLine($"Host: {this.Host}");
@@ -304,6 +321,11 @@ namespace XiaoFeng.Net
         public async Task HandshakeAsync()
         {
             var stream = this.Client.GetSslStream();
+            if (stream == null)
+            {
+                await Task.FromException(new Exception("客户端网络已经断开."));
+                return;
+            }
             var bytes = this.GetHandshakeData().GetBytes(this.Encoding);
             await stream.WriteAsync(bytes, 0, bytes.Length);
             await stream.FlushAsync();

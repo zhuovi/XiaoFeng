@@ -814,6 +814,8 @@ namespace XiaoFeng.Net
         protected override void Dispose(bool disposing)
         {
             this.CancelToken.Cancel();
+            this.CancelToken = new CancellationTokenSource();
+            this.ClearQueue();
             if (this.Server.Connected)
             {
                 this.Server.Shutdown(SocketShutdown.Both);
@@ -823,8 +825,6 @@ namespace XiaoFeng.Net
             this.Server.Dispose();
             this.Server = null;
             this.SocketState = SocketState.Stop;
-            this.CancelToken = new CancellationTokenSource();
-            this.ClearQueue();
             if (this.Job != null)
             {
                 this.Job.Stop();

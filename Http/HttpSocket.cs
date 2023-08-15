@@ -85,7 +85,7 @@ namespace XiaoFeng.Http
 			{
 				header.Append($"{this.Request.Method.Method.ToUpper()} {uri.PathAndQuery} HTTP/{this.Request.ProtocolVersion}\r\n");
 			}
-			if (uri.Scheme.ToUpper() == "HTTPS")
+			if (uri.Scheme.ToUpper() == "HTTPSA")
 			{
 				header.Append($":authority:{uri.Host}\r\n");
 				header.Append($":method:{this.Request.Method.Method.ToUpper()}\r\n");
@@ -231,11 +231,13 @@ namespace XiaoFeng.Http
 			}
 			var RequestHeader = this.CreateRequestHeader(requestUri);
 			var bytes = RequestHeader.ToString().GetBytes(this.Request.Encoding);
-			this.Client = new SocketClient(requestUri.Host, requestUri.Port);
-			this.Client.ReceiveTimeout = this.Request.ReadWriteTimeout;
-			this.Client.SendTimeout = this.Request.ReadWriteTimeout;
-			this.Client.NoDelay = true;
-			await this.Client.ConnectAsync();
+            this.Client = new SocketClient(requestUri.Host, requestUri.Port)
+            {
+                ReceiveTimeout = this.Request.ReadWriteTimeout,
+                SendTimeout = this.Request.ReadWriteTimeout,
+                NoDelay = true
+            };
+            await this.Client.ConnectAsync();
 			if (this.RequestUri.Scheme == "https") this.Client.HostName = this.RequestUri.Host;
 			await this.Client.SendAsync(bytes);
 			await this.Client.SendAsync(RequestBody);

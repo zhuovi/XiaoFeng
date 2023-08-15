@@ -36,7 +36,7 @@ namespace XiaoFeng
         /// <summary>
         /// 大写基本单位
         /// </summary>
-        private static string[] UpperRadice = new string[] { "", "十", "百", "千" };
+        private static string[] UpperRadice = new string[] { "", "拾", "佰", "仟" };
         /// <summary>
         /// 整型单位
         /// </summary>
@@ -96,7 +96,7 @@ namespace XiaoFeng
         {
             var val = number.ToCast<double>();
             if (val > Max) return "";
-            if (val == 0) return "零" + (upperType == UpperType.Money ? "圆整" : "");
+            if (val == 0) return "零" + (upperType == UpperType.Money ? "元整" : "");
             var IntegerNum = "";
             var DecimalNum = "";
             var _ = new StringBuilder();
@@ -158,7 +158,7 @@ namespace XiaoFeng
                 }
             }
             if (_.Length == 0)
-                return "零" + (upperType == UpperType.Money ? "圆整" : "");
+                return "零" + (upperType == UpperType.Money ? "元整" : "");
             if (upperType == UpperType.Money && DecimalNum.IsNullOrEmpty())
                 _.Append(Integer);
             return _.ToString().TrimEnd('点');

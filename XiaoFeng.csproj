@@ -24,7 +24,7 @@
 		<PackageProjectUrl>https://www.eelf.cn</PackageProjectUrl>
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>修复网络库添加订阅功能;SocketClient增加Connect(),ConnectAsync()方法;SocketClient增加自动ping功能,SocketServer增加自动pong功能;SocketClient增加ReceviceMessageAsync(byte[] bytes,int offset,int count),自定义接收指定长度的数据;SocketClient增加ReceviceByteAsync(),可接收一个字节数据;</PackageReleaseNotes>
+		<PackageReleaseNotes>XiaoFeng设置中增加调度日志输出等级设置,默认是Warn;增加WebSocketClient中属性WebSocketRequest为客户端请求信息;WebSocketClient增加启动传参数据WebSocketRequestOptions;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>

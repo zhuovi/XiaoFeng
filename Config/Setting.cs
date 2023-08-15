@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using XiaoFeng.Cache;
 using XiaoFeng.Json;
+using XiaoFeng.Log;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -74,6 +75,12 @@ namespace XiaoFeng.Config
                 this._JobSchedulerWaitTimeout = value;
             }
         }
+        /// <summary>
+        /// 作业调度日志等级
+        /// </summary>
+        [Description("作业调度日志等级")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public LogType? JobLogLevel { get; set; } = LogType.Warn;
         /// <summary>
         /// 任务队列执行任务超时时间 单位为秒
         /// </summary>

@@ -371,8 +371,8 @@ namespace XiaoFeng.Net
             {
                 this.Connect(this.EndPoint);
                 this.PingAsync().ConfigureAwait(false);
+                this.OnStart?.Invoke(this, EventArgs.Empty);
             }
-            this.OnStart?.Invoke(this, EventArgs.Empty);
             Task.Run(() =>
             {
                 this.ReceviceDataAsync().ConfigureAwait(false);
@@ -680,6 +680,10 @@ namespace XiaoFeng.Net
                         {
                             this.ConnectionType = ConnectionType.WebSocket;
                             this._RequestHeader = ReceiveMessage;
+                            if(this.IsServer && this is IWebSocketClient webSocket)
+                            {
+                                webSocket.Request = new WebSocketRequest(webSocket.HostName.IsNullOrEmpty() ? "ws" : "wss", this.RequestHeader);
+                            }
                         }
                         else
                         {
@@ -695,6 +699,8 @@ namespace XiaoFeng.Net
                             this.OnAuthentication?.Invoke(this, msg, EventArgs.Empty);
                             break;
                         }
+                        if (this.IsServer)
+                            this.OnStart?.Invoke(this, EventArgs.Empty);
                         if (this.ConnectionType == ConnectionType.WebSocket)
                         {
                             //开始握手
@@ -703,7 +709,9 @@ namespace XiaoFeng.Net
                                 Encoding = this.Encoding,
                                 DataType = this.DataType
                             };
-                            await packet.HandshakeAsync();
+                           var Handshake = packet.HandshakeAsync();
+                            await Handshake;
+                            
                             HandshakesCount++;
                             continue;
                         }
@@ -761,8 +769,8 @@ namespace XiaoFeng.Net
                     }
                 }
 
-                this.OnMessage?.Invoke(this, ReceiveMessage, EventArgs.Empty);
-                this.OnMessageByte?.Invoke(this, bytes, EventArgs.Empty);
+                Task.Run(() => this.OnMessage?.Invoke(this, ReceiveMessage, EventArgs.Empty));
+                Task.Run(() => this.OnMessageByte?.Invoke(this, bytes, EventArgs.Empty));
 
             } while (!this.CancelToken.IsCancellationRequested && this.Connected);
             this.Stop();

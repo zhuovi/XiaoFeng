@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using XiaoFeng.Log;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -41,6 +42,10 @@ namespace XiaoFeng.Config
         /// 调度最小等待时长 单位为秒
         /// </summary>
         int JobSchedulerWaitTimeout { get; set; }
+        /// <summary>
+        /// 作业调度日志等级
+        /// </summary>
+        LogType? JobLogLevel { get; set; }
         /// <summary>
         /// 是否启用数据加密
         /// </summary>

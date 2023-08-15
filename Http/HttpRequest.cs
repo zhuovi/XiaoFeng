@@ -634,7 +634,7 @@ namespace XiaoFeng.Http
         /// 获取响应数据
         /// </summary>
         /// <returns>响应数据</returns>
-        public async Task<HttpResponse> GetHttpSocketResponseAsync()
+        private async Task<HttpResponse> GetHttpSocketResponseAsync()
         {
             var httpSocket = new HttpSocket(this);
             return await httpSocket.SendRequestAsync().ConfigureAwait(false);

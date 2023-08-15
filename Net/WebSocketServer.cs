@@ -54,12 +54,12 @@ namespace XiaoFeng.Net
         {
             if (address == IPAddress.Any)
             {
-                this.Uri = new Uri($"ws://localhost://{port}");
+                this.Uri = new Uri($"ws://localhost:{port}");
                 base.EndPoint = new IPEndPoint(IPAddress.Any, port);
             }
             else
             {
-                this.Uri = new Uri($"ws://{address}://{port}");
+                this.Uri = new Uri($"ws://{address}:{port}");
                 this.EndPoint = new IPEndPoint(address, port);
             }
         }

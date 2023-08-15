@@ -8,33 +8,33 @@ using System.Text;
 *  QQ : 7092734                                                 *
 *  Email : jacky@fayelf.com                                     *
 *  Site : www.fayelf.com                                        *
-*  Create Time : 2023-08-03 11:47:44                            *
+*  Create Time : 2023-08-14 16:38:52                            *
 *  Version : v 1.0.0                                            *
 *  CLR Version : 4.0.30319.42000                                *
 *****************************************************************/
 namespace XiaoFeng.Net
 {
     /// <summary>
-    /// WebSocketClient接口
+    /// HttpVersionX 类说明
     /// </summary>
-    public interface IWebSocketClient : ISocketClient
+    public enum HttpVersionX
+
     {
         /// <summary>
-        /// Uri地址
+        /// 1.0
         /// </summary>
-        Uri Uri { get; }
+        Version10 = 10,
         /// <summary>
-        /// 请求配置
+        /// 1.1
         /// </summary>
-        WebSocketRequestOptions WebSocketRequestOptions { get; }
+        Version11 = 11,
         /// <summary>
-        /// 请求数据
+        /// 2.0
         /// </summary>
-        WebSocketRequest Request { get; set; }
+        Version20 = 20,
         /// <summary>
-        /// 启动
+        /// 3.0
         /// </summary>
-        /// <param name="options">请求配置</param>
-        void Start(WebSocketRequestOptions options);
+        Version30 = 30
     }
 }

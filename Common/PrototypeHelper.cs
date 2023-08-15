@@ -1763,9 +1763,16 @@ namespace XiaoFeng
             {
                 if (targetType == typeof(string))
                     return o.ToString();
+                else if (targetType.IsGenericType)
+                {
+                    if(targetType.GenericTypeArguments.Length == 1 && targetType.GenericTypeArguments[0].IsEnum)
+                    {
+                        return Enum.Parse(targetType.GenericTypeArguments[0], o.ToString(), true);
+                    }
+                }
                 else if (targetType.IsEnum)
                     return Enum.Parse(targetType, o.ToString(), true);
-                else return Convert.ChangeType(o, targetType);
+                return Convert.ChangeType(o, targetType);
             }
             if (targetType.IsEnum) return o.ToEnum(targetType);
             if (targetType == typeof(string)) return o.IsNullOrEmpty() ? String.Empty : o.ToString();

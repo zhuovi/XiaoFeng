@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Security;
@@ -14,14 +13,14 @@ using XiaoFeng.Config;
 *  Email : jacky@fayelf.com                                     *
 *  Site : www.fayelf.com                                        *
 *  Create Time : 2017-10-31 14:18:38                            *
-*  Version : v 1.0.0                                            *
+*  Version : v 2.1.0                                            *
 *  CLR Version : 4.0.30319.42000                                *
 *****************************************************************/
 namespace XiaoFeng.Threading
 {
     /// <summary>
     /// 作业调度器
-    /// Version : 2.0
+    /// Version : 2.1
     /// </summary>
     public class JobScheduler : Disposable, IJobScheduler
     {
@@ -31,7 +30,7 @@ namespace XiaoFeng.Threading
         /// </summary>
         public JobScheduler()
         {
-            
+            this.Setting = XiaoFeng.Config.Setting.Current;
         }
         /// <summary>
         /// 设置带名称的调度
@@ -81,6 +80,10 @@ namespace XiaoFeng.Threading
         private IJobScheduler _Current = null;
         /// <summary>当前调度器</summary>
         public IJobScheduler Current { get { return _Current ?? CreateScheduler(); } private set { _Current = value; } }
+        /// <summary>
+        /// 全局配置
+        /// </summary>
+        private ISetting Setting { get; set; }
         #endregion
 
         #region 方法
@@ -98,7 +101,7 @@ namespace XiaoFeng.Threading
             {
                 ts = new JobScheduler(name);
                 Schedulers.TryAdd(name, ts);
-                LogHelper.Info("创建调度器:" + name);
+                ts.Log("创建调度器:" + name);
                 return ts;
             });
         }
@@ -209,7 +212,7 @@ namespace XiaoFeng.Threading
                 }
                 if (job.Times.Count == 0)
                 {
-                    LogHelper.Warn($"-- 作业[{job.Name}]未加入调度，因为作业任务类型为:{job.TimerType.GetDescription()} 未设置执行时间 --");
+                    this.Log($"-- 作业[{job.Name}]未加入调度，因为作业任务类型为:{job.TimerType.GetDescription()} 未设置执行时间 --");
                     return;
                 }
                 job.Times = job.Times.OrderBy(a => a.Month).ThenBy(a => a.Day).ThenBy(a => a.Week).ThenBy(a => a.TotalSeconds).ToList();
@@ -285,7 +288,7 @@ namespace XiaoFeng.Threading
                     });
                     this.ConsumeState = true;
                     //Console.ForegroundColor = ConsoleColor.Magenta;
-                    LogHelper.Warn($"-- 有新作业任务,启动调度器[{this.Name}]. --");
+                    this.Log($"-- 有新作业任务,启动调度器[{this.Name}]. --");
                     //Console.ResetColor();
                     this.Process();
                 }
@@ -312,16 +315,15 @@ namespace XiaoFeng.Threading
                     Thread.CurrentThread.Name = this.Name;
                 while (!this.CancelToken.IsCancellationRequested)
                 {
-                    var set = Setting.Current;
                     if (this.SchedulerJobs.Count == 0)
                     {
-                        this.Period = set.JobSchedulerWaitTimeout * 1000;
+                        this.Period = this.Setting.JobSchedulerWaitTimeout * 1000;
                         this.CancelToken.Cancel();
-                        LogHelper.Warn($"-- 暂无作业任务,终止调度器[{this.Name}]. --");
+                        this.Log($"-- 暂无作业任务,终止调度器[{this.Name}]. --");
                         break;
                     }
                     else
-                        this.Period = set.JobSchedulerWaitTimeout * 1000;
+                        this.Period = this.Setting.JobSchedulerWaitTimeout * 1000;
                     var now = DateTime.Now;
                     this.SchedulerJobs.Values.Each(job =>
                     {
@@ -335,7 +337,7 @@ namespace XiaoFeng.Threading
                                 });
                             job.Status = JobStatus.Runing;
                             job.LastTime = now;
-                            LogHelper.Warn($"开始运行作业 [{job.Name}] - {this.SchedulerJobs.Count}");
+                            this.Log($"开始运行作业 [{job.Name}] - {this.SchedulerJobs.Count}");
                             if (job.CompleteCallBack == null) job.Status = JobStatus.Waiting;
                             if (!job.Async)
                                 Execute(job);
@@ -355,15 +357,15 @@ namespace XiaoFeng.Threading
                             /*计算下次运行时长*/
                             this.CheckTimes(job, DateTime.Now.AddMilliseconds(job.Deviation * 2), out period);
                         }
-                        //LogHelper.Warn($"计算出间隔:{period}");
+                        //this.Log($"计算出间隔:{period}");
                         if (period > 0)
                             Synchronized.Run(() =>
                             {
                                 this.Period = Math.Min(this.Period, period);
                             });
-                        LogHelper.Warn($"-- 下一次运行作业时间为:{now.AddMilliseconds(this.Period):yyyy-MM-dd HH:mm:ss.ffff} --");
+                        this.Log($"-- 下一次运行作业时间为:{now.AddMilliseconds(this.Period):yyyy-MM-dd HH:mm:ss.ffff} --");
                     });
-                    //LogHelper.Warn($"等待间隔:{this.Period}");
+                    //this.Log($"等待间隔:{this.Period}");
                     if (this.Manual == null) this.Manual = new ManualResetEventSlim(false);
                     Manual.Reset();
                     Manual.Wait(TimeSpan.FromMilliseconds(this.Period < 0 ? 10 : this.Period));
@@ -429,7 +431,7 @@ namespace XiaoFeng.Threading
         private void Success(IJob job)
         {
             job.Message.Add("执行作业[{0}]成功.[{1}]".format(job.Name, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")));
-            LogHelper.Warn($"执行作业 [{job.Name}] 完成.");
+            this.Log($"执行作业 [{job.Name}] 完成.");
             job.SuccessCount++;
             if (job.TimerType == TimerType.Once || job.IsDestroy || (job.MaxCount.HasValue && job.SuccessCount + job.FailureCount >= job.MaxCount))
             {
@@ -819,7 +821,7 @@ namespace XiaoFeng.Threading
                         job.Period = (long)Math.Abs((job.NextTime.Value - now).TotalMilliseconds);
                     }
                     period = job.Period;
-                    //LogHelper.Warn($"now={now:yyyy-MM-dd HH:mm:ss.fff}-NOW={DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}");
+                    //this.Log($"now={now:yyyy-MM-dd HH:mm:ss.fff}-NOW={DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}");
                     return MatchFlag;
                 case TimerType.Week:
                     if (job.Times == null || job.Times.Count == 0)
@@ -1077,6 +1079,21 @@ namespace XiaoFeng.Threading
         public IJob Worker<T>() where T : IJobWoker
         {
             return new Job().Worker<T>();
+        }
+        #endregion
+
+        #region 日志
+        /// <summary>
+        /// 日志
+        /// </summary>
+        /// <param name="message">消息</param>
+        private void Log(string message)
+        {
+            var level = this.Setting.JobLogLevel;
+            if (level.HasValue)
+            {
+                LogHelper.WriteLog(this.Setting.JobLogLevel.Value, message);
+            }
         }
         #endregion
 
