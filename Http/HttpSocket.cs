@@ -25,8 +25,9 @@ using XiaoFeng.Net;
 namespace XiaoFeng.Http
 {
 	/// <summary>
-	/// HttpSocket 请求操作类
+	/// HttpSocket Http请求操作类
 	/// </summary>
+	/// <remarks>通过Socket连接实现http请求</remarks>
 	public class HttpSocket : Disposable
 	{
 		#region 构造器

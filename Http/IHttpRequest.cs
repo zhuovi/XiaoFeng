@@ -79,7 +79,7 @@ namespace XiaoFeng.Http
         /// <summary>
         /// 设置509证书集合
         /// </summary>
-        X509Certificate2Collection ClientCertificates { get; set; }
+        X509CertificateCollection ClientCertificates { get; set; }
         /// <summary>
         /// 获取和设置IfModifiedSince，默认为当前日期和时间
         /// </summary>
@@ -327,6 +327,12 @@ namespace XiaoFeng.Http
         /// <param name="password">证书密码</param>
         /// <returns>请求对象</returns>
         IHttpRequest SetCert(string path, string password);
+        /// <summary>
+        /// 设置证书集
+        /// </summary>
+        /// <param name="certificates">证书集</param>
+        /// <returns></returns>
+        IHttpRequest SetCertificate(X509CertificateCollection certificates);
         /// <summary>
         /// 设置内容类型
         /// </summary>
