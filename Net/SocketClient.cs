@@ -255,10 +255,12 @@ namespace XiaoFeng.Net
                                 catch (Exception ex)
                                 {
                                     this.Client = null;
-                                    throw ex;
+                                    this.OnClientError?.Invoke(this, this.EndPoint, ex);
+                                    return;
                                 }
                             }
                             this._Active = true;
+                            this.SocketState = SocketState.Runing;
                             break;
                         }
                         else if (address.AddressFamily == AddressFamily.Unknown)
@@ -280,9 +282,7 @@ namespace XiaoFeng.Net
                 if (!this.Active)
                 {
                     lastex?.Throw();
-                    throw new SocketException((int)SocketError.NotConnected);
-                }
-                this.SocketState = SocketState.Runing;
+                } 
             }
         }
         ///<inheritdoc/>

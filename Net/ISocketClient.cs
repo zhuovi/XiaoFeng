@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 namespace XiaoFeng.Net
 {
     /// <summary>
-    /// ISocketClient 类说明
+    /// Socket客户端接口
     /// </summary>
     public interface ISocketClient : INetSocket
     {

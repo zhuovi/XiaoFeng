@@ -7,6 +7,7 @@ using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using XiaoFeng.IO;
 using XiaoFeng.Net;
@@ -54,13 +55,17 @@ namespace XiaoFeng.Http
 		/// </summary>
 		public Uri RequestUri { get; set; }
 		/// <summary>
-		/// 网络流
+		/// 转向次数
 		/// </summary>
-		public Stream NetStream { get; set; }
+		private int _RedirectCount = 0;
 		/// <summary>
 		/// 转向次数
 		/// </summary>
-		public int RedirectCount { get; set; } = 0;
+		public int RedirectCount { get => this._RedirectCount; }
+		/// <summary>
+		/// 请求客户端
+		/// </summary>
+		private ISocketClient Client { get; set; }
 		#endregion
 
 		#region 方法
@@ -71,37 +76,33 @@ namespace XiaoFeng.Http
 		/// </summary>
 		/// <param name="uri">请求网址</param>
 		/// <returns></returns>
-		public StringBuilder CreateRequestHeader(Uri uri)
+		public string CreateRequestHeader(Uri uri)
 		{
-			var header = new StringBuilder();
+			var headers = new WebHeaderCollection();
+			var RequestPath = "";
 			if (this.Request.WebProxy != null)
 			{
-				header.Append($"{this.Request.Method.Method.ToUpper()} {uri.Scheme}://{uri.Host}:{uri.Port}{uri.PathAndQuery} HTTP/{this.Request.ProtocolVersion}\r\n");
-				header.Append($"Proxy-Connection:keep-alive\r\n");
+				RequestPath = $"{this.Request.Method.Method.ToUpper()} {uri.Scheme}://{uri.Host}:{uri.Port}{uri.PathAndQuery} HTTP/{this.Request.ProtocolVersion}\r\n";
+				headers.Set("Proxy-Connection", "keep-alive");
 				var credentials = this.Request.WebProxy.Credentials.GetCredential(uri, "Basic");
-				header.Append($"Proxy-Authorization:Basic {(credentials.UserName + ":" + credentials.Password).ToBase64String()}\r\n");
+				headers.Set(HttpRequestHeader.ProxyAuthorization, $"Basic {(credentials.UserName + ":" + credentials.Password).ToBase64String()}");
 			}
 			else
 			{
-				header.Append($"{this.Request.Method.Method.ToUpper()} {uri.PathAndQuery} HTTP/{this.Request.ProtocolVersion}\r\n");
-			}
-			if (uri.Scheme.ToUpper() == "HTTPSA")
-			{
-				header.Append($":authority:{uri.Host}\r\n");
-				header.Append($":method:{this.Request.Method.Method.ToUpper()}\r\n");
-				header.Append($":path:{uri.AbsolutePath}\r\n");
-				header.Append($":scheme:{uri.Scheme}\r\n");
+				RequestPath = $"{this.Request.Method.Method.ToUpper()} {uri.PathAndQuery} HTTP/{this.Request.ProtocolVersion}\r\n";
 			}
 			if (this.Request.Credentials != null)
 			{
 				var credentials = this.Request.Credentials.GetCredential(RequestUri, "Basic");
-				header.Append($"Authorization:Basic {(credentials.UserName + ":" + credentials.Password).ToBase64String()}\r\n");
+				headers.Set(HttpRequestHeader.Authorization, $"Basic {(credentials.UserName + ":" + credentials.Password).ToBase64String()}");
 			}
-			header.Append($"Accept:{this.Request.Accept}\r\n");
-			header.Append($"Accept-Encoding:{this.Request.AcceptEncoding.Multivariate("gzip, deflate")}\r\n");
-			header.Append($"Accept-Language:{this.Request.AcceptLanguage.Multivariate("zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6")}\r\n");
-			header.Append($"Cache-Control:{(this.Request.CacheControl == null ? "max-age=0" : this.Request.CacheControl.ToString())}\r\n");
-			header.Append($"Connection:{(this.Request.KeepAlive ? "keep-alive" : "close")}\r\n");
+
+			headers.Set(HttpRequestHeader.Accept, this.Request.Accept);
+			headers.Set(HttpRequestHeader.AcceptEncoding, this.Request.AcceptEncoding.Multivariate("gzip, deflate, br"));
+			headers.Set(HttpRequestHeader.AcceptLanguage, this.Request.AcceptLanguage.Multivariate("zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6"));
+			headers.Set(HttpRequestHeader.CacheControl, this.Request.CacheControl == null ? "max-age=0" : this.Request.CacheControl.ToString());
+			headers.Set(HttpRequestHeader.Connection, this.Request.KeepAlive ? "keep-alive" : "close");
+
 			if (this.Request.CookieContainer != null && this.Request.CookieContainer.Count > 0)
 			{
 				var Cookie = new List<string>();
@@ -111,82 +112,86 @@ namespace XiaoFeng.Http
 					var cookie = cookies[i];
 					Cookie.Add($"{cookie.Name}={cookie.Value}");
 				}
-				header.Append($"{Cookie}:{Cookie.Join("&")}\r\n");
+				headers.Set(HttpRequestHeader.Cookie, Cookie.Join("&"));
 			}
-			header.Append($"Host:{uri.Host}:{uri.Port}\r\n");
-			header.Append($"Origin:{uri.Scheme}://{uri.Host}:{uri.Port}\r\n");
-			header.Append($"Upgrade-Insecure-Requests:1\r\n");
-			header.Append($"User-Agent:{this.Request.UserAgent}\r\n");
-			if (this.Request.Referer.IsNotNullOrEmpty())
-				header.Append($"Referer:{this.Request.Referer}\r\n");
 
+			headers.Set(HttpRequestHeader.Host, uri.Host + ":" + uri.Port);
+			headers.Set("Origin", $"{uri.Scheme}://{uri.Host}:{uri.Port}");
+			headers.Set("Upgrade-Insecure-Requests", "1");
+			headers.Set(HttpRequestHeader.UserAgent, this.Request.UserAgent);
+
+			if (this.Request.Referer.IsNotNullOrEmpty())
+			{
+				headers.Set(HttpRequestHeader.Referer, this.Request.Referer);
+			}
 			if (this.Request.ContentType.IsNotNullOrWhiteSpace())
 			{
-				header.Append($"Content-type:{this.Request.ContentType}\r\n");
+				headers.Set(HttpRequestHeader.ContentType, this.Request.ContentType);
 			}
 			else
 			{
 				if (this.Request.Method.Method.ToUpper() == "POST")
 				{
-					header.Append($"Content-Type:application/x-www-form-urlencoded");
+					headers.Set(HttpRequestHeader.ContentType, "application/x-www-form-urlencoded");
 				}
 			}
 			if (this.Request.Encoding != null)
-				header.Append($"Accept-Charset:{this.Request.Encoding.EncodingName}\r\n");
-
+			{
+				headers.Set(HttpRequestHeader.AcceptCharset, this.Request.Encoding.EncodingName);
+			}
 			if (this.Request.Expect100Continue)
-				header.Append($"Expect:100-continue\r\n");
+			{
+				headers.Set(HttpRequestHeader.Expect, "100-continue");
+			}
 			if (this.Request.ContentLength > 0)
-				header.Append($"Content-Length:{this.Request.ContentLength}\r\n");
-
+			{
+				headers.Set(HttpRequestHeader.ContentLength, this.Request.ContentLength.ToString());
+			}
 			if (this.Request.IfModifiedSince != null)
-				header.Append($"If-Modified-Since:{this.Request.IfModifiedSince:r}\r\n");
+			{
+				headers.Set(HttpRequestHeader.IfModifiedSince, this.Request.IfModifiedSince.GetValueOrDefault().ToString("r"));
+			}
 			if (this.Request.Headers != null && this.Request.Headers.Count > 0)
 			{
-				this.Request.Headers.Each(h =>
-				{
-					header.Append($"{h.Key}:{h.Value}\r\n");
-				});
+				this.Request.Headers.Each(h => headers.Set(h.Key, h.Value));
 			}
-
-			header.Append("\r\n");
-			return header;
+			return RequestPath + headers.ToString();
 		}
 		#endregion
 
-		#region 创建NetworkStream
+		#region 获取网络
 		/// <summary>
-		/// 创建NetworkStream
+		/// 获取网络
 		/// </summary>
+		/// <param name="uri">请求地址</param>
 		/// <returns></returns>
-		public NetworkStream CreateNetStream()
+		private async Task<ISocketClient> GetClient(Uri uri)
 		{
-			var uri = new Uri(this.Request.Address);
+			if (this.Request.CertPath.IsNotNullOrEmpty())
+			{
+				var cert = this.Request.CertPath.GetBasePath();
+				if (File.Exists(cert))
+				{
+					var x509 = this.Request.CertPassWord.IsNullOrEmpty() ? new X509Certificate2(cert) : new X509Certificate2(cert, this.Request.CertPassWord);
+					if (this.Request.ClientCertificates == null) this.Request.ClientCertificates = new X509Certificate2Collection(x509);
+					else
+						this.Request.ClientCertificates.Add(x509);
+				}
+			}
 			if (this.Request.WebProxy != null)
 				uri = this.Request.WebProxy.Address;
-			var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+			if (this.Client != null) this.Client.Stop();
+			this.Client = new SocketClient(uri.Host, uri.Port)
 			{
-				NoDelay = true,
-				ReceiveTimeout = this.Request.Timeout,
-				SendTimeout = this.Request.Timeout
+				ReceiveTimeout = this.Request.ReadWriteTimeout,
+				SendTimeout = this.Request.ReadWriteTimeout,
+				ClientCertificates = this.Request.ClientCertificates,
+				NoDelay = true
 			};
-			try
-			{
-				socket.Connect(Dns.GetHostAddresses(uri.Host), uri.Port);
-				return new NetworkStream(socket, true)
-				{
-					ReadTimeout = socket.ReceiveTimeout,
-					WriteTimeout = socket.SendTimeout
-				};
-			}
-			catch (SocketException ex)
-			{
-				throw ex;
-			}
+			await this.Client.ConnectAsync();
+			return await Task.FromResult(this.Client);
 		}
 		#endregion
-
-		public ISocketClient Client { get; set; }
 
 		#region 发送请求
 		/// <summary>
@@ -197,7 +202,7 @@ namespace XiaoFeng.Http
 		{
 			this.Response = new HttpResponse();
 			var url = this.Request.Address;
-			if (this.Request.Method.Method == "Get" && this.Request.Data != null && this.Request.Data.Count > 0)
+			if (this.Request.Method.ToString().ToUpper() == "GET" && this.Request.Data != null && this.Request.Data.Count > 0)
 			{
 				this.Request.Data.Each(k =>
 				{
@@ -205,18 +210,11 @@ namespace XiaoFeng.Http
 				});
 			}
 			this.RequestUri = new Uri(url);
-
-			/*var NetStream = this.CreateNetStream();
-			this.NetStream = this.RequestUri.Scheme.ToUpper() == "HTTP" ? NetStream as Stream : this.GetSslStream(NetStream);*/
-
 			this.Response.Request = this.Request;
 			this.Response.SetBeginTime();
 
-			return await this.SendRequestAsync(this.RequestUri);
+			return await this.SendRequestAsync(this.RequestUri).ConfigureAwait(false);
 		}
-		#endregion
-
-		#region 发送请求
 		/// <summary>
 		/// 发送请求
 		/// </summary>
@@ -225,70 +223,20 @@ namespace XiaoFeng.Http
 		private async Task<HttpResponse> SendRequestAsync(Uri requestUri)
 		{
 			byte[] RequestBody = Array.Empty<byte>();
-			if (this.Request.Method == "POST")
+			if (this.Request.Method.ToString().ToUpper() == "POST")
 			{
 				RequestBody = this.Request.GetReuqestBody();
 			}
 			var RequestHeader = this.CreateRequestHeader(requestUri);
-			var bytes = RequestHeader.ToString().GetBytes(this.Request.Encoding);
-            this.Client = new SocketClient(requestUri.Host, requestUri.Port)
-            {
-                ReceiveTimeout = this.Request.ReadWriteTimeout,
-                SendTimeout = this.Request.ReadWriteTimeout,
-                NoDelay = true
-            };
-            await this.Client.ConnectAsync();
-			if (this.RequestUri.Scheme == "https") this.Client.HostName = this.RequestUri.Host;
-			await this.Client.SendAsync(bytes);
-			await this.Client.SendAsync(RequestBody);
+			var bytes = RequestHeader.GetBytes(this.Request.Encoding);
+			await this.GetClient(requestUri).ConfigureAwait(false);
+			if (requestUri.Scheme.ToUpper() == "HTTPS") this.Client.HostName = requestUri.Host;
+			await this.Client.SendAsync(bytes).ConfigureAwait(false);
+			await this.Client.SendAsync(RequestBody).ConfigureAwait(false);
 			var resonseBytes = await this.Client.ReceviceMessageAsync();
-			
+
 			var buffers = new MemoryStream(resonseBytes);
 			//发送头
-			/*await this.NetStream.WriteAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
-			if (RequestBody.Length > 0)
-			{
-				//发送body
-				await this.NetStream.WriteAsync(RequestBody, 0, RequestBody.Length).ConfigureAwait(false);
-			}
-			await this.NetStream.FlushAsync().ConfigureAwait(false);
-
-			byte[] buffer;
-			var buffers = new MemoryStream();
-
-			if (this.NetStream is NetworkStream ns)
-			{
-				do
-				{
-					buffer = new byte[1024];
-					var length = await ns.ReadAsync(buffer, 0, buffer.Length).ConfigureAwait(false);
-					if (length == 0) break;
-					await buffers.WriteAsync(buffer, 0, length).ConfigureAwait(false);
-				} while (ns.DataAvailable);
-			}
-			else
-			{
-				var ssl = this.NetStream as SslStream;
-				do
-				{
-					buffer = new byte[1024];
-					var length = await ssl.ReadAsync(buffer, 0, buffer.Length).ConfigureAwait(false);
-					if (length == 0) break;
-					await buffers.WriteAsync(buffer, 0, length).ConfigureAwait(false);
-
-					var array = buffers.ToArray();
-					if (array.Length >= 7 && array.Skip(array.Length - 7).Take(7).ToArray().GetString(this.Request.Encoding) == "\r\n0\r\n\r\n") break;
-				} while (ssl.CanRead);
-			}*/
-			/*while (true)
-			{
-				buffer = new byte[1024];
-				var length = await this.NetStream.ReadAsync(buffer, 0, buffer.Length);
-				if (length == 0) break;
-				await buffers.WriteAsync(buffer, 0, length);
-				//if (length < buffer.Length) break;
-			}*/
-			
 			var Headers = this.GetResponseHeaders(buffers);
 			if (Headers.TryGetValue("Location", out var location))
 			{
@@ -297,12 +245,10 @@ namespace XiaoFeng.Http
 					if (!location.IsSite())
 						location = $"{requestUri.Scheme}://{requestUri.Host}:{requestUri.Port}{location}";
 					var uri = new Uri(location);
-					this.RedirectCount++;
-					if (RedirectCount <= this.Request.MaximumAutomaticRedirections)
+					if (Interlocked.Increment(ref this._RedirectCount) <= this.Request.MaximumAutomaticRedirections)
 					{
-						if (this.Response.ResponseUri == null) this.Response.ResponseUris = new List<Uri>();
+						if (this.Response.ResponseUri == null) this.Response.ResponseUris = new List<Uri>() { requestUri, uri };
 						this.Response.ResponseUri = uri;
-						this.Response.ResponseUris.Add(uri);
 						return await this.SendRequestAsync(uri).ConfigureAwait(false);
 					}
 					else
@@ -337,8 +283,8 @@ namespace XiaoFeng.Http
 								var length = Convert.ToInt32(BlockLine.ToArray().GetString(this.Request.Encoding), 16);
 								if (length == 0) break;
 								var BodyBytes = new byte[length];
-								await buffers.ReadAsync(BodyBytes, 0, BodyBytes.Length);
-								await BodyStream.WriteAsync(BodyBytes, 0, length);
+								await buffers.ReadAsync(BodyBytes, 0, BodyBytes.Length).ConfigureAwait(false);
+								await BodyStream.WriteAsync(BodyBytes, 0, length).ConfigureAwait(false);
 								BlockLine.SetLength(0);
 								Body = false;
 							}
@@ -471,53 +417,36 @@ namespace XiaoFeng.Http
 		/// </summary>
 		public void Close()
 		{
-			if (this.NetStream != null)
-			{
-				this.NetStream.Close();
-				this.NetStream.Dispose();
-			}
+			this.Dispose(true);
 		}
 		#endregion
 
-		#region 获取ssl流
+		#region 释放
 		/// <summary>
-		/// 获取ssl流
+		/// 释放
 		/// </summary>
-		/// <param name="stream">网络流</param>
-		/// <returns></returns>
-		/// <exception cref="Exception">异常</exception>
-		private SslStream GetSslStream(NetworkStream stream)
+		public override void Dispose()
 		{
-			var ssl = new SslStream(stream, true, new RemoteCertificateValidationCallback((o, certificate, chain, errors) =>
+			this.Dispose(true);
+		}
+		/// <summary>
+		/// 释放
+		/// </summary>
+		/// <param name="disposing">标识</param>
+		protected override void Dispose(bool disposing)
+		{
+			if (this.Client != null)
 			{
-				return errors == SslPolicyErrors.None;
-			}));
-			if (this.Request.CertPath.IsNotNullOrEmpty())
-			{
-				var cert = this.Request.CertPath.GetBasePath();
-				if (File.Exists(cert))
-				{
-					var x509 = this.Request.CertPassWord.IsNullOrEmpty() ? new X509Certificate2(cert) : new X509Certificate2(cert, this.Request.CertPassWord);
-					if (this.Request.ClientCertificates == null) this.Request.ClientCertificates = new X509Certificate2Collection(x509);
-					else
-						this.Request.ClientCertificates.Add(x509);
-				}
+				this.Client.Stop();
 			}
-			var uri = new Uri(this.Request.Address);
-			if (this.Request.ClientCertificates != null && this.Request.ClientCertificates.Count > 0)
-			{
-				ssl.AuthenticateAsClient(uri.Host, this.Request.ClientCertificates, System.Security.Authentication.SslProtocols.Tls12, false);
-			}
-			else
-				ssl.AuthenticateAsClient(uri.Host);
-			if (ssl.IsAuthenticated)
-			{
-				return ssl;
-			}
-			else
-			{ 
-				throw new Exception("认证失败.");
-			}
+			base.Dispose(disposing);
+		}
+		/// <summary>
+		/// 析构器
+		/// </summary>
+		~HttpSocket()
+		{
+			Dispose(true);
 		}
 		#endregion
 
