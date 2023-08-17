@@ -23,13 +23,32 @@ namespace XiaoFeng.Collections
     /// <summary>
     /// 参数集合
     /// </summary>
-    public class ParameterCollection : NameValueCollection
+    public class ParameterCollection : NameValueCollection, IComparable<ParameterCollection>, IEquatable<ParameterCollection>
     {
         #region 构造器
         /// <summary>
         /// 无参构造器
         /// </summary>
         public ParameterCollection() { }
+        /// <summary>
+        /// 将具有指定名称和值的项添加到 XiaoFeng.Collections.ParameterCollection。
+        /// </summary>
+        /// <param name="name">要添加的项的键。</param>
+        /// <param name="value">要添加的项的值。</param>
+        public ParameterCollection(string name, string value) => this.Add(name, value);
+        /// <summary>
+        /// 将字符串分解成key value添加到 集合中
+        /// </summary>
+        /// <param name="parameters">参数</param>
+        /// <remarks>a:b,b:c,c:d或a=b&amp;b=c&amp;c=d</remarks>
+        public ParameterCollection(string parameters)
+        {
+            if (parameters.IsNullOrEmpty()) return;
+            parameters.GetMatches(@"(((?<a>[^,;:]+)\s*:\s*(?<b>[^,;:]*))|((?<a>[^=&?#]+)=(?<b>[^=&?#]*)))").Each(m =>
+            {
+                this.Add(m["a"].Trim(), m["b"].Trim().UrlDecode());
+            });
+        }
         /// <summary>
         /// 添加集合
         /// </summary>
@@ -44,15 +63,15 @@ namespace XiaoFeng.Collections
 
         #region 属性
         /// <summary>
-        /// 获取 XiaoFeng.Collections.ParameterCollection 中指定索引处的项。
+        /// 获取 <see cref="ParameterCollection"/> 中指定索引处的项。
         /// </summary>
         /// <param name="index">要在集合中定位的项的从零开始的索引。</param>
         /// <returns></returns>
         public new string this[int index] => this.Get(index);
         /// <summary>
-        /// 获取或设置 XiaoFeng.Collections.ParameterCollection 中具有指定键的项。
+        /// 获取或设置 <see cref="ParameterCollection"/> 中具有指定键的项。
         /// </summary>
-        /// <param name="name">要定位的项的 System.String 键。</param>
+        /// <param name="name">要定位的项的 <see cref="System.String"/> 键。</param>
         /// <returns></returns>
         public new string this[string name] => this.Get(name);
         /// <summary>
@@ -72,19 +91,19 @@ namespace XiaoFeng.Collections
             }
         }
         /// <summary>
-        /// 获取包含在 XiaoFeng.Collections.ParameterCollection 实例中的键/值对的数目
+        /// 获取包含在 <see cref="ParameterCollection"/> 实例中的键/值对的数目
         /// </summary>
         public override int Count => base.Count;
         /// <summary>
-        /// 获取 XiaoFeng.Collections.ParameterCollection 中的所有键。
+        /// 获取 <see cref="ParameterCollection"/> 中的所有键。
         /// </summary>
         public override string[] AllKeys => this.OrderedEnumerable == null ? Array.Empty<string>() : this.OrderedEnumerable?.Select(a => a.Key).ToArray();
         /// <summary>
-        /// 获取 XiaoFeng.Collections.ParameterCollection 中的所有值。
+        /// 获取 <see cref="ParameterCollection"/> 中的所有值。
         /// </summary>
         public string[] AllValues => this.AllKeys?.Select(k => this.Get(k)).ToArray();
         /// <summary>
-        /// 获取包含 System.Collections.Specialized.NameObjectCollectionBase.KeysCollection 实例中所有键的 XiaoFeng.Collections.ParameterCollection 实例。
+        /// 获取包含 <see cref="NameObjectCollectionBase.KeysCollection"/> 实例中所有键的 <see cref="ParameterCollection"/> 实例。
         /// </summary>
         public override KeysCollection Keys => base.Keys;
         #endregion
@@ -93,10 +112,10 @@ namespace XiaoFeng.Collections
 
         #region 添加键值
         /// <summary>
-        /// 将具有指定名称和值的项添加到 XiaoFeng.Collections.ParameterCollection。
+        /// 将具有指定名称和值的项添加到 <see cref="ParameterCollection"/> 。
         /// </summary>
-        /// <param name="name">要添加的项的 System.String 键。</param>
-        /// <param name="value">要添加的项的 System.String 值。</param>
+        /// <param name="name">要添加的项的 <see cref="System.String"/> 键。</param>
+        /// <param name="value">要添加的项的 <see cref="System.String"/> 值。</param>
         public override void Add(string name, string value)
         {
             if (name.IsNullOrEmpty()) return;
@@ -104,12 +123,12 @@ namespace XiaoFeng.Collections
             this.ClearOrderedEnumerable();
         }
         /// <summary>
-        /// 将指定 System.Collections.Specialized.NameValueCollection 中的项复制到当前 XiaoFeng.Collections.ParameterCollection。
+        /// 将指定 <see cref="NameValueCollection"/> 中的项复制到当前 <see cref="ParameterCollection"/> 。
         /// </summary>
         /// <param name="c">集合</param>
         public new void Add(NameValueCollection c) { base.Add(c); this.ClearOrderedEnumerable(); }
         /// <summary>
-        /// 将指定 XiaoFeng.Collections.ParameterCollection 中的项复制到当前 XiaoFeng.Collections.ParameterCollection。
+        /// 将指定 <see cref="ParameterCollection"/> 中的项复制到当前 <see cref="ParameterCollection"/> 。
         /// </summary>
         /// <param name="c"></param>
         public void Add(ParameterCollection c) { base.Add(c); this.ClearOrderedEnumerable(); }
@@ -117,7 +136,7 @@ namespace XiaoFeng.Collections
         /// 添加集合
         /// </summary>
         /// <param name="collections">集合</param>
-        /// <returns>ParameterCollection</returns>
+        /// <returns>一个 <see cref="ParameterCollection"/> 对象。</returns>
         public ParameterCollection AddRange(IEnumerable<KeyValuePair<string, string>> collections)
         {
             if (collections == null) return this;
@@ -128,7 +147,7 @@ namespace XiaoFeng.Collections
         /// 添加集合
         /// </summary>
         /// <param name="collections">集合</param>
-        /// <returns>ParameterCollection</returns>
+        /// <returns>一个 <see cref="ParameterCollection"/> 对象。</returns>
         public ParameterCollection AddRange(ICollection<KeyValuePair<string, string>> collections)
         {
             if (collections == null) return this;
@@ -136,9 +155,9 @@ namespace XiaoFeng.Collections
             return this;
         }
         /// <summary>
-        /// 设置 XiaoFeng.Collections.ParameterCollection 中某个项的值。
+        /// 设置 <see cref="ParameterCollection"/> 中某个项的值。
         /// </summary>
-        /// <param name="name">要向其添加新值的项的 System.String 键。</param>
+        /// <param name="name">要向其添加新值的项的 <see cref="System.String"/> 键。</param>
         /// <param name="value">表示要添加到指定项的新值。</param>
         public override void Set(string name, string value)
         {
@@ -150,7 +169,7 @@ namespace XiaoFeng.Collections
         /// 设置集合
         /// </summary>
         /// <param name="collections">集合</param>
-        /// <returns>ParameterCollection</returns>
+        /// <returns>一个 <see cref="ParameterCollection"/> 对象。</returns>
         public ParameterCollection SetRange(IEnumerable<KeyValuePair<string, string>> collections)
         {
             if (collections == null) return this;
@@ -161,7 +180,7 @@ namespace XiaoFeng.Collections
         /// 设置集合
         /// </summary>
         /// <param name="collections">集合</param>
-        /// <returns>ParameterCollection</returns>
+        /// <returns>一个 <see cref="ParameterCollection"/> 对象。</returns>
         public ParameterCollection SetRange(ICollection<KeyValuePair<string, string>> collections)
         {
             if (collections == null) return this;
@@ -175,41 +194,41 @@ namespace XiaoFeng.Collections
         /// 是否存在当前键
         /// </summary>
         /// <param name="name">键</param>
-        /// <returns>存在则为true 不存在则为false。</returns>
+        /// <returns>存在则为 <see langword="true"/> 不存在则为 <see langword="false"/> 。</returns>
         public Boolean Contains(string name) => this.AllKeys.Contains(name);
         /// <summary>
-        /// 获取 XiaoFeng.Collections.ParameterCollection 中指定索引处的值，这些值已合并为一个以逗号分隔的列表。
+        /// 获取 <see cref="ParameterCollection"/> 中指定索引处的值，这些值已合并为一个以逗号分隔的列表。
         /// </summary>
         /// <param name="index">项的从零开始的索引，该项包含要从集合中获取的值。</param>
-        /// <returns>如果找到，则为一个 System.String，包含 XiaoFeng.Collections.ParameterCollection 中指定索引处的值的列表（此列表以逗号分隔）；否则为 null。</returns>
+        /// <returns>如果找到，则为一个 <see cref="System.String"/> ，包含 <see cref="ParameterCollection"/> 中指定索引处的值的列表（此列表以逗号分隔）；否则为 <see langword="null"/>。</returns>
         public override string Get(int index) => index >= this.Count ? String.Empty : this.AllValues[index];
         /// <summary>
-        /// 获取与 XiaoFeng.Collections.ParameterCollection 中的指定键关联的值，这些值已合并为一个以逗号分隔的列表。
+        /// 获取与 <see cref="ParameterCollection"/> 中的指定键关联的值，这些值已合并为一个以逗号分隔的列表。
         /// </summary>
-        /// <param name="name">项的 System.String 键，该项包含要获取的值。</param>
-        /// <returns>如果找到，则为一个 System.String，包含与 XiaoFeng.Collections.ParameterCollection  中的指定键关联的值的列表（此列表以逗号分隔）；否则为 null。</returns>
+        /// <param name="name">项的 <see cref="System.String"/> 键，该项包含要获取的值。</param>
+        /// <returns>如果找到，则为一个 <see cref="System.String"/> ，包含与 <see cref="ParameterCollection"/> 中的指定键关联的值的列表（此列表以逗号分隔）；否则为 <see langword="null"/>。</returns>
         public override string Get(string name) => base.Get(name);
         /// <summary>
-        /// 返回循环访问 XiaoFeng.Collections.ParameterCollection 的枚举数。
+        /// 返回循环访问 <see cref="ParameterCollection"/> 的枚举数。
         /// </summary>
-        /// <returns>用于 System.Collections.IEnumerator 实例的 XiaoFeng.Collections.ParameterCollection。</returns>
+        /// <returns>用于 <see cref="System.Collections.IEnumerator"/> 实例的 <see cref="ParameterCollection"/> 。</returns>
         public override IEnumerator GetEnumerator() => this.OrderedEnumerable.GetEnumerator();
         /// <summary>
-        /// 获取 XiaoFeng.Collections.ParameterCollection 中指定索引处的值。
+        /// 获取 <see cref="ParameterCollection"/> 中指定索引处的值。
         /// </summary>
         /// <param name="index">项的从零开始的索引，该项包含要从集合中获取的值。</param>
-        /// <returns>如果找到，则为一个 System.String 数组，包含 XiaoFeng.Collections.ParameterCollection 中指定索引处的值；否则为 null。</returns>
+        /// <returns>如果找到，则为一个 <see cref="System.String"/> 数组，包含 <see cref="ParameterCollection"/> 中指定索引处的值；否则为 <see langword="null"/>。</returns>
         public override string[] GetValues(int index) => index >= this.Count ? Array.Empty<string>() : this.AllValues[index].Split(new char[] { ',' });
         /// <summary>
-        /// 获取与 XiaoFeng.Collections.ParameterCollection 中的指定键关联的值。
+        /// 获取与 <see cref="ParameterCollection"/> 中的指定键关联的值。
         /// </summary>
-        /// <param name="name">项的 System.String 键，该项包含要获取的值。</param>
-        /// <returns>如果找到，则为一个 System.String 数组，包含与 XiaoFeng.Collections.ParameterCollection  中的指定键关联的值；否则为 null。</returns>
+        /// <param name="name">项的 <see cref="System.String"/> 键，该项包含要获取的值。</param>
+        /// <returns>如果找到，则为一个 <see cref="System.String"/> 数组，包含与 <see cref="ParameterCollection"/> 中的指定键关联的值；否则为 <see langword="null"/>。</returns>
         public override string[] GetValues(string name) => base.GetValues(name);
         /// <summary>
-        /// 移除 XiaoFeng.Collections.ParameterCollection 实例中具有指定键的项。
+        /// 移除 <see cref="ParameterCollection"/> 实例中具有指定键的项。
         /// </summary>
-        /// <param name="name">要移除的项的 System.String 键。</param>
+        /// <param name="name">要移除的项的 <paramref name="name"/> 键。</param>
         public override void Remove(string name)
         {
             base.Remove(name);
@@ -219,19 +238,19 @@ namespace XiaoFeng.Collections
         /// 确定指定对象是否等于当前对象。
         /// </summary>
         /// <param name="obj">要与当前对象进行比较的对象。</param>
-        /// <returns>如果指定的对象等于当前对象，则为 true；否则为 false。</returns>
-        public override bool Equals(object obj) => base.Equals(obj);
+        /// <returns>如果指定的对象等于当前对象，则为 <see langword="true"/> ；否则为 <see langword="false"/> 。</returns>
+        public override bool Equals(object obj) => obj is ParameterCollection o && this == o;
         /// <summary>
-        /// 获取 XiaoFeng.Collections.ParameterCollection 的指定索引处的键。
+        /// 获取 <see cref="ParameterCollection"/> 的指定索引处的键。
         /// </summary>
         /// <param name="index">要从集合中获取的从零开始的键索引。</param>
-        /// <returns>如果找到，则为一个 System.String，包含 XiaoFeng.Collections.ParameterCollection 中指定索引处的键</returns>
+        /// <returns>如果找到，则为一个 <see cref="System.String"/>，包含 <see cref="ParameterCollection"/> 中指定索引处的键</returns>
         public override string GetKey(int index) => index >= this.Count ? string.Empty : this.AllKeys[index];
         /// <summary>
-        /// 获取 XiaoFeng.Collections.ParameterCollection 的指定索引处的项。
+        /// 获取 <see cref="ParameterCollection"/> 的指定索引处的项。
         /// </summary>
         /// <param name="index">要从集合中获取的从零开始的键索引。</param>
-        /// <returns>如果找到，则为一个 System.String，包含 XiaoFeng.Collections.ParameterCollection 中指定索引处的项</returns>
+        /// <returns>如果找到，则为一个 <see cref="System.String"/> ，包含 <see cref="ParameterCollection"/> 中指定索引处的项</returns>
         public string GetValue(int index) => index >= this.Count ? string.Empty : this.AllValues[index];
         /// <summary>
         /// 作为默认哈希函数。
@@ -243,7 +262,7 @@ namespace XiaoFeng.Collections
 
         #region 清空
         /// <summary>
-        /// 使缓存数组无效，并将所有项从 XiaoFeng.Collections.ParameterCollection 中移除。
+        /// 使缓存数组无效，并将所有项从 <see cref="ParameterCollection"/> 中移除。
         /// </summary>
         public override void Clear() { base.Clear(); this.ClearOrderedEnumerable(); }
         #endregion
@@ -253,7 +272,7 @@ namespace XiaoFeng.Collections
         /// 正序排序
         /// </summary>
         /// <param name="func">委托</param>
-        /// <returns>ParameterCollection</returns>
+        /// <returns>一个 <see cref="ParameterCollection"/> 对象。</returns>
         public ParameterCollection OrderBy(Func<KeyValuePair<string, string>, string> func = null)
         {
             var list = this.GetList();
@@ -265,8 +284,8 @@ namespace XiaoFeng.Collections
         /// <summary>
         /// 倒序排序
         /// </summary>
-        /// <param name="func">委托</param>
-        /// <returns>ParameterCollection</returns>
+        /// <param name="func">委托 <paramref name="func"/></param>
+        /// <returns>一个 <see cref="ParameterCollection"/> 对象。</returns>
         public ParameterCollection OrderByDescending(Func<KeyValuePair<string, string>, string> func = null)
         {
             var list = this.GetList();
@@ -341,6 +360,19 @@ namespace XiaoFeng.Collections
         {
             if (this._OrderedEnumerable != null) this._OrderedEnumerable = null;
         }
+        ///<inheritdoc/>
+        public bool Equals(ParameterCollection other) => this == other;
+        /// <summary>
+        /// 将此实例与指定的 <see cref="ParameterCollection"/> 对象进行比较，并指示此实例在排序顺序中是位于指定的 <see cref="ParameterCollection"/> 之前、之后还是与其出现在同一位置。
+        /// </summary>
+        /// <param name="other">要与此实例进行比较的 <see langword="ParameterCollection" />。</param>
+        /// <returns>一个 32 位带符号整数，该整数指示此实例在排序顺序中是位于 <paramref name="other"/> 参数之前、之后还是与其出现在同一位置。
+        /// <para><term>“值”</term> – 条件</para>
+        /// <para><term>小于零</term> – 此实例位于 <paramref name="other"/> 之前。</para>
+        /// <para><term>零</term> – 此实例在排序顺序中的位置与 <paramref name="other"/> 相同。</para>
+        /// <para><term>大于零</term> – 此实例位于 <paramref name="other"/> 之后。 或 <paramref name="other"/> 上声明的默认值为 <see langword="null" />。</para>
+        /// </returns>
+        public int CompareTo(ParameterCollection other) => this.ToString().CompareTo(other.ToString());
         #endregion
 
         #region 强制转换
@@ -354,6 +386,29 @@ namespace XiaoFeng.Collections
         /// </summary>
         /// <param name="d">值</param>
         public static implicit operator ParameterCollection(Dictionary<string, string> d) => new ParameterCollection(d);
+        #endregion
+
+        #region 实现== !=
+        /// <summary>
+        /// 两类型相等
+        /// </summary>
+        /// <param name="a">第一个对象</param>
+        /// <param name="b">第二个对象</param>
+        /// <returns></returns>
+        public static bool operator ==(ParameterCollection a, ParameterCollection b)
+        {
+            return a.ToString() == b.ToString();
+        }
+        /// <summary>
+        /// 两类型不相等
+        /// </summary>
+        /// <param name="a">第一个对象</param>
+        /// <param name="b">第二个对象</param>
+        /// <returns></returns>
+        public static bool operator !=(ParameterCollection a, ParameterCollection b)
+        {
+            return !(a == b);
+        }
         #endregion
 
         #region 释放        
