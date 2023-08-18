@@ -56,7 +56,7 @@ namespace XiaoFeng.Net
     /// <summary>
     /// Socket服务端
     /// </summary>
-    public class SocketServer<T> :Disposable, ISocketServer where T : ISocketClient, new()
+    public class SocketServer<T> : Disposable, ISocketServer where T : ISocketClient, new()
     {
         #region 构造器
         /// <summary>
@@ -403,7 +403,7 @@ namespace XiaoFeng.Net
                         break;
                     }
                     var client = this.AcceptTcpClientAsync(this.CancelToken.Token).ConfigureAwait(false).GetAwaiter().GetResult();
-                    if(client == null)
+                    if (client == null)
                     {
                         this.OnError?.Invoke(this, new Exception("客户端转换实体出错."));
                         continue;
@@ -456,7 +456,10 @@ namespace XiaoFeng.Net
         /// <summary>
         /// 确定是否存在挂起的连接请求。
         /// </summary>
-        /// <returns></returns>
+        /// <returns>是否存在
+        /// <para><term>true</term> 存在</para>
+        /// <para><term>false</term> 不存在</para>
+        /// </returns>
         public virtual Boolean Pending()
         {
             return this.Active ? this.Server.Poll(0, SelectMode.SelectRead) : false;
@@ -467,7 +470,7 @@ namespace XiaoFeng.Net
         /// <summary>
         /// 接受第一个挂起的连接
         /// </summary>
-        /// <returns></returns>
+        /// <returns>一个 <see cref="Socket"/> 对象</returns>
         public virtual Socket AcceptSocket()
         {
             return this.Server?.Accept();
@@ -476,7 +479,7 @@ namespace XiaoFeng.Net
         /// 接受第一个挂起的连接
         /// </summary>
         /// <param name="cancellationToken">取消指令</param>
-        /// <returns></returns>
+        /// <returns>一个 <see cref="Socket"/> <see cref="Task"/></returns>
         public virtual async Task<Socket> AcceptSocketAsync(CancellationToken cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested)
@@ -525,9 +528,9 @@ namespace XiaoFeng.Net
 
         #region 允许网络地址转换
         /// <summary>
-        /// 允许网络地址转换 仅支持windows
+        /// 允许网络地址转换 仅支持 <see langword="windows"/>
         /// </summary>
-        /// <param name="allowed">true允许  false 不允许</param>
+        /// <param name="allowed"><para><term>true</term> 允许 </para><para><term>false</term> 不允许</para></param>
         public void AllowNatTraversal(bool allowed)
         {
             if (this.Active)
@@ -836,7 +839,8 @@ namespace XiaoFeng.Net
         /// <summary>
         /// 析构器
         /// </summary>
-        ~SocketServer(){
+        ~SocketServer()
+        {
             this.Dispose(false);
         }
         #endregion

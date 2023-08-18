@@ -19,7 +19,7 @@ using XiaoFeng.Threading;
 namespace XiaoFeng.Net
 {
     /// <summary>
-    /// WebSocket 类说明
+    /// WebSocket 客户端
     /// </summary>
     public class WebSocketClient : SocketClient, IWebSocketClient
     {
