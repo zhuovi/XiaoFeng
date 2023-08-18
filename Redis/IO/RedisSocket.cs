@@ -156,18 +156,29 @@ namespace XiaoFeng.Redis.IO
             {
                 if (this.Stream != null)
                 {
-                    this.Stream.Close();
-                    this.Stream.Dispose();
+                    this.Stream?.Close();
+                    this.Stream?.Dispose();
                 }
                 if (this.SocketClient != null)
                 {
-                    this.SocketClient.Shutdown(SocketShutdown.Both);
-                    this.SocketClient.Disconnect(false);
-                    this.SocketClient.Close();
-                    this.SocketClient.Dispose();
+                    this.SocketClient?.Shutdown(SocketShutdown.Both);
+                    this.SocketClient?.Disconnect(false);
+                    this.SocketClient?.Close();
+                    this.SocketClient?.Dispose();
                 }
             }
-            catch { }
+            catch (IOException ie)
+            {
+                LogHelper.Error(ie);
+            }
+            catch (SocketException se)
+            {
+                LogHelper.Error(se);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Error(ex);
+            }
         }
         #endregion
 

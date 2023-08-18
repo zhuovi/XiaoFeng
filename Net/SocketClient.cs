@@ -443,7 +443,8 @@ namespace XiaoFeng.Net
             {
                 var sslStream = new SslStream(stream, false, (sender, cert, chain, error) =>
                 {
-                    return error == SslPolicyErrors.None;
+                    return true;
+                    //return error == SslPolicyErrors.None;
                 });
                 if (IsServer)
                 {

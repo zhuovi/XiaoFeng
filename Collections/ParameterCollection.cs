@@ -31,7 +31,7 @@ namespace XiaoFeng.Collections
         /// </summary>
         public ParameterCollection() { }
         /// <summary>
-        /// 将具有指定名称和值的项添加到 XiaoFeng.Collections.ParameterCollection。
+        /// 将具有指定名称和值的项添加到 <see cref="ParameterCollection"/> 。
         /// </summary>
         /// <param name="name">要添加的项的键。</param>
         /// <param name="value">要添加的项的值。</param>
@@ -39,8 +39,18 @@ namespace XiaoFeng.Collections
         /// <summary>
         /// 将字符串分解成key value添加到 集合中
         /// </summary>
-        /// <param name="parameters">参数</param>
-        /// <remarks>a:b,b:c,c:d或a=b&amp;b=c&amp;c=d</remarks>
+        /// <param name="parameters">参数字符串
+        /// <remarks>字符串格式:
+        /// <para><term>1.</term> – <see langword="a:b,b:c,c:d"/> </para>
+        /// <para><term>2.</term> – <see langword="a:b;b:c;c:d"/> </para>
+        /// <para><term>3.</term> – <see langword="a=b&amp;b=c&amp;c=d"/> </para>
+        /// </remarks>
+        /// </param>
+        /// <remarks><paramref name="parameters"/> 字符串格式:
+        /// <para><term>1.</term> – <see langword="a:b,b:c,c:d"/> </para>
+        /// <para><term>2.</term> – <see langword="a:b;b:c;c:d"/> </para>
+        /// <para><term>3.</term> – <see langword="a=b&amp;b=c&amp;c=d"/> </para>
+        /// </remarks>
         public ParameterCollection(string parameters)
         {
             if (parameters.IsNullOrEmpty()) return;
@@ -49,6 +59,18 @@ namespace XiaoFeng.Collections
                 this.Add(m["a"].Trim(), m["b"].Trim().UrlDecode());
             });
         }
+        /// <summary>
+        /// 设置数据
+        /// </summary>
+        /// <param name="data">数据 <see langword="数据类型为匿名对象"/></param>
+        /// <remarks>
+        /// 参数 <paramref name="data"/> 数据格式为:
+        /// <code>new {
+        ///     a = "aa",
+        ///     b = "bb 
+        /// }</code>
+        /// </remarks>
+        public ParameterCollection(object data) => data.GetType().GetProperties().Each(a => this.Add(a.Name, a.GetValue(data).ToString()));
         /// <summary>
         /// 添加集合
         /// </summary>
