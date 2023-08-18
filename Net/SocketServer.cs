@@ -255,7 +255,7 @@ namespace XiaoFeng.Net
             catch (SocketException ex)
             {
                 Stop();
-                throw ex;
+                this.OnError?.Invoke(this, ex);
             }
             this._Active = true;
         }
