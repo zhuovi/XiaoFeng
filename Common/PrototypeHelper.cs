@@ -3062,5 +3062,19 @@ namespace XiaoFeng
         }
         #endregion
 
+        #region 将枚举转换换成字符串大小写表示形式
+        /// <summary>
+        /// 将此实例的值转换为其等效的字符串小写表示形式。
+        /// </summary>
+        /// <param name="e">枚举</param>
+        /// <returns>此实例的值的字符串小写表示形式。</returns>
+        public static string ToLower(this Enum e) => e.ToString().ToLower(System.Globalization.CultureInfo.CurrentCulture);
+        /// <summary>
+        /// 将此实例的值转换为其等效的字符串大写表示形式。
+        /// </summary>
+        /// <param name="e">枚举</param>
+        /// <returns>此实例的值的字符串大写表示形式。</returns>
+        public static string ToUpper(this Enum e) => e.ToString().ToUpper(System.Globalization.CultureInfo.CurrentCulture);
+        #endregion
     }
 }

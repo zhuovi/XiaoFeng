@@ -101,6 +101,8 @@ namespace XiaoFeng.Net
         ///<inheritdoc/>
         public int SendTimeout { get; set; } = -1;
         ///<inheritdoc/>
+        public int ConnectTimeout { get; set; } = -1;
+        ///<inheritdoc/>
         public int ReceiveBufferSize { get; set; } = 8192;
         ///<inheritdoc/>
         public int SendBufferSize { get; set; } = 8192;

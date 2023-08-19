@@ -74,6 +74,55 @@ namespace XiaoFeng.Net
 
         #region 方法
 
+        #region 启动
+        /// <summary>
+        /// 启动
+        /// </summary>
+        /// <param name="host">主机</param>
+        /// <param name="port">端口</param>
+        void Start(string host, int port);
+        /// <summary>
+        /// 启动（异步）
+        /// </summary>
+        /// <param name="host">主机</param>
+        /// <param name="port">端口</param>
+        Task StartAsync(string host, int port);
+        /// <summary>
+        /// 启动
+        /// </summary>
+        /// <param name="address">主机</param>
+        /// <param name="port">端口</param>
+        void Start(IPAddress address,int port);
+        /// <summary>
+        /// 启动（异步）
+        /// </summary>
+        /// <param name="address">主机</param>
+        /// <param name="port">端口</param>
+        Task StartAsync(IPAddress address, int port);
+        /// <summary>
+        /// 启动
+        /// </summary>
+        /// <param name="endPoint">端点</param>
+        void Start(IPEndPoint endPoint);
+        /// <summary>
+        /// 启动（异步）
+        /// </summary>
+        /// <param name="endPoint">端点</param>
+        Task StartAsync(IPEndPoint endPoint);
+        /// <summary>
+        /// 启动
+        /// </summary>
+        /// <param name="addresses">主机</param>
+        /// <param name="port">端口</param>
+        void Start(IPAddress[] addresses, int port);
+        /// <summary>
+        /// 启动（异步）
+        /// </summary>
+        /// <param name="addresses">主机</param>
+        /// <param name="port">端口</param>
+        Task StartAsync(IPAddress[] addresses, int port);
+        #endregion
+
         #region 连接
         /// <summary>
         /// 将客户端连接到指定主机上的指定端口。
@@ -307,6 +356,7 @@ namespace XiaoFeng.Net
         /// 客户端事件回调
         /// </summary>
         /// <param name="e">错误信息</param>
+        /// <param name="endPoint">地址节点</param>
         void ClientErrorEventHandler(IPEndPoint endPoint, Exception e);
         /// <summary>
         /// 接收消息事件回调

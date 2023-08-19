@@ -174,7 +174,7 @@ namespace XiaoFeng.Http
             {
                 try
                 {
-                    await this.Client.SendAsync(new ArraySegment<byte>(msg.GetBytes()), messageType, true, this.CancelToken);
+                    await this.Client.SendAsync(new ArraySegment<byte>(msg.GetBytes()), messageType, true, this.CancelToken).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
@@ -184,13 +184,13 @@ namespace XiaoFeng.Http
             }
             else if (this.ClientState != WebSocketState.None)
             {
-                await Task.Delay(100);
-                await this.SendAsync(msg, messageType);
+                await Task.Delay(100).ConfigureAwait(false);
+                await this.SendAsync(msg, messageType).ConfigureAwait(false);
             }
             else
             {
-                await this.ConnectAsync();
-                await this.SendAsync(msg, messageType);
+                await this.ConnectAsync().ConfigureAwait(false);
+                await this.SendAsync(msg, messageType).ConfigureAwait(false);
             }
         }
         #endregion

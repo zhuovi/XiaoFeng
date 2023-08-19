@@ -854,14 +854,20 @@ namespace XiaoFeng.Redis
         /// </summary>
         /// <returns>类型</returns>
         public ResultType ReadType() {
-            //try
+            try
             {
                 lock (StreamLock)
                     return (ResultType)this.Reader.ReadByte();
             }
-            //catch
+            catch (IOException ie)
             {
-                //return ResultType.Error;
+                LogHelper.Error(ie);
+                return ResultType.Error;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Error(ex);
+                return ResultType.Error;
             }
         }
         #endregion

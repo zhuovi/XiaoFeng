@@ -18,7 +18,7 @@ using System.Text.RegularExpressions;
 namespace XiaoFeng.Net
 {
     /// <summary>
-    /// WebSocketRequest 类说明
+    /// WebSocket请求类
     /// </summary>
     public class WebSocketRequest : WebSocketRequestOptions
     {
@@ -72,7 +72,5 @@ namespace XiaoFeng.Net
         private string RequestHeader { get; set; }
 
         #endregion
-
-        
     }
 }

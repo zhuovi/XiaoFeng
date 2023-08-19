@@ -30,6 +30,7 @@ namespace XiaoFeng.Net
         public static IPEndPoint ToIPEndPoint(this EndPoint endPoint)
         {
             if (endPoint == null) return null;
+            if (endPoint is IPEndPoint) return (IPEndPoint)endPoint;
             var IPPorts = endPoint.ToString().Split(':');
             return new IPEndPoint(IPAddress.Parse(IPPorts[0]), IPPorts[1].ToCast<int>());
         }

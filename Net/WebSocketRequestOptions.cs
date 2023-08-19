@@ -18,7 +18,7 @@ using XiaoFeng.Http;
 namespace XiaoFeng.Net
 {
     /// <summary>
-    /// WebSocket请求配置
+    /// WebSocketClient请求配置
     /// </summary>
     public class WebSocketRequestOptions
     {
@@ -35,7 +35,7 @@ namespace XiaoFeng.Net
             this["Sec-WebSocket-Version"] = "13";
             this[HttpRequestHeader.Upgrade] = "websocket";
             this[HttpRequestHeader.UserAgent] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36";
-            this[HttpRequestHeader.AcceptEncoding] = (AcceptEncodingType.GZIP | AcceptEncodingType.DEFLATE | AcceptEncodingType.BR).ToString().ToLower();
+            this[HttpRequestHeader.AcceptEncoding] = (AcceptEncodingType.GZIP | AcceptEncodingType.DEFLATE | AcceptEncodingType.BR).ToLower();
             this[HttpRequestHeader.CacheControl] = "no-cache";
             this[HttpRequestHeader.AcceptLanguage] = "zh-CN,zh;q=0.9";
         }
@@ -43,30 +43,30 @@ namespace XiaoFeng.Net
 
         #region 属性
         /// <summary>
-        /// 获取值
+        /// 获取请求头值
         /// </summary>
-        /// <param name="header">key</param>
-        /// <returns></returns>
+        /// <param name="header">头key <see cref="HttpRequestHeader"/></param>
+        /// <returns>请求头值</returns>
         public String this[HttpRequestHeader header]
         {
             get => this.Get(header);
             set => this.Set(header, value);
         }
         /// <summary>
-        /// 获取值
+        /// 获取请求头值
         /// </summary>
-        /// <param name="header">key</param>
-        /// <returns></returns>
+        /// <param name="header">头key <see cref="HttpResponseHeader"/></param>
+        /// <returns>请求头值</returns>
         public String this[HttpResponseHeader header]
         {
             get => this.Get(header);
             set => this.Set(header, value);
         }
         /// <summary>
-        /// 获取值
+        /// 获取请求头值
         /// </summary>
         /// <param name="key">key</param>
-        /// <returns></returns>
+        /// <returns>请求头值</returns>
         public String this[String key]
         {
             get => this.Get(key);
@@ -77,7 +77,7 @@ namespace XiaoFeng.Net
         /// </summary>
         private Uri _Uri;
         /// <summary>
-        /// 请求地址
+        /// 请求地址 <see cref="System.Uri"/>
         /// </summary>
         public Uri Uri
         {
@@ -88,23 +88,23 @@ namespace XiaoFeng.Net
             }
         }
         /// <summary>
-        /// 请求类型
+        /// 请求类型 <see cref="XiaoFeng.Http.HttpMethod"/> 或 <see cref="System.Net.Http.HttpMethod"/>
         /// </summary>
         public HttpMethod Method { get; set; } = HttpMethod.Get;
         /// <summary>
-        /// Http协议版本
+        /// Http协议版本 1.0,1.1,2.0,3.0
         /// </summary>
         public HttpVersionX HttpVersion { get; set; } = HttpVersionX.Version11;
         /// <summary>
-        /// 指定要访问的服务器地址。
+        /// Host 标头，指定要请求的资源的主机名和端口号。
         /// </summary>
         public String Host => this[HttpRequestHeader.Host];
         /// <summary>
-        /// 指定客户端和服务器之间的连接类型，如 keep-alive、close 等。
+        /// Connection 标头，指定特定连接所需的选项。指定客户端和服务器之间的连接类型，如 keep-alive、close 等。
         /// </summary>
         public String Connection => this[HttpRequestHeader.Connection];
         /// <summary>
-        /// 用来包含实现特定的指令。
+        /// Pragma 标头，指定特定于实现的指令，这些指令可应用到请求/响应链上的任意代理。用来包含实现特定的指令。
         /// </summary>
         public String Pragma => this[HttpRequestHeader.Pragma];
         /// <summary>
@@ -126,7 +126,8 @@ namespace XiaoFeng.Net
         /// <summary>
         /// 请求标识key
         /// </summary>
-        public String SecWebSocketKey {
+        public String SecWebSocketKey
+        {
             get => this["Sec-WebSocket-Key"];
             set => this["Sec-WebSocket-Key"] = value;
         }
@@ -135,30 +136,31 @@ namespace XiaoFeng.Net
         /// </summary>
         public String SecWebSocketVersion => this["Sec-WebSocket-Version"];
         /// <summary>
-        /// 向服务器指定某种传输协议以便服务器进行转换。
+        /// Upgrade 标头，指定客户端支持的其他通信协议。向服务器指定某种传输协议以便服务器进行转换。
         /// </summary>
         public String Upgrade => this[HttpRequestHeader.Upgrade];
         /// <summary>
-        /// 标识浏览器的详细信息，包括名称、版本、操作系统等。
+        /// User-Agent 标头，指定有关客户端代理的信息。标识浏览器的详细信息，包括名称、版本、操作系统等。
         /// </summary>
-        public String UserAgent {
+        public String UserAgent
+        {
             get => this[HttpRequestHeader.UserAgent];
             set => this[HttpRequestHeader.UserAgent] = value;
         }
         /// <summary>
-        /// 指定客户端可以接受的压缩编码类型
+        /// Accept-Charset 标头，指定响应可接受的内容编码。指定客户端可以接受的压缩编码类型
         /// </summary>
         public AcceptEncodingType AcceptEncoding
         {
             get => this[HttpRequestHeader.AcceptEncoding].ToUpper().ToCast<AcceptEncodingType>();
-            set => this[HttpRequestHeader.AcceptEncoding] = value.ToString().ToLower();
+            set => this[HttpRequestHeader.AcceptEncoding] = value.ToLower();
         }
         /// <summary>
-        /// 指定客户端的缓存策略，如 no-cache、max-age 等。
+        /// Cache-Control 标头，指定请求/响应链上所有缓存控制机制必须服从的指令。如 no-cache、max-age 等。
         /// </summary>
         public String CacheControl => this[HttpRequestHeader.CacheControl];
         /// <summary>
-        /// 指定客户端接受的语言类型和优先级。
+        /// Accept-Langauge 标头，指定用于响应的首选自然语言。。
         /// </summary>
         public String AcceptLanguage
         {
@@ -166,11 +168,15 @@ namespace XiaoFeng.Net
             set => this[HttpRequestHeader.AcceptLanguage] = value;
         }
         /// <summary>
-        /// 指定请求来源网页的 URL。
+        /// Referer 标头，指定可从中获取请求 URI 的资源 URI。
         /// </summary>
-        public String Referer { get; set; }
+        public String Referer
+        {
+            get => this[HttpRequestHeader.Referer];
+            set => this[HttpRequestHeader.Referer] = value;
+        }
         /// <summary>
-        /// 发出请求的用户的Email。
+        /// From 标头，指定控制请求的用户代理的用户的 Internet 电子邮件地址。
         /// </summary>
         public String From
         {
@@ -178,23 +184,36 @@ namespace XiaoFeng.Net
             set => this[HttpRequestHeader.From] = value;
         }
         /// <summary>
-        /// 希望向服务器进行身份验证的用户代理 凭证是 (用户名:密码)的base64
+        /// Authorization 标头，指定客户端提供的以向服务器验证自身身份的凭据。 凭证是 (用户名:密码)的base64
         /// </summary>
+        /// <remarks>
+        /// <para>假设用户名为jacky密码为eelf.cn则代码就是
+        /// <code>Convert.ToBase64String(Encoding.UTF8.GetBytes("jacky:eelf.cn"))</code>
+        /// </para>
+        /// <code>
+        /// 则上面的帐号密码输出为以下
+        /// 
+        /// Authorization: Basic amFja3k6ZWVsZi5jbg==
+        /// </code>
+        /// </remarks>
         public String Authorization
         {
             get => this[HttpRequestHeader.Authorization];
             set => this[HttpRequestHeader.Authorization] = value;
         }
         /// <summary>
-        /// 代理认证
+        /// Proxy-Authorization 标头，指定客户端提供的以向代理验证自身身份的凭据。
         /// </summary>
+        /// <remarks>
+        /// 设置参照 <see cref="Authorization"/> 属性设置
+        /// </remarks>
         public String ProxyAuthorization
         {
             get => this[HttpRequestHeader.ProxyAuthorization];
             set => this[HttpRequestHeader.ProxyAuthorization] = value;
         }
         /// <summary>
-        /// Cookie
+        ///  Cookie 标头，指定向服务器提供的 cookie 数据。
         /// </summary>
         public String Cookie
         {
@@ -202,17 +221,41 @@ namespace XiaoFeng.Net
             set => this[HttpRequestHeader.Cookie] = value;
         }
         /// <summary>
-        /// 自定义Header
+        ///  Content-Encoding 标头，指定应用到随附的正文数据的编码。
+        /// </summary>
+        public String ContentEncoding
+        {
+            get => this[HttpRequestHeader.ContentEncoding];
+            set => this[HttpRequestHeader.ContentEncoding] = value;
+        }
+        /// <summary>
+        ///  Content-Language 标头，指定随附的正文数据的自然语言。
+        /// </summary>
+        public String ContentLangauge
+        {
+            get => this[HttpRequestHeader.ContentLanguage];
+            set => this[HttpRequestHeader.ContentLanguage] = value;
+        }
+        /// <summary>
+        ///  Content-MD5 标头，指定随附的正文数据的 MD5 摘要，以便提供端到端消息完整性检查。 由于 MD5 出现冲突问题，Microsoft 建议使用基于SHA256 或更高版本的安全模型。
+        /// </summary>
+        public String ContentMd5
+        {
+            get => this[HttpRequestHeader.ContentMd5];
+            set => this[HttpRequestHeader.ContentMd5] = value;
+        }
+        /// <summary>
+        /// 自定义协议标头。
         /// </summary>
         private WebHeaderCollection WebHeader { get; set; }
         #endregion
 
         #region 方法
         /// <summary>
-        /// 设置头信息
+        /// 设置协议标头信息
         /// </summary>
-        /// <param name="key">key</param>
-        /// <param name="value">value</param>
+        /// <param name="key">协议标头key</param>
+        /// <param name="value">协议标头value</param>
         public void Set(string key, string value)
         {
             if (key.IsNullOrEmpty()) return;
@@ -220,30 +263,30 @@ namespace XiaoFeng.Net
             this.WebHeader.Set(key, value);
         }
         /// <summary>
-        /// 设置头信息
+        /// 设置协议标头信息
         /// </summary>
-        /// <param name="header">key</param>
-        /// <param name="value">value</param>
-        public void Set(HttpRequestHeader header,string value)
+        /// <param name="header">协议标头key <see cref="HttpRequestHeader"/></param>
+        /// <param name="value">协议标头value</param>
+        public void Set(HttpRequestHeader header, string value)
         {
             if (this.WebHeader == null) this.WebHeader = new WebHeaderCollection();
             this.WebHeader.Set(header, value);
         }
         /// <summary>
-        /// 设置头信息
+        /// 设置协议标头信息
         /// </summary>
-        /// <param name="header">key</param>
-        /// <param name="value">value</param>
-        public void Set(HttpResponseHeader header,string value)
+        /// <param name="header">协议标头 key <see cref="HttpResponseHeader"/></param>
+        /// <param name="value">协议标头 value</param>
+        public void Set(HttpResponseHeader header, string value)
         {
             if (this.WebHeader == null) this.WebHeader = new WebHeaderCollection();
             this.WebHeader.Set(header, value);
         }
         /// <summary>
-        /// 添加头信息
+        /// 添加协议标头信息
         /// </summary>
-        /// <param name="key">key</param>
-        /// <param name="value">value</param>
+        /// <param name="key">协议标头 key</param>
+        /// <param name="value">协议标头 value</param>
         public void Add(string key, string value)
         {
             if (key.IsNullOrEmpty()) return;
@@ -251,59 +294,59 @@ namespace XiaoFeng.Net
             this.WebHeader.Add(key, value);
         }
         /// <summary>
-        /// 添加头信息
+        /// 添加协议标头信息
         /// </summary>
-        /// <param name="header">key</param>
-        /// <param name="value">value</param>
+        /// <param name="header">协议标头 key <see cref="HttpRequestHeader"/></param>
+        /// <param name="value">协议标头 value</param>
         public void Add(HttpRequestHeader header, string value)
         {
             if (this.WebHeader == null) this.WebHeader = new WebHeaderCollection();
             this.WebHeader.Add(header, value);
         }
         /// <summary>
-        /// 添加头信息
+        /// 添加协议标头信息
         /// </summary>
-        /// <param name="header">key</param>
-        /// <param name="value">value</param>
+        /// <param name="header">协议标头 key <see cref="HttpResponseHeader"/></param>
+        /// <param name="value">协议标头 value</param>
         public void Add(HttpResponseHeader header, string value)
         {
             if (this.WebHeader == null) this.WebHeader = new WebHeaderCollection();
             this.WebHeader.Add(header, value);
         }
         /// <summary>
-        /// 获取数据
+        /// 获取协议标头数据
         /// </summary>
-        /// <param name="header">key</param>
-        /// <returns></returns>
+        /// <param name="header">协议标头 key <see cref="HttpRequestHeader"/></param>
+        /// <returns>协议标头值</returns>
         public string Get(HttpRequestHeader header)
         {
             if (this.WebHeader == null) return String.Empty;
             return this.WebHeader[header];
         }
         /// <summary>
-        /// 获取数据
+        /// 获取协议标头数据
         /// </summary>
-        /// <param name="key">key</param>
-        /// <returns></returns>
+        /// <param name="key">协议标头 key</param>
+        /// <returns>协议标头值</returns>
         public string Get(string key)
         {
             if (this.WebHeader == null) return String.Empty;
             return this.WebHeader[key];
         }
         /// <summary>
-        /// 获取数据
+        /// 获取响应协议标头数据
         /// </summary>
-        /// <param name="header">key</param>
-        /// <returns></returns>
+        /// <param name="header">响应协议标头key <see cref="HttpResponseHeader"/></param>
+        /// <returns>响应协议标头数据</returns>
         public string Get(HttpResponseHeader header)
         {
             if (this.WebHeader == null) return String.Empty;
             return this.WebHeader[header];
         }
         /// <summary>
-        /// 转成字符串
+        /// 转成协议标头字符串
         /// </summary>
-        /// <returns></returns>
+        /// <returns>合并协议标头字符串</returns>
         public override string ToString()
         {
             var sbr = new StringBuilder();

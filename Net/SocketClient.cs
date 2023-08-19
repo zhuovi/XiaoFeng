@@ -56,15 +56,15 @@ namespace XiaoFeng.Net
         public SocketClient(string host, int port)
         {
             if (host.IsNullOrEmpty() || host.EqualsIgnoreCase("localhost")) host = "127.0.0.1";
-           
-           foreach(var ip in Dns.GetHostEntry(host).AddressList)
+
+            foreach (var ip in Dns.GetHostEntry(host).AddressList)
             {
                 if (ip.AddressFamily == AddressFamily.InterNetwork)
                 {
                     this.EndPoint = new IPEndPoint(ip, port);
                     break;
                 }
-            }            
+            }
             InitializeClientSocket();
         }
         /// <summary>
@@ -97,6 +97,27 @@ namespace XiaoFeng.Net
         public int ReceiveTimeout { get; set; } = -1;
         ///<inheritdoc/>
         public int SendTimeout { get; set; } = -1;
+        /// <summary>
+        /// 指定之后连接服务端将超时的时间长度
+        /// </summary>
+        private int _ConnectTimeout = 0;
+        /// <inheritdoc/>
+        public int ConnectTimeout
+        {
+            get
+            {
+                if (this._ConnectTimeout >= 1 && this._ConnectTimeout < 500)
+                    this._ConnectTimeout = 500;
+                if (this._ConnectTimeout <= 0) this._ConnectTimeout = 0;
+                return this._ConnectTimeout;
+            }
+            set
+            {
+                if (value >= 1 && value < 500) this._ConnectTimeout = 500;
+                if (value <= 0) this._ConnectTimeout = 0;
+                this._ConnectTimeout = value;
+            }
+        }
         ///<inheritdoc/>
         public int ReceiveBufferSize { get; set; } = 8192;
         ///<inheritdoc/>
@@ -242,15 +263,24 @@ namespace XiaoFeng.Net
                         {
                             if ((address.AddressFamily == AddressFamily.InterNetwork && Socket.OSSupportsIPv4) || Socket.OSSupportsIPv6)
                             {
-                                this.Client = new Socket(address.AddressFamily, this.SocketType, this.ProtocolType);
+
                                 if (address.IsIPv4MappedToIPv6)
                                 {
                                     this.Client.DualMode = true;
                                 }
                                 try
                                 {
-                                    this.Client.Connect(address, port);
                                     this.EndPoint = new IPEndPoint(address, port);
+                                    InitializeClientSocket();
+                                    if (this.ConnectTimeout <= 0)
+                                        this.Client.Connect(address, port);
+                                    else
+                                    {
+                                        var result = this.Client.BeginConnect(address, port, null, null);
+                                        if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
+                                            this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
+                                        this.Client.EndConnect(result);
+                                    }
                                 }
                                 catch (Exception ex)
                                 {
@@ -282,7 +312,7 @@ namespace XiaoFeng.Net
                 if (!this.Active)
                 {
                     lastex?.Throw();
-                } 
+                }
             }
         }
         ///<inheritdoc/>
@@ -301,17 +331,52 @@ namespace XiaoFeng.Net
                 remoteEP = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1006);
             }
             this.EndPoint = remoteEP;
-            this.Client.Connect(remoteEP);
-            this._Active = true;
-            this.SocketState = SocketState.Runing;
+            InitializeClientSocket();
+            if (this.ConnectTimeout <= 0)
+                this.Client.Connect(remoteEP);
+            else
+            {
+                var result = this.Client.BeginConnect(this.EndPoint, null, null);
+                if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
+                    this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
+                try
+                {
+                    this.Client.EndConnect(result);
+                    this._Active = true;
+                    this.SocketState = SocketState.Runing;
+                }
+                catch (Exception ex)
+                {
+                    this.OnClientError?.Invoke(this, this.EndPoint, ex);
+                    this._Active = false;
+                    this.SocketState = SocketState.Stop;
+                }
+            }
         }
         ///<inheritdoc/>
         public virtual void Connect(IPAddress[] ipAddresses, int port)
         {
             if (ipAddresses == null || ipAddresses.Length == 0) throw new Exception("服务端地址为空.");
             if (port <= 0) port = 1006;
-
-            this.Client.Connect(ipAddresses, port);
+            InitializeClientSocket();
+            if (this.ConnectTimeout <= 0)
+                this.Client.Connect(ipAddresses, port);
+            else
+            {
+                var result = this.Client.BeginConnect(ipAddresses, port, null, null);
+                if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
+                    this.OnClientError?.Invoke(this, this.Client.RemoteEndPoint.ToIPEndPoint(), new Exception());
+                try
+                {
+                    this.Client.EndConnect(result);
+                }
+                catch (Exception ex)
+                {
+                    this.Client = null;
+                    this.OnClientError?.Invoke(this, this.EndPoint, ex);
+                    return;
+                }
+            }
             this.EndPoint = this.Client.RemoteEndPoint.ToIPEndPoint();
             this._Active = true;
             this.SocketState = SocketState.Runing;
@@ -321,7 +386,27 @@ namespace XiaoFeng.Net
         {
             if (address == null) address = IPAddress.Parse("127.0.0.1");
             if (port <= 0) port = 1006;
-            await this.CompleteConnectAsync(this.Client.ConnectAsync(address, port));
+            await this.CompleteConnectAsync(async () =>
+            {
+                if (this.ConnectTimeout <= 0)
+                    await this.Client.ConnectAsync(address, port).ConfigureAwait(false);
+                else
+                {
+                    var result = this.Client.BeginConnect(address, port, null, null);
+                    if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
+                        this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
+                    try
+                    {
+                        this.Client.EndConnect(result);
+                    }
+                    catch (Exception ex)
+                    {
+                        this.Client = null;
+                        this.OnClientError?.Invoke(this, this.EndPoint, ex);
+                        return;
+                    }
+                }
+            });
         }
         ///<inheritdoc/>
         public virtual async Task ConnectAsync() => await this.ConnectAsync(this.EndPoint);
@@ -330,14 +415,54 @@ namespace XiaoFeng.Net
         {
             if (host.IsNullOrEmpty()) host = "127.0.0.1";
             if (port <= 0) port = 1006;
-            await CompleteConnectAsync(this.Client.ConnectAsync(host, port));
+            await this.CompleteConnectAsync(async () =>
+            {
+                if (this.ConnectTimeout <= 0)
+                    await this.Client.ConnectAsync(host, port).ConfigureAwait(false);
+                else
+                {
+                    var result = this.Client.BeginConnect(host, port, null, null);
+                    if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
+                        this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
+                    try
+                    {
+                        this.Client.EndConnect(result);
+                    }
+                    catch (Exception ex)
+                    {
+                        this.Client = null;
+                        this.OnClientError?.Invoke(this, this.EndPoint, ex);
+                        return;
+                    }
+                }
+            });
         }
         ///<inheritdoc/>
         public virtual async Task ConnectAsync(IPAddress[] addresses, int port)
         {
             if (addresses == null || addresses.Length == 0) addresses = new IPAddress[] { IPAddress.Parse("127.0.0.1") };
             if (port <= 0) port = 1006;
-            await this.CompleteConnectAsync(this.Client.ConnectAsync(addresses, port));
+            await this.CompleteConnectAsync(async () =>
+            {
+                if (this.ConnectTimeout <= 0)
+                    await this.Client.ConnectAsync(addresses, port).ConfigureAwait(false);
+                else
+                {
+                    var result = this.Client.BeginConnect(addresses, port, null, null);
+                    if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
+                        this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
+                    try
+                    {
+                        this.Client.EndConnect(result);
+                    }
+                    catch (Exception ex)
+                    {
+                        this.Client = null;
+                        this.OnClientError?.Invoke(this, this.EndPoint, ex);
+                        return;
+                    }
+                }
+            });
         }
         ///<inheritdoc/>
         public virtual async Task ConnectAsync(IPEndPoint remoteEP)
@@ -346,16 +471,37 @@ namespace XiaoFeng.Net
             {
                 remoteEP = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1006);
             }
-            await this.CompleteConnectAsync(this.Client.ConnectAsync(remoteEP));
+            await this.CompleteConnectAsync(async () =>
+            {
+                if (this.ConnectTimeout <= 0)
+                    await this.Client.ConnectAsync(remoteEP).ConfigureAwait(false);
+                else
+                {
+                    var result = this.Client.BeginConnect(remoteEP, null, null);
+                    if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
+                        this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
+                    try
+                    {
+                        this.Client.EndConnect(result);
+                    }
+                    catch (Exception ex)
+                    {
+                        this.Client = null;
+                        this.OnClientError?.Invoke(this, this.EndPoint, ex);
+                        return;
+                    }
+                }
+            });
         }
         /// <summary>
         /// 连接完成
         /// </summary>
         /// <param name="task">任务</param>
         /// <returns></returns>
-        private async Task CompleteConnectAsync(Task task)
+        private async Task CompleteConnectAsync(Func<Task> task)
         {
-            await task.ConfigureAwait(false);
+            InitializeClientSocket();
+            await task.Invoke().ConfigureAwait(false);
             this.EndPoint = this.Client.RemoteEndPoint.ToIPEndPoint();
             this._Active = true;
             this.SocketState = SocketState.Runing;
@@ -373,11 +519,70 @@ namespace XiaoFeng.Net
                 this.PingAsync().ConfigureAwait(false);
                 this.OnStart?.Invoke(this, EventArgs.Empty);
             }
-            Task.Run(() =>
+            Task.Factory.StartNew(() =>
             {
                 this.ReceviceDataAsync().ConfigureAwait(false);
-            }, this.CancelToken.Token);
+            }, this.CancelToken.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
+        ///<inheritdoc/>
+        public virtual void Start(string host, int port)
+        {
+            this.Connect(host, port);
+            this.AutoReceviceData();
+        }
+        ///<inheritdoc/>
+        public virtual async Task StartAsync(string host, int port)
+        {
+            await this.ConnectAsync(host, port).ConfigureAwait(false);
+            this.AutoReceviceData().ConfigureAwait(false);
+        }
+        ///<inheritdoc/>
+        public virtual void Start(IPAddress address, int port)
+        {
+            this.Connect(address, port);
+            this.AutoReceviceData();
+        }
+        ///<inheritdoc/>
+        public virtual async Task StartAsync(IPAddress address, int port)
+        {
+            await this.ConnectAsync(address, port).ConfigureAwait(false);
+            this.AutoReceviceData().ConfigureAwait(false);
+        }
+        ///<inheritdoc/>
+        public virtual void Start(IPEndPoint endPoint)
+        {
+            this.Connect(endPoint);
+            this.AutoReceviceData();
+        }
+        ///<inheritdoc/>
+        public virtual async Task StartAsync(IPEndPoint endPoint)
+        {
+            await this.ConnectAsync(endPoint).ConfigureAwait(false);
+            this.AutoReceviceData().ConfigureAwait(false);
+        }
+        ///<inheritdoc/>
+        public virtual void Start(IPAddress[] addresses, int port)
+        {
+            this.Connect(addresses, port);
+            this.AutoReceviceData();
+        }
+        ///<inheritdoc/>
+        public virtual async Task StartAsync(IPAddress[] addresses, int port)
+        {
+            await this.ConnectAsync(addresses, port).ConfigureAwait(false);
+            this.AutoReceviceData().ConfigureAwait(false);
+        }
+        /// <summary>
+        /// 自动接收数据
+        /// </summary>
+        /// <returns></returns>
+        Task AutoReceviceData() =>
+            Task.Factory.StartNew(() =>
+            {
+                this.PingAsync().ConfigureAwait(false);
+                this.OnStart?.Invoke(this, EventArgs.Empty);
+                this.ReceviceDataAsync().ConfigureAwait(false);
+            }, this.CancelToken.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         #endregion
 
         #region 停止
@@ -416,13 +621,18 @@ namespace XiaoFeng.Net
         /// </summary>
         private void InitializeClientSocket()
         {
-            if (this.EndPoint.AddressFamily == AddressFamily.Unknown)
-            {
+            if (this.EndPoint == null)
                 this.Client = new Socket(this.SocketType, this.ProtocolType);
-            }
             else
             {
-                this.Client = new Socket(this.EndPoint.AddressFamily, this.SocketType, this.ProtocolType);
+                if (this.EndPoint.AddressFamily == AddressFamily.Unknown)
+                {
+                    this.Client = new Socket(this.SocketType, this.ProtocolType);
+                }
+                else
+                {
+                    this.Client = new Socket(this.EndPoint.AddressFamily, this.SocketType, this.ProtocolType);
+                }
             }
             if (this.ReceiveTimeout > 0) this.Client.ReceiveTimeout = this.ReceiveTimeout;
             if (this.SendTimeout > 0) this.Client.SendTimeout = this.SendTimeout;
@@ -681,7 +891,7 @@ namespace XiaoFeng.Net
                         {
                             this.ConnectionType = ConnectionType.WebSocket;
                             this._RequestHeader = ReceiveMessage;
-                            if(this.IsServer && this is IWebSocketClient webSocket)
+                            if (this.IsServer && this is IWebSocketClient webSocket)
                             {
                                 webSocket.Request = new WebSocketRequest(webSocket.HostName.IsNullOrEmpty() ? "ws" : "wss", this.RequestHeader);
                             }
@@ -710,9 +920,9 @@ namespace XiaoFeng.Net
                                 Encoding = this.Encoding,
                                 DataType = this.DataType
                             };
-                           var Handshake = packet.HandshakeAsync();
+                            var Handshake = packet.HandshakeAsync();
                             await Handshake;
-                            
+
                             HandshakesCount++;
                             continue;
                         }
@@ -735,7 +945,7 @@ namespace XiaoFeng.Net
                     {
                         if (bytes.Length == 0) continue;
                     }
-                    if(packet.OpCode == OpCode.Ping)
+                    if (packet.OpCode == OpCode.Ping)
                     {
                         SendPongAsync().ConfigureAwait(false);
                         if (bytes.Length == 0) continue;
@@ -836,7 +1046,7 @@ namespace XiaoFeng.Net
         {
             if (!this.Connected)
             {
-                this.OnClientError?.Invoke(this,this.EndPoint, new SocketException((int)SocketError.NotConnected));
+                this.OnClientError?.Invoke(this, this.EndPoint, new SocketException((int)SocketError.NotConnected));
                 return -1;
             }
             if ((opCode == OpCode.Text || opCode == OpCode.Binary) && (buffers == null || buffers.Length == 0)) return 0;
@@ -849,7 +1059,7 @@ namespace XiaoFeng.Net
             }
             else
             {
-                
+
             }
             stream.Write(buffers, 0, buffers.Length);
             stream.Flush();

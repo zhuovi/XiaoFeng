@@ -39,7 +39,7 @@ namespace XiaoFeng.Net
    +---------------------------------------------------------------+
 */
     /// <summary>
-    /// WebSocketPacket 类说明
+    /// WebSocket消息包
     /// </summary>
     public class WebSocketPacket: Disposable
     {

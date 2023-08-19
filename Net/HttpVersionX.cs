@@ -15,7 +15,7 @@ using System.Text;
 namespace XiaoFeng.Net
 {
     /// <summary>
-    /// HttpVersionX 类说明
+    /// Http协议版本
     /// </summary>
     public enum HttpVersionX
 

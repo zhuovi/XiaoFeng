@@ -87,11 +87,6 @@ namespace XiaoFeng.Net
             };
             base.Start(backlog);
         }
-        /// <inheritdoc/>
-        public override void Stop()
-        {
-            base.Stop();
-        }
         #endregion
     }
 }

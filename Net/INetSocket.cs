@@ -62,6 +62,10 @@ namespace XiaoFeng.Net
         /// </summary>
         int SendTimeout { get; set; }
         /// <summary>
+        /// 获取或设置一个值，该值指定之后连接服务端将超时的时间长度。超时值（以毫秒为单位）。 如果将该属性设置为 1 到 499 之间的值，该值将被更改为 500。 默认值为 0，指示超时期限无限大。 指定 -1 还会指示超时期限无限大。
+        /// </summary>
+        int ConnectTimeout { get; set; }
+        /// <summary>
         /// 获取或设置一个值，它指定 System.Net.Sockets.Socket 接收缓冲区的大小。System.Int32，它包含接收缓冲区的大小（以字节为单位）。 默认值为 8192。
         /// </summary>
         int ReceiveBufferSize { get; set; }

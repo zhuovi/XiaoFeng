@@ -112,8 +112,6 @@ namespace XiaoFeng.Memcached.IO
             this.SocketClient = new Socket(this.AddressFamily, this.SocketType, this.ProtocolType);
             this.SocketClient.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendTimeout, this.SendTimeout);
             this.SocketClient.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, this.ReceiveTimeout);
-            this.SocketClient.SendTimeout = this.SendTimeout;
-            this.SocketClient.ReceiveTimeout = this.ReceiveTimeout;
             this.SocketClient.NoDelay = true;
         }
         ///<inheritdoc/>
