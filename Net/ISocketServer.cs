@@ -37,6 +37,10 @@ namespace XiaoFeng.Net
         /// </summary>
         int ListenCount { get; set; }
         /// <summary>
+        /// 是否允许将套接字绑定到已在使用中的地址。
+        /// </summary>
+        Boolean ReuseAddress { get; set; }
+        /// <summary>
         /// 验证Socket请求的合法性
         /// </summary>
         Func<ISocketClient, Boolean> Authentication { get; set; }
