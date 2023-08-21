@@ -128,6 +128,10 @@ namespace XiaoFeng.Collections
         /// 获取包含 <see cref="NameObjectCollectionBase.KeysCollection"/> 实例中所有键的 <see cref="ParameterCollection"/> 实例。
         /// </summary>
         public override KeysCollection Keys => base.Keys;
+        /// <summary>
+        /// 编码
+        /// </summary>
+        public Encoding Encoding { get; set; } = Encoding.UTF8;
         #endregion
 
         #region 方法
@@ -360,6 +364,17 @@ namespace XiaoFeng.Collections
         /// </summary>
         /// <returns>拼接好的参数字符串</returns>
         public override string ToString() => this.ToString(false);
+        /// <summary>
+        /// 获取字节数组
+        /// </summary>
+        /// <param name="isEncode">是否URL编码</param>
+        /// <returns></returns>
+        public virtual byte[] GetBytes(bool isEncode) => this.ToString(isEncode).GetBytes(this.Encoding);
+        /// <summary>
+        /// 获取字节数组
+        /// </summary>
+        /// <returns></returns>
+        public virtual byte[] GetBytes() => this.ToString().GetBytes(this.Encoding);
         #endregion
 
         #region 获取列表

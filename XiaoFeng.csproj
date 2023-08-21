@@ -24,7 +24,7 @@
 		<PackageProjectUrl>https://www.eelf.cn</PackageProjectUrl>
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>XiaoFeng设置中增加调度日志输出等级设置,默认是Warn;增加WebSocketClient中属性WebSocketRequest为客户端请求信息;WebSocketClient增加启动传参数据WebSocketRequestOptions;HttpHelper中HttpSocket获取Https优化;SocketClient优化连接失败;增加ParameterCollection类专一来处理参数排序拼接;修改JobScheduler输出日志等级;增加将枚举转换换成字符串大小写表示形式;优化Socket网络库注释;修复SocketServer每次收到消息都发送一次新连接回调的bug;</PackageReleaseNotes>
+		<PackageReleaseNotes>ParameterCollection类增加GetBytes方法;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>
