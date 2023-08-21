@@ -31,6 +31,40 @@ namespace XiaoFeng.Collections
         /// </summary>
         public ParameterCollection() { }
         /// <summary>
+        /// 设置配置
+        /// </summary>
+        /// <param name="isEncode">是否编码
+        /// <para>
+        /// <term>true</term> 通过 <see cref="System.Net.WebUtility.UrlEncode"/> 编码
+        /// </para>
+        /// <para>
+        /// <term>false</term> 不编码
+        /// </para>
+        /// </param>
+        /// <param name="encoding">字符串编码</param>
+        public ParameterCollection(bool isEncode, Encoding encoding)
+        {
+            this.IsEncode = isEncode;
+            this.Encoding = encoding;
+        }
+        /// <summary>
+        /// 设置配置
+        /// </summary>
+        /// <param name="isEncode">是否编码
+        /// <para>
+        /// <term>true</term> 通过 <see cref="System.Net.WebUtility.UrlEncode"/> 编码
+        /// </para>
+        /// <para>
+        /// <term>false</term> 不编码
+        /// </para>
+        /// </param>
+        public ParameterCollection(bool isEncode) : this(isEncode, Encoding.UTF8) { }
+        /// <summary>
+        /// 设置配置
+        /// </summary>
+        /// <param name="encoding">字符串编码</param>
+        public ParameterCollection(Encoding encoding) : this(false, encoding) { }
+        /// <summary>
         /// 将具有指定名称和值的项添加到 <see cref="ParameterCollection"/> 。
         /// </summary>
         /// <param name="name">要添加的项的键。</param>
@@ -132,6 +166,10 @@ namespace XiaoFeng.Collections
         /// 编码
         /// </summary>
         public Encoding Encoding { get; set; } = Encoding.UTF8;
+        /// <summary>
+        /// 参数值是否Url编码
+        /// </summary>
+        public bool IsEncode { get; set; }
         #endregion
 
         #region 方法
@@ -363,7 +401,7 @@ namespace XiaoFeng.Collections
         /// 转换成参数字符串
         /// </summary>
         /// <returns>拼接好的参数字符串</returns>
-        public override string ToString() => this.ToString(false);
+        public override string ToString() => this.ToString(this.IsEncode);
         /// <summary>
         /// 获取字节数组
         /// </summary>
