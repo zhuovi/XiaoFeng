@@ -339,7 +339,7 @@ namespace XiaoFeng.Net
             this.Clients.Where(a => a.GetData(key) == value).Each(c => c.Send(buffers));
         }
         ///<inheritdoc/>
-        public virtual async Task SendAsync(string message) => await this.SendAsync(message.GetBytes(this.Encoding));
+        public virtual async Task SendAsync(string message) => await this.SendAsync(message.GetBytes(this.Encoding)).ConfigureAwait(false);
         ///<inheritdoc/>
         public virtual Task SendAsync(byte[] buffers)
         {
@@ -354,7 +354,7 @@ namespace XiaoFeng.Net
         {
             if (buffers == null || buffers.Length == 0) return;
             if (client.Connected)
-                await client.SendAsync(buffers);
+                await client.SendAsync(buffers).ConfigureAwait(false);
             await Task.CompletedTask;
         }
         ///<inheritdoc/>
@@ -363,7 +363,7 @@ namespace XiaoFeng.Net
             if (buffers == null || buffers.Length == 0 || buffers.Length - count <= 0) return;
             var buffer = new byte[count];
             Array.Copy(buffers, offset, buffer, 0, count);
-            await this.SendAsync(buffer, client);
+            await this.SendAsync(buffer, client).ConfigureAwait(false);
         }
         ///<inheritdoc/>
         public virtual Task SendAsync(byte[] buffers, params string[] channel)
@@ -371,7 +371,7 @@ namespace XiaoFeng.Net
             if (buffers == null || buffers.Length == 0) return Task.CompletedTask;
             if (this.Clients == null) { this._Clients = new ConcurrentDictionary<IPEndPoint, ISocketClient>(); return Task.CompletedTask; }
             if (this.Clients.Count == 0) return Task.CompletedTask;
-            this.Clients.Where(a => a.ContainsChannel(channel)).Each(async c => await c.SendAsync(buffers));
+            this.Clients.Where(a => a.ContainsChannel(channel)).Each(async c => await c.SendAsync(buffers).ConfigureAwait(false));
             return Task.CompletedTask;
         }
         ///<inheritdoc/>
@@ -380,7 +380,7 @@ namespace XiaoFeng.Net
             if (buffers == null || buffers.Length == 0) return Task.CompletedTask;
             if (this.Clients == null) { this._Clients = new ConcurrentDictionary<IPEndPoint, ISocketClient>(); return Task.CompletedTask; }
             if (this.Clients.Count == 0) return Task.CompletedTask;
-            this.Clients.Where(a => a.GetData(key) == value).Each(async c => await c.SendAsync(buffers));
+            this.Clients.Where(a => a.GetData(key) == value).Each(async c => await c.SendAsync(buffers).ConfigureAwait(false));
             return Task.CompletedTask;
         }
         #endregion
@@ -506,9 +506,9 @@ namespace XiaoFeng.Net
         {
             if (cancellationToken.IsCancellationRequested)
             {
-                return await Task.FromCanceled<Socket>(cancellationToken);
+                return await Task.FromCanceled<Socket>(cancellationToken).ConfigureAwait(false);
             }
-            return await this.Server.AcceptAsync();
+            return await this.Server.AcceptAsync().ConfigureAwait(false);
         }
         /// <summary>
         /// 接受第一个挂起的连接
@@ -527,14 +527,14 @@ namespace XiaoFeng.Net
         {
             if (cancellationToken.IsCancellationRequested)
             {
-                return await Task.FromCanceled<T>(cancellationToken);
+                return await Task.FromCanceled<T>(cancellationToken).ConfigureAwait(false);
             }
-            var AcceptSocket = await this.AcceptSocketAsync(cancellationToken);
+            var AcceptSocket = await this.AcceptSocketAsync(cancellationToken).ConfigureAwait(false);
             try
             {
                 var client = Activator.CreateInstance<T>();
                 client.SetSocket(AcceptSocket, this.Authentication, this.Certificate);
-                return await Task.FromResult(client);
+                return await Task.FromResult(client).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -543,7 +543,7 @@ namespace XiaoFeng.Net
                 AcceptSocket.Dispose();
                 AcceptSocket = null;
                 LogHelper.Error(ex);
-                return await Task.FromResult(default(T));
+                return await Task.FromResult(default(T)).ConfigureAwait(false);
             }
         }
         #endregion

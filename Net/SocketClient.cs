@@ -202,6 +202,8 @@ namespace XiaoFeng.Net
         public int PingTime { get; set; } = 120;
         ///<inheritdoc/>
         private IJob Job { get; set; }
+        ///<inheritdoc/>
+        public DateTime LastMessageTime { get; set; }
         /// <summary>
         /// 频道KEY
         /// </summary>
@@ -762,7 +764,9 @@ namespace XiaoFeng.Net
             if (stream == null) return null;
             try
             {
-                return await Task.FromResult(stream.ReadByte());
+                var b = stream.ReadByte();
+                this.LastMessageTime = DateTime.Now;
+                return await Task.FromResult(b).ConfigureAwait(false);
             }
             catch (SocketException ex)
             {
@@ -800,7 +804,7 @@ namespace XiaoFeng.Net
             try
             {
                 var dataBuffer = new byte[count];
-                var readsize = await stream.ReadAsync(dataBuffer, 0, count, this.CancelToken.Token);
+                var readsize = await stream.ReadAsync(dataBuffer, 0, count, this.CancelToken.Token).ConfigureAwait(false);
                 Array.Copy(dataBuffer, 0, bytes, offset, readsize);
             }
             catch (SocketException ex)
@@ -827,6 +831,7 @@ namespace XiaoFeng.Net
                     this.OnClientError?.Invoke(this, this.EndPoint, ex);
                 return Array.Empty<byte>();
             }
+            this.LastMessageTime = DateTime.Now;
             return bytes;
         }
         /// <inheritdoc/>
@@ -842,7 +847,7 @@ namespace XiaoFeng.Net
                 try
                 {
                     readsize = await stream.ReadAsync(dataBuffer, 0, this.ReceiveBufferSize, this.CancelToken.Token).ConfigureAwait(false);
-                    await buffer.WriteAsync(dataBuffer, 0, readsize, this.CancelToken.Token);
+                    await buffer.WriteAsync(dataBuffer, 0, readsize, this.CancelToken.Token).ConfigureAwait(false);
                 }
                 catch (SocketException ex)
                 {
@@ -868,9 +873,8 @@ namespace XiaoFeng.Net
                         this.OnClientError?.Invoke(this, this.EndPoint, ex);
                     break;
                 }
-                await Task.Delay(1).ConfigureAwait(false);
             } while (readsize > 0 && this.GetStream().DataAvailable);
-
+            this.LastMessageTime = DateTime.Now;
             if (buffer.Length == 0) return Array.Empty<byte>();
             var bytes = buffer.ToArray();
             buffer.Close();
@@ -1024,11 +1028,11 @@ namespace XiaoFeng.Net
         ///<inheritdoc/>
         public virtual void SendPing(byte[] buffers = null) => this.NetStreamSend(buffers, OpCode.Ping);
         ///<inheritdoc/>
-        public virtual async Task SendPingAsync(byte[] buffers = null) => await this.NetStreamSendAsync(buffers, OpCode.Ping);
+        public virtual async Task SendPingAsync(byte[] buffers = null) => await this.NetStreamSendAsync(buffers, OpCode.Ping).ConfigureAwait(false);
         ///<inheritdoc/>
         public virtual void SendPong(byte[] buffers = null) => this.NetStreamSend(buffers, OpCode.Pong);
         ///<inheritdoc/>
-        public virtual async Task SendPongAsync(byte[] buffers = null) => await this.NetStreamSendAsync(buffers, OpCode.Pong);
+        public virtual async Task SendPongAsync(byte[] buffers = null) => await this.NetStreamSendAsync(buffers, OpCode.Pong).ConfigureAwait(false);
         ///<inheritdoc/>
         public virtual int Send(byte[] buffers)
         {
@@ -1039,7 +1043,7 @@ namespace XiaoFeng.Net
         public virtual async Task<int> SendAsync(byte[] buffers)
         {
             if (buffers.IsNullOrEmpty() || buffers.Length == 0) return 0;
-            return await this.NetStreamSendAsync(buffers);
+            return await this.NetStreamSendAsync(buffers).ConfigureAwait(false);
         }
         ///<inheritdoc/>
         public virtual int Send(string message)
@@ -1051,7 +1055,7 @@ namespace XiaoFeng.Net
         public virtual async Task<int> SendAsync(string message)
         {
             if (message.IsNullOrEmpty()) return 0;
-            return await this.SendAsync(this.DataType == SocketDataType.String ? message.GetBytes(this.Encoding) : message.HexStringToBytes());
+            return await this.SendAsync(this.DataType == SocketDataType.String ? message.GetBytes(this.Encoding) : message.HexStringToBytes()).ConfigureAwait(false);
         }
         ///<inheritdoc/>
         public virtual void SendFile(string fileName)
@@ -1067,7 +1071,7 @@ namespace XiaoFeng.Net
             if (fileName.IsNullOrEmpty()) return;
             if (!FileHelper.Exists(fileName)) return;
             var buffers = FileHelper.OpenBytes(fileName);
-            await this.SendAsync(buffers);
+            await this.SendAsync(buffers).ConfigureAwait(false);
         }
         /// <summary>
         /// 发送数据
@@ -1096,6 +1100,7 @@ namespace XiaoFeng.Net
             }
             stream.Write(buffers, 0, buffers.Length);
             stream.Flush();
+            this.LastMessageTime = DateTime.Now;
             return buffers.Length;
         }
         /// <summary>
@@ -1121,10 +1126,11 @@ namespace XiaoFeng.Net
             }
             else
                 if (buffers == null || buffers.Length == 0)
-                return await Task.FromResult(0);
-            await stream.WriteAsync(buffers, 0, buffers.Length, this.CancelToken.Token);
+                return await Task.FromResult(0).ConfigureAwait(false);
+            await stream.WriteAsync(buffers, 0, buffers.Length, this.CancelToken.Token).ConfigureAwait(false);
             await stream.FlushAsync(this.CancelToken.Token);
-            return await Task.FromResult(buffers.Length);
+            this.LastMessageTime = DateTime.Now;
+            return await Task.FromResult(buffers.Length).ConfigureAwait(false);
         }
         #endregion
 

@@ -70,6 +70,10 @@ namespace XiaoFeng.Net
         /// 每次ping的时间 单位为秒
         /// </summary>
         int PingTime { get; set; }
+        /// <summary>
+        /// 最后一次通讯时间
+        /// </summary>
+        DateTime LastMessageTime { get; set; }
         #endregion
 
         #region 方法

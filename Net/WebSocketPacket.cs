@@ -330,15 +330,15 @@ namespace XiaoFeng.Net
             if (stream == null)
             {
                 await Task.FromException(new Exception("客户端网络已经断开."));
-                return await Task.FromResult(0);
+                return await Task.FromResult(0).ConfigureAwait(false);
             }
 
             var handshakedata = this.GetHandshakeData();
             if (handshakedata.IsNullOrEmpty()) return await Task.FromResult(-1);
             var bytes = handshakedata.GetBytes(this.Encoding);
 
-            await stream.WriteAsync(bytes, 0, bytes.Length);
-            await stream.FlushAsync();
+            await stream.WriteAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
+            await stream.FlushAsync().ConfigureAwait(false);
             return await Task.FromResult(bytes.Length);
         }
         #endregion
