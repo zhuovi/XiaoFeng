@@ -39,7 +39,6 @@ namespace XiaoFeng.Http
 		{
 			Request = request;
 		}
-
 		#endregion
 
 		#region 属性
