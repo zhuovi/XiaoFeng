@@ -936,12 +936,12 @@ namespace XiaoFeng.Net
                             var len = await packet.HandshakeAsync().ConfigureAwait(false);
                             if (len == 0)
                             {
-                                this.OnClientError?.Invoke(this, this.EndPoint, new Exception("Client is closed!"));
+                                this.OnClientError?.Invoke(this, this.EndPoint, new Exception("网络客户端已经关闭."));
 
                             }
                             else if (len == -1)
                             {
-                                this.OnClientError?.Invoke(this, this.EndPoint, new Exception("Sec-WebSocket-Key is null,Handshake failure!"));
+                                this.OnClientError?.Invoke(this, this.EndPoint, new Exception("Sec-WebSocket-Key接收到是空数据,握手失败."));
                             }
 
                             FirstConnectMessage = false;

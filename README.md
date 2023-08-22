@@ -31,44 +31,57 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 4.0.1
+$ dotnet add package XiaoFeng --version 4.0.2
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 4.0.1
+PM> Install-Package XiaoFeng -Version 4.0.2
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="4.0.1" />
+<PackageReference Include="XiaoFeng" Version="4.0.2" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 4.0.1
+> paket add XiaoFeng --version 4.0.2
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 4.0.1"
+> #r "nuget: XiaoFeng, 4.0.2"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=4.0.1
+#addin nuget:?package=XiaoFeng&version=4.0.2
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=4.0.1
+#tool nuget:?package=XiaoFeng&version=4.0.2
 ```
 
 # 更新日志
+
+## 2023-08-22
+
+1.ParameterCollection类增加GetBytes方法,增加多种构造器可以设置是否URL编码及字符串编码;
+
+2.增加扩展RSAEncryption算法SignHash,VerifyHash;
+
+3.修复Json,Xml中类型为可空枚举时,应该序列化成key则序列化成value的bug;
+
+4.优化Redis关闭;
+
+5.优化WebSocketServer握手偶尔失败问题;服务端认证问题;
+
 
 ## 2023-08-14   v 4.0.1
 
