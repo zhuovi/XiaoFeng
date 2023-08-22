@@ -134,12 +134,8 @@ namespace XiaoFeng.Memcached.IO
 
             if (!this.IsSsl) { this.Stream = ns; return ns; }
 
-            var sns = new SslStream(ns, true, new RemoteCertificateValidationCallback((o, cert, chain, errors) => errors == SslPolicyErrors.None)); ;
-#if NETSTANDARD2_0
+            var sns = new SslStream(ns, true, new RemoteCertificateValidationCallback((o, cert, chain, errors) => errors == SslPolicyErrors.None));
             sns.AuthenticateAsClient(this.ConnConfig.Host);
-#else
-            sns.AuthenticateAsClientAsync(this.ConnConfig.Host).Wait();
-#endif
             this.Stream = sns;
             return sns;
         }
@@ -152,19 +148,28 @@ namespace XiaoFeng.Memcached.IO
         {
             try
             {
-                if (this.Stream != null)
+                lock (this.Stream)
                 {
-                    this.Stream.Close();
-                    this.Stream.Dispose();
-                }
-                if (this.SocketClient != null)
-                {
-                    this.SocketClient.Shutdown(SocketShutdown.Both);
-                    this.SocketClient.Close();
-                    this.SocketClient.Dispose();
+                    if (this.Stream != null)
+                    {
+                        this.Stream?.Close();
+                        this.Stream?.Dispose();
+                        this.Stream = null;
+                    }
                 }
             }
-            catch { }
+            catch (IOException ie)
+            {
+                LogHelper.Error(ie);
+            }
+            catch (SocketException se)
+            {
+                LogHelper.Error(se);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Error(ex);
+            }
         }
         #endregion
 

@@ -149,15 +149,14 @@ namespace XiaoFeng.Redis.IO
         {
             try
             {
-                if (this.Stream != null)
+                lock (this.Stream)
                 {
-                    this.Stream?.Close();
-                    this.Stream?.Dispose();
-                }
-                if (this.SocketClient != null)
-                {
-                    this.SocketClient?.Close();
-                    this.SocketClient?.Dispose();
+                    if (this.Stream != null)
+                    {
+                        this.Stream?.Close();
+                        this.Stream?.Dispose();
+                        this.Stream = null;
+                    }
                 }
             }
             catch (IOException ie)

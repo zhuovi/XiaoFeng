@@ -405,52 +405,62 @@ namespace XiaoFeng.Net
                         break;
                     }
                     var client = this.AcceptTcpClientAsync(this.CancelToken.Token).ConfigureAwait(false).GetAwaiter().GetResult();
-                    if (client == null)
-                    {
-                        this.OnError?.Invoke(this, new Exception("客户端转换实体出错."));
-                        continue;
-                    }
-
-                    new Task(o =>
-                    {
-                        var clientSocket = (T)o;
-                        //判断黑名单
-                        if (this.ContainsBlack(clientSocket.EndPoint.Address.ToString()))
-                        {
-                            var msg = "当前客户端IP在黑名单中,禁止连接服务器.";
-                            clientSocket.Send(msg);
-                            clientSocket.Stop();
-                            this.OnAuthentication?.Invoke(clientSocket, msg, EventArgs.Empty);
-                            return;
-                        }
-                        if (this.ReceiveBufferSize >= 0)
-                            clientSocket.ReceiveBufferSize = this.ReceiveBufferSize;
-                        if (this.ReceiveTimeout >= 0) clientSocket.ReceiveTimeout = this.ReceiveTimeout;
-                        if (this.SendTimeout >= 0) clientSocket.SendTimeout = this.SendTimeout;
-                        if (this.SslProtocols >= 0)
-                            clientSocket.SslProtocols = this.SslProtocols;
-                        clientSocket.Encoding = this.Encoding;
-                        clientSocket.DataType = this.DataType;
-                        clientSocket.CancelToken = this.CancelToken;
-                        clientSocket.OnClientError += this.OnClientError;
-                        clientSocket.OnMessage += this.OnMessage;
-                        clientSocket.OnMessageByte += this.OnMessageByte;
-                        clientSocket.OnAuthentication += this.OnAuthentication;
-                        clientSocket.OnStart += (c, e) =>
-                        {
-                            //加入队列
-                            this.AddQueue(clientSocket);
-                            this.OnNewConnection?.Invoke(clientSocket, e);
-                        };
-                        clientSocket.OnStop += (c, e) =>
-                        {
-                            //移除队列
-                            this.RemoveQueue(clientSocket);
-                        };
-                        clientSocket.Start();
-                    }, client, this.CancelToken.Token, TaskCreationOptions.LongRunning).Start();
+                    this.CreateClientAsync(client).ConfigureAwait(false);
                 }
             }, this.CancelToken.Token, TaskCreationOptions.LongRunning, TaskScheduler.Current);
+        }
+        #endregion
+
+        #region 创建网络客户端
+        /// <summary>
+        /// 创建网络客户端
+        /// </summary>
+        /// <param name="client">网络客户端 <see cref="ISocketClient"/></param>
+        /// <returns>任务</returns>
+        private async Task CreateClientAsync(T client)
+        {
+            if (client == null)
+            {
+                this.OnError?.Invoke(this, new Exception("客户端转换实体出错."));
+                await Task.CompletedTask;
+                return;
+            }
+            //判断黑名单
+            if (this.ContainsBlack(client.EndPoint.Address.ToString()))
+            {
+                var msg = "当前客户端IP在黑名单中,禁止连接服务器.";
+                client.Send(msg);
+                client.Stop();
+                this.OnAuthentication?.Invoke(client, msg, EventArgs.Empty);
+                await Task.CompletedTask;
+                return;
+            }
+            if (this.ReceiveBufferSize >= 0)
+                client.ReceiveBufferSize = this.ReceiveBufferSize;
+            if (this.ReceiveTimeout >= 0) client.ReceiveTimeout = this.ReceiveTimeout;
+            if (this.SendTimeout >= 0) client.SendTimeout = this.SendTimeout;
+            if (this.SslProtocols >= 0)
+                client.SslProtocols = this.SslProtocols;
+            client.Encoding = this.Encoding;
+            client.DataType = this.DataType;
+            client.CancelToken = this.CancelToken;
+            client.OnClientError += this.OnClientError;
+            client.OnMessage += this.OnMessage;
+            client.OnMessageByte += this.OnMessageByte;
+            client.OnAuthentication += this.OnAuthentication;
+            client.OnStart += (c, e) =>
+            {
+                //加入队列
+                this.AddQueue(client);
+                this.OnNewConnection?.Invoke(client, e);
+            };
+            client.OnStop += (c, e) =>
+            {
+                //移除队列
+                this.RemoveQueue(client);
+            };
+            client.Start();
+            await Task.CompletedTask;
         }
         #endregion
 
