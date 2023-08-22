@@ -195,6 +195,7 @@ namespace XiaoFeng.Net
                     SecWebSocketKey = this.SecWebSocketKey
                 };
             return this.WebSocketRequestOptions.ToString();
+            /*
             StringBuilder sbr = new StringBuilder();
             sbr.AppendLine($"GET {this.RequestUri} HTTP/1.1");
             sbr.AppendLine($"Host: {this.Host}");
@@ -210,7 +211,7 @@ namespace XiaoFeng.Net
             sbr.AppendLine($"Sec-WebSocket-Key: {this.SecWebSocketKey.Multivariate(RandomHelper.GetRandomString(16).ToBase64String())}");
             sbr.AppendLine($"Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits");
             sbr.AppendLine();
-            return sbr.ToString();
+            return sbr.ToString();*/
         }
         /// <summary>
         /// 获取握手包
@@ -224,13 +225,17 @@ namespace XiaoFeng.Net
             sbr.AppendLine("Connection: Upgrade");
             sbr.AppendLine("Upgrade: WebSocket");
             sbr.AppendLine($"Date: {DateTime.Now.ToString("ddd, dd-MMM-yyyy HH:mm:ss.fff 'GMT'zzz", System.Globalization.CultureInfo.GetCultureInfo("en-US"))}");
-            sbr.AppendLine($"Server: FayElf v2.0({OS.Platform.GetOSPlatform() })");
+            sbr.AppendLine($"Server: FayElf v2.0({OS.Platform.GetOSPlatform()})");
             sbr.AppendLine("Author: Jacky(QQ:7092734,Email:jacky@eelf.cn,Site:www.eelf.cn)");
             sbr.AppendLine("Copyright: 未经授权禁止使用,盗版必究.");
-            this.SecWebSocketKey = this.RequestMessage.GetMatch(@"Sec-WebSocket-Key:\s*(?<a>[a-z0-9+=/]+)\s*\n");
-            if (this.SecWebSocketKey.IsNullOrEmpty()) return string.Empty;
 
-            sbr.AppendLine($"Sec-WebSocket-Accept: {this.ComputeWebSocketHandshakeSecurityHash09(this.SecWebSocketKey)}");
+            if (this.Data.TryGetValue("Sec-WebSocket-Key", out var key))
+            {
+                this.SecWebSocketAccept = key;
+                sbr.AppendLine($"Sec-WebSocket-Accept: {this.ComputeWebSocketHandshakeSecurityHash09(this.SecWebSocketKey)}");
+            }
+            else return string.Empty;
+
             sbr.AppendLine();
             return sbr.ToString();
         }
@@ -273,6 +278,7 @@ namespace XiaoFeng.Net
             };
             this.OpCode = dr.Opcode;
             return dr.Body;
+            /*
             bool fin = (bytes[0] & 0b10000000) != 0,
                     mask = (bytes[1] & 0b10000000) != 0; // must be true, "All messages from the client to the server have this bit set"
             this.FIN = fin;
@@ -312,23 +318,28 @@ namespace XiaoFeng.Net
                 return decoded;
             }
             else
-                return Array.Empty<byte>();
+                return Array.Empty<byte>();*/
         }
         /// <summary>
         /// 握手
         /// </summary>
         /// <returns></returns>
-        public async Task HandshakeAsync()
+        public async Task<int> HandshakeAsync()
         {
             var stream = this.Client.GetSslStream();
             if (stream == null)
             {
                 await Task.FromException(new Exception("客户端网络已经断开."));
-                return;
+                return await Task.FromResult(0);
             }
-            var bytes = this.GetHandshakeData().GetBytes(this.Encoding);
+
+            var handshakedata = this.GetHandshakeData();
+            if (handshakedata.IsNullOrEmpty()) return await Task.FromResult(-1);
+            var bytes = handshakedata.GetBytes(this.Encoding);
+
             await stream.WriteAsync(bytes, 0, bytes.Length);
             await stream.FlushAsync();
+            return await Task.FromResult(bytes.Length);
         }
         #endregion
     }

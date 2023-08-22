@@ -933,7 +933,16 @@ namespace XiaoFeng.Net
                                 Encoding = this.Encoding,
                                 DataType = this.DataType
                             };
-                            await packet.HandshakeAsync().ConfigureAwait(false);
+                            var len = await packet.HandshakeAsync().ConfigureAwait(false);
+                            if (len == 0)
+                            {
+                                this.OnClientError?.Invoke(this, this.EndPoint, new Exception("Client is closed!"));
+
+                            }
+                            else if (len == -1)
+                            {
+                                this.OnClientError?.Invoke(this, this.EndPoint, new Exception("Sec-WebSocket-Key is null,Handshake failure!"));
+                            }
 
                             FirstConnectMessage = false;
                             continue;
