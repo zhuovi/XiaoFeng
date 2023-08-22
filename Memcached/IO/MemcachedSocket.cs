@@ -142,13 +142,17 @@ namespace XiaoFeng.Memcached.IO
 
         #region 关闭
         /// <summary>
+        /// Memcached锁
+        /// </summary>
+        private static object RedisState = new object();
+        /// <summary>
         /// 关闭
         /// </summary>
         public void Close()
         {
             try
             {
-                lock (this.Stream)
+                lock (RedisState)
                 {
                     if (this.Stream != null)
                     {
