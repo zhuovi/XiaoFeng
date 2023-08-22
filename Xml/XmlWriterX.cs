@@ -169,6 +169,22 @@ namespace XiaoFeng.Xml
                     WriteValue(item, isCData, tagName);
                 }
             }
+            else if (data is Enum)
+            {
+                if (SerializerSetting.EnumValueType == EnumValueType.Name)
+                    data = data.ToString();
+                else if (SerializerSetting.EnumValueType == EnumValueType.Description)
+                    data = data.GetType().GetField(data.ToString()).GetDescription(false);
+                else data = data.GetValue(Enum.GetUnderlyingType(data.GetType()) ?? typeof(Int32));
+
+                if (tagName.IsNotNullOrEmpty()) XmlWriter.WriteStartElement(tagName);
+                if (isCData)
+                    XmlWriter.WriteCData(data.ToString());
+                else
+                    XmlWriter.WriteString(EncodeString(data.ToString()));
+                if (tagName.IsNotNullOrEmpty()) XmlWriter.WriteEndElement();
+                return;
+            }
             else
             {
                 if (BaseType == ValueTypes.Value || BaseType == ValueTypes.String || BaseType == ValueTypes.Null)
@@ -259,7 +275,7 @@ namespace XiaoFeng.Xml
                               ItemName = m.GetCustomAttribute<XmlArrayItemAttribute>().ElementName.IfEmpty(FieldName);
                               //if (ArrayName.IsNullOrEmpty()) ArrayName = FieldName;
                           }
-                          
+
                           if (_BaseType == ValueTypes.Anonymous || _BaseType == ValueTypes.Dictionary || _BaseType == ValueTypes.IDictionary)
                           {
                               XmlWriter.WriteStartElement(FieldName);
@@ -273,9 +289,10 @@ namespace XiaoFeng.Xml
                           {
                               if (ArrayName.IsNullOrEmpty())
                               {
-                                  if(!this.SerializerSetting.OmitArrayItemName && ItemName.IsNotNullOrEmpty())
+                                  if (!this.SerializerSetting.OmitArrayItemName && ItemName.IsNotNullOrEmpty())
                                       XmlWriter.WriteStartElement(ItemName);
-                              }else
+                              }
+                              else
                                   XmlWriter.WriteStartElement(ArrayName);
                               //if (!this.SerializerSetting.OmitArrayItemName && ItemName.IsNotNullOrEmpty())
                               //    XmlWriter.WriteStartElement(FieldName);
@@ -305,9 +322,9 @@ namespace XiaoFeng.Xml
                                       var converter = m.GetCustomAttribute<XmlConverterAttribute>();
                                       if (converter.ConverterType == typeof(DescriptionConverter))
                                       {
-                                          if ((m.MemberType == MemberTypes.Field ? (m as FieldInfo).FieldType : (m as PropertyInfo).PropertyType).IsEnum)
+                                          if ((m.MemberType == MemberTypes.Field ? (m as FieldInfo).FieldType : (m as PropertyInfo).PropertyType).GetValueType() == ValueTypes.Enum)
                                           {
-                                              value = value.GetType().GetField(value.ToString()).GetDescription().IfEmpty(((int)value).ToString());
+                                              value = value.GetType().GetBaseType().GetField(value.ToString()).GetDescription().IfEmpty(((int)value).ToString());
                                           }
                                           else
                                               value = m.GetDescription().IfEmpty(((int)value).ToString());
@@ -324,7 +341,7 @@ namespace XiaoFeng.Xml
                               }
                               else
                               {
-                                  
+
                               }
                               WriteValue(value, m.IsDefined(typeof(XmlCDataAttribute), false), m.IsDefined(typeof(XmlTextAttribute), false) ? "" : ItemName.IfEmpty(FieldName));
                           }

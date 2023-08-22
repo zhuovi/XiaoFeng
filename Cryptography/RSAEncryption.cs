@@ -421,7 +421,7 @@ namespace XiaoFeng.Cryptography
         /// <param name="privateKey">私钥</param>
         /// <param name="hashAlgorithmName">签名算法</param>
         /// <returns>签名数据</returns>
-        public byte[] Sign(byte[] data, string privateKey, HashAlgorithmName hashAlgorithmName)
+        public byte[] SignData(byte[] data, string privateKey, HashAlgorithmName hashAlgorithmName)
         {
             if (data.IsNullOrEmpty()) return Array.Empty<byte>();
             var service = new RSACryptoServiceProvider();
@@ -429,6 +429,21 @@ namespace XiaoFeng.Cryptography
                 service.FromXmlString(privateKey);
             else
                 service.ImportParameters(FromPEM(privateKey));
+            
+            return service.SignData(data, HashAlgorithm.Create(hashAlgorithmName.Name));
+        }
+        /// <summary>
+        /// 签名
+        /// </summary>
+        /// <param name="data">要进行哈希处理和签名的输入数据。</param>
+        /// <param name="privateKey">私钥</param>
+        /// <param name="hashAlgorithmName">签名算法</param>
+        /// <returns>签名数据</returns>
+        public byte[] SignData(byte[] data, byte[] privateKey, HashAlgorithmName hashAlgorithmName)
+        {
+            if (data.IsNullOrEmpty()) return Array.Empty<byte>();
+            var service = new RSACryptoServiceProvider();
+            service.ImportCspBlob(privateKey);
 
             return service.SignData(data, HashAlgorithm.Create(hashAlgorithmName.Name));
         }
@@ -438,12 +453,12 @@ namespace XiaoFeng.Cryptography
         /// <summary>
         /// 验证
         /// </summary>
-        /// <param name="data">已签名数据数据</param>
+        /// <param name="data">已签名的数据。</param>
         /// <param name="publicKey">公钥</param>
         /// <param name="signature">要验证的签名数据</param>
         /// <param name="hashAlgorithmName">签名算法</param>
         /// <returns>是否一致</returns>
-        public Boolean Verify(byte[] data, string publicKey, byte[] signature, HashAlgorithmName hashAlgorithmName)
+        public Boolean VerifyData(byte[] data, string publicKey, byte[] signature, HashAlgorithmName hashAlgorithmName)
         {
             if (data.IsNullOrEmpty()) return false;
             var service = new RSACryptoServiceProvider();
@@ -453,6 +468,62 @@ namespace XiaoFeng.Cryptography
                 service.ImportParameters(FromPEM(publicKey));
 
             return service.VerifyData(data, HashAlgorithm.Create(hashAlgorithmName.Name), signature);
+        }
+        /// <summary>
+        /// 验证
+        /// </summary>
+        /// <param name="data">已签名数据</param>
+        /// <param name="publicKey">公钥</param>
+        /// <param name="signature">要验证的签名数据</param>
+        /// <param name="hashAlgorithmName">签名算法</param>
+        /// <returns>是否一致</returns>
+        public Boolean VerifyData(byte[] data, byte[] publicKey, byte[] signature, HashAlgorithmName hashAlgorithmName)
+        {
+            if (data.IsNullOrEmpty()) return false;
+            var service = new RSACryptoServiceProvider();
+            service.ImportCspBlob(publicKey);
+            return service.VerifyData(data, HashAlgorithm.Create(hashAlgorithmName.Name), signature);
+        }
+        #endregion
+
+        #region Hash签名
+        /// <summary>
+        /// 使用指定的填充计算指定的哈希值的签名。
+        /// </summary>
+        /// <param name="data">数据</param>
+        /// <param name="publicKey">公钥</param>
+        /// <param name="hashAlgorithmName">签名算法</param>
+        /// <param name="signaturePadding">指定要用于 RSA 签名创建或验证操作的填充模式和参数。</param>
+        /// <returns>是否一致</returns>
+        public byte[] SignHash(byte[] data, string publicKey, HashAlgorithmName hashAlgorithmName, RSASignaturePadding signaturePadding)
+        {
+            if (data.IsNullOrEmpty()) return Array.Empty<byte>();
+            var service = new RSACryptoServiceProvider();
+            if (publicKey.StartsWith("<RSAKeyValue>", StringComparison.OrdinalIgnoreCase))
+                service.FromXmlString(publicKey);
+            else
+                service.ImportParameters(FromPEM(publicKey));
+
+            return service.SignHash(data, hashAlgorithmName, signaturePadding);
+        }
+        #endregion
+
+        #region Hash签名验证
+        /// <summary>
+        /// 验证
+        /// </summary>
+        /// <param name="data">已签名数据</param>
+        /// <param name="publicKey">公钥</param>
+        /// <param name="signature">要验证的签名数据</param>
+        /// <param name="hashAlgorithmName">签名算法</param>
+        /// <param name="signaturePadding">指定要用于 RSA 签名创建或验证操作的填充模式和参数。</param>
+        /// <returns>是否一致</returns>
+        public Boolean VerifyData(byte[] data, byte[] publicKey, byte[] signature, HashAlgorithmName hashAlgorithmName, RSASignaturePadding signaturePadding)
+        {
+            if (data.IsNullOrEmpty()) return false;
+            var service = new RSACryptoServiceProvider();
+            service.ImportCspBlob(publicKey);
+            return service.VerifyHash(data, signature, hashAlgorithmName, signaturePadding);
         }
         #endregion
 

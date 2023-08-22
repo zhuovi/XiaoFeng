@@ -82,6 +82,26 @@ Cake
 
 5.SocketClient增加ReceviceByteAsync(),可接收一个字节数据;
 
+6.XiaoFeng设置中增加调度日志输出等级设置,默认是Warn;
+
+7.增加WebSocketClient中属性WebSocketRequest为客户端请求信息;
+
+8.WebSocketClient增加启动传参数据WebSocketRequestOptions;
+
+9.HttpHelper中HttpSocket获取Https优化;
+
+10.SocketClient优化连接失败;
+
+11.增加ParameterCollection类专一来处理参数排序拼接;
+
+12.修改JobScheduler输出日志等级;
+
+13.优化Socket网络库注释;
+
+14.修复SocketServer每次收到消息都发送一次新连接回调的bug;
+
+15.增加将枚举转换换成字符串大小写表示形式;
+
 
 ## 2023-08-03   v 4.0.0
 

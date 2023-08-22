@@ -111,6 +111,8 @@ namespace XiaoFeng.Net
         ///<inheritdoc/>
         public Encoding Encoding { get; set; } = Encoding.UTF8;
         ///<inheritdoc/>
+        public Boolean ReuseAddress { get; set; } = true;
+        ///<inheritdoc/>
         public CancellationTokenSource CancelToken { get; set; } = new CancellationTokenSource();
         ///<inheritdoc/>
         public Func<ISocketClient, Boolean> Authentication { get; set; }
@@ -242,9 +244,17 @@ namespace XiaoFeng.Net
         public virtual void Start(int backlog)
         {
             CreateNewSocketIfNeeded();
-            this.Server?.Bind(this.EndPoint);
             try
             {
+                if (this.EndPoint.AddressFamily == AddressFamily.InterNetworkV6)
+                {
+                    this.Server?.SetSocketOption(SocketOptionLevel.IPv6, (SocketOptionName)27, false);
+                    this.Server?.Bind(new IPEndPoint(IPAddress.IPv6Any, this.EndPoint.Port));
+                }
+                else
+                {
+                    this.Server?.Bind(this.EndPoint);
+                }
                 this.Server?.Listen(backlog);
                 this.ListenCount = backlog;
                 /*设定服务器运行状态*/
@@ -577,14 +587,15 @@ namespace XiaoFeng.Net
                     ReceiveBufferSize = this.ReceiveBufferSize,
                     SendBufferSize = this.SendBufferSize
                 };
-                this.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                if (this.ReuseAddress)
+                    this.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
             }
 
             if (this.ExclusiveAddressUse)
             {
                 this.Server.ExclusiveAddressUse = true;
             }
-
+            
             if (OS.Platform.GetOSPlatform() == PlatformOS.Windows && this._AllowNatTraversal != null)
             {
                 this.AllowNatTraversal(this._AllowNatTraversal.GetValueOrDefault());

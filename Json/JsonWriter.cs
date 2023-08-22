@@ -341,11 +341,17 @@ namespace XiaoFeng.Json
                 JsonConverterAttribute jsonConverter = m.GetCustomAttribute<JsonConverterAttribute>(false);
                 if (jsonConverter != null)
                 {
-                    if (jsonConverter.ConverterType == typeof(StringEnumConverter) && mType.IsEnum)
+                    if (jsonConverter.ConverterType == typeof(StringEnumConverter))
+                    {
                         value = value.ToString();
+                    }
                     else if (jsonConverter.ConverterType == typeof(DescriptionConverter))
                     {
-                        if (mType.IsEnum)
+                        if (mType.GetValueType() == ValueTypes.Enum)
+                        {
+                            value = mType.GetBaseType().GetField(value.ToString()).GetDescription(false);
+                        }
+                        else if (mType.IsEnum)
                         {
                             value = value.GetType().GetField(value.ToString()).GetDescription(false);
                         }

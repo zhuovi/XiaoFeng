@@ -56,7 +56,8 @@ namespace XiaoFeng.Net
         public SocketClient(string host, int port)
         {
             if (host.IsNullOrEmpty() || host.EqualsIgnoreCase("localhost")) host = "127.0.0.1";
-
+            var address = Dns.GetHostEntry(host).AddressList;
+            /*
             foreach (var ip in Dns.GetHostEntry(host).AddressList)
             {
                 if (ip.AddressFamily == AddressFamily.InterNetwork)
@@ -64,7 +65,8 @@ namespace XiaoFeng.Net
                     this.EndPoint = new IPEndPoint(ip, port);
                     break;
                 }
-            }
+            }*/
+            this.EndPoint = new IPEndPoint(address[address.Length - 1], port);
             InitializeClientSocket();
         }
         /// <summary>
@@ -332,25 +334,25 @@ namespace XiaoFeng.Net
             }
             this.EndPoint = remoteEP;
             InitializeClientSocket();
-            if (this.ConnectTimeout <= 0)
-                this.Client.Connect(remoteEP);
-            else
+            try
             {
-                var result = this.Client.BeginConnect(this.EndPoint, null, null);
-                if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
-                    this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
-                try
+                if (this.ConnectTimeout <= 0)
+                    this.Client.Connect(remoteEP);
+                else
                 {
+                    var result = this.Client.BeginConnect(this.EndPoint, null, null);
+                    if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
+                        this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
                     this.Client.EndConnect(result);
                     this._Active = true;
                     this.SocketState = SocketState.Runing;
                 }
-                catch (Exception ex)
-                {
-                    this.OnClientError?.Invoke(this, this.EndPoint, ex);
-                    this._Active = false;
-                    this.SocketState = SocketState.Stop;
-                }
+            }
+            catch (Exception ex)
+            {
+                this.OnClientError?.Invoke(this, this.EndPoint, ex);
+                this._Active = false;
+                this.SocketState = SocketState.Stop;
             }
         }
         ///<inheritdoc/>
@@ -359,23 +361,25 @@ namespace XiaoFeng.Net
             if (ipAddresses == null || ipAddresses.Length == 0) throw new Exception("服务端地址为空.");
             if (port <= 0) port = 1006;
             InitializeClientSocket();
-            if (this.ConnectTimeout <= 0)
-                this.Client.Connect(ipAddresses, port);
-            else
+            try
             {
-                var result = this.Client.BeginConnect(ipAddresses, port, null, null);
-                if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
-                    this.OnClientError?.Invoke(this, this.Client.RemoteEndPoint.ToIPEndPoint(), new Exception());
-                try
+                if (this.ConnectTimeout <= 0)
+                    this.Client.Connect(ipAddresses, port);
+                else
                 {
+                    var result = this.Client.BeginConnect(ipAddresses, port, null, null);
+                    if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
+                        this.OnClientError?.Invoke(this, this.Client.RemoteEndPoint.ToIPEndPoint(), new Exception());
+
                     this.Client.EndConnect(result);
+
                 }
-                catch (Exception ex)
-                {
-                    this.Client = null;
-                    this.OnClientError?.Invoke(this, this.EndPoint, ex);
-                    return;
-                }
+            }
+            catch (Exception ex)
+            {
+                this.Client = null;
+                this.OnClientError?.Invoke(this, this.EndPoint, ex);
+                return;
             }
             this.EndPoint = this.Client.RemoteEndPoint.ToIPEndPoint();
             this._Active = true;
@@ -388,23 +392,24 @@ namespace XiaoFeng.Net
             if (port <= 0) port = 1006;
             await this.CompleteConnectAsync(async () =>
             {
-                if (this.ConnectTimeout <= 0)
-                    await this.Client.ConnectAsync(address, port).ConfigureAwait(false);
-                else
+                try
                 {
-                    var result = this.Client.BeginConnect(address, port, null, null);
-                    if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
-                        this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
-                    try
+                    if (this.ConnectTimeout <= 0)
+                        await this.Client.ConnectAsync(address, port).ConfigureAwait(false);
+                    else
                     {
+                        var result = this.Client.BeginConnect(address, port, null, null);
+                        if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
+                            this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
+
                         this.Client.EndConnect(result);
                     }
-                    catch (Exception ex)
-                    {
-                        this.Client = null;
-                        this.OnClientError?.Invoke(this, this.EndPoint, ex);
-                        return;
-                    }
+                }
+                catch (Exception ex)
+                {
+                    this.Client = null;
+                    this.OnClientError?.Invoke(this, this.EndPoint, ex);
+                    return;
                 }
             });
         }
@@ -417,23 +422,24 @@ namespace XiaoFeng.Net
             if (port <= 0) port = 1006;
             await this.CompleteConnectAsync(async () =>
             {
-                if (this.ConnectTimeout <= 0)
-                    await this.Client.ConnectAsync(host, port).ConfigureAwait(false);
-                else
+                try
                 {
-                    var result = this.Client.BeginConnect(host, port, null, null);
-                    if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
-                        this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
-                    try
+                    if (this.ConnectTimeout <= 0)
+                        await this.Client.ConnectAsync(host, port).ConfigureAwait(false);
+                    else
                     {
+                        var result = this.Client.BeginConnect(host, port, null, null);
+                        if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
+                            this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
+
                         this.Client.EndConnect(result);
                     }
-                    catch (Exception ex)
-                    {
-                        this.Client = null;
-                        this.OnClientError?.Invoke(this, this.EndPoint, ex);
-                        return;
-                    }
+                }
+                catch (Exception ex)
+                {
+                    this.Client = null;
+                    this.OnClientError?.Invoke(this, this.EndPoint, ex);
+                    return;
                 }
             });
         }
@@ -444,23 +450,25 @@ namespace XiaoFeng.Net
             if (port <= 0) port = 1006;
             await this.CompleteConnectAsync(async () =>
             {
-                if (this.ConnectTimeout <= 0)
-                    await this.Client.ConnectAsync(addresses, port).ConfigureAwait(false);
-                else
+                try
                 {
-                    var result = this.Client.BeginConnect(addresses, port, null, null);
-                    if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
-                        this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
-                    try
+                    if (this.ConnectTimeout <= 0)
+                        await this.Client.ConnectAsync(addresses, port).ConfigureAwait(false);
+                    else
                     {
+                        var result = this.Client.BeginConnect(addresses, port, null, null);
+                        if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
+                            this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
+
                         this.Client.EndConnect(result);
+
                     }
-                    catch (Exception ex)
-                    {
-                        this.Client = null;
-                        this.OnClientError?.Invoke(this, this.EndPoint, ex);
-                        return;
-                    }
+                }
+                catch (Exception ex)
+                {
+                    this.Client = null;
+                    this.OnClientError?.Invoke(this, this.EndPoint, ex);
+                    return;
                 }
             });
         }
@@ -473,23 +481,25 @@ namespace XiaoFeng.Net
             }
             await this.CompleteConnectAsync(async () =>
             {
-                if (this.ConnectTimeout <= 0)
-                    await this.Client.ConnectAsync(remoteEP).ConfigureAwait(false);
-                else
+                try
                 {
-                    var result = this.Client.BeginConnect(remoteEP, null, null);
-                    if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
-                        this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
-                    try
+                    if (this.ConnectTimeout <= 0)
+                        await this.Client.ConnectAsync(remoteEP).ConfigureAwait(false);
+                    else
                     {
+                        var result = this.Client.BeginConnect(remoteEP, null, null);
+                        if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
+                            this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
+
                         this.Client.EndConnect(result);
+
                     }
-                    catch (Exception ex)
-                    {
-                        this.Client = null;
-                        this.OnClientError?.Invoke(this, this.EndPoint, ex);
-                        return;
-                    }
+                }
+                catch (Exception ex)
+                {
+                    this.Client = null;
+                    this.OnClientError?.Invoke(this, this.EndPoint, ex);
+                    return;
                 }
             });
         }
@@ -869,10 +879,13 @@ namespace XiaoFeng.Net
         #endregion
 
         #region 循环接收数据
+        /// <summary>
+        /// 连接第一次接收消息
+        /// </summary>
+        private Boolean FirstConnectMessage = true;
         ///<inheritdoc/>
         public virtual async Task ReceviceDataAsync()
         {
-            var HandshakesCount = 0;
             do
             {
                 var bytes = await ReceviceMessageAsync().ConfigureAwait(false);
@@ -884,7 +897,7 @@ namespace XiaoFeng.Net
                 string ReceiveMessage;
                 if (this.IsServer)
                 {
-                    if (HandshakesCount == 0)
+                    if (FirstConnectMessage)
                     {
                         ReceiveMessage = bytes.GetString(this.Encoding);
                         if (ReceiveMessage.IndexOf("Sec-WebSocket-Key", StringComparison.OrdinalIgnoreCase) > -1)
@@ -920,10 +933,9 @@ namespace XiaoFeng.Net
                                 Encoding = this.Encoding,
                                 DataType = this.DataType
                             };
-                            var Handshake = packet.HandshakeAsync();
-                            await Handshake;
+                            await packet.HandshakeAsync().ConfigureAwait(false);
 
-                            HandshakesCount++;
+                            FirstConnectMessage = false;
                             continue;
                         }
                     }
@@ -932,9 +944,9 @@ namespace XiaoFeng.Net
                         var msg = "请先认证后再通讯.";
                         var msgBytes = msg.GetBytes(this.Encoding);
                         await this.SendAsync(msgBytes);
-                        HandshakesCount = 0;
                         continue;
                     }
+                    FirstConnectMessage = false;
                 }
                 if (this.ConnectionType == ConnectionType.WebSocket)
                 {
