@@ -841,7 +841,7 @@ namespace XiaoFeng.Net
             {
                 try
                 {
-                    readsize = await stream.ReadAsync(dataBuffer, 0, this.ReceiveBufferSize, this.CancelToken.Token);
+                    readsize = await stream.ReadAsync(dataBuffer, 0, this.ReceiveBufferSize, this.CancelToken.Token).ConfigureAwait(false);
                     await buffer.WriteAsync(dataBuffer, 0, readsize, this.CancelToken.Token);
                 }
                 catch (SocketException ex)
@@ -868,6 +868,7 @@ namespace XiaoFeng.Net
                         this.OnClientError?.Invoke(this, this.EndPoint, ex);
                     break;
                 }
+                await Task.Delay(1).ConfigureAwait(false);
             } while (readsize > 0 && this.GetStream().DataAvailable);
 
             if (buffer.Length == 0) return Array.Empty<byte>();
@@ -923,8 +924,7 @@ namespace XiaoFeng.Net
                             this.OnAuthentication?.Invoke(this, msg, EventArgs.Empty);
                             break;
                         }
-                        if (this.IsServer)
-                            this.OnStart?.Invoke(this, EventArgs.Empty);
+
                         if (this.ConnectionType == ConnectionType.WebSocket)
                         {
                             //开始握手
@@ -945,7 +945,12 @@ namespace XiaoFeng.Net
                             }
 
                             FirstConnectMessage = false;
+                            this.OnStart?.Invoke(this, EventArgs.Empty);
                             continue;
+                        }
+                        else
+                        {
+                            this.OnStart?.Invoke(this, EventArgs.Empty);
                         }
                     }
                     if (!this.IsAuthenticated.HasValue || !this.IsAuthenticated.GetValueOrDefault())
@@ -971,6 +976,12 @@ namespace XiaoFeng.Net
                         SendPongAsync().ConfigureAwait(false);
                         if (bytes.Length == 0) continue;
                     }
+                    /*
+                     * 2023-08-23 20:43 Jacky
+                     * Postman 在ssl下 连续发消息接收不到,只能通过回应一个pong来解决
+                     */
+                    if (this.Certificate != null)
+                        await this.SendPongAsync().ConfigureAwait(false);
                 }
                 ReceiveMessage = this.DataType == SocketDataType.String ? bytes.GetString(this.Encoding) : bytes.ByteToHexString();
 
@@ -1080,7 +1091,8 @@ namespace XiaoFeng.Net
             }
             else
             {
-
+                if (buffers == null || buffers.Length == 0)
+                    return 0;
             }
             stream.Write(buffers, 0, buffers.Length);
             stream.Flush();
@@ -1107,6 +1119,9 @@ namespace XiaoFeng.Net
                 using (var packet = new WebSocketPacket(this))
                     buffers = packet.Packet(buffers, opCode);
             }
+            else
+                if (buffers == null || buffers.Length == 0)
+                return await Task.FromResult(0);
             await stream.WriteAsync(buffers, 0, buffers.Length, this.CancelToken.Token);
             await stream.FlushAsync(this.CancelToken.Token);
             return await Task.FromResult(buffers.Length);

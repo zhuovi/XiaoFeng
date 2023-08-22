@@ -8,7 +8,7 @@
 		<Copyright>CopyRight @ 2008-2024 魔法精灵(www.eelf.cn) QQ:7092734 Email:jacky@eelf.cn</Copyright>
 		<Company>魔法精灵</Company>
 		<VersionPrefix>4.0</VersionPrefix>
-		<VersionSuffix>2</VersionSuffix>
+		<VersionSuffix>3</VersionSuffix>
 		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
 		<FileVersion>$(Version)</FileVersion>
 		<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
@@ -24,7 +24,7 @@
 		<PackageProjectUrl>https://www.eelf.cn</PackageProjectUrl>
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>ParameterCollection类增加GetBytes方法,增加多种构造器可以设置是否URL编码及字符串编码;增加扩展RSAEncryption算法SignHash,VerifyHash;修复Json,Xml中类型为可空枚举时,应该序列化成key则序列化成value的bug;优化Redis关闭;</PackageReleaseNotes>
+		<PackageReleaseNotes>修复postman在ssl下,一直发送消息服务端不能收到的问题;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>
