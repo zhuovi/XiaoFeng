@@ -70,7 +70,7 @@ Cake
 
 # 更新日志
 
-## 2023-08-22
+## 2023-08-22   v 4.0.2
 
 1.ParameterCollection类增加GetBytes方法,增加多种构造器可以设置是否URL编码及字符串编码;
 
