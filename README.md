@@ -19,7 +19,7 @@ Nuget：XiaoFeng
 
 教程： https://www.eelf.cn
 
-其中包含了Redis,Memcached,Socket,Json,Xml,ADO.NET数据库操作兼容以下数据库（SQLSERVER,MYSQL,ORACLE,达梦,SQLITE,ACCESS,OLEDB,ODBC等数十种数据库）,正则表达式,QueryableX(ORM)和EF无缝对接,FTP,网络日志,调度,IO操作,加密算法(AES,DES,DES3,MD5,RSA,RC4,SHA等常用加密算法),超级好用的配置管理器,应用池,类型转换等功能。
+C#公用类库,包含了Redis,Memcached,Json,Xml,ADO.NET数据库操作兼容以下数据库（SQLSERVER,MYSQL,ORACLE,达梦,SQLITE,ACCESS,OLEDB,ODBC等数十种数据库）,正则表达式,QueryableX(ORM)和EF无缝对接,FTP,网络日志,调度器(作业),网络库(SocketServer,WebSocketServer,SocketClient,WebSocketClient),IO操作,加密算法(AES,DES,DES3,MD5,RSA,RC4,SHA等常用加密算法),超级好用的配置管理器,应用池,类型转换等功能。
 
 
 ## XiaoFeng
@@ -31,41 +31,41 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 4.0.3
+$ dotnet add package XiaoFeng --version 4.1.0
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 4.0.3
+PM> Install-Package XiaoFeng -Version 4.1.0
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="4.0.3" />
+<PackageReference Include="XiaoFeng" Version="4.1.0" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 4.0.3
+> paket add XiaoFeng --version 4.1.0
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 4.0.3"
+> #r "nuget: XiaoFeng, 4.1.0"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=4.0.3
+#addin nuget:?package=XiaoFeng&version=4.1.0
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=4.0.3
+#tool nuget:?package=XiaoFeng&version=4.1.0
 ```
 
 # 更新日志
@@ -73,6 +73,7 @@ Cake
 ## 2023-08-24   v 4.1.0
 
 1.SocketClient增加LastMessageTime最后通讯时间,ConnectedTime连接时间;
+
 2.优化识别客户端是WebSocket还是Socket;
 
 ## 2023-08-22   v 4.0.3
@@ -1679,20 +1680,26 @@ var cellColumn = cell.Column;
 
 # XiaoFeng.Net Socket操作
 
+当前命名空间下有 SocketServer,SocketClient,WebSocketServer,WebSocket,NetServer,NetClient等,当前四个库的关系如下:
+
+SocketServer替代NetServer,SocketClient替代NetClient
+
+有新的网络库SocketServer,WebSocketServer 用法和NetServer一样当前网络库支持SSL连接;
+
 ## 服务端实例
 
 ```csharp
 //新建一个服务端,同时支持websocket,socket客户端连接
-var server = new NetServer<ServerSession>(8088)
+var server = new SocketServer(8088)
 {
-    //是否启用ping
-    IsPing = true,
-    //是否启用新行
-    IsNewLine = true,
+    //是否启用pong
+    IsPong = true,
+    //Pong时间
+    PongTime = 30,
     //传输编码
     Encoding = System.Text.Encoding.UTF8,
     //认证 认证不过则直接断开
-    SocketAuth = s =>
+    Authentication = s =>
     {
         //判断 客户端是否符合认证,不符合则直接返回false即可
         return true;
@@ -1782,7 +1789,7 @@ var clients1 = server.ConnectionSocketList;
 ## 客户端实例
 
 ```csharp
-var client = new XiaoFeng.Net.NetClient<XiaoFeng.Net.ClientSession>("127.0.0.1", 8888);
+var client = new SocketClient("127.0.0.1", 8888);
 client.OnStart += (socket, e) =>
 {
     //启动消息
