@@ -70,6 +70,11 @@ Cake
 
 # 更新日志
 
+## 2023-08-24   v 4.1.0
+
+1.SocketClient增加LastMessageTime最后通讯时间,ConnectedTime连接时间;
+2.优化识别客户端是WebSocket还是Socket;
+
 ## 2023-08-22   v 4.0.3
 
 1.修复postman在ssl下,一直发送消息服务端不能收到的问题;

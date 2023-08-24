@@ -97,27 +97,27 @@ namespace XiaoFeng.Net
 
         #region 事件
         /// <summary>
-        /// 启动
+        /// 启动事件
         /// </summary>
         event OnStartEventHandler OnStart;
         /// <summary>
-        /// 停止
+        /// 停止事件
         /// </summary>
         event OnStopEventHandler OnStop;
         /// <summary>
-        /// 客户端错误信息
+        /// 客户端错误信息事件
         /// </summary>
         event OnClientErrorEventHandler OnClientError;
         /// <summary>
-        /// 接收消息
+        /// 接收消息(string)事件
         /// </summary>
         event OnMessageEventHandler OnMessage;
         /// <summary>
-        /// 接收消息
+        /// 接收消息(byte[])事件
         /// </summary>
         event OnMessageByteEventHandler OnMessageByte;
         /// <summary>
-        /// 警告事件
+        /// 认证事件
         /// </summary>
         event OnAuthenticationEventHandler OnAuthentication;
         #endregion

@@ -185,9 +185,9 @@ namespace XiaoFeng.Net
         /// <summary>
         /// 是否认证
         /// </summary>
-        private Boolean _IsAuthenticated = false;
+        private Boolean? _IsAuthenticated = false;
         ///<inheritdoc/>
-        public Boolean? IsAuthenticated => this._IsAuthenticated;
+        public Boolean IsAuthenticated => this._IsAuthenticated.GetValueOrDefault();
         /// <summary>
         /// 请求头
         /// </summary>
@@ -204,6 +204,8 @@ namespace XiaoFeng.Net
         private IJob Job { get; set; }
         ///<inheritdoc/>
         public DateTime LastMessageTime { get; set; }
+        ///<inheritdoc/>
+        public DateTime ConnectedTime { get; set; }
         /// <summary>
         /// 频道KEY
         /// </summary>
@@ -211,29 +213,17 @@ namespace XiaoFeng.Net
         #endregion
 
         #region 事件
-        /// <summary>
-        /// 启动
-        /// </summary>
+        ///<inheritdoc/>
         public event OnStartEventHandler OnStart;
-        /// <summary>
-        /// 停止
-        /// </summary>
+        ///<inheritdoc/>
         public event OnStopEventHandler OnStop;
-        /// <summary>
-        /// 客户端错误信息
-        /// </summary>
+        ///<inheritdoc/>
         public event OnClientErrorEventHandler OnClientError;
-        /// <summary>
-        /// 接收消息
-        /// </summary>
+        ///<inheritdoc/>
         public event OnMessageEventHandler OnMessage;
-        /// <summary>
-        /// 接收消息
-        /// </summary>
+        ///<inheritdoc/>
         public event OnMessageByteEventHandler OnMessageByte;
-        /// <summary>
-        /// 认证事件
-        /// </summary>
+        ///<inheritdoc/>
         public event OnAuthenticationEventHandler OnAuthentication;
         #endregion
 
@@ -525,16 +515,15 @@ namespace XiaoFeng.Net
         ///<inheritdoc/>
         public virtual void Start()
         {
-            if (!this.IsServer)
+            if (this.IsServer)
+                this.CheckClientConnectionTypeAsync().ConfigureAwait(false);
+            else
             {
                 this.Connect(this.EndPoint);
-                this.PingAsync().ConfigureAwait(false);
                 this.OnStart?.Invoke(this, EventArgs.Empty);
-            }
-            Task.Factory.StartNew(() =>
-            {
                 this.ReceviceDataAsync().ConfigureAwait(false);
-            }, this.CancelToken.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+                this.PingAsync().ConfigureAwait(false);
+            } 
         }
         ///<inheritdoc/>
         public virtual void Start(string host, int port)
@@ -658,7 +647,7 @@ namespace XiaoFeng.Net
         ///<inheritdoc/>
         public Stream GetSslStream()
         {
-            if (this.SslStream != null && this.IsAuthenticated.GetValueOrDefault()) return this.SslStream;
+            if (this.SslStream != null && this.IsAuthenticated) return this.SslStream;
             var stream = this.GetStream();
             if (stream == null) return null;
             if ((this.IsServer && (this.SslProtocols != SslProtocols.None || this.Certificate != null)) || (!this.IsServer && (this.HostName.IsNotNullOrEmpty() || this.SslProtocols != SslProtocols.None && this.Certificate != null)))
@@ -859,7 +848,6 @@ namespace XiaoFeng.Net
                     if (ex.InnerException is SocketException err)
                     {
                         this.OnClientError?.Invoke(this, this.EndPoint, err);
-                        this.OnStop?.Invoke(this, EventArgs.Empty);
                     }
                     else
                         this.OnClientError?.Invoke(this, this.EndPoint, ex);
@@ -883,11 +871,95 @@ namespace XiaoFeng.Net
         }
         #endregion
 
-        #region 循环接收数据
+        #region 检测客户端连接类型
         /// <summary>
-        /// 连接第一次接收消息
+        /// 检测客户端连接类型
         /// </summary>
-        private Boolean FirstConnectMessage = true;
+        /// <returns></returns>
+        private async Task CheckClientConnectionTypeAsync()
+        {
+            var stream = this.GetStream();
+            //第一次接收消息延时10毫秒,防止websocket网络抖动导致连接上,发送消息延时导致关闭客户端;
+            await Task.Delay(10).ConfigureAwait(false);
+            if (stream.DataAvailable)
+            {
+                var bytes = await ReceviceMessageAsync().ConfigureAwait(false);
+                if (bytes.Length == 0)
+                {
+                    //断开了
+                    this.Stop();
+                    return;
+                }
+                var ReceiveMessage = this.DataType == SocketDataType.String ? bytes.GetString(this.Encoding) : bytes.ByteToHexString();
+
+                if (ReceiveMessage.IndexOf("Sec-WebSocket-Key", StringComparison.OrdinalIgnoreCase) > -1)
+                {
+                    this.ConnectionType = ConnectionType.WebSocket;
+                    this._RequestHeader = ReceiveMessage;
+                    if (this is IWebSocketClient webSocket)
+                    {
+                        webSocket.Request = new WebSocketRequest(webSocket.HostName.IsNullOrEmpty() ? "ws" : "wss", this.RequestHeader);
+                    }
+                    //开始握手
+                    var packet = new WebSocketPacket(this, ReceiveMessage)
+                    {
+                        Encoding = this.Encoding,
+                        DataType = this.DataType
+                    };
+                    var len = await packet.HandshakeAsync().ConfigureAwait(false);
+                    if (len == 0)
+                    {
+                        this.OnClientError?.Invoke(this, this.EndPoint, new Exception("网络客户端已经关闭."));
+                        this.Stop();
+                        return;
+                    }
+                    else if (len == -1)
+                    {
+                        this.OnClientError?.Invoke(this, this.EndPoint, new Exception("Sec-WebSocket-Key接收到是空数据,握手失败."));
+                        this.Stop();
+                        return;
+                    }
+                    this.OnStart?.Invoke(this, EventArgs.Empty);
+                    await this.CheckClientAuthenticatedAsync().ConfigureAwait(false);
+                }
+                else
+                {
+                    this.ConnectionType = ConnectionType.Socket;
+                    this.OnStart?.Invoke(this, EventArgs.Empty);
+                    await this.CheckClientAuthenticatedAsync().ConfigureAwait(false);
+                    this.OnMessage?.Invoke(this, ReceiveMessage, EventArgs.Empty);
+                }
+            }
+            else
+            {
+                this.ConnectionType = ConnectionType.Socket;
+                this.OnStart?.Invoke(this, EventArgs.Empty);
+                await this.CheckClientAuthenticatedAsync().ConfigureAwait(false);
+            }
+            await this.ReceviceDataAsync().ConfigureAwait(false);
+        }
+        #endregion
+
+        #region 检测认证
+        /// <summary>
+        /// 检测认证
+        /// </summary>
+        /// <returns></returns>
+        public async Task CheckClientAuthenticatedAsync()
+        {
+            //认证
+            this._IsAuthenticated = this.Authentication(this);
+            if (!this.IsAuthenticated)
+            {
+                var msg = "认证失败.";
+                var msgBytes = msg.GetBytes(this.Encoding);
+                await this.SendAsync(msgBytes);
+                this.OnAuthentication?.Invoke(this, msg, EventArgs.Empty);
+            }
+        }
+        #endregion
+
+        #region 循环接收数据
         ///<inheritdoc/>
         public virtual async Task ReceviceDataAsync()
         {
@@ -899,72 +971,20 @@ namespace XiaoFeng.Net
                     //断开了
                     break;
                 }
-                string ReceiveMessage;
+                var ReceiveMessage = this.DataType == SocketDataType.String ? bytes.GetString(this.Encoding) : bytes.ByteToHexString();
                 if (this.IsServer)
                 {
-                    if (FirstConnectMessage)
-                    {
-                        ReceiveMessage = bytes.GetString(this.Encoding);
-                        if (ReceiveMessage.IndexOf("Sec-WebSocket-Key", StringComparison.OrdinalIgnoreCase) > -1)
-                        {
-                            this.ConnectionType = ConnectionType.WebSocket;
-                            this._RequestHeader = ReceiveMessage;
-                            if (this.IsServer && this is IWebSocketClient webSocket)
-                            {
-                                webSocket.Request = new WebSocketRequest(webSocket.HostName.IsNullOrEmpty() ? "ws" : "wss", this.RequestHeader);
-                            }
-                        }
-                        else
-                        {
-                            this.ConnectionType = ConnectionType.Socket;
-                        }
-                        //认证
+                    if (!this._IsAuthenticated.HasValue || !this.IsAuthenticated)
                         this._IsAuthenticated = this.Authentication(this);
-                        if (!this.IsAuthenticated.GetValueOrDefault())
-                        {
-                            var msg = "认证失败.";
-                            var msgBytes = msg.GetBytes(this.Encoding);
-                            await this.SendAsync(msgBytes);
-                            this.OnAuthentication?.Invoke(this, msg, EventArgs.Empty);
-                            break;
-                        }
-
-                        if (this.ConnectionType == ConnectionType.WebSocket)
-                        {
-                            //开始握手
-                            var packet = new WebSocketPacket(this, ReceiveMessage)
-                            {
-                                Encoding = this.Encoding,
-                                DataType = this.DataType
-                            };
-                            var len = await packet.HandshakeAsync().ConfigureAwait(false);
-                            if (len == 0)
-                            {
-                                this.OnClientError?.Invoke(this, this.EndPoint, new Exception("网络客户端已经关闭."));
-
-                            }
-                            else if (len == -1)
-                            {
-                                this.OnClientError?.Invoke(this, this.EndPoint, new Exception("Sec-WebSocket-Key接收到是空数据,握手失败."));
-                            }
-
-                            FirstConnectMessage = false;
-                            this.OnStart?.Invoke(this, EventArgs.Empty);
-                            continue;
-                        }
-                        else
-                        {
-                            this.OnStart?.Invoke(this, EventArgs.Empty);
-                        }
-                    }
-                    if (!this.IsAuthenticated.HasValue || !this.IsAuthenticated.GetValueOrDefault())
+                    if (!this.IsAuthenticated)
                     {
                         var msg = "请先认证后再通讯.";
                         var msgBytes = msg.GetBytes(this.Encoding);
                         await this.SendAsync(msgBytes);
+                        this.OnMessage?.Invoke(this, ReceiveMessage, EventArgs.Empty);
+                        this.OnMessageByte?.Invoke(this, bytes, EventArgs.Empty);
                         continue;
                     }
-                    FirstConnectMessage = false;
                 }
                 if (this.ConnectionType == ConnectionType.WebSocket)
                 {
@@ -986,8 +1006,7 @@ namespace XiaoFeng.Net
                      */
                     if (this.Certificate != null)
                         await this.SendPongAsync().ConfigureAwait(false);
-                }
-                ReceiveMessage = this.DataType == SocketDataType.String ? bytes.GetString(this.Encoding) : bytes.ByteToHexString();
+                }                
 
                 if (ReceiveMessage.StartsWith("SUBSCRIBE#", StringComparison.OrdinalIgnoreCase))
                 {
@@ -1015,9 +1034,8 @@ namespace XiaoFeng.Net
                         bytes = ReceiveMessage.GetBytes(this.Encoding);
                     }
                 }
-
-                Task.Run(() => this.OnMessage?.Invoke(this, ReceiveMessage, EventArgs.Empty));
-                Task.Run(() => this.OnMessageByte?.Invoke(this, bytes, EventArgs.Empty));
+                this.OnMessage?.Invoke(this, ReceiveMessage, EventArgs.Empty);
+                this.OnMessageByte?.Invoke(this, bytes, EventArgs.Empty);
 
             } while (!this.CancelToken.IsCancellationRequested && this.Connected);
             this.Stop();

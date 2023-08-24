@@ -56,13 +56,17 @@ namespace XiaoFeng.Net
 
         #region 事件
         /// <summary>
-        /// 新的连接事件
+        /// 新客户端连接事件
         /// </summary>
         event OnNewConnectionEventHandler OnNewConnection;
         /// <summary>
-        /// 断开连接事件
+        /// 客户端断开连接事件
         /// </summary>
         event OnDisconnectedEventHandler OnDisconnected;
+        /// <summary>
+        /// 出错事件
+        /// </summary>
+        event OnErrorEventHandler OnError;
         #endregion
 
         #region 事件回调

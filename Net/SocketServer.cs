@@ -194,41 +194,23 @@ namespace XiaoFeng.Net
         #endregion
 
         #region 事件
-        /// <summary>
-        /// 新的连接事件
-        /// </summary>
+        ///<inheritdoc/>
         public event OnNewConnectionEventHandler OnNewConnection;
-        /// <summary>
-        /// 接收消息事件
-        /// </summary>
+        ///<inheritdoc/>
         public event OnMessageEventHandler OnMessage;
-        /// <summary>
-        /// 接收消息事件
-        /// </summary>
+        ///<inheritdoc/>
         public event OnMessageByteEventHandler OnMessageByte;
-        /// <summary>
-        /// 断开连接事件
-        /// </summary>
+        ///<inheritdoc/>
         public event OnDisconnectedEventHandler OnDisconnected;
-        /// <summary>
-        /// 停止服务事件
-        /// </summary>
+        ///<inheritdoc/>
         public event OnStopEventHandler OnStop;
-        /// <summary>
-        /// 出错事件
-        /// </summary>
+        ///<inheritdoc/>
         public event OnErrorEventHandler OnError;
-        /// <summary>
-        /// 客户端错误事件
-        /// </summary>
+        ///<inheritdoc/>
         public event OnClientErrorEventHandler OnClientError;
-        /// <summary>
-        /// 服务器启动事件
-        /// </summary>
+        ///<inheritdoc/>
         public event OnStartEventHandler OnStart;
-        /// <summary>
-        /// 认证事件
-        /// </summary>
+        ///<inheritdoc/>
         public event OnAuthenticationEventHandler OnAuthentication;
         #endregion
 
@@ -469,6 +451,7 @@ namespace XiaoFeng.Net
                 //移除队列
                 this.RemoveQueue(client);
             };
+            client.ConnectedTime = DateTime.Now;
             client.Start();
             await Task.CompletedTask;
         }

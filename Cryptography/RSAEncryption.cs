@@ -77,9 +77,9 @@ namespace XiaoFeng.Cryptography
         {
             using (var rsa = new RSACryptoServiceProvider(keySize))
             {
-                var PublicAndPrivateKey = rsa.ExportParameters(true);
+                var PrivateKey = rsa.ExportParameters(true);
                 var PublicKey = rsa.ExportParameters(false);
-                return new Tuple<string, string>(ToBase64String(PublicAndPrivateKey), ToBase64String(PublicKey));
+                return new Tuple<string, string>(ToBase64String(PrivateKey), ToBase64String(PublicKey));
             }
         }
         /// <summary>

@@ -57,7 +57,7 @@ namespace XiaoFeng.Net
         /// <summary>
         /// 是否认证
         /// </summary>
-        Boolean? IsAuthenticated { get; }
+        Boolean IsAuthenticated { get; }
         /// <summary>
         /// 请求头
         /// </summary>
@@ -74,6 +74,10 @@ namespace XiaoFeng.Net
         /// 最后一次通讯时间
         /// </summary>
         DateTime LastMessageTime { get; set; }
+        /// <summary>
+        /// 连接时间
+        /// </summary>
+        DateTime ConnectedTime { get; set; }
         #endregion
 
         #region 方法
