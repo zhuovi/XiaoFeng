@@ -162,7 +162,7 @@ namespace XiaoFeng.Net
             }
         }
         /// <summary>
-        /// 允许网络地址转换Thank you very much. You are a wonderful person. Do you have whatsapp or telegram? Or are you using your mail actively?
+        /// 允许网络地址转换
         /// </summary>
         private Boolean? _AllowNatTraversal;
         ///<inheritdoc/>
@@ -413,14 +413,14 @@ namespace XiaoFeng.Net
         {
             if (client == null)
             {
-                this.OnError?.Invoke(this, new Exception("客户端转换实体出错."));
+                this.OnError?.Invoke(this, new Exception("网络客户端转换实体出错."));
                 await Task.CompletedTask;
                 return;
             }
             //判断黑名单
             if (this.ContainsBlack(client.EndPoint.Address.ToString()))
             {
-                var msg = "当前客户端IP在黑名单中,禁止连接服务器.";
+                var msg = "当前客户端IP在黑名单中,禁止连接服务端.";
                 client.Send(msg);
                 client.Stop();
                 this.OnAuthentication?.Invoke(client, msg, EventArgs.Empty);
