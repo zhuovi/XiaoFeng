@@ -23,6 +23,7 @@ namespace XiaoFeng.Net
     /// <summary>
     /// 网络客户端
     /// </summary>
+    [Obsolete("当前类库已过期,请使用SocketClient.",false)]
     public class NetClient<TSession> : INetClient where TSession : IClientSession,new()
     {
         #region 构造器

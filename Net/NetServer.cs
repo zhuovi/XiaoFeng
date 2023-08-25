@@ -27,6 +27,7 @@ namespace XiaoFeng.Net
     /// <summary>
     /// 网络服务端
     /// </summary>
+    [Obsolete("当前类库已过期,请使用SocketServer.", false)]
     public class NetServer<TSession> : INetServer where TSession : IServerSession, new()
     {
         #region 构造器
