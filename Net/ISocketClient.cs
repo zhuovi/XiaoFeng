@@ -135,61 +135,61 @@ namespace XiaoFeng.Net
         /// <summary>
         /// 将客户端连接到指定主机上的指定端口。
         /// </summary>
-        void Connect();
+        SocketError Connect();
         /// <summary>
         /// 将客户端连接到指定主机上的指定端口。
         /// </summary>
         /// <param name="hostname">主机</param>
         /// <param name="port">端口</param>
-        void Connect(string hostname, int port);
+        SocketError Connect(string hostname, int port);
         /// <summary>
         /// 将客户端连接到指定主机上的指定端口
         /// </summary>
         /// <param name="address">主机</param>
         /// <param name="port">端口</param>
-        void Connect(IPAddress address, int port);
+        SocketError Connect(IPAddress address, int port);
         /// <summary>
         /// 将客户端连接到指定端点
         /// </summary>
         /// <param name="remoteEP">端点</param>
-        void Connect(IPEndPoint remoteEP);
+        SocketError Connect(IPEndPoint remoteEP);
         /// <summary>
         /// 将客户端连接到指定主机上的指定端口
         /// </summary>
         /// <param name="ipAddresses">主机</param>
         /// <param name="port">端口</param>
-        void Connect(IPAddress[] ipAddresses, int port);
+        SocketError Connect(IPAddress[] ipAddresses, int port);
         /// <summary>
         /// 将客户端连接到指定主机上的指定端口。
         /// </summary>
-        Task ConnectAsync();
+        Task<SocketError> ConnectAsync();
         /// <summary>
         /// 将客户端连接到指定主机上的指定端口
         /// </summary>
         /// <param name="address">主机</param>
         /// <param name="port">端口</param>
         /// <returns></returns>
-        Task ConnectAsync(IPAddress address, int port);
+        Task<SocketError> ConnectAsync(IPAddress address, int port);
         /// <summary>
         /// 将客户端连接到指定主机上的指定端口
         /// </summary>
         /// <param name="host">主机</param>
         /// <param name="port">端口</param>
         /// <returns></returns>
-        Task ConnectAsync(string host, int port);
+        Task<SocketError> ConnectAsync(string host, int port);
         /// <summary>
         /// 将客户端连接到指定主机上的指定端口
         /// </summary>
         /// <param name="addresses">IP地址组</param>
         /// <param name="port">端口</param>
         /// <returns></returns>
-        Task ConnectAsync(IPAddress[] addresses, int port);
+        Task<SocketError> ConnectAsync(IPAddress[] addresses, int port);
         /// <summary>
         /// 将客户端连接到指定端点
         /// </summary>
         /// <param name="remoteEP">端点</param>
         /// <returns></returns>
-        Task ConnectAsync(IPEndPoint remoteEP);
+        Task<SocketError> ConnectAsync(IPEndPoint remoteEP);
         #endregion
 
         #region 发送消息

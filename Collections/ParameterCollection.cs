@@ -19,7 +19,6 @@ using System.Text;
 *****************************************************************/
 namespace XiaoFeng.Collections
 {
-
     /// <summary>
     /// 参数集合
     /// </summary>
