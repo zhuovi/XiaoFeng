@@ -113,6 +113,13 @@ namespace XiaoFeng.Redis
         Task<Boolean> SelectAsync(int dbNum = 0);
         #endregion
 
+        #region 关闭
+        /// <summary>
+        /// 关闭
+        /// </summary>
+        void Close();
+        #endregion
+
         #endregion
 
         #region GEO

@@ -146,7 +146,7 @@ namespace XiaoFeng.Redis
         /// <summary>
         /// 排它锁
         /// </summary>
-        private static readonly Mutex Mutex = new Mutex();
+        private static Mutex Mutex = new Mutex(false, "RedisMutex");
         #endregion
 
         #region 方法
@@ -172,8 +172,11 @@ namespace XiaoFeng.Redis
                         ReceiveTimeout = this.ReceiveTimeout,
                         SendTimeout = this.SendTimeout
                     };
-            if (!this.Redis.IsConnected)
-                this.Redis.Connect();
+            lock (this.Redis)
+            {
+                if (!this.Redis.IsConnected)
+                    this.Redis.Connect();
+            }
         }
         #endregion
 
@@ -187,6 +190,7 @@ namespace XiaoFeng.Redis
                 RedisPool.Put(this.RedisItem);
             else
                 this.Redis.Close();
+            Mutex = new Mutex(false, "RedisMutex");
         }
         #endregion
 
@@ -202,7 +206,7 @@ namespace XiaoFeng.Redis
         /// <returns>执行结果</returns>
         public T Execute<T>(CommandType commandType, int? dbNum, Func<RedisReader, T> func, params object[] args)
         {
-            Mutex.WaitOne();
+            Mutex.WaitOne(TimeSpan.FromMilliseconds(1000));
             this.Init();
             if (!this.Redis.IsAuth && commandType != CommandType.AUTH && this.ConnConfig.Password.IsNotNullOrEmpty())
             {
@@ -219,10 +223,21 @@ namespace XiaoFeng.Redis
                 else
                     throw new RedisException("选库出错.");
             }
-            new CommandPacket(commandType, args).SendCommand(this.Redis.GetStream() as NetworkStream);
-            var result = func.Invoke(new RedisReader(commandType, this.Redis.GetStream() as NetworkStream, args));
-            Mutex.ReleaseMutex();
-            return result;
+            try
+            {
+                new CommandPacket(commandType, args).SendCommand(this.Redis.GetStream() as NetworkStream);
+                var result = func.Invoke(new RedisReader(commandType, this.Redis.GetStream() as NetworkStream, args));
+                return result;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Error(ex);
+                return default(T);
+            }
+            finally
+            {
+                Mutex.ReleaseMutex();
+            }
         }
         /// <summary>
         /// 执行 异步
@@ -235,25 +250,36 @@ namespace XiaoFeng.Redis
         /// <returns>执行结果</returns>
         public async Task<T> ExecuteAsync<T>(CommandType commandType, int? dbNum, Func<RedisReader, Task<T>> func, params object[] args)
         {
-            Mutex.WaitOne();
+            Mutex.WaitOne(TimeSpan.FromMilliseconds(1000));
             this.Init();
             if (commandType != CommandType.AUTH && this.ConnConfig.Password.IsNotNullOrEmpty())
             {
-                this.Redis.IsAuth = await this.AuthAsync(this.ConnConfig.Password);
+                this.Redis.IsAuth = await this.AuthAsync(this.ConnConfig.Password).ConfigureAwait(false);
                 if (!this.Redis.IsAuth)
                     throw new RedisException("认证失败.");
             }
             if (dbNum.HasValue && dbNum != this.Redis.DbNum)
             {
-                if (this.Select(dbNum.Value))
+                if (await this.SelectAsync(dbNum.Value).ConfigureAwait(false))
                     this.Redis.DbNum = dbNum;
                 else
                     throw new RedisException("选库出错.");
             }
-            new CommandPacket(commandType, args).SendCommand(this.Redis.GetStream() as NetworkStream);
-            var result = func.Invoke(new RedisReader(commandType, this.Redis.GetStream() as NetworkStream, args));
-            Mutex.ReleaseMutex();
-            return await result;
+            try
+            {
+                await new CommandPacket(commandType, args).SendCommandAsync(this.Redis.GetStream() as NetworkStream).ConfigureAwait(false);
+                var result = await func.Invoke(new RedisReader(commandType, this.Redis.GetStream() as NetworkStream, args)).ConfigureAwait(false);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Error(ex);
+                return default(T);
+            }
+            finally
+            {
+                 Mutex.ReleaseMutex();
+            }
         }
         #endregion
 
