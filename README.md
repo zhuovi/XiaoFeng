@@ -31,44 +31,52 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 4.1.0
+$ dotnet add package XiaoFeng --version 4.1.1
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 4.1.0
+PM> Install-Package XiaoFeng -Version 4.1.1
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="4.1.0" />
+<PackageReference Include="XiaoFeng" Version="4.1.1" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 4.1.0
+> paket add XiaoFeng --version 4.1.1
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 4.1.0"
+> #r "nuget: XiaoFeng, 4.1.1"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=4.1.0
+#addin nuget:?package=XiaoFeng&version=4.1.1
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=4.1.0
+#tool nuget:?package=XiaoFeng&version=4.1.1
 ```
 
 # 更新日志
+
+## 2023-08-28   v 4.1.1
+
+1.设置NetServer,NetClient过期,用SocketServer,SocketClient替代;
+
+2.优化Redis有时为无限等待bug;
+
+3.SocketClient连接方法增加返回类型
 
 ## 2023-08-24   v 4.1.0
 
