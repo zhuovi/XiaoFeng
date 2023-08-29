@@ -53,7 +53,7 @@ namespace XiaoFeng.Memcached.IO
         /// <summary>
         /// 是否连接
         /// </summary>
-        public Boolean IsConnected => this.SocketClient != null && SocketClient.Connected;
+        public Boolean IsConnected => this.Client != null && Client.Connected;
         /// <summary>
         /// 寻址方案
         /// </summary>
