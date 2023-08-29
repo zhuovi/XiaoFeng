@@ -219,25 +219,41 @@ namespace XiaoFeng.Net
         /// 发送消息
         /// </summary>
         /// <param name="buffers">消息</param>
-        /// <returns>发送字节长度 -1表示socket无连接 0表示无发送数据</returns>
+        /// <returns>发送数据包的字节长度
+        /// <para><term>0</term> 无发送数据</para>
+        /// <para><term>-1</term> 网络通道未连接</para>
+        /// <para><term>-2</term> 网络通道还未准备好</para>
+        /// </returns>
         int Send(byte[] buffers);
         /// <summary>
         /// 发送消息
         /// </summary>
         /// <param name="buffers">消息</param>
-        /// <returns>发送字节长度 -1表示socket无连接 0表示无发送数据</returns>
+        /// <returns>发送数据包的字节长度
+        /// <para><term>0</term> 无发送数据</para>
+        /// <para><term>-1</term> 网络通道未连接</para>
+        /// <para><term>-2</term> 网络通道还未准备好</para>
+        /// </returns>
         Task<int> SendAsync(byte[] buffers);
         /// <summary>
         /// 发送消息
         /// </summary>
         /// <param name="message">消息</param>
-        /// <returns>发送字节长度 -1表示socket无连接 0表示无发送数据</returns>
+        /// <returns>发送数据包的字节长度
+        /// <para><term>0</term> 无发送数据</para>
+        /// <para><term>-1</term> 网络通道未连接</para>
+        /// <para><term>-2</term> 网络通道还未准备好</para>
+        /// </returns>
         int Send(string message);
         /// <summary>
         /// 发送消息
         /// </summary>
         /// <param name="message">消息</param>
-        /// <returns>发送字节长度 -1表示socket无连接 0表示无发送数据</returns>
+        /// <returns>发送数据包的字节长度
+        /// <para><term>0</term> 无发送数据</para>
+        /// <para><term>-1</term> 网络通道未连接</para>
+        /// <para><term>-2</term> 网络通道还未准备好</para>
+        /// </returns>
         Task<int> SendAsync(string message);
         /// <summary>
         /// 发送文件
@@ -321,12 +337,13 @@ namespace XiaoFeng.Net
 
         #region 设置Socket
         /// <summary>
-        /// 连接socket
+        /// 连接socket 服务端接收客户端设置socket使用
         /// </summary>
         /// <param name="socket">socket</param>
+        /// <param name="networkDelay">网络延时 单位毫秒</param>
         /// <param name="authentication">认证</param>
         /// <param name="certificate">ssl证书</param>
-        void SetSocket(Socket socket, Func<ISocketClient, bool> authentication = null, X509Certificate certificate = null);
+        void SetSocket(Socket socket, int networkDelay, Func<ISocketClient, bool> authentication = null, X509Certificate certificate = null);
         #endregion
 
         #region 自定义数据

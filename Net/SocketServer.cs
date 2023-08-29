@@ -183,6 +183,8 @@ namespace XiaoFeng.Net
         /// pong间隔 单位为秒
         /// </summary>
         public int PongTime { get; set; } = 120;
+        ///<inheritdoc/>
+        public int NetworkDelay { get; set; } = 10;
         /// <summary>
         /// 定时作业
         /// </summary>
@@ -516,7 +518,7 @@ namespace XiaoFeng.Net
             try
             {
                 var client = Activator.CreateInstance<T>();
-                client.SetSocket(AcceptSocket, this.Authentication, this.Certificate);
+                client.SetSocket(AcceptSocket, this.NetworkDelay, this.Authentication, this.Certificate);
                 return await Task.FromResult(client).ConfigureAwait(false);
             }
             catch (Exception ex)

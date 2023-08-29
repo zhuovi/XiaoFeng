@@ -42,11 +42,12 @@ namespace XiaoFeng.Net
         /// 连接socket
         /// </summary>
         /// <param name="socket">socket</param>
+        /// <param name="networkDelay">网络延时 单位为毫秒</param>
         /// <param name="authentication">认证</param>
         /// <param name="certificate">ssl证书</param>
-        public SocketClient(Socket socket, Func<ISocketClient, bool> authentication = null, X509Certificate certificate = null)
+        public SocketClient(Socket socket, int networkDelay, Func<ISocketClient, bool> authentication = null, X509Certificate certificate = null)
         {
-            this.SetSocket(socket, authentication, certificate);
+            this.SetSocket(socket, networkDelay, authentication, certificate);
         }
         /// <summary>
         /// 设置连接主机和端口
@@ -206,6 +207,8 @@ namespace XiaoFeng.Net
         public DateTime LastMessageTime { get; set; }
         ///<inheritdoc/>
         public DateTime ConnectedTime { get; set; }
+        ///<inheritdoc/>
+        public int NetworkDelay { get; set; } = 10;
         /// <summary>
         /// 频道KEY
         /// </summary>
@@ -897,8 +900,8 @@ namespace XiaoFeng.Net
         private async Task CheckClientConnectionTypeAsync()
         {
             var stream = this.GetStream();
-            //第一次接收消息延时10毫秒,防止websocket网络抖动导致连接上,发送消息延时导致关闭客户端;
-            await Task.Delay(10).ConfigureAwait(false);
+            //第一次接收消息延时 10 毫秒,防止websocket网络抖动导致连接上,发送消息延时导致关闭客户端;
+            await Task.Delay(this.NetworkDelay).ConfigureAwait(false);
             if (stream.DataAvailable)
             {
                 var bytes = await ReceviceMessageAsync().ConfigureAwait(false);
@@ -937,11 +940,13 @@ namespace XiaoFeng.Net
                         this.Stop();
                         return;
                     }
+                    this._Active = true;
                     this.OnStart?.Invoke(this, EventArgs.Empty);
                     await this.CheckClientAuthenticatedAsync().ConfigureAwait(false);
                 }
                 else
                 {
+                    this._Active = true;
                     this.ConnectionType = ConnectionType.Socket;
                     this.OnStart?.Invoke(this, EventArgs.Empty);
                     await this.CheckClientAuthenticatedAsync().ConfigureAwait(false);
@@ -952,6 +957,7 @@ namespace XiaoFeng.Net
             else
             {
                 this.ConnectionType = ConnectionType.Socket;
+                this._Active = true;
                 this.OnStart?.Invoke(this, EventArgs.Empty);
                 await this.CheckClientAuthenticatedAsync().ConfigureAwait(false);
             }
@@ -1115,9 +1121,15 @@ namespace XiaoFeng.Net
         /// 发送数据
         /// </summary>
         /// <param name="buffers">数据</param>
-        /// <param name="opCode">操作码</param>
+        /// <param name="opCode">操作码 <paramref name="opCode"/></param>
+        /// <returns>发送数据包的字节长度
+        /// <para><term>0</term> 无发送数据</para>
+        /// <para><term>-1</term> 网络通道未连接</para>
+        /// <para><term>-2</term> 网络通道还未准备好</para>
+        /// </returns>
         private int NetStreamSend(byte[] buffers, OpCode opCode = OpCode.Text)
         {
+            if (!this.Active) return -2;
             if (!this.Connected)
             {
                 this.OnClientError?.Invoke(this, this.EndPoint, new SocketException((int)SocketError.NotConnected));
@@ -1145,10 +1157,15 @@ namespace XiaoFeng.Net
         /// 异步发送数据
         /// </summary>
         /// <param name="buffers">数据</param>
-        /// <param name="opCode">操作码</param>
-        /// <returns>发送数据长度</returns>
+        /// <param name="opCode">操作码 <paramref name="opCode"/></param>
+        /// <returns>发送数据包的字节长度
+        /// <para><term>0</term> 无发送数据</para>
+        /// <para><term>-1</term> 网络通道未连接</para>
+        /// <para><term>-2</term> 网络通道还未准备好</para>
+        /// </returns>
         private async Task<int> NetStreamSendAsync(byte[] buffers, OpCode opCode = OpCode.Text)
         {
+            if (!this.Active) return await Task.FromResult(-2).ConfigureAwait(false);
             if (!this.Connected)
             {
                 this.OnClientError?.Invoke(this, this.EndPoint, new SocketException((int)SocketError.NotConnected));
@@ -1189,10 +1206,10 @@ namespace XiaoFeng.Net
 
         #region 设置Socket
         ///<inheritdoc/>
-        public void SetSocket(Socket socket, Func<ISocketClient, bool> authentication = null, X509Certificate certificate = null)
+        public void SetSocket(Socket socket,int networkDelay, Func<ISocketClient, bool> authentication = null, X509Certificate certificate = null)
         {
             this.Client = socket;
-            this._Active = true;
+            this.NetworkDelay = networkDelay;
             this.SocketState = SocketState.Runing;
             this.EndPoint = socket.RemoteEndPoint as IPEndPoint;
             this._IsServer = true;

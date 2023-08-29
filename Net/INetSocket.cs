@@ -93,6 +93,11 @@ namespace XiaoFeng.Net
         /// 数据类型
         /// </summary>
         SocketDataType DataType { get; set; }
+        /// <summary>
+        /// 网络延时 单位为毫秒 默认为 10 毫秒,建议最长不超过5秒。
+        /// <para>在服务端接收客户端websocket连接时使用</para>
+        /// </summary>
+        int NetworkDelay { get; set; }
         #endregion
 
         #region 事件
