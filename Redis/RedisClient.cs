@@ -204,7 +204,7 @@ namespace XiaoFeng.Redis
         /// <param name="func">回调方法</param>
         /// <param name="args">参数集</param>
         /// <returns>执行结果</returns>
-        public T Execute<T>(CommandType commandType, int? dbNum, Func<RedisReader, T> func, params object[] args)
+        protected T Execute<T>(CommandType commandType, int? dbNum, Func<RedisReader, T> func, params object[] args)
         {
             Mutex.WaitOne(TimeSpan.FromMilliseconds(1000));
             this.Init();
@@ -248,7 +248,7 @@ namespace XiaoFeng.Redis
         /// <param name="func">回调方法</param>
         /// <param name="args">参数集</param>
         /// <returns>执行结果</returns>
-        public async Task<T> ExecuteAsync<T>(CommandType commandType, int? dbNum, Func<RedisReader, Task<T>> func, params object[] args)
+        protected async Task<T> ExecuteAsync<T>(CommandType commandType, int? dbNum, Func<RedisReader, Task<T>> func, params object[] args)
         {
             Mutex.WaitOne(TimeSpan.FromMilliseconds(1000));
             this.Init();

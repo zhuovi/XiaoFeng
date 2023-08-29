@@ -161,7 +161,7 @@ namespace XiaoFeng.Memcached
         /// <summary>
         /// 排它锁
         /// </summary>
-        private static readonly Mutex Mutex = new Mutex();
+        private static Mutex Mutex = new Mutex(false, "MemcachedMutex");
         #endregion
 
         #region 方法
@@ -187,8 +187,11 @@ namespace XiaoFeng.Memcached
                         ReceiveTimeout = this.ReceiveTimeout,
                         SendTimeout = this.SendTimeout
                     };
-            if (!this.Memcached.IsConnected)
-                this.Memcached.Connect();
+            lock (this.Memcached)
+            {
+                if (!this.Memcached.IsConnected)
+                    this.Memcached.Connect();
+            }
 
             if (this.Transform == null)
                 this.Transform = new ModifiedFNV1_32();
@@ -205,6 +208,7 @@ namespace XiaoFeng.Memcached
                 MemcachedPool.Put(this.MemcachedItem);
             else
                 this.Memcached.Close();
+            Mutex = new Mutex(false, "MemcachedMutex");
         }
         #endregion
 
@@ -219,7 +223,7 @@ namespace XiaoFeng.Memcached
         /// <returns>执行结果</returns>
         protected T Execute<T>(CommandType commandType, Func<MemcachedReader, T> func, params object[] args)
         {
-            Mutex.WaitOne();
+            Mutex.WaitOne(TimeSpan.FromMilliseconds(1000));
             this.Init();
             if (!this.Memcached.IsAuth && commandType != CommandType.AUTH && this.ConnConfig.Password.IsNotNullOrEmpty())
             {
@@ -227,10 +231,21 @@ namespace XiaoFeng.Memcached
                 if (!this.Memcached.IsAuth)
                     throw new MemcachedException("认证失败.");
             }
-            new CommandPacket(commandType, this.CompressLength, args).SendCommand(this.Memcached.GetStream() as NetworkStream);
-            var result = func.Invoke(new MemcachedReader(commandType, this.Memcached.GetStream() as NetworkStream, args));
-            Mutex.ReleaseMutex();
-            return result;
+            try
+            {
+                new CommandPacket(commandType, this.CompressLength, args).SendCommand(this.Memcached.GetStream() as NetworkStream);
+                var result = func.Invoke(new MemcachedReader(commandType, this.Memcached.GetStream() as NetworkStream, args));
+                return result;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Error(ex);
+                return default(T);
+            }
+            finally
+            {
+                Mutex.ReleaseMutex();
+            }
         }
         /// <summary>
         /// 执行 异步
@@ -242,18 +257,29 @@ namespace XiaoFeng.Memcached
         /// <returns>执行结果</returns>
         protected async Task<T> ExecuteAsync<T>(CommandType commandType, Func<MemcachedReader, Task<T>> func, params object[] args)
         {
-            Mutex.WaitOne();
+            Mutex.WaitOne(TimeSpan.FromMilliseconds(1000));
             this.Init();
             if (commandType != CommandType.AUTH && this.ConnConfig.Password.IsNotNullOrEmpty())
             {
-                this.Memcached.IsAuth = await this.AuthAsync();
+                this.Memcached.IsAuth = await this.AuthAsync().ConfigureAwait(false);
                 if (!this.Memcached.IsAuth)
                     throw new MemcachedException("认证失败.");
             }
-            new CommandPacket(commandType, this.CompressLength, args).SendCommand(this.Memcached.GetStream() as NetworkStream);
-            var result = func.Invoke(new MemcachedReader(commandType, this.Memcached.GetStream() as NetworkStream, args));
-            Mutex.ReleaseMutex();
-            return await result;
+            try
+            {
+                await new CommandPacket(commandType, this.CompressLength, args).SendCommandAsync(this.Memcached.GetStream() as NetworkStream).ConfigureAwait(false);
+                var result = await func.Invoke(new MemcachedReader(commandType, this.Memcached.GetStream() as NetworkStream, args)).ConfigureAwait(false);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Error(ex);
+                return default(T);
+            }
+            finally
+            {
+                Mutex.ReleaseMutex();
+            }
         }
         #endregion
 
@@ -350,7 +376,7 @@ namespace XiaoFeng.Memcached
         /// <param name="value">值</param>
         /// <param name="exptime">过期时间 单位为秒 默认不限制</param>
         /// <returns>成功状态</returns>
-        public async Task<Boolean> SetAsync<T>(string key, T value, uint exptime = 0) => await this.StoreAsync(CommandType.SET, key, value, exptime);
+        public async Task<Boolean> SetAsync<T>(string key, T value, uint exptime = 0) => await this.StoreAsync(CommandType.SET, key, value, exptime).ConfigureAwait(false);
         /// <summary>
         /// 如果key不存在的话，就添加
         /// </summary>
@@ -368,7 +394,7 @@ namespace XiaoFeng.Memcached
         /// <param name="value">值</param>
         /// <param name="exptime">过期时间 单位为秒 默认不限制</param>
         /// <returns>成功状态</returns>
-        public async Task<Boolean> AddAsync<T>(string key, T value, uint exptime = 0) => await this.StoreAsync(CommandType.ADD, key, value, exptime);
+        public async Task<Boolean> AddAsync<T>(string key, T value, uint exptime = 0) => await this.StoreAsync(CommandType.ADD, key, value, exptime).ConfigureAwait(false);
         /// <summary>
         /// 用来替换已知key的value
         /// </summary>
@@ -475,7 +501,7 @@ namespace XiaoFeng.Memcached
             var list = new List<object> { key, exptime };
             if (casToken > 0) list.Add(casToken);
             list.Add(value);
-            return await this.ExecuteAsync(commandType, async reader => await Task.FromResult(reader.OK), list.ToArray());
+            return await this.ExecuteAsync(commandType, async reader => await Task.FromResult(reader.OK), list.ToArray()).ConfigureAwait(false);
         }
         #endregion
 
@@ -498,7 +524,7 @@ namespace XiaoFeng.Memcached
         public async Task<MemcachedValue> GetAsync(string key)
         {
             if (key.IsNullOrEmpty()) return null;
-            return await this.ExecuteAsync(CommandType.GET, async reader => await Task.FromResult(reader.OK ? reader.Value?[0] : null), key);
+            return await this.ExecuteAsync(CommandType.GET, async reader => await Task.FromResult(reader.OK ? reader.Value?[0] : null), key).ConfigureAwait(false);
         }
         /// <summary>
         /// 获取key的value值，若key不存在，返回空。支持多个key
@@ -518,7 +544,7 @@ namespace XiaoFeng.Memcached
         public async Task<List<MemcachedValue>> GetAsync(params string[] keys)
         {
             if (keys.Length == 0) return null;
-            return await this.ExecuteAsync(CommandType.GET, async reader => await Task.FromResult(reader.OK ? reader.Value : null), keys);
+            return await this.ExecuteAsync(CommandType.GET, async reader => await Task.FromResult(reader.OK ? reader.Value : null), keys).ConfigureAwait(false);
         }
         /// <summary>
         /// 用于获取key的带有CAS令牌值的value值，若key不存在，返回空。
@@ -538,7 +564,7 @@ namespace XiaoFeng.Memcached
         public async Task<MemcachedValue> GetsAsync(string key)
         {
             if (key.IsNullOrEmpty()) return null;
-            return await this.ExecuteAsync(CommandType.GETS, async reader => await Task.FromResult(reader.OK ? reader.Value?[0] : null), key);
+            return await this.ExecuteAsync(CommandType.GETS, async reader => await Task.FromResult(reader.OK ? reader.Value?[0] : null), key).ConfigureAwait(false);
         }
         /// <summary>
         /// 用于获取key的带有CAS令牌值的value值，若key不存在，返回空。支持多个key
@@ -558,7 +584,7 @@ namespace XiaoFeng.Memcached
         public async Task<List<MemcachedValue>> GetsAsync(params string[] keys)
         {
             if (keys.Length == 0) return null;
-            return await this.ExecuteAsync(CommandType.GETS, async reader => await Task.FromResult(reader.OK ? reader.Value : null), keys);
+            return await this.ExecuteAsync(CommandType.GETS, async reader => await Task.FromResult(reader.OK ? reader.Value : null), keys).ConfigureAwait(false);
         }
         /// <summary>
         /// 获取key的value值，若key不存在，返回空。更新缓存时间
@@ -580,7 +606,7 @@ namespace XiaoFeng.Memcached
         public async Task<MemcachedValue> GatAsync(uint exptime, string key)
         {
             if (key.IsNullOrEmpty()) return null;
-            return await this.ExecuteAsync(CommandType.GAT, async reader => await Task.FromResult(reader.OK ? reader.Value?[0] : null), exptime, key);
+            return await this.ExecuteAsync(CommandType.GAT, async reader => await Task.FromResult(reader.OK ? reader.Value?[0] : null), exptime, key).ConfigureAwait(false);
         }
         /// <summary>
         /// 获取key的value值，若key不存在，返回空。支持多个key 更新缓存时间
@@ -602,7 +628,7 @@ namespace XiaoFeng.Memcached
         public async Task<List<MemcachedValue>> GatAsync(uint exptime, params string[] keys)
         {
             if (keys.Length == 0) return null;
-            return await this.ExecuteAsync(CommandType.GAT, async reader => await Task.FromResult(reader.OK ? reader.Value : null), new object[] { exptime }.Concat(keys).ToArray());
+            return await this.ExecuteAsync(CommandType.GAT, async reader => await Task.FromResult(reader.OK ? reader.Value : null), new object[] { exptime }.Concat(keys).ToArray()).ConfigureAwait(false);
         }
         /// <summary>
         /// 用于获取key的带有CAS令牌值的value值，若key不存在，返回空。支持多个key 更新缓存时间
@@ -624,7 +650,7 @@ namespace XiaoFeng.Memcached
         public async Task<MemcachedValue> GatsAsync(uint exptime, string key)
         {
             if (key.IsNullOrEmpty()) return null;
-            return await this.ExecuteAsync(CommandType.GATS, async reader => await Task.FromResult(reader.OK ? reader.Value?[0] : null), exptime, key);
+            return await this.ExecuteAsync(CommandType.GATS, async reader => await Task.FromResult(reader.OK ? reader.Value?[0] : null), exptime, key).ConfigureAwait(false);
         }
         /// <summary>
         /// 用于获取key的带有CAS令牌值的value值，若key不存在，返回空。支持多个key 更新缓存时间
@@ -646,7 +672,7 @@ namespace XiaoFeng.Memcached
         public async Task<List<MemcachedValue>> GatsAsync(uint exptime, params string[] keys)
         {
             if (keys.Length == 0) return null;
-            return await this.ExecuteAsync(CommandType.GATS, async reader => await Task.FromResult(reader.OK ? reader.Value : null), new object[] { exptime }.Concat(keys).ToArray());
+            return await this.ExecuteAsync(CommandType.GATS, async reader => await Task.FromResult(reader.OK ? reader.Value : null), new object[] { exptime }.Concat(keys).ToArray()).ConfigureAwait(false);
         }
         /// <summary>
         /// 删除已存在的 key(键)
@@ -666,7 +692,7 @@ namespace XiaoFeng.Memcached
         public async Task<Boolean> DeleteAsync(string key)
         {
             if (key.IsNullOrEmpty()) return false;
-            return await this.ExecuteAsync(CommandType.DELETE, async reader => await Task.FromResult(reader.OK), key);
+            return await this.ExecuteAsync(CommandType.DELETE, async reader => await Task.FromResult(reader.OK), key).ConfigureAwait(false);
         }
         /// <summary>
         /// 递增
@@ -688,7 +714,7 @@ namespace XiaoFeng.Memcached
         public async Task<ulong> IncrementAsync(string key, uint incrementValue)
         {
             if (key.IsNullOrEmpty()) return 0;
-            return await this.ExecuteAsync(CommandType.INCREMENT, async reader => await Task.FromResult(reader.OK ? (ulong)reader.Value?[0].Value : 0), key, incrementValue);
+            return await this.ExecuteAsync(CommandType.INCREMENT, async reader => await Task.FromResult(reader.OK ? (ulong)reader.Value?[0].Value : 0), key, incrementValue).ConfigureAwait(false);
         }
         /// <summary>
         /// 递减
@@ -710,7 +736,7 @@ namespace XiaoFeng.Memcached
         public async Task<ulong> DecrementAsync(string key, uint incrementValue)
         {
             if (key.IsNullOrEmpty()) return 0;
-            return await this.ExecuteAsync(CommandType.DECREMENT, async reader => await Task.FromResult(reader.OK ? (ulong)reader.Value?[0].Value : 0), key, incrementValue);
+            return await this.ExecuteAsync(CommandType.DECREMENT, async reader => await Task.FromResult(reader.OK ? (ulong)reader.Value?[0].Value : 0), key, incrementValue).ConfigureAwait(false);
         }
         /// <summary>
         /// 修改key过期时间
@@ -732,7 +758,7 @@ namespace XiaoFeng.Memcached
         public async Task<Boolean> TouchAsync(string key, uint exptime)
         {
             if (key.IsNullOrEmpty()) return false;
-            return await this.ExecuteAsync(CommandType.TOUCH, async reader => await Task.FromResult(reader.OK), key, exptime);
+            return await this.ExecuteAsync(CommandType.TOUCH, async reader => await Task.FromResult(reader.OK), key, exptime).ConfigureAwait(false);
         }
         #endregion
 
@@ -746,7 +772,7 @@ namespace XiaoFeng.Memcached
         /// 统计信息
         /// </summary>
         /// <returns>统计数据</returns>
-        public async Task<Dictionary<string, string>> StatsAsync() => await this.ExecuteAsync(CommandType.STATS, async reader => await Task.FromResult(reader.OK ? reader.DictonaryValue : null));
+        public async Task<Dictionary<string, string>> StatsAsync() => await this.ExecuteAsync(CommandType.STATS, async reader => await Task.FromResult(reader.OK ? reader.DictonaryValue : null)).ConfigureAwait(false);
         /// <summary>
         /// 显示各个 slab 中 item 的数目和存储时长(最后一次访问距离现在的秒数)
         /// </summary>
@@ -756,7 +782,7 @@ namespace XiaoFeng.Memcached
         /// 显示各个 slab 中 item 的数目和存储时长(最后一次访问距离现在的秒数)
         /// </summary>
         /// <returns>统计数据</returns>
-        public async Task<Dictionary<string, string>> StatsItemsAsync() => await this.ExecuteAsync(CommandType.STATSITEMS, async reader => await Task.FromResult(reader.OK ? reader.DictonaryValue : null));
+        public async Task<Dictionary<string, string>> StatsItemsAsync() => await this.ExecuteAsync(CommandType.STATSITEMS, async reader => await Task.FromResult(reader.OK ? reader.DictonaryValue : null)).ConfigureAwait(false);
         /// <summary>
         /// 显示各个slab的信息，包括chunk的大小、数目、使用情况等
         /// </summary>
@@ -766,7 +792,7 @@ namespace XiaoFeng.Memcached
         /// 显示各个slab的信息，包括chunk的大小、数目、使用情况等
         /// </summary>
         /// <returns>统计数据</returns>
-        public async Task<Dictionary<string, string>> StatsSlabsAsync() => await this.ExecuteAsync(CommandType.STATSSLABS, async reader => await Task.FromResult(reader.OK ? reader.DictonaryValue : null));
+        public async Task<Dictionary<string, string>> StatsSlabsAsync() => await this.ExecuteAsync(CommandType.STATSSLABS, async reader => await Task.FromResult(reader.OK ? reader.DictonaryValue : null)).ConfigureAwait(false);
         /// <summary>
         /// 显示所有item的大小和个数
         /// </summary>
@@ -776,7 +802,7 @@ namespace XiaoFeng.Memcached
         /// 显示所有item的大小和个数
         /// </summary>
         /// <returns>统计数据</returns>
-        public async Task<Dictionary<string, string>> StatsSizesAsync() => await this.ExecuteAsync(CommandType.STATSSIZES, async reader => await Task.FromResult(reader.OK ? reader.DictonaryValue : null));
+        public async Task<Dictionary<string, string>> StatsSizesAsync() => await this.ExecuteAsync(CommandType.STATSSIZES, async reader => await Task.FromResult(reader.OK ? reader.DictonaryValue : null)).ConfigureAwait(false);
         /// <summary>
         /// 用于清理缓存中的所有 key=>value(键=>值) 对
         /// </summary>
@@ -788,7 +814,7 @@ namespace XiaoFeng.Memcached
         /// </summary>
         /// <param name="time">延迟多长时间执行清理 单位为秒</param>
         /// <returns>状态</returns>
-        public async Task<Boolean> FulshAllAsync(ulong time = 0) => await this.ExecuteAsync(CommandType.FLUSHALL, async reader => await Task.FromResult(reader.OK), time);
+        public async Task<Boolean> FulshAllAsync(ulong time = 0) => await this.ExecuteAsync(CommandType.FLUSHALL, async reader => await Task.FromResult(reader.OK), time).ConfigureAwait(false);
         #endregion
 
         #region 释放

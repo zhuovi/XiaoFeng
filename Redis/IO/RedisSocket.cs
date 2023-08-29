@@ -177,7 +177,7 @@ namespace XiaoFeng.Redis.IO
             {
                 this.IsAuth = false;
                 if (this.Client != null)
-                    this.Client.Stop();
+                    this.Client?.Stop();
                 if (this.Stream != null)
                 {
                     this.Stream?.Close();
