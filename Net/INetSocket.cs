@@ -20,7 +20,7 @@ using System.Threading;
 namespace XiaoFeng.Net
 {
     /// <summary>
-    /// INetSocket 类说明
+    /// 网络库接口
     /// </summary>
     public interface INetSocket
     {
@@ -94,7 +94,7 @@ namespace XiaoFeng.Net
         /// </summary>
         SocketDataType DataType { get; set; }
         /// <summary>
-        /// 网络延时 单位为毫秒 默认为 10 毫秒,建议最长不超过5秒。
+        /// 网络延时 单位为毫秒 默认为 10 毫秒。
         /// <para>在服务端接收客户端websocket连接时使用</para>
         /// </summary>
         int NetworkDelay { get; set; }
