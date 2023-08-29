@@ -31,44 +31,50 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 4.1.2
+$ dotnet add package XiaoFeng --version 4.1.3
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 4.1.2
+PM> Install-Package XiaoFeng -Version 4.1.3
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="4.1.2" />
+<PackageReference Include="XiaoFeng" Version="4.1.3" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 4.1.2
+> paket add XiaoFeng --version 4.1.3
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 4.1.2"
+> #r "nuget: XiaoFeng, 4.1.3"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=4.1.2
+#addin nuget:?package=XiaoFeng&version=4.1.3
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=4.1.2
+#tool nuget:?package=XiaoFeng&version=4.1.3
 ```
 
 # 更新日志
+
+## 2023-08-29   v 4.1.3
+
+1.优化SocketClient,在websocket客户端未解包的Bug;
+
+2.优化SocketClient第一次连接只调用OnMessage事件未调用OnMessageByte事件的Bug;
 
 ## 2023-08-29   v 4.1.2
 
