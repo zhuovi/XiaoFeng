@@ -501,7 +501,22 @@ namespace XiaoFeng.Net
         /// <returns></returns>
         public virtual T AcceptTcpClient()
         {
-            return new T();
+            var AcceptSocket = this.AcceptSocket();
+            try
+            {
+                var client = Activator.CreateInstance<T>();
+                client.SetSocket(AcceptSocket, this.NetworkDelay, this.Authentication, this.Certificate);
+                return client;
+            }
+            catch (Exception ex)
+            {
+                AcceptSocket.Shutdown(SocketShutdown.Both);
+                AcceptSocket.Close();
+                AcceptSocket.Dispose();
+                AcceptSocket = null;
+                LogHelper.Error(ex);
+                return default(T);
+            }
         }
         /// <summary>
         /// 接受第一个挂起的连接

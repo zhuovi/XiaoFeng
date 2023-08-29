@@ -24,7 +24,7 @@
 		<PackageProjectUrl>https://www.eelf.cn</PackageProjectUrl>
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>优化网络延时时服务端接收websocket客户端时偶尔拒绝连接的bug;SocketServer,SocketClient增加NetworkDelay网络延时属性;</PackageReleaseNotes>
+		<PackageReleaseNotes>优化网络延时时服务端接收websocket客户端时偶尔拒绝连接的bug;SocketServer,SocketClient增加NetworkDelay网络延时属性;优化SocketServer中的AcceptTcpClient方法;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>
