@@ -1008,6 +1008,7 @@ namespace XiaoFeng.Net
                 {
                     var packet = new WebSocketPacket(this);
                     bytes = packet.UnPacket(bytes);
+                    ReceiveMessage = bytes.GetString(this.Encoding);
                     if (packet.OpCode == OpCode.Close) break;
                     if (packet.OpCode == OpCode.Pong)
                     {
