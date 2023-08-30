@@ -288,6 +288,8 @@ namespace XiaoFeng.Threading
             return this;
         }
         ///<inheritdoc/>
+        public IJob Interval(long period, Action<IJob> action) => this.Interval(period).SetSuccessCallBack(action);
+        ///<inheritdoc/>
         public IJob SetStartTime(DateTime startTime)
         {
             if (startTime == null || startTime < DateTime.Now) return this;
