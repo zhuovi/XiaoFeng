@@ -207,8 +207,26 @@ namespace XiaoFeng.Net
         public DateTime LastMessageTime { get; set; }
         ///<inheritdoc/>
         public DateTime ConnectedTime { get; set; }
+        /// <summary>
+        /// 网络延时时长 默认为10毫秒
+        /// </summary>
+        private int _NetworkDelay = 10;
         ///<inheritdoc/>
-        public int NetworkDelay { get; set; } = 10;
+        public int NetworkDelay
+        {
+            get
+            {
+                if (this._NetworkDelay < 0) this._NetworkDelay = 1;
+                else if (this._NetworkDelay > 10_000) this._NetworkDelay = 5_000;
+                return this._NetworkDelay;
+            }
+            set
+            {
+                if (value < 0) this._NetworkDelay = 0;
+                else if (value > 10_000) this._NetworkDelay = 5_000;
+                this._NetworkDelay = value;
+            }
+        }
         /// <summary>
         /// 频道KEY
         /// </summary>
@@ -393,31 +411,31 @@ namespace XiaoFeng.Net
         {
             if (address == null) address = IPAddress.Parse("127.0.0.1");
             if (port <= 0) port = 1006;
-           return await this.CompleteConnectAsync(async () =>
-            {
-                try
-                {
-                    if (this.ConnectTimeout <= 0)
-                        await this.Client.ConnectAsync(address, port).ConfigureAwait(false);
-                    else
-                    {
-                        var result = this.Client.BeginConnect(address, port, null, null);
-                        if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
-                        {
-                            this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
-                            return await Task.FromResult(SocketError.TimedOut).ConfigureAwait(false);
-                        }
-                        this.Client.EndConnect(result);
-                    }
-                    return await Task.FromResult(SocketError.Success).ConfigureAwait(false);
-                }
-                catch (Exception ex)
-                {
-                    this.Client = null;
-                    this.OnClientError?.Invoke(this, this.EndPoint, ex);
-                    return await Task.FromResult(SocketError.SocketError).ConfigureAwait(false); ;
-                }
-            });
+            return await this.CompleteConnectAsync(async () =>
+             {
+                 try
+                 {
+                     if (this.ConnectTimeout <= 0)
+                         await this.Client.ConnectAsync(address, port).ConfigureAwait(false);
+                     else
+                     {
+                         var result = this.Client.BeginConnect(address, port, null, null);
+                         if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
+                         {
+                             this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
+                             return await Task.FromResult(SocketError.TimedOut).ConfigureAwait(false);
+                         }
+                         this.Client.EndConnect(result);
+                     }
+                     return await Task.FromResult(SocketError.Success).ConfigureAwait(false);
+                 }
+                 catch (Exception ex)
+                 {
+                     this.Client = null;
+                     this.OnClientError?.Invoke(this, this.EndPoint, ex);
+                     return await Task.FromResult(SocketError.SocketError).ConfigureAwait(false); ;
+                 }
+             });
         }
         ///<inheritdoc/>
         public virtual async Task<SocketError> ConnectAsync() => await this.ConnectAsync(this.EndPoint).ConfigureAwait(false);
@@ -544,7 +562,7 @@ namespace XiaoFeng.Net
                 this.OnStart?.Invoke(this, EventArgs.Empty);
                 this.ReceviceDataAsync().ConfigureAwait(false);
                 this.PingAsync().ConfigureAwait(false);
-            } 
+            }
         }
         ///<inheritdoc/>
         public virtual void Start(string host, int port)
@@ -1032,7 +1050,7 @@ namespace XiaoFeng.Net
                      */
                     if (this.Certificate != null)
                         await this.SendPongAsync().ConfigureAwait(false);
-                }                
+                }
 
                 if (ReceiveMessage.StartsWith("SUBSCRIBE#", StringComparison.OrdinalIgnoreCase))
                 {
@@ -1206,7 +1224,7 @@ namespace XiaoFeng.Net
 
         #region 设置Socket
         ///<inheritdoc/>
-        public void SetSocket(Socket socket,int networkDelay, Func<ISocketClient, bool> authentication = null, X509Certificate certificate = null)
+        public void SetSocket(Socket socket, int networkDelay, Func<ISocketClient, bool> authentication = null, X509Certificate certificate = null)
         {
             this.Client = socket;
             this.NetworkDelay = networkDelay;
@@ -1331,7 +1349,7 @@ namespace XiaoFeng.Net
         {
             if (!this.IsPing || this.IsServer) return Task.CompletedTask;
             if (this.PingTime <= 3) this.PingTime = 10;
-            this.Job = new Job().SetName("SocketClient自动Ping作业").Interval(this.PingTime * 1000).SetCompleteCallBack(job =>
+            this.Job = new Job().SetCancelToken(this.CancelToken.Token).SetName("SocketClient自动Ping作业").Interval(this.PingTime * 1000).SetCompleteCallBack(job =>
             {
                 this.SendPingAsync(new
                 {

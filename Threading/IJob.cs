@@ -143,6 +143,11 @@ namespace XiaoFeng.Threading
         /// </summary>
         /// <param name="scheduler">调度</param>
         void Start(IJobScheduler scheduler);
+        /// <summary>
+        /// 启动作业
+        /// </summary>
+        /// <param name="token">取消指令 <see cref="CancellationToken"/></param>
+        void Start(CancellationToken token);
         #endregion
 
         #region 停止作业
@@ -248,6 +253,12 @@ namespace XiaoFeng.Threading
         /// <param name="job">作业内容</param>
         /// <returns>作业</returns>
         IJob SetFailureCallBack(Action<IJob, Exception> job);
+        /// <summary>
+        /// 设置取消指令
+        /// </summary>
+        /// <param name="token">取消指令 <see cref="CancellationToken"/></param>
+        /// <returns></returns>
+        IJob SetCancelToken(CancellationToken token);
         /// <summary>
         /// 添加工作作业
         /// </summary>

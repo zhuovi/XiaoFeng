@@ -19,7 +19,7 @@ namespace XiaoFeng.Threading
 {
     /// <summary>
     /// 作业操作类
-    /// Version : 2.1
+    /// Version : 2.2
     /// </summary>
     [Serializable]
     public class Job : Disposable, IJob
@@ -99,17 +99,17 @@ namespace XiaoFeng.Threading
         /// <summary>
         /// 成功回调
         /// </summary>
-        [JsonIgnore] 
+        [JsonIgnore]
         public Action<IJob> SuccessCallBack { get; set; } = null;
         /// <summary>
         /// 当前任务执行完成后再进入计时队列
         /// </summary>
-        [JsonIgnore] 
+        [JsonIgnore]
         public Action<IJob> CompleteCallBack { get; set; } = null;
         /// <summary>
         /// 失败回调
         /// </summary>
-        [JsonIgnore] 
+        [JsonIgnore]
         public Action<IJob, Exception> FailureCallBack { get; set; } = null;
         /// <summary>
         /// 停止作业回调
@@ -173,6 +173,7 @@ namespace XiaoFeng.Threading
         /// <summary>
         /// 几点，几号，周几（周日为一周的第一天）,可用负数，-1代表一天中最后一小时即23点，一周内最后一天即周六，一月内最后一天
         /// </summary>
+        [Obsolete("以后升级会移除当前属性")]
         public int[] DayOrWeekOrHour
         {
             get { return this._DayOrWeekOrHour; }
@@ -181,7 +182,7 @@ namespace XiaoFeng.Threading
                 this._DayOrWeekOrHour = value;
                 Array.Sort(this._DayOrWeekOrHour);
                 if (this.Times == null) this.Times = new List<Times>();
-                if (!(TimerType.Hour| TimerType.Day| TimerType.Week| TimerType.Month| TimerType.Year).HasFlag(this.TimerType)) return;
+                if (!(TimerType.Hour | TimerType.Day | TimerType.Week | TimerType.Month | TimerType.Year).HasFlag(this.TimerType)) return;
             }
         }
         /// <summary>
@@ -227,18 +228,12 @@ namespace XiaoFeng.Threading
         #region 方法
 
         #region 启动作业
-        /// <summary>
-        /// 启动作业
-        /// </summary>
+        ///<inheritdoc/>
         public void Start() => this.Start(null);
-        /// <summary>
-        /// 启动作业
-        /// </summary>
-        /// <param name="scheduler">调度</param>
-        public void Start(IJobScheduler scheduler)
-        {
-            (scheduler ?? this.Scheduler).Add(this);
-        }
+        ///<inheritdoc/>
+        public void Start(IJobScheduler scheduler) => (scheduler ?? this.Scheduler).Add(this);
+        ///<inheritdoc/>
+        public void Start(CancellationToken token) => this.SetCancelToken(token).Start();
         #endregion
 
         #region 停止作业
@@ -270,33 +265,21 @@ namespace XiaoFeng.Threading
         #endregion
 
         #region 扩展属性
-        /// <summary>
-        /// 设置作业名称
-        /// </summary>
-        /// <param name="name">作业名称</param>
-        /// <returns></returns>
+        ///<inheritdoc/>
         public IJob SetName(string name)
         {
             if (name.IsNullOrEmpty()) return this;
             this.Name = name;
             return this;
         }
-        /// <summary>
-        /// 设置作业ID
-        /// </summary>
-        /// <param name="id">作业ID</param>
-        /// <returns></returns>
+        ///<inheritdoc/>
         public IJob SetID(Guid id)
         {
             if (id.IsNullOrEmpty()) return this;
             this.ID = id;
             return this;
         }
-        /// <summary>
-        /// 间隔多长时间执行
-        /// </summary>
-        /// <param name="period">间隔时长</param>
-        /// <returns>作业</returns>
+        ///<inheritdoc/>
         public IJob Interval(long period)
         {
             if (period < 1) return this;
@@ -304,22 +287,14 @@ namespace XiaoFeng.Threading
             this.Period = period;
             return this;
         }
-        /// <summary>
-        /// 设置开始运行时间
-        /// </summary>
-        /// <param name="startTime">运行时间</param>
-        /// <returns>作业</returns>
+        ///<inheritdoc/>
         public IJob SetStartTime(DateTime startTime)
         {
             if (startTime == null || startTime < DateTime.Now) return this;
             this.StartTime = startTime;
             return this;
         }
-        /// <summary>
-        /// 每小时几分运行
-        /// </summary>
-        /// <param name="times">几分运行</param>
-        /// <returns>作业</returns>
+        ///<inheritdoc/>
         public IJob EveryHour(List<Time> times)
         {
             if (times == null || times.Count == 0) return this;
@@ -327,11 +302,7 @@ namespace XiaoFeng.Threading
             this.Times = (from t in times select (Times)t).ToList();
             return this;
         }
-        /// <summary>
-        /// 每小时几分运行
-        /// </summary>
-        /// <param name="times">几分运行</param>
-        /// <returns>作业</returns>
+        ///<inheritdoc/>
         public IJob EveryHour(List<Times> times)
         {
             if (times == null || times.Count == 0) return this;
@@ -339,11 +310,7 @@ namespace XiaoFeng.Threading
             this.Times = times;
             return this;
         }
-        /// <summary>
-        /// 每天几点几分运行
-        /// </summary>
-        /// <param name="times">几点几分</param>
-        /// <returns>作业</returns>
+        ///<inheritdoc/>
         public IJob EveryDay(List<Time> times)
         {
             if (times == null || times.Count == 0) return this;
@@ -351,11 +318,7 @@ namespace XiaoFeng.Threading
             this.Times = (from t in times select (Times)t).ToList();
             return this;
         }
-        /// <summary>
-        /// 每天几点几分运行
-        /// </summary>
-        /// <param name="times">几点几分</param>
-        /// <returns>作业</returns>
+        ///<inheritdoc/>
         public IJob EveryDay(List<Times> times)
         {
             if (times == null || times.Count == 0) return this;
@@ -363,11 +326,7 @@ namespace XiaoFeng.Threading
             this.Times = times;
             return this;
         }
-        /// <summary>
-        /// 每周周几几点几分运行
-        /// </summary>
-        /// <param name="times">周几几点几分</param>
-        /// <returns>作业</returns>
+        ///<inheritdoc/>
         public IJob EveryWeek(List<Times> times)
         {
             if (times == null || times.Count == 0) return this;
@@ -375,11 +334,7 @@ namespace XiaoFeng.Threading
             this.Times = times;
             return this;
         }
-        /// <summary>
-        /// 每月几号几点几分运行
-        /// </summary>
-        /// <param name="times">几号几点几分</param>
-        /// <returns>作业</returns>
+        ///<inheritdoc/>
         public IJob EveryMonth(List<Times> times)
         {
             if (times == null || times.Count == 0) return this;
@@ -387,11 +342,7 @@ namespace XiaoFeng.Threading
             this.Times = times;
             return this;
         }
-        /// <summary>
-        /// 每年几月几号几点几分运行
-        /// </summary>
-        /// <param name="times">几月几号几点几分</param>
-        /// <returns>作业</returns>
+        ///<inheritdoc/>
         public IJob EveryYear(List<Times> times)
         {
             if (times == null || times.Count == 0) return this;
@@ -399,75 +350,53 @@ namespace XiaoFeng.Threading
             this.Times = times;
             return this;
         }
-        /// <summary>
-        /// 设置作业执行完成再执行调度
-        /// </summary>
-        /// <param name="job">作业内容</param>
-        /// <returns>作业</returns>
+        ///<inheritdoc/>
         public IJob SetCompleteCallBack(Action<IJob> job)
         {
             if (job == null) job = a => { };
             this.CompleteCallBack = job;
             return this;
         }
-        /// <summary>
-        /// 设置执行成功回调
-        /// </summary>
-        /// <param name="job">作业内容</param>
-        /// <returns>作业</returns>
+        ///<inheritdoc/>
         public IJob SetSuccessCallBack(Action<IJob> job)
         {
             if (job == null) job = a => { };
             this.SuccessCallBack = job;
             return this;
         }
-        /// <summary>
-        /// 设置作业停止回调
-        /// </summary>
-        /// <param name="job">作业内容</param>
-        /// <returns>作业</returns>
+        ///<inheritdoc/>
         public IJob SetStopCallBack(Action<IJob> job)
         {
             if (job == null) job = a => { };
             this.StopCallBack = job;
             return this;
         }
-        /// <summary>
-        /// 设置失败回调
-        /// </summary>
-        /// <param name="job">作业内容</param>
-        /// <returns>作业</returns>
-        public IJob SetFailureCallBack(Action<IJob,Exception> job)
+        ///<inheritdoc/>
+        public IJob SetFailureCallBack(Action<IJob, Exception> job)
         {
             if (job == null) job = (a, e) => { };
             this.FailureCallBack = job;
             return this;
         }
-        /// <summary>
-        /// 添加工作作业
-        /// </summary>
-        /// <typeparam name="T">作业</typeparam>
-        /// <returns></returns>
+        ///<inheritdoc/>
+        public IJob SetCancelToken(CancellationToken token)
+        {
+            this.CancelToken = CancellationTokenSource.CreateLinkedTokenSource(this.CancelToken.Token, token);
+            return this;
+        }
+        ///<inheritdoc/>
         public IJob Worker<T>() where T : IJobWoker
         {
             this.SuccessCallBack = job => (Activator.CreateInstance<T>() as IJobWoker).Invoke();
             return this;
         }
-        /// <summary>
-        /// 添加工作作业
-        /// </summary>
-        /// <typeparam name="T">作业</typeparam>
-        /// <returns></returns>
+        ///<inheritdoc/>
         public IJob SuccessWorker<T>() where T : IJobWoker
         {
             this.SuccessCallBack = job => (Activator.CreateInstance<T>() as IJobWoker).Invoke();
             return this;
         }
-        /// <summary>
-        /// 添加工作作业
-        /// </summary>
-        /// <typeparam name="T">作业</typeparam>
-        /// <returns></returns>
+        ///<inheritdoc/>
         public IJob CompleteWorker<T>() where T : IJobWoker
         {
             this.CompleteCallBack = job => (Activator.CreateInstance<T>() as IJobWoker).Invoke();
