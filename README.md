@@ -70,6 +70,37 @@ Cake
 
 # 更新日志
 
+##      v 4.1.5
+
+### Job 作业
+
+1.增加作业Job设置取消指令方法,启动设置取消指令方法;
+
+2.优化IJob事件;
+
+### XiaoFeng.Socket 网络库
+
+1.优化SocketClient中NetworkDelay最小值及最大值的判断;
+
+2.优化SocketClient中连接host为IP的bug;
+
+### XiaoFeng.ParameterCollection 参数集
+
+1.ParameterCollection中增加ToJson方法;
+
+### XiaoFeng.Http 网络库
+
+1.增加HttpHelper中HttpRequest类中直接可以调用DownFileAsync;
+
+### XiaoFeng.PrototypeHelper 扩展方法
+
+1.优化For扩展方法;
+
+### 正则表达式
+
+1.优化正则表达式网址,Ftp正则增加汉字识别;
+
+
 ## 2023-08-30   v 4.1.4
 
 1.优化网络延时时服务端接收websocket客户端时偶尔拒绝连接的bug

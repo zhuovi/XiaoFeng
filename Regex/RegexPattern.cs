@@ -33,7 +33,7 @@ namespace XiaoFeng
         /// <summary>
         /// 汉字格式
         /// </summary>
-        public const string Chinese = @"^[\u4e00-\u9fa5？，“”‘’。、；：]+$";
+        public const string Chinese = @"^[\u4e00-\u9fa5？，“”‘’。、；：（）·！￥]+$";
         /// <summary>
         /// 字母格式
         /// </summary>
@@ -41,11 +41,11 @@ namespace XiaoFeng
         /// <summary>
         /// FTP格式
         /// </summary>
-        public const string Ftp = @"^ftp:\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#\s\.\(\)\[\]\*]*)$";
+        public const string Ftp = @"^ftp:\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#\s\.\(\)\[\]\*\u4e00-\u9fa5？，“”‘’。、；：（）·！￥]*)$";
         /// <summary>
         /// 网址格式
         /// </summary>
-        public const string Site = @"^http(s)?:\/\/[\w\-_]+(\.[\w\-_]+)*(:\d+)?([\w\-\.,@?^=%&amp;:/~\+#\s\.\(\)\[\]\*]*)$";
+        public const string Site = @"^http(s)?:\/\/[\w\-_]+(\.[\w\-_]+)*(:\d+)?([\w\-\.,@?^=%&amp;:/~\+#\s\.\(\)\[\]\*\u4e00-\u9fa5？，“”‘’。、；：（）·！￥]*)$";
         /// <summary>
         /// GUID格式
         /// </summary>

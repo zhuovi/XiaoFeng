@@ -402,6 +402,11 @@ namespace XiaoFeng.Collections
         /// <returns>拼接好的参数字符串</returns>
         public override string ToString() => this.ToString(this.IsEncode);
         /// <summary>
+        /// 转成json字符串
+        /// </summary>
+        /// <returns></returns>
+        public string ToJson() => this.ToDictionary().ToJson();
+        /// <summary>
         /// 获取字节数组
         /// </summary>
         /// <param name="isEncode">是否URL编码</param>

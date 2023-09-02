@@ -652,7 +652,7 @@ namespace XiaoFeng
         /// <param name="end">数组结束</param>
         /// <param name="action">委托事件</param>
         /// <returns>返回对象</returns>
-        public static T[] For<T>(this T[] enumerable, int start, int end, Action<int, T[]> action)
+        public static T[] For<T>(this T[] enumerable, int start, int end, Action<int, T> action)
         {
             return enumerable.For(action, start, end);
         }
@@ -665,7 +665,7 @@ namespace XiaoFeng
         /// <param name="start">数组开始</param>
         /// <param name="end">数组结束</param>
         /// <returns>返回对象</returns>
-        public static T[] For<T>(this T[] enumerable, Action<int, T[]> action, int start = 0, int end = 0)
+        public static T[] For<T>(this T[] enumerable, Action<int, T> action, int start = 0, int end = 0)
         {
             if (enumerable == null || action == null) return enumerable;
             int Count = enumerable.Length;
@@ -674,7 +674,7 @@ namespace XiaoFeng
                 if (start < 0) start = 0;
                 if (end == 0 || end > Count) end = Count;
                 for (int i = start; i < end; i++)
-                    action(i, enumerable);
+                    action(i, enumerable[i]);
             }
             return enumerable;
         }

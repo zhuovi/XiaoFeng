@@ -159,6 +159,18 @@ namespace XiaoFeng.Http
         /// <returns>响应对像</returns>
         HttpResponse GetResponse();
         /// <summary>
+        /// 下载文件
+        /// </summary>
+        /// <param name="filePath">文件保存路径</param>
+        /// <returns>运行时长</returns>
+        Task<long> DownFileAsync(string filePath);
+        /// <summary>
+        /// 下载文件
+        /// </summary>
+        /// <param name="filePath">文件保存路径</param>
+        /// <returns>运行时长</returns>
+        long DownFile(string filePath);
+        /// <summary>
         /// 取消请求
         /// </summary>
         void Abort();

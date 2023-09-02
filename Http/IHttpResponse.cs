@@ -81,6 +81,12 @@ namespace XiaoFeng.Http
 		/// <returns>运行时长</returns>
 		Task<long> DownFileAsync(string path);
         /// <summary>
+        /// 下载文件
+        /// </summary>
+        /// <param name="path">文件保存路径</param>
+        /// <returns>运行时长</returns>
+        long DownFile(string path);
+        /// <summary>
         /// 获取Cookie
         /// </summary>
         /// <param name="key">key</param>

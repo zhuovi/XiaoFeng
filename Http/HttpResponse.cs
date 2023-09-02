@@ -423,6 +423,21 @@ namespace XiaoFeng.Http
             this.EndTime = DateTime.Now;
             return this.RunTime;
         }
+        /// <summary>
+        /// 下载文件
+        /// </summary>
+        /// <param name="path">文件保存路径</param>
+        /// <returns>运行时长</returns>
+        public long DownFile(string path)
+        {
+            path = path.GetBasePath();
+            FileHelper.CreateDirectory(path.GetDirectoryName());
+            FileHelper.DeleteFile(path);
+            using (var file = File.Create(path))
+                file.Write(this.Data, 0, this.Data.Length);
+            this.EndTime = DateTime.Now;
+            return this.RunTime;
+        }
         #endregion
 
         #region 获取Cookie

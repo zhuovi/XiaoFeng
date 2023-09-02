@@ -639,17 +639,36 @@ namespace XiaoFeng.Http
             var httpSocket = new HttpSocket(this);
             return await httpSocket.SendRequestAsync().ConfigureAwait(false);
         }
-		#endregion
+        #endregion
 
-		#region 通过设置这个属性，可以在发出连接的时候绑定客户端发出连接所使用的IP地址。
-		/// <summary>
-		/// 通过设置这个属性，可以在发出连接的时候绑定客户端发出连接所使用的IP地址。 
-		/// </summary>
-		/// <param name="servicePoint"></param>
-		/// <param name="remoteEndPoint"></param>
-		/// <param name="retryCount"></param>
-		/// <returns></returns>
-		private IPEndPoint BindIPEndPointCallback(ServicePoint servicePoint, IPEndPoint remoteEndPoint, int retryCount)
+        #region 下载文件
+        /// <summary>
+        /// 下载文件
+        /// </summary>
+        /// <param name="filePath">文件保存路径</param>
+        /// <returns>运行时长</returns>
+        public async Task<long> DownFileAsync(string filePath)
+        {
+            var response = await this.GetResponseAsync().ConfigureAwait(false);
+            return await response.DownFileAsync(filePath);
+        }
+        /// <summary>
+        /// 下载文件
+        /// </summary>
+        /// <param name="filePath">文件保存路径</param>
+        /// <returns>运行时长</returns>
+        public long DownFile(string filePath) => this.GetResponse().DownFile(filePath);
+        #endregion
+
+        #region 通过设置这个属性，可以在发出连接的时候绑定客户端发出连接所使用的IP地址。
+        /// <summary>
+        /// 通过设置这个属性，可以在发出连接的时候绑定客户端发出连接所使用的IP地址。 
+        /// </summary>
+        /// <param name="servicePoint"></param>
+        /// <param name="remoteEndPoint"></param>
+        /// <param name="retryCount"></param>
+        /// <returns></returns>
+        private IPEndPoint BindIPEndPointCallback(ServicePoint servicePoint, IPEndPoint remoteEndPoint, int retryCount)
         {
             return this.IPEndPoint;
         }

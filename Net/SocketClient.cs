@@ -57,7 +57,7 @@ namespace XiaoFeng.Net
         public SocketClient(string host, int port)
         {
             if (host.IsNullOrEmpty() || host.EqualsIgnoreCase("localhost")) host = "127.0.0.1";
-            var address = Dns.GetHostEntry(host).AddressList;
+            var address = Dns.GetHostAddresses(host);
             /*
             foreach (var ip in Dns.GetHostEntry(host).AddressList)
             {
