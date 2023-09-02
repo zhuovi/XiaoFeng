@@ -84,6 +84,8 @@ Cake
 
 2.优化SocketClient中连接host为IP的bug;
 
+3.优化SocketClient中NetworkDelay最小值及最大值的判断;
+
 ### XiaoFeng.ParameterCollection 参数集
 
 1.ParameterCollection中增加ToJson方法;
