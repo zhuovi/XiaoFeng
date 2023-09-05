@@ -110,19 +110,10 @@ namespace XiaoFeng.Threading
         /// 定时器类型
         /// </summary>
         TimerType TimerType { get; set; }
-        /// <summary>
-        /// 时间
-        /// </summary>
-        Time Time { get; set; }
-        /// <summary>
+         /// <summary>
         /// 间隔 单位毫秒
         /// </summary>
         long Period { get; set; }
-        /// <summary>
-        /// 几点，几号，周几（周日为一周的第一天）,可用负数，-1代表一天中最后一小时即23点，一周内最后一天即周六，一月内最后一天
-        /// </summary>
-        [Obsolete("以后升级会移除当前属性")]
-        int[] DayOrWeekOrHour { get; set; }
         /// <summary>
         /// 时间集 几点，几号，周几（周日为一周的第一天）,可用负数，-1代表一天中最后一小时即23点，一周内最后一天即周六，一月内最后一天 代替 Time+DayOrWeekOrHour;
         /// </summary>

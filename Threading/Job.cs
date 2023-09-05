@@ -150,42 +150,6 @@ namespace XiaoFeng.Threading
         [JsonConverter(typeof(DescriptionConverter))]
         public TimerType TimerType { get; set; } = TimerType.UnKnow;
         /// <summary>
-        /// 时间
-        /// </summary>
-        private Time _Time = null;
-        /// <summary>
-        /// 时间
-        /// </summary>
-        public Time Time
-        {
-            get { return this._Time; }
-            set
-            {
-                this._Time = value;
-                //if (this.Times == null) this.Times = new List<Times>();
-                //this.Times.Add(new Times(value));
-            }
-        }
-        /// <summary>
-        /// 几点，几号，周几（周日为一周的第一天）,可用负数，-1代表一天中最后一小时即23点，一周内最后一天即周六，一月内最后一天
-        /// </summary>
-        private int[] _DayOrWeekOrHour;
-        /// <summary>
-        /// 几点，几号，周几（周日为一周的第一天）,可用负数，-1代表一天中最后一小时即23点，一周内最后一天即周六，一月内最后一天
-        /// </summary>
-        [Obsolete("以后升级会移除当前属性")]
-        public int[] DayOrWeekOrHour
-        {
-            get { return this._DayOrWeekOrHour; }
-            set
-            {
-                this._DayOrWeekOrHour = value;
-                Array.Sort(this._DayOrWeekOrHour);
-                if (this.Times == null) this.Times = new List<Times>();
-                if (!(TimerType.Hour | TimerType.Day | TimerType.Week | TimerType.Month | TimerType.Year).HasFlag(this.TimerType)) return;
-            }
-        }
-        /// <summary>
         /// 时间集 几点，几号，周几（周日为一周的第一天）, 可用负数，-1代表一天中最后一小时即23点，一周内最后一天即周六，一月内最后一天 代替 Time+DayOrWeekOrHour ;
         /// </summary>
         private List<Times> _Times;

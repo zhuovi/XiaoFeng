@@ -605,7 +605,7 @@ namespace XiaoFeng.Validator
         public ConditionValidator IsGuid()
         {
             if (!this.IsMust && this.Value.IsNullOrEmpty()) return this;
-            if (!this.Value.ToString().IsGUID())
+            if (!this.Value.ToString().IsGuid())
             {
                 this.Result.Add("参数[{0}]的值 ' {1} ' 不是[Guid]格式.".format(this.Name, this.Value));
             }

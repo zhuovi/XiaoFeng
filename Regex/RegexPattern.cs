@@ -41,16 +41,16 @@ namespace XiaoFeng
         /// <summary>
         /// FTP格式
         /// </summary>
-        public const string Ftp = @"^ftp:\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#\s\.\(\)\[\]\*\u4e00-\u9fa5？，“”‘’。、；：（）·！￥]*)$";
+        public const string Ftp = @"^ftp:\/\/[\w\-_]+(\.[\w\-_]+)*(:\d+)?([\s\S]*)$";
         /// <summary>
         /// 网址格式
         /// </summary>
-        public const string Site = @"^http(s)?:\/\/[\w\-_]+(\.[\w\-_]+)*(:\d+)?([\w\-\.,@?^=%&amp;:/~\+#\s\.\(\)\[\]\*\u4e00-\u9fa5？，“”‘’。、；：（）·！￥]*)$";
+        public const string Site = @"^http(s)?:\/\/[\w\-_]+(\.[\w\-_]+)*(:\d+)?([\s\S]*)$";
         /// <summary>
         /// GUID格式
         /// </summary>
         //public const string guid = @"^(([a-z0-9]{8}(-?)[a-z0-9]{4}\3[4][a-z0-9]{3}\3[a-z0-9]{4}\3[a-z0-9]{12})|(0{8}(-?)[0]{4}\5[0]{4}\5[0]{4}\5[0]{12}))$";
-        public const string guid = @"^(([a-z0-9]{8}(-?)[a-z0-9]{4}\3[a-z0-9]{4}\3[a-z0-9]{4}\3[a-z0-9]{12})|(0{8}(-?)[0]{4}\5[0]{4}\5[0]{4}\5[0]{12}))$";
+        public const string Guid = @"^(([a-z0-9]{8}(-?)[a-z0-9]{4}\3[a-z0-9]{4}\3[a-z0-9]{4}\3[a-z0-9]{12})|(0{8}(-?)[0]{4}\5[0]{4}\5[0]{4}\5[0]{12}))$";
         /// <summary>
         /// Email格式
         /// </summary>

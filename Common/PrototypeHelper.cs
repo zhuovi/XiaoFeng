@@ -555,7 +555,7 @@ namespace XiaoFeng
                 else if (attributeValue.GetType() == typeof(DateTime))
                     value = attributeValue.ToString().ToDateTime().ToString("yyyy-MM-dd HH:mm:ss.fff");
                 else if (attributeValue.GetType() == typeof(Guid))
-                    value = attributeValue.ToString().ToGUID().ToString("N");
+                    value = attributeValue.ToString().ToGuid().ToString("N");
                 else
                     value = attributeValue.ToString();
                 elm.SetAttribute(attributeName, value);
@@ -1651,18 +1651,11 @@ namespace XiaoFeng
         /// <param name="_">字符串</param>
         /// <param name="defaultValue">默认值</param>
         /// <returns></returns>
-        public static Guid ToGUID(this string _, Guid defaultValue = default(Guid)) => _.ToGuid(defaultValue);
-        /// <summary>
-        /// 字符串转换成Guid
-        /// </summary>
-        /// <param name="_">字符串</param>
-        /// <param name="defaultValue">默认值</param>
-        /// <returns></returns>
         public static Guid ToGuid(this string _, Guid defaultValue = default(Guid))
         {
             if (_.IsNullOrWhiteSpace()) return defaultValue;
             _ = _.Trim();
-            return _.IsGUID() ? new Guid(_) : defaultValue;
+            return _.IsGuid() ? new Guid(_) : defaultValue;
         }
         #endregion
 
@@ -1857,7 +1850,7 @@ namespace XiaoFeng
             }
             else if (targetType == typeof(Guid))
             {
-                if (!_val.IsGUID()) return isGeneric ? default(Guid?) : default(Guid);
+                if (!_val.IsGuid()) return isGeneric ? default(Guid?) : default(Guid);
                 o = new Guid(_val);
             }
             else if (targetType == typeof(int) || targetType == typeof(long) || targetType == typeof(double) || targetType == typeof(decimal) || targetType == typeof(float) || targetType == typeof(short) || targetType == typeof(ushort) || targetType == typeof(uint) || targetType == typeof(ulong) || targetType == typeof(byte) || targetType == typeof(sbyte))

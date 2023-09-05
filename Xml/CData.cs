@@ -98,7 +98,7 @@ namespace XiaoFeng.Xml
         /// 强转 long
         /// </summary>
         /// <param name="element">节点</param>
-        public static implicit operator Guid(CData element) => (Guid)element?.Value.ToGUID();
+        public static implicit operator Guid(CData element) => (Guid)element?.Value.ToGuid();
         /// <summary>
         /// 强转CDATA
         /// </summary>

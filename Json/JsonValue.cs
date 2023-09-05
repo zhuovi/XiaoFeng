@@ -787,7 +787,7 @@ namespace XiaoFeng.Json
                 return new JsonValue(value.ToCast<long>());
             else if (value.IsDateOrTime())
                 return new JsonValue(value.ToCast<DateTime>());
-            else if (value.IsGUID())
+            else if (value.IsGuid())
                 return new JsonValue(value.ToCast<Guid>());
             else if (value.IsBoolean())
                 return new JsonValue(value.ToCast<Boolean>());
