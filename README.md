@@ -31,46 +31,46 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 4.1.4
+$ dotnet add package XiaoFeng --version 4.2.0
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 4.1.4
+PM> Install-Package XiaoFeng -Version 4.2.0
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="4.1.4" />
+<PackageReference Include="XiaoFeng" Version="4.2.0" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 4.1.4
+> paket add XiaoFeng --version 4.2.0
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 4.1.4"
+> #r "nuget: XiaoFeng, 4.2.0"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=4.1.4
+#addin nuget:?package=XiaoFeng&version=4.2.0
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=4.1.4
+#tool nuget:?package=XiaoFeng&version=4.2.0
 ```
 
 # 更新日志
 
-##      v 4.1.5
+## 2023-09-07   v 4.2.0
 
 ### Job 作业
 
@@ -87,6 +87,8 @@ Cake
 2.优化SocketClient中连接host为IP的bug;
 
 3.优化XiaoFeng.Net.WebSocketClient请求头;
+
+4.优化SocketClient发送消息时,网络已断开抛出的异常;
 
 ### XiaoFeng.ParameterCollection 参数集
 
