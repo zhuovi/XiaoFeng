@@ -31,7 +31,7 @@ namespace XiaoFeng.Net
     /// <summary>
     /// Socket客户端
     /// </summary>
-    public class SocketClient : Disposable, ISocketClient
+    public class SocketClient : BaseSocket, ISocketClient
     {
         #region 构造器
         /// <summary>
@@ -87,64 +87,15 @@ namespace XiaoFeng.Net
         /// </summary>
         private Socket Client { get; set; }
         ///<inheritdoc/>
-        public Encoding Encoding { get; set; } = Encoding.UTF8;
-        ///<inheritdoc/>
-        public SocketType SocketType { get; set; } = SocketType.Stream;
-        ///<inheritdoc/>
-        public ProtocolType ProtocolType { get; set; } = ProtocolType.Tcp;
-        ///<inheritdoc/>
         public ConnectionType ConnectionType { get; set; } = ConnectionType.Socket;
-        ///<inheritdoc/>
-        public Boolean NoDelay { get; set; } = false;
-        ///<inheritdoc/>
-        public int ReceiveTimeout { get; set; } = -1;
-        ///<inheritdoc/>
-        public int SendTimeout { get; set; } = -1;
-        /// <summary>
-        /// 指定之后连接服务端将超时的时间长度
-        /// </summary>
-        private int _ConnectTimeout = 0;
-        /// <inheritdoc/>
-        public int ConnectTimeout
-        {
-            get
-            {
-                if (this._ConnectTimeout >= 1 && this._ConnectTimeout < 500)
-                    this._ConnectTimeout = 500;
-                if (this._ConnectTimeout <= 0) this._ConnectTimeout = 0;
-                return this._ConnectTimeout;
-            }
-            set
-            {
-                if (value >= 1 && value < 500) this._ConnectTimeout = 500;
-                if (value <= 0) this._ConnectTimeout = 0;
-                this._ConnectTimeout = value;
-            }
-        }
-        ///<inheritdoc/>
-        public int ReceiveBufferSize { get; set; } = 8192;
-        ///<inheritdoc/>
-        public int SendBufferSize { get; set; } = 8192;
         /// <summary>
         /// 标签数据
         /// </summary>
         private Dictionary<string, object> TagsData = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-        /// <summary>
-        /// 激活状态
-        /// </summary>
-        private Boolean _Active = false;
-        ///<inheritdoc/>
-        public Boolean Active { get => this._Active; }
-        ///<inheritdoc/>
-        public SocketState SocketState { get; set; } = SocketState.Idle;
-        ///<inheritdoc/>
-        public SslProtocols SslProtocols { get; set; } = SslProtocols.None;
         ///<inheritdoc/>
         public X509CertificateCollection ClientCertificates { get; set; }
         ///<inheritdoc/>
         private X509Certificate Certificate { get; set; }
-        ///<inheritdoc/>
-        public IPEndPoint EndPoint { get; set; }
         ///<inheritdoc/>
         public int Available => this.Client?.Available ?? 0;
         ///<inheritdoc/>
@@ -158,7 +109,7 @@ namespace XiaoFeng.Net
         ///<inheritdoc/>
         public string HostName { get; set; }
         ///<inheritdoc/>
-        public bool ExclusiveAddressUse
+        public override Boolean ExclusiveAddressUse
         {
             get { return this.Client?.ExclusiveAddressUse ?? false; }
             set
@@ -177,8 +128,6 @@ namespace XiaoFeng.Net
         /// SSL 网络流
         /// </summary>
         private SslStream SslStream;
-        ///<inheritdoc/>
-        public CancellationTokenSource CancelToken { get; set; } = new CancellationTokenSource();
         /// <summary>
         /// 权限认证
         /// </summary>
@@ -196,8 +145,6 @@ namespace XiaoFeng.Net
         ///<inheritdoc/>
         public string RequestHeader => this._RequestHeader;
         ///<inheritdoc/>
-        public SocketDataType DataType { get; set; } = SocketDataType.String;
-        ///<inheritdoc/>
         public Boolean IsPing { get; set; }
         ///<inheritdoc/>
         public int PingTime { get; set; } = 120;
@@ -208,26 +155,6 @@ namespace XiaoFeng.Net
         ///<inheritdoc/>
         public DateTime ConnectedTime { get; set; }
         /// <summary>
-        /// 网络延时时长 默认为10毫秒
-        /// </summary>
-        private int _NetworkDelay = 10;
-        ///<inheritdoc/>
-        public int NetworkDelay
-        {
-            get
-            {
-                if (this._NetworkDelay < 0) this._NetworkDelay = 1;
-                else if (this._NetworkDelay > 10_000) this._NetworkDelay = 5_000;
-                return this._NetworkDelay;
-            }
-            set
-            {
-                if (value < 0) this._NetworkDelay = 0;
-                else if (value > 10_000) this._NetworkDelay = 5_000;
-                this._NetworkDelay = value;
-            }
-        }
-        /// <summary>
         /// 频道KEY
         /// </summary>
         private const string CHANNEL_KEY = "CHANNELS";
@@ -235,24 +162,24 @@ namespace XiaoFeng.Net
 
         #region 事件
         ///<inheritdoc/>
-        public event OnStartEventHandler OnStart;
+        public override event OnStartEventHandler OnStart;
         ///<inheritdoc/>
-        public event OnStopEventHandler OnStop;
+        public override event OnStopEventHandler OnStop;
         ///<inheritdoc/>
-        public event OnClientErrorEventHandler OnClientError;
+        public override event OnClientErrorEventHandler OnClientError;
         ///<inheritdoc/>
-        public event OnMessageEventHandler OnMessage;
+        public override event OnMessageEventHandler OnMessage;
         ///<inheritdoc/>
-        public event OnMessageByteEventHandler OnMessageByte;
+        public override event OnMessageByteEventHandler OnMessageByte;
         ///<inheritdoc/>
-        public event OnAuthenticationEventHandler OnAuthentication;
+        public override event OnAuthenticationEventHandler OnAuthentication;
         #endregion
 
         #region 方法
 
         #region 获取Socket
         /// <inheritdoc/>
-        public Socket GetSocket() => this.Client;
+        public override Socket GetSocket() => this.Client;
         #endregion
 
         #region 连接
@@ -552,7 +479,7 @@ namespace XiaoFeng.Net
 
         #region 启动
         ///<inheritdoc/>
-        public virtual void Start()
+        public override void Start()
         {
             if (this.IsServer)
                 this.CheckClientConnectionTypeAsync().ConfigureAwait(false);
@@ -627,7 +554,7 @@ namespace XiaoFeng.Net
 
         #region 停止
         ///<inheritdoc/>
-        public virtual void Stop()
+        public override void Stop()
         {
             this.OnStop?.Invoke(this, EventArgs.Empty);
             if (this.Active)
@@ -1238,10 +1165,6 @@ namespace XiaoFeng.Net
         #endregion
 
         #region 事件回调
-        ///<inheritdoc/>
-        public void StartEventHandler() => OnStart?.Invoke(this, EventArgs.Empty);
-        ///<inheritdoc/>
-        public void StopEventHandler() => OnStop?.Invoke(this, EventArgs.Empty);
         ///<inheritdoc/>
         public void ClientErrorEventHandler(IPEndPoint endPoint, Exception e) => OnClientError?.Invoke(this, endPoint, e);
         ///<inheritdoc/>

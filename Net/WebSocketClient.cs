@@ -1,52 +1,27 @@
 ﻿using System;
-using System.IO;
+using System.Collections.Generic;
+using System.Net;
 using System.Net.Sockets;
-using System.Net.WebSockets;
-using System.Threading;
+using System.Text;
 using System.Threading.Tasks;
+using XiaoFeng.Threading;
 
 /****************************************************************
-*  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
+*  Copyright © (2023) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
 *  QQ : 7092734                                                 *
 *  Email : jacky@fayelf.com                                     *
 *  Site : www.fayelf.com                                        *
-*  Create Time : 2022-01-17 15:59:53                            *
+*  Create Time : 2023-08-02 10:56:40                            *
 *  Version : v 1.0.0                                            *
 *  CLR Version : 4.0.30319.42000                                *
 *****************************************************************/
-namespace XiaoFeng.Http
+namespace XiaoFeng.Net
 {
     /// <summary>
-    /// 接收消息
+    /// WebSocket 客户端
     /// </summary>
-    /// <param name="data">数据</param>
-    public delegate void ReceiveMessageEventHandler(byte[] data);
-    /// <summary>
-    /// 错误事件
-    /// </summary>
-    /// <param name="msg">错误信息</param>
-    public delegate void ErrorEventHandler(string msg);
-    /// <summary>
-    /// 连接成功
-    /// </summary>
-    /// <param name="socket">连接对象</param>
-    public delegate void SuccessEventHandler(WebSocket socket);
-    /// <summary>
-    /// 连接失败
-    /// </summary>
-    /// <param name="socket">连接对象</param>
-    /// <param name="message">错误消息</param>
-    public delegate void ConnectErrorEventHandler(WebSocket socket, string message);
-	/// <summary>
-	/// 断开连接
-	/// </summary>
-	/// <param name="socket">连接对象</param>
-	public delegate void DisconnectErrorEventHandler(WebSocket socket);
-    /// <summary>
-    /// WebSocket客户端
-    /// </summary>
-    public class WebSocketClient
+    public class WebSocketClient : SocketClient, IWebSocketClient
     {
         #region 构造器
         /// <summary>
@@ -54,155 +29,108 @@ namespace XiaoFeng.Http
         /// </summary>
         public WebSocketClient() { }
         /// <summary>
-        /// 设置连接
+        /// 设置连接地址
         /// </summary>
-        /// <param name="url">服务端网址</param>
-        /// <param name="cancellationToken">Token凭证</param>
-        public WebSocketClient(string url, CancellationToken cancellationToken)
+        /// <param name="url">连接地址</param>
+        public WebSocketClient(string url) : this(new Uri(url)) { }
+        /// <summary>
+        /// 设置连接地址
+        /// </summary>
+        /// <param name="uri">连接地址</param>
+        public WebSocketClient(Uri uri) 
         {
-            this.ServerUri = new Uri(url);
-            this.CancelToken = cancellationToken;
+            this.Uri = uri;
+            base.ConnectionType = ConnectionType.WebSocket;
+            this.WebSocketRequestOptions = new WebSocketRequestOptions
+            {
+                Uri = uri
+            };
         }
         #endregion
 
         #region 属性
+        ///<inheritdoc/>
+        public Uri Uri { get; }
+        ///<inheritdoc/>
+        public WebSocketRequestOptions WebSocketRequestOptions { get; private set; }
         /// <summary>
-        /// ID
+        /// 请求数据
         /// </summary>
-        public string Id { get; set; } = Guid.NewGuid().ToString("N");
-        /// <summary>
-        /// Token凭证
-        /// </summary>
-        private CancellationToken CancelToken { get; set; }
-        /// <summary>
-        /// 服务端网址
-        /// </summary>
-        private Uri ServerUri { get; set; }
-        /// <summary>
-        /// 客户端对象
-        /// </summary>
-        private ClientWebSocket Client { get; set; }
-        /// <summary>
-        /// 连接状态
-        /// </summary>
-        public WebSocketState ClientState { get; set; } = WebSocketState.None;
-        /// <summary>
-        /// 接收数据事件
-        /// </summary>
-        public event ReceiveMessageEventHandler OnReceiveMessage;
-        /// <summary>
-        /// 错误事件
-        /// </summary>
-        public event ErrorEventHandler OnError;
-        /// <summary>
-        /// 连接成功事件
-        /// </summary>
-        public event SuccessEventHandler OnSuccess;
-        /// <summary>
-        /// 连接错误
-        /// </summary>
-        public event ConnectErrorEventHandler OnConnectError;
-        /// <summary>
-        /// 断开连接
-        /// </summary>
-        public event DisconnectErrorEventHandler OnDisconnectError;
+        private WebSocketRequest _Request;
+        ///<inheritdoc/>
+        public WebSocketRequest Request
+        {
+            get
+            {
+                if (!this.IsServer) return null;
+                if (this._Request == null)
+                {
+                    this._Request = new WebSocketRequest(this.HostName.IsNullOrEmpty() ? "ws" : "wss", this.RequestHeader);
+                }
+                return this._Request;
+            }
+            set => this._Request = value;
+        }
         #endregion
 
         #region 方法
-        /// <summary>
-        /// 连接
-        /// </summary>
-        /// <returns></returns>
-        public async Task ConnectAsync()
+        ///<inheritdoc/>
+        public override void Start()
         {
-            this.ClientState = WebSocketState.Connecting;
-            this.Client = new ClientWebSocket();
-            try
+            if (base.IsServer)
             {
-                /*连接*/
-                await this.Client.ConnectAsync(this.ServerUri, this.CancelToken).ConfigureAwait(false);
-                /*连接成功*/
-                this.OnSuccess?.Invoke(this.Client);
-                /*接收*/
-                HandleMessage().ConfigureAwait(false).GetAwaiter();
+                base.Start();
+                return;
             }
-            catch (Exception ex)
+            if (this.Uri == null)
             {
-                this.ClientState = this.Client.State;
-                this.OnConnectError?.Invoke(this.Client, ex.Message);
+                throw new Exception("请求地址出错.");
             }
+            if (this.Uri.Scheme == "wss")
+            {
+                this.HostName = this.Uri.Host;
+                if (this.ClientCertificates == null)
+                    this.SslProtocols = System.Security.Authentication.SslProtocols.None;
+                else
+                    this.SslProtocols = System.Security.Authentication.SslProtocols.Tls12;
+            }
+            base.Connect(this.Uri.Host, this.Uri.Port);
+            //发请求包
+            var stream = base.GetSslStream();
+            if (stream == null)
+            {
+                ClientErrorEventHandler(this.EndPoint, new Exception(stream is NetworkStream ? "请求网络流失败." : "注册SSL失败."));
+                base.Stop();
+                return;
+            }
+            this.WebSocketRequestOptions.SecWebSocketKey = RandomHelper.GetRandomString(16).ToBase64String();
+            if (this.WebSocketRequestOptions.Origin.IsNullOrEmpty()) this.WebSocketRequestOptions.Origin = $"{this.Uri.Scheme.ReplacePattern(@"^ws", "http")}://{this.Uri.Host}{(this.Uri.Port == 80 || this.Uri.Port == 443 ? "" : (":" + this.Uri.Port))}";
+            var packet = new WebSocketPacket(this, this.WebSocketRequestOptions);
+            var data = packet.GetRequestData();
+            var bytes = data.GetBytes(this.Encoding);
+            stream.Write(bytes, 0, bytes.Length);
+            stream.Flush();
+            bytes = base.ReceviceMessageAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+            var msg = bytes.GetString(this.Encoding);
+            var AcceptCode = packet.ComputeWebSocketHandshakeSecurityHash09(this.WebSocketRequestOptions.SecWebSocketKey);
+            packet = new WebSocketPacket(this, msg);
+            if (packet.SecWebSocketAccept.IsNullOrEmpty() || packet.SecWebSocketAccept != AcceptCode)
+            {
+                ClientErrorEventHandler(this.EndPoint, new Exception("握手失败.\r\n请求包:\r\n" + data + "握手包:\r\n" + msg));
+                base.Stop();
+            }
+            base.StartEventHandler();
+            Task.Run(() =>
+            {
+                this.ReceviceDataAsync().ConfigureAwait(false);
+            }, this.CancelToken.Token);
+            if (!this.IsPing) return;
         }
-        /// <summary>
-        /// 处理消息
-        /// </summary>
-        /// <returns></returns>
-        public async Task HandleMessage()
+        ///<inheritdoc/>
+        public void Start(WebSocketRequestOptions options)
         {
-            WebSocketReceiveResult result;
-            do
-            {
-                if (this.ClientState != this.Client.State)
-                    this.ClientState = this.Client.State;
-                using (var ms = new MemoryStream())
-                {
-                    var buffer = new byte[1024 * 1];
-                    try
-                    {
-                        do
-                        {
-                            result = await this.Client.ReceiveAsync(new ArraySegment<byte>(buffer), this.CancelToken);
-                            ms.Write(buffer, 0, result.Count);
-                            Array.Clear(buffer, 0, 1024);
-                        } while (!result.EndOfMessage);
-                        this.OnReceiveMessage?.Invoke(ms.ToArray());
-                    }
-                    catch (Exception ex)
-                    {
-                        this.ClientState = WebSocketState.Closed;
-                        this.OnError?.Invoke(ex.Message);
-                        buffer = null;
-                        GC.Collect();
-                        break;
-                    }
-                }
-            } while (this.Client.State == WebSocketState.Open && !result.CloseStatus.HasValue);
-            this.OnDisconnectError?.Invoke(this.Client);
-        }
-        /// <summary>
-        /// 关闭连接
-        /// </summary>
-        /// <returns></returns>
-        public async Task CloseAsync()
-        {
-            await this.Client.CloseAsync(WebSocketCloseStatus.NormalClosure, "人为关闭", this.CancelToken);
-            this.ClientState = this.Client.State;
-        }
-        /// <summary>
-        /// 发送消息
-        /// </summary>
-        /// <param name="msg">消息</param>
-        /// <param name="messageType">消息类型</param>
-        /// <returns></returns>
-        public async Task SendAsync(string msg, WebSocketMessageType messageType = WebSocketMessageType.Text)
-        {
-            if (this.ClientState == WebSocketState.Open && this.Client.State == WebSocketState.Open)
-            {
-                try
-                {
-                    await this.Client.SendAsync(new ArraySegment<byte>(msg.GetBytes()), messageType, true, this.CancelToken).ConfigureAwait(false);
-                }
-                catch (Exception ex)
-                {
-                    this.ClientState = this.Client.State;
-                    this.OnError?.Invoke(ex.Message);
-                }
-            }
-            else
-            {
-                await this.CloseAsync().ConfigureAwait(false);
-                //await this.ConnectAsync().ConfigureAwait(false);
-                //await this.SendAsync(msg, messageType).ConfigureAwait(false);
-            }
+            this.WebSocketRequestOptions = options;
+            this.Start();
         }
         #endregion
     }

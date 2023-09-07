@@ -56,7 +56,7 @@ namespace XiaoFeng.Net
     /// <summary>
     /// Socket服务端
     /// </summary>
-    public class SocketServer<T> : Disposable, ISocketServer where T : ISocketClient, new()
+    public class SocketServer<T> : BaseSocket, ISocketServer where T : ISocketClient, new()
     {
         #region 构造器
         /// <summary>
@@ -89,31 +89,9 @@ namespace XiaoFeng.Net
 
         #region 属性
         ///<inheritdoc/>
-        public SocketDataType DataType { get; set; } = SocketDataType.String;
-        ///<inheritdoc/>
-        public SocketType SocketType { get; set; } = SocketType.Stream;
-        ///<inheritdoc/>
-        public ProtocolType ProtocolType { get; set; } = ProtocolType.Tcp;
-        ///<inheritdoc/>
-        public Boolean NoDelay { get; set; } = false;
-        ///<inheritdoc/>
-        public int ReceiveTimeout { get; set; } = -1;
-        ///<inheritdoc/>
-        public int SendTimeout { get; set; } = -1;
-        ///<inheritdoc/>
-        public int ConnectTimeout { get; set; } = -1;
-        ///<inheritdoc/>
-        public int ReceiveBufferSize { get; set; } = 8192;
-        ///<inheritdoc/>
-        public int SendBufferSize { get; set; } = 8192;
-        ///<inheritdoc/>
         public int ListenCount { get; set; } = int.MaxValue;
         ///<inheritdoc/>
-        public Encoding Encoding { get; set; } = Encoding.UTF8;
-        ///<inheritdoc/>
         public Boolean ReuseAddress { get; set; } = true;
-        ///<inheritdoc/>
-        public CancellationTokenSource CancelToken { get; set; } = new CancellationTokenSource();
         ///<inheritdoc/>
         public Func<ISocketClient, Boolean> Authentication { get; set; }
         /// <summary>
@@ -121,27 +99,17 @@ namespace XiaoFeng.Net
         /// </summary>
         private ConcurrentDictionary<long, string> BlackList { get; set; } = new ConcurrentDictionary<long, string>();
         ///<inheritdoc/>
-        public SslProtocols SslProtocols { get; set; } = SslProtocols.None;
-        ///<inheritdoc/>
         public X509Certificate Certificate { get; set; }
-        /// <summary>
-        /// 激活状态
-        /// </summary>
-        private Boolean _Active = false;
-        ///<inheritdoc/>
-        public Boolean Active { get => this._Active; }
         /// <summary>
         /// 服务端SOCKET
         /// </summary>
         private Socket Server { get; set; }
-        ///<inheritdoc/>
-        public IPEndPoint EndPoint { get; set; }
         /// <summary>
         /// 是否独占地址使用
         /// </summary>
         private Boolean _ExclusiveAddressUse;
         ///<inheritdoc/>
-        public Boolean ExclusiveAddressUse
+        public override Boolean ExclusiveAddressUse
         {
             get
             {
@@ -165,8 +133,6 @@ namespace XiaoFeng.Net
         /// 允许网络地址转换
         /// </summary>
         private Boolean? _AllowNatTraversal;
-        ///<inheritdoc/>
-        public SocketState SocketState { get; set; } = SocketState.Idle;
         /// <summary>
         /// 客户端列表
         /// </summary>
@@ -183,8 +149,6 @@ namespace XiaoFeng.Net
         /// pong间隔 单位为秒
         /// </summary>
         public int PongTime { get; set; } = 120;
-        ///<inheritdoc/>
-        public int NetworkDelay { get; set; } = 10;
         /// <summary>
         /// 定时作业
         /// </summary>
@@ -199,28 +163,28 @@ namespace XiaoFeng.Net
         ///<inheritdoc/>
         public event OnNewConnectionEventHandler OnNewConnection;
         ///<inheritdoc/>
-        public event OnMessageEventHandler OnMessage;
+        public override event OnMessageEventHandler OnMessage;
         ///<inheritdoc/>
-        public event OnMessageByteEventHandler OnMessageByte;
+        public override event OnMessageByteEventHandler OnMessageByte;
         ///<inheritdoc/>
         public event OnDisconnectedEventHandler OnDisconnected;
         ///<inheritdoc/>
-        public event OnStopEventHandler OnStop;
+        public override event OnStopEventHandler OnStop;
         ///<inheritdoc/>
         public event OnErrorEventHandler OnError;
         ///<inheritdoc/>
-        public event OnClientErrorEventHandler OnClientError;
+        public override event OnClientErrorEventHandler OnClientError;
         ///<inheritdoc/>
-        public event OnStartEventHandler OnStart;
+        public override event OnStartEventHandler OnStart;
         ///<inheritdoc/>
-        public event OnAuthenticationEventHandler OnAuthentication;
+        public override event OnAuthenticationEventHandler OnAuthentication;
         #endregion
 
         #region 方法
 
         #region 获取Socket
         /// <inheritdoc/>
-        public Socket GetSocket() => this.Server;
+        public override Socket GetSocket() => this.Server;
         #endregion
 
         #region 启动
@@ -256,7 +220,7 @@ namespace XiaoFeng.Net
             this._Active = true;
         }
         /// <inheritdoc/>
-        public virtual void Start()
+        public override void Start()
         {
             this.Start(this.ListenCount);
         }
@@ -264,7 +228,7 @@ namespace XiaoFeng.Net
 
         #region 停止
         /// <inheritdoc/>
-        public virtual void Stop()
+        public override  void Stop()
         {
             if (this.Active)
             {
