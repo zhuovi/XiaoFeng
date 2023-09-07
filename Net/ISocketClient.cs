@@ -229,12 +229,34 @@ namespace XiaoFeng.Net
         /// 发送消息
         /// </summary>
         /// <param name="buffers">消息</param>
+        /// <param name="messageType">消息类型</param>
+        /// <returns>发送数据包的字节长度
+        /// <para><term>0</term> 无发送数据</para>
+        /// <para><term>-1</term> 网络通道未连接</para>
+        /// <para><term>-2</term> 网络通道还未准备好</para>
+        /// </returns>
+        int Send(byte[] buffers, MessageType messageType);
+        /// <summary>
+        /// 发送消息
+        /// </summary>
+        /// <param name="buffers">消息</param>
         /// <returns>发送数据包的字节长度
         /// <para><term>0</term> 无发送数据</para>
         /// <para><term>-1</term> 网络通道未连接</para>
         /// <para><term>-2</term> 网络通道还未准备好</para>
         /// </returns>
         Task<int> SendAsync(byte[] buffers);
+        /// <summary>
+        /// 发送消息
+        /// </summary>
+        /// <param name="buffers">消息</param>
+        /// <param name="messageType">消息类型</param>
+        /// <returns>发送数据包的字节长度
+        /// <para><term>0</term> 无发送数据</para>
+        /// <para><term>-1</term> 网络通道未连接</para>
+        /// <para><term>-2</term> 网络通道还未准备好</para>
+        /// </returns>
+        Task<int> SendAsync(byte[] buffers, MessageType messageType);
         /// <summary>
         /// 发送消息
         /// </summary>

@@ -1102,10 +1102,22 @@ namespace XiaoFeng.Net
             return this.NetStreamSend(buffers);
         }
         ///<inheritdoc/>
+        public virtual int Send(byte[] buffers, MessageType messageType)
+        {
+            if (buffers.IsNullOrEmpty() || buffers.Length == 0) return 0;
+            return this.NetStreamSend(buffers, ((int)messageType).ToEnum<OpCode>());
+        }
+        ///<inheritdoc/>
         public virtual async Task<int> SendAsync(byte[] buffers)
         {
             if (buffers.IsNullOrEmpty() || buffers.Length == 0) return 0;
             return await this.NetStreamSendAsync(buffers).ConfigureAwait(false);
+        }
+        ///<inheritdoc/>
+        public virtual async Task<int> SendAsync(byte[] buffers, MessageType messageType)
+        {
+            if (buffers.IsNullOrEmpty() || buffers.Length == 0) return 0;
+            return await this.NetStreamSendAsync(buffers, ((int)messageType).ToEnum<OpCode>()).ConfigureAwait(false);
         }
         ///<inheritdoc/>
         public virtual int Send(string message)
@@ -1166,9 +1178,18 @@ namespace XiaoFeng.Net
                 if (buffers == null || buffers.Length == 0)
                     return 0;
             }
-            stream.Write(buffers, 0, buffers.Length);
-            stream.Flush();
-            this.LastMessageTime = DateTime.Now;
+            try
+            {
+                stream.Write(buffers, 0, buffers.Length);
+                stream.Flush();
+                this.LastMessageTime = DateTime.Now;
+            }
+            catch (IOException)
+            {
+                this.OnClientError?.Invoke(this, this.EndPoint, new SocketException((int)SocketError.SocketError));
+                this.Stop();
+                return -1;
+            }
             return buffers.Length;
         }
         /// <summary>
@@ -1200,9 +1221,18 @@ namespace XiaoFeng.Net
             else
                 if (buffers == null || buffers.Length == 0)
                 return await Task.FromResult(0).ConfigureAwait(false);
-            await stream.WriteAsync(buffers, 0, buffers.Length, this.CancelToken.Token).ConfigureAwait(false);
-            await stream.FlushAsync(this.CancelToken.Token);
-            this.LastMessageTime = DateTime.Now;
+            try
+            {
+                await stream.WriteAsync(buffers, 0, buffers.Length, this.CancelToken.Token).ConfigureAwait(false);
+                await stream.FlushAsync(this.CancelToken.Token);
+                this.LastMessageTime = DateTime.Now;
+            }
+            catch (IOException)
+            {
+                this.OnClientError?.Invoke(this, this.EndPoint, new SocketException((int)SocketError.SocketError));
+                this.Stop();
+                return -1;
+            }
             return await Task.FromResult(buffers.Length).ConfigureAwait(false);
         }
         #endregion

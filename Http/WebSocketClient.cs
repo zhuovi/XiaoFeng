@@ -32,12 +32,12 @@ namespace XiaoFeng.Http
     /// </summary>
     /// <param name="socket">连接对象</param>
     public delegate void SuccessEventHandler(WebSocket socket);
-	/// <summary>
-	/// 连接失败
-	/// </summary>
-	/// <param name="socket">连接对象</param>
+    /// <summary>
+    /// 连接失败
+    /// </summary>
+    /// <param name="socket">连接对象</param>
     /// <param name="message">错误消息</param>
-	public delegate void ConnectErrorEventHandler(WebSocket socket,string message);
+    public delegate void ConnectErrorEventHandler(WebSocket socket, string message);
 	/// <summary>
 	/// 断开连接
 	/// </summary>
@@ -66,6 +66,10 @@ namespace XiaoFeng.Http
         #endregion
 
         #region 属性
+        /// <summary>
+        /// ID
+        /// </summary>
+        public string Id { get; set; } = Guid.NewGuid().ToString("N");
         /// <summary>
         /// Token凭证
         /// </summary>
@@ -142,13 +146,24 @@ namespace XiaoFeng.Http
                 using (var ms = new MemoryStream())
                 {
                     var buffer = new byte[1024 * 1];
-                    do
+                    try
                     {
-                        result = await this.Client.ReceiveAsync(new ArraySegment<byte>(buffer), this.CancelToken);
-                        ms.Write(buffer, 0, result.Count);
-                        Array.Clear(buffer, 0, 1024);
-                    } while (!result.EndOfMessage);
-                    this.OnReceiveMessage?.Invoke(ms.ToArray());
+                        do
+                        {
+                            result = await this.Client.ReceiveAsync(new ArraySegment<byte>(buffer), this.CancelToken);
+                            ms.Write(buffer, 0, result.Count);
+                            Array.Clear(buffer, 0, 1024);
+                        } while (!result.EndOfMessage);
+                        this.OnReceiveMessage?.Invoke(ms.ToArray());
+                    }
+                    catch (Exception ex)
+                    {
+                        this.ClientState = WebSocketState.Closed;
+                        this.OnError?.Invoke(ex.Message);
+                        buffer = null;
+                        GC.Collect();
+                        break;
+                    }
                 }
             } while (this.Client.State == WebSocketState.Open && !result.CloseStatus.HasValue);
             this.OnDisconnectError?.Invoke(this.Client);
@@ -182,15 +197,11 @@ namespace XiaoFeng.Http
                     this.OnError?.Invoke(ex.Message);
                 }
             }
-            else if (this.ClientState != WebSocketState.None)
-            {
-                await Task.Delay(100).ConfigureAwait(false);
-                await this.SendAsync(msg, messageType).ConfigureAwait(false);
-            }
             else
             {
-                await this.ConnectAsync().ConfigureAwait(false);
-                await this.SendAsync(msg, messageType).ConfigureAwait(false);
+                await this.CloseAsync().ConfigureAwait(false);
+                //await this.ConnectAsync().ConfigureAwait(false);
+                //await this.SendAsync(msg, messageType).ConfigureAwait(false);
             }
         }
         #endregion

@@ -24,7 +24,7 @@
 		<PackageProjectUrl>https://www.eelf.cn</PackageProjectUrl>
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>增加作业Job设置取消指令方法,启动设置取消指令方法;优化SocketClient中NetworkDelay最小值及最大值的判断;优化IJob事件;优化For扩展方法;增加HttpHelper中HttpRequest类中直接可以调用DownFileAsync;优化SocketClient中连接host为IP的bug;ParameterCollection中增加ToJson方法;优化正则表达式网址,Ftp正则增加汉字识别;增加字符强度枚举,优化字符强度方法GetStringStrength;增加判断字符串格式正则配置文件;删除作业中已过期DayOrWeek,Time属性;</PackageReleaseNotes>
+		<PackageReleaseNotes>增加作业Job设置取消指令方法,启动设置取消指令方法;优化SocketClient中NetworkDelay最小值及最大值的判断;优化IJob事件;优化For扩展方法;增加HttpHelper中HttpRequest类中直接可以调用DownFileAsync;优化SocketClient中连接host为IP的bug;ParameterCollection中增加ToJson方法;优化正则表达式网址,Ftp正则增加汉字识别;增加字符强度枚举,优化字符强度方法GetStringStrength;增加判断字符串格式正则配置文件;删除作业中已过期DayOrWeek,Time属性;优化XiaoFeng.Net.WebSocketClient请求头;优化XiaoFeng.Http.WebSocketClient接收消息;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>

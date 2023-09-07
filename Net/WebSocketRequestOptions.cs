@@ -37,7 +37,7 @@ namespace XiaoFeng.Net
             this[HttpRequestHeader.UserAgent] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36";
             this[HttpRequestHeader.AcceptEncoding] = (AcceptEncodingType.GZIP | AcceptEncodingType.DEFLATE | AcceptEncodingType.BR).ToLower();
             this[HttpRequestHeader.CacheControl] = "no-cache";
-            this[HttpRequestHeader.AcceptLanguage] = "zh-CN,zh;q=0.9";
+            this[HttpRequestHeader.AcceptLanguage] = "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6";
         }
         #endregion
 
@@ -84,7 +84,7 @@ namespace XiaoFeng.Net
             get => this._Uri; set
             {
                 this._Uri = value;
-                this[HttpRequestHeader.Host] = value.Host + ":" + value.Port;
+                this[HttpRequestHeader.Host] = value.Host + (value.Port == 80 || value.Port == 443 ? "" : (":" + value.Port));
             }
         }
         /// <summary>
@@ -350,7 +350,7 @@ namespace XiaoFeng.Net
         public override string ToString()
         {
             var sbr = new StringBuilder();
-            sbr.AppendLine($"{this.Method} {this.Uri?.PathAndQuery} HTTP/{((float)this.HttpVersion) / 10F}");
+            sbr.AppendLine($"{this.Method.ToString().ToUpper()} {this.Uri?.PathAndQuery} HTTP/{((float)this.HttpVersion) / 10F}");
             sbr.Append(this.WebHeader.ToString());
             return sbr.ToString();
         }

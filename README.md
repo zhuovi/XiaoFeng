@@ -78,11 +78,15 @@ Cake
 
 2.优化IJob事件;
 
+3.删除作业中已过期DayOrWeek,Time属性;
+
 ### XiaoFeng.Socket 网络库
 
 1.优化SocketClient中NetworkDelay最小值及最大值的判断;
 
 2.优化SocketClient中连接host为IP的bug;
+
+3.优化XiaoFeng.Net.WebSocketClient请求头;
 
 ### XiaoFeng.ParameterCollection 参数集
 
@@ -91,6 +95,8 @@ Cake
 ### XiaoFeng.Http 网络库
 
 1.增加HttpHelper中HttpRequest类中直接可以调用DownFileAsync;
+
+2.优化XiaoFeng.Http.WebSocketClient接收消息;
 
 ### XiaoFeng.PrototypeHelper 扩展方法
 

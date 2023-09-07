@@ -102,6 +102,11 @@ namespace XiaoFeng.Net
             if (_Extend.Length == 0)
             {
                 _Content = new byte[_Header.Length];
+                if (buffer.Length < _Header.Length - _Extend.Length - _Mask.Length - 1)
+                {
+                    _Content = Array.Empty<byte>();
+                    return;
+                }
                 Buffer.BlockCopy(buffer, _Extend.Length + _Mask.Length + 2 , _Content, 0, _Content.Length);
                 
             }
