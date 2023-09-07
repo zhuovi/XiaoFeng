@@ -570,9 +570,9 @@ namespace XiaoFeng.Net
 
         #region 调用当前事件
         ///<inheritdoc/>
-        public void StartEventHandler() => OnStart?.Invoke(this, EventArgs.Empty);
+        public override void StartEventHandler() => OnStart?.Invoke(this, EventArgs.Empty);
         ///<inheritdoc/>
-        public void StopEventHandler() => OnStop?.Invoke(this, EventArgs.Empty);
+        public override void StopEventHandler() => OnStop?.Invoke(this, EventArgs.Empty);
         ///<inheritdoc/>
         public void NewConnectionEventHandler(ISocketClient client) => OnNewConnection?.Invoke(client, EventArgs.Empty);
         ///<inheritdoc/>

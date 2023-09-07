@@ -1173,6 +1173,10 @@ namespace XiaoFeng.Net
         public void MessageByteEventHandler(byte[] message) => OnMessageByte?.Invoke(this, message, EventArgs.Empty);
         ///<inheritdoc/>
         public void AuthenticationEventHandler(string message) => OnAuthentication?.Invoke(this, message, EventArgs.Empty);
+        ///<inheritdoc/>
+        public override void StartEventHandler() => OnStart?.Invoke(this, EventArgs.Empty);
+        ///<inheritdoc/>
+        public override void StopEventHandler() => OnStop?.Invoke(this, EventArgs.Empty);
         #endregion
 
         #region 设置Socket
