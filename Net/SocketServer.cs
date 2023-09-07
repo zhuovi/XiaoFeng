@@ -228,7 +228,7 @@ namespace XiaoFeng.Net
 
         #region 停止
         /// <inheritdoc/>
-        public override  void Stop()
+        public override void Stop()
         {
             if (this.Active)
             {
@@ -559,7 +559,7 @@ namespace XiaoFeng.Net
             {
                 this.Server.ExclusiveAddressUse = true;
             }
-            
+
             if (OS.Platform.GetOSPlatform() == PlatformOS.Windows && this._AllowNatTraversal != null)
             {
                 this.AllowNatTraversal(this._AllowNatTraversal.GetValueOrDefault());

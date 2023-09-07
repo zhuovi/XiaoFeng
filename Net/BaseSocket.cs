@@ -21,7 +21,7 @@ namespace XiaoFeng.Net
     /// <summary>
     /// 基础网络库
     /// </summary>
-    public abstract class BaseSocket: Disposable,INetSocket
+    public abstract class BaseSocket : Disposable, INetSocket
     {
         #region 构造器
         /// <summary>
