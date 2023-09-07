@@ -315,6 +315,7 @@ namespace XiaoFeng.Json
                     if (m.MemberType == MemberTypes.Property)
                     {
                         var p = m as PropertyInfo;
+                        if (!p.CanWrite || !p.CanRead) return;
                         mType = p.PropertyType;
                         value = p.GetValue(obj, null);
                     }
@@ -341,7 +342,7 @@ namespace XiaoFeng.Json
                 JsonConverterAttribute jsonConverter = m.GetCustomAttribute<JsonConverterAttribute>(false);
                 if (jsonConverter != null)
                 {
-                    if (jsonConverter.ConverterType == typeof(StringEnumConverter))
+                    if (jsonConverter.ConverterType == typeof(StringEnumConverter) || jsonConverter.ConverterType == typeof(StringObjectConverter))
                     {
                         value = value.ToString();
                     }

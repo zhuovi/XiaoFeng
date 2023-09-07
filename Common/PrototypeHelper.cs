@@ -9,6 +9,8 @@ using System.Collections;
 using System.Data;
 using System.ComponentModel;
 using XiaoFeng.IO;
+using XiaoFeng.Json;
+using XiaoFeng.Xml;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -1734,7 +1736,7 @@ namespace XiaoFeng
                 else if (BaseTargetType == ValueTypes.String) return string.Empty;
                 else return null;
             }
-            else if (o is Json.JsonValue JValue)
+            else if (o is JsonValue JValue)
             {
                 return JValue.ToObject(targetType);
             }
@@ -1742,7 +1744,7 @@ namespace XiaoFeng
             {
                 return RValue.ToObject(targetType);
             }
-            else if (o is Xml.XmlValue XValue)
+            else if (o is XmlValue XValue)
             {
                 return XValue.ToObject(targetType);
             }
@@ -1819,14 +1821,24 @@ namespace XiaoFeng
                 }
                 else if (_.IsXml())
                     return _.XmlToEntity(targetType);
-                return null;
-            }
-            else if (BaseSourceType == ValueTypes.String && (BaseTargetType == ValueTypes.Dictionary || BaseTargetType == ValueTypes.IDictionary))
-            {
-                var _ = o.ToString();
-                if ((_.IsQuery() && !_.IsJson()) || _.IsJson())
+                else
                 {
-                    return _.JsonToObject(targetType);
+                    return targetType.GetConstructor(new[] { typeof(string) })?.Invoke(new[] { o.ToString() });
+                }
+            }
+            else if (BaseSourceType == ValueTypes.String)
+            {
+                if (BaseTargetType == ValueTypes.Dictionary || BaseTargetType == ValueTypes.IDictionary)
+                {
+                    var _ = o.ToString();
+                    if ((_.IsQuery() && !_.IsJson()) || _.IsJson())
+                    {
+                        return _.JsonToObject(targetType);
+                    }
+                }
+                else if (BaseTargetType == ValueTypes.Class)
+                {
+                    return targetType.GetConstructor(new[] { typeof(string) })?.Invoke(new[] { o.ToString() });
                 }
             }
             if ((BaseSourceType != ValueTypes.Value && BaseSourceType != ValueTypes.String) || (BaseTargetType != ValueTypes.Value && BaseTargetType != ValueTypes.String)) return null;
@@ -3068,6 +3080,46 @@ namespace XiaoFeng
         /// <param name="e">枚举</param>
         /// <returns>此实例的值的字符串大写表示形式。</returns>
         public static string ToUpper(this Enum e) => e.ToString().ToUpper(System.Globalization.CultureInfo.CurrentCulture);
+        #endregion
+
+        #region 转换字符串
+        /// <summary>
+        /// 对象转字符串
+        /// </summary>
+        /// <param name="o">对象</param>
+        /// <returns></returns>
+        public static string ToStringX(this object o)
+        {
+            if (o.IsNullOrEmpty()) return string.Empty;
+            if (o is JsonValue jsonValue)
+                return jsonValue.ToString();
+            if (o is XmlValue xmlValue)
+                return xmlValue.ToString();
+            if (o is string) return o.ToString();
+            var baseValueType = o.GetType().GetValueType();
+            if (baseValueType == ValueTypes.String || baseValueType == ValueTypes.Value) return o.ToString();
+            if (baseValueType == ValueTypes.Anonymous || baseValueType == ValueTypes.Array|| baseValueType == ValueTypes.ArrayList || baseValueType== ValueTypes.List|| baseValueType== ValueTypes.DataTable || baseValueType == ValueTypes.Dictionary || baseValueType == ValueTypes.IDictionary || baseValueType == ValueTypes.IEnumerable || baseValueType == ValueTypes.Struct)
+                return o.ToJson();
+            if (baseValueType == ValueTypes.Class)
+            {
+                var type = o.GetType();
+                var ToString = type.GetMethod("ToString", BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.DeclaredOnly);
+                if (type.GetConstructor(new Type[] { typeof(string) }) != null && ToString != null)
+                {
+                    try
+                    {
+                        return ToString.Invoke(o, new object[] { }).ToString();
+                    }
+                    catch
+                    {
+                        return o.ToString();
+                    }
+                }
+                else
+                    return o.ToJson();
+            }
+            return o.ToString();
+        }
         #endregion
     }
 }

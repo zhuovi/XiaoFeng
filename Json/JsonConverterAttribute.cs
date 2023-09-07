@@ -19,7 +19,7 @@ namespace XiaoFeng.Json
     /// Json属性类
     /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Interface | AttributeTargets.Parameter, AllowMultiple = false)]
-    public sealed class JsonConverterAttribute:Attribute
+    public sealed class JsonConverterAttribute : Attribute
     {
         #region 构造器
         /// <summary>
@@ -35,7 +35,7 @@ namespace XiaoFeng.Json
         /// </summary>
         /// <param name="converterType">转换类型</param>
         /// <param name="converterParameters">属性</param>
-        public JsonConverterAttribute(Type converterType,params object[] converterParameters)
+        public JsonConverterAttribute(Type converterType, params object[] converterParameters)
         {
             this.ConverterType = converterType;
             this.ConverterParameters = converterParameters;

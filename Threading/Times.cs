@@ -128,7 +128,7 @@ namespace XiaoFeng.Threading
         /// <summary>
         /// 日
         /// </summary>
-        public int? _Day;
+        private int? _Day;
         /// <summary>
         /// 日
         /// </summary>
@@ -170,7 +170,7 @@ namespace XiaoFeng.Threading
         /// <summary>
         /// 周几
         /// </summary>
-        public int? _Week;
+        private int? _Week;
         /// <summary>
         /// 周几
         /// </summary>

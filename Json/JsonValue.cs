@@ -1427,6 +1427,26 @@ namespace XiaoFeng.Json
                             if (element.Name.IsNotNullOrEmpty()) name = element.Name;
                         }
                         var _f = list.ContainsKey(name);
+                        JsonConverterAttribute jsonConverter = m.GetCustomAttribute<JsonConverterAttribute>(false);
+                        if (_f) val = list[name];
+                        if(val?.ToStringX() == "aaaabbbda:bbbddd")
+                        {
+                            var aa = "";
+                        }
+                        if (jsonConverter != null)
+                        {
+                            if (jsonConverter.ConverterType == typeof(StringObjectConverter))
+                            {
+                                if (val is JsonValue jval)
+                                {
+                                    if (m is PropertyInfo p)
+                                        p.SetValue(target, jval.ToString().GetValue(p.PropertyType), null);
+                                    else if (m is FieldInfo fi)
+                                        fi.SetValue(target, jval.ToString().GetValue(fi.FieldType));
+                                    return;
+                                }
+                            }
+                        }
                         if (m is FieldInfo f)
                         {
                             val = _f ? list[name].ToObject(f.FieldType, null) : null;
