@@ -82,6 +82,23 @@ namespace XiaoFeng.Config
         [JsonConverter(typeof(StringEnumConverter))]
         public LogType? JobLogLevel { get; set; } = LogType.Warn;
         /// <summary>
+        /// 作业记录记录次数
+        /// </summary>
+        private int _JobMessageCount = 0;
+        /// <summary>
+        /// 作业记录记录次数
+        /// </summary>
+        [Description("作业记录记录次数")]
+        public int JobMessageCount
+        {
+            get
+            {
+                if (this._JobMessageCount == 0) this._JobMessageCount = 10;
+                return this._JobMessageCount;
+            }
+            set => this._JobMessageCount = value;
+        }
+        /// <summary>
         /// 任务队列执行任务超时时间 单位为秒
         /// </summary>
         private int _TaskWaitTimeout = 5 * 60;

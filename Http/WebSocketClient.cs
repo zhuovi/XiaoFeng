@@ -116,11 +116,12 @@ namespace XiaoFeng.Http
         public async Task ConnectAsync()
         {
             this.ClientState = WebSocketState.Connecting;
-            this.Client = new ClientWebSocket();
+            if (this.Client == null) this.Client = new ClientWebSocket();
             try
             {
                 /*连接*/
                 await this.Client.ConnectAsync(this.ServerUri, this.CancelToken).ConfigureAwait(false);
+                this.ClientState = WebSocketState.Open;
                 /*连接成功*/
                 this.OnSuccess?.Invoke(this.Client);
                 /*接收*/
@@ -133,6 +134,16 @@ namespace XiaoFeng.Http
             }
         }
         /// <summary>
+        /// 设置请求头
+        /// </summary>
+        /// <param name="name">请求头名称</param>
+        /// <param name="value">请求头值</param>
+        public void SetRequestHeader(string name, string value)
+        {
+            if (this.Client == null) this.Client = new ClientWebSocket();
+            this.Client.Options.SetRequestHeader(name, value);
+        }
+        /// <summary>
         /// 处理消息
         /// </summary>
         /// <returns></returns>
@@ -141,8 +152,6 @@ namespace XiaoFeng.Http
             WebSocketReceiveResult result;
             do
             {
-                if (this.ClientState != this.Client.State)
-                    this.ClientState = this.Client.State;
                 using (var ms = new MemoryStream())
                 {
                     var buffer = new byte[1024 * 1];

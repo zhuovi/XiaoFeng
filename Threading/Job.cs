@@ -211,8 +211,6 @@ namespace XiaoFeng.Threading
         /// <param name="scheduler">调度</param>
         public void Stop(IJobScheduler scheduler)
         {
-            (scheduler ?? this.Scheduler).Remove(this);
-            this.StopCallBack?.Invoke(this);
             this.CancelToken.Cancel();
         }
         #endregion

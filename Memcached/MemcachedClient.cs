@@ -291,9 +291,19 @@ namespace XiaoFeng.Memcached
         public Boolean Auth()
         {
             /*
-             * 认证命令一直没试出来，暂只支持没有帐号密码的
+             * Authentication
+set <key> <flags> <exptime> <bytes>\r\n
+username password\r\n
+
+key, flags, and exptime are ignored for authentication. Bytes is the length
+of the username/password payload.
+
+- "STORED\r\n" indicates success. After this point any command should work
+  normally.
+
+- "CLIENT_ERROR [message]\r\n" will be returned if authentication fails for
+  any reason.
              */
-            return true;
             if (this.ConnConfig.User.IsNullOrEmpty()) return false;
             return this.Execute(CommandType.AUTH, result => result.OK, this.ConnConfig.User, this.ConnConfig.Password);
         }
@@ -304,9 +314,19 @@ namespace XiaoFeng.Memcached
         public async Task<Boolean> AuthAsync()
         {
             /*
-             * 认证命令一直没试出来，暂只支持没有帐号密码的
+             * Authentication
+set <key> <flags> <exptime> <bytes>\r\n
+username password\r\n
+
+key, flags, and exptime are ignored for authentication. Bytes is the length
+of the username/password payload.
+
+- "STORED\r\n" indicates success. After this point any command should work
+  normally.
+
+- "CLIENT_ERROR [message]\r\n" will be returned if authentication fails for
+  any reason.
              */
-            return true;
             if (this.ConnConfig.User.IsNullOrEmpty()) return false;
             return await this.ExecuteAsync(CommandType.AUTH, async result => await Task.FromResult(result.OK), this.ConnConfig.User, this.ConnConfig.Password);
         }

@@ -36,7 +36,7 @@ namespace XiaoFeng.Threading
         /// <param name="cancellationToken">取消指令</param>
         public TaskServiceQueue(CancellationToken cancellationToken)
         {
-            this.CancelToken = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            this.CancelToken = cancellationToken;
         }
         /// <summary>
         /// 设置队列名称
@@ -54,11 +54,40 @@ namespace XiaoFeng.Threading
         public TaskServiceQueue(string queueName, CancellationToken cancellationToken)
         {
             this.QueueName = queueName;
-            this.CancelToken = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            this.CancelToken = cancellationToken;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="queueName"></param>
+        /// <param name="maxCount"></param>
+        /// <param name="cancellationToken"></param>
+        public TaskServiceQueue(string queueName, int maxCount, CancellationToken cancellationToken)
+        {
+            this.QueueName = queueName;
+            this.MaxCount = maxCount;
+            this.CancelToken = cancellationToken;
         }
         #endregion
 
         #region 属性
+        /// <summary>
+        /// 最大运行线程数
+        /// </summary>
+        private int _MaxCount = 1;
+        /// <summary>
+        /// 最大运行线程数
+        /// </summary>
+        private int MaxCount
+        {
+            get
+            {
+                if (this._MaxCount <= 0 || this._MaxCount >= 1000)
+                    this._MaxCount = 1;
+                return this._MaxCount;
+            }
+            set => this._MaxCount = value;
+        }
         /// <summary>
         /// 队列名称
         /// </summary>
@@ -72,13 +101,21 @@ namespace XiaoFeng.Threading
         /// </summary>
         private ManualResetEventSlim Manual = new ManualResetEventSlim(false);
         /// <summary>
+        /// 线程数锁
+        /// </summary>
+        private SemaphoreSlim Slim { get; set; } = new SemaphoreSlim(1, 1);
+        /// <summary>
+        /// 传播取消通知
+        /// </summary>
+        private CancellationToken CancelToken { get; set; } = CancellationToken.None;
+        /// <summary>
         /// 取消事件
         /// </summary>
-        private CancellationTokenSource CancelToken = new CancellationTokenSource();
+        private CancellationTokenSource CancelTokenSource = new CancellationTokenSource();
         /// <summary>
         /// 消费运行状态
         /// </summary>
-        public Boolean ConsumeState { get; private set; } = false;
+        public int ConsumeState = 0;
         /// <summary>
         /// 队列是否为空
         /// </summary>
@@ -95,6 +132,10 @@ namespace XiaoFeng.Threading
         /// 任务成功事件
         /// </summary>
         public event TaskQueueOk<T> TaskQueueOk;
+        /// <summary>
+        /// 任务队列空事件
+        /// </summary>
+        public event TaskQueueEmpty<T> TaskQueueEmpty;
         /// <summary>
         /// 配置
         /// </summary>
@@ -129,8 +170,7 @@ namespace XiaoFeng.Threading
         public virtual async Task PrependWorkItem(T t)
         {
             QueueData.Prepend(t);
-            Manual.Set();
-            RunConsume();
+            Wake();
             await Task.CompletedTask;
         }
         /// <summary>
@@ -140,33 +180,8 @@ namespace XiaoFeng.Threading
         public virtual async Task AddWorkItem(T t)
         {
             QueueData.Enqueue(t);
-            Manual.Set();
-            RunConsume();
+            Wake();
             await Task.CompletedTask;
-        }
-        /// <summary>
-        /// 启动消费
-        /// </summary>
-        private void RunConsume()
-        {
-            Synchronized.Run(() =>
-            {
-                if (this.CancelToken.IsCancellationRequested || !this.ConsumeState)
-                {
-                    this.CancelToken = new CancellationTokenSource();
-                    this.CancelToken.Token.Register(() =>
-                    {
-                        Synchronized.Run(() =>
-                        {
-                            this.ConsumeState = false;
-                        });
-                    });
-                    this.ConsumeState = true;
-                    //有新任务,重新启动任务.
-                    this.ConsoleWrite("有新任务,启动消费任务.");
-                    this.ConsumeTask();
-                }
-            });
         }
         /// <summary>
         /// 加入到队列前边
@@ -175,7 +190,7 @@ namespace XiaoFeng.Threading
         /// <returns></returns>
         public virtual async Task PrependWorkItem(Func<T> func)
         {
-            if(func!=null)await PrependWorkItem(func.Invoke());
+            if (func != null) await PrependWorkItem(func.Invoke());
         }
         /// <summary>
         /// 加入队列
@@ -210,6 +225,25 @@ namespace XiaoFeng.Threading
             }
         }
         /// <summary>
+        /// 唤醒消费
+        /// </summary>
+        void Wake()
+        {
+            Manual.Set();
+            if (Interlocked.CompareExchange(ref ConsumeState, 1, 0) == 0)
+            {
+                this.Slim = new SemaphoreSlim(this.MaxCount, this.MaxCount);
+                this.Manual = new ManualResetEventSlim(false);
+                if (this.CancelTokenSource == null || this.CancelTokenSource.IsCancellationRequested) this.CancelTokenSource = CancellationTokenSource.CreateLinkedTokenSource(this.CancelToken);
+                this.CancelTokenSource.Token.Register(() =>
+                {
+                    Interlocked.CompareExchange(ref ConsumeState, 0, 1);
+                });
+                this.ConsoleWrite($"-- 有新任务,启动消费任务[{this.QueueName}]. --");
+                this.ConsumeTask();
+            }
+        }
+        /// <summary>
         /// 消费任务线程
         /// </summary>
         void ConsumeTask()
@@ -218,16 +252,24 @@ namespace XiaoFeng.Threading
             {
                 if (this.QueueName.IsNotNullOrEmpty())
                     Thread.CurrentThread.Name = this.QueueName;
-                while (!this.CancelToken.Token.IsCancellationRequested)
+                while (!this.CancelTokenSource.Token.IsCancellationRequested)
                 {
+                    if (this.MaxCount > 1)
+                        await Slim.WaitAsync(TimeSpan.FromSeconds(Setting.IdleSeconds <= 0 ? 0 : Setting.IdleSeconds), this.CancelTokenSource.Token);
                     if (QueueData.TryDequeue(out var workItem))
                     {
                         try
                         {
-                            var task = this.ExecuteAsync(workItem, this.CancelToken.Token);
+                            var task = this.ExecuteAsync(workItem, this.CancelTokenSource.Token);
                             if (task.Status == TaskStatus.Created)
                                 task.Start();
-                            await Task.WhenAny(task).ContinueWith(t => this.TaskQueueOk?.Invoke(workItem)).ConfigureAwait(false);
+                            var taska = task.ContinueWith(t =>
+                              {
+                                  if (this.MaxCount > 1)
+                                      this.Slim.Release();
+                                  this.TaskQueueOk?.Invoke(workItem);
+                              }).ConfigureAwait(false);
+                            if (MaxCount == 1) await taska;
                         }
                         catch (Exception ex)
                         {
@@ -238,20 +280,25 @@ namespace XiaoFeng.Threading
                     }
                     else
                     {
+                        TaskQueueEmpty?.Invoke(this);
+
                         Manual.Reset();
-                        Manual.Wait(TimeSpan.FromSeconds(Setting.IdleSeconds <= 0 ? 0 : Setting.IdleSeconds));
+                        Manual.Wait(TimeSpan.FromSeconds(Setting.IdleSeconds <= 0 ? 0 : Setting.IdleSeconds), this.CancelTokenSource.Token);
+
                         if (QueueData.IsEmpty)
                         {
                             Synchronized.Run(() =>
                             {
                                 //等待时长超过消费等待时长限制 终止当前消费任务.
                                 this.ConsoleWrite($"等待时长超过消费等待时长 {Setting.IdleSeconds}S 限制,终止当前消费任务.");
-                                this.CancelToken.Cancel();
+                                this.CancelTokenSource.Cancel();
+                                GC.Collect();
                             });
                         }
+
                     }
                 }
-            }, this.CancelToken.Token, TaskCreationOptions.LongRunning).Start();
+            }, this.CancelTokenSource.Token, TaskCreationOptions.LongRunning).Start();
         }
         /// <summary>
         /// 停止消费任务
@@ -259,9 +306,10 @@ namespace XiaoFeng.Threading
         public virtual async Task StopAsync()
         {
             //取消任务
-            this.CancelToken.Cancel();
+            this.CancelTokenSource.Cancel();
             //清空队列
             this.QueueData = new ConcurrentQueue<T>();
+            GC.Collect();
             await Task.CompletedTask;
         }
         /// <summary>

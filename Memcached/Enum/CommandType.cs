@@ -165,7 +165,7 @@ namespace XiaoFeng.Memcached
         /// <summary>
         /// 认证
         /// </summary>
-        public static CommandType AUTH => new CommandType("auth", "set <key> <flags> <exptime> <bytes> [noreply]", (int)StoreCommand.Set, new string[] { "set" });
+        public static CommandType AUTH => new CommandType("auth", "set <key> <flags> <exptime> <bytes> [noreply]\r\nusername password\r\n", (int)StoreCommand.Set, new string[] { "set" });
         /// <summary>
         /// 给key设置一个值
         /// </summary>

@@ -159,9 +159,12 @@ namespace XiaoFeng.Redis
         public Dictionary<string, Dictionary<string, string>> GetMessageList(string key, int? start = null, int? end = null, int? count = null, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return null;
-            var list = new List<object> { key };
-            list.Add(start.HasValue ? Math.Abs(start.Value).ToString() : "-");
-            list.Add(end.HasValue ? Math.Abs(end.Value).ToString() : "+");
+            var list = new List<object>
+            {
+                key,
+                start.HasValue ? Math.Abs(start.Value).ToString() : "-",
+                end.HasValue ? Math.Abs(end.Value).ToString() : "+"
+            };
             if (count.HasValue)
             {
                 list.Add("COUNT");

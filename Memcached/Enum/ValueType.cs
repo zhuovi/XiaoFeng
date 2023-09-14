@@ -26,7 +26,7 @@ namespace XiaoFeng.Memcached
         /// <summary>
         /// 字节数组
         /// </summary>
-        ByteArray  =1,
+        ByteArray = 1,
         /// <summary>
         /// 对象
         /// </summary>

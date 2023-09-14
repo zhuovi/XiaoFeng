@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,6 +47,10 @@ namespace XiaoFeng.Config
         /// 作业调度日志等级
         /// </summary>
         LogType? JobLogLevel { get; set; }
+        /// <summary>
+        /// 作业记录记录次数
+        /// </summary>
+        int JobMessageCount { get; set; }
         /// <summary>
         /// 是否启用数据加密
         /// </summary>

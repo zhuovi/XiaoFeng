@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using XiaoFeng.Threading;
 
 /****************************************************
  *  Copyright © www.fayelf.com All Rights Reserved. *
@@ -46,4 +47,9 @@ namespace XiaoFeng.Event
     /// <typeparam name="T">数据类型</typeparam>
     /// <param name="workItem">数据</param>
     public delegate void TaskQueueOk<T>(T workItem);
+    /// <summary>
+    /// 任务队列为空事件
+    /// </summary>
+    /// <param name="taskService">任务队列</param>
+    public delegate void TaskQueueEmpty<T>(ITaskServiceQueue<T> taskService);
 }

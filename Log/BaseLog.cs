@@ -159,7 +159,7 @@ namespace XiaoFeng.Log
         /// </summary>
         /// <param name="message">消息</param>
         /// <param name="type">类型</param>
-        public virtual void Record(string message,LogType type = LogType.Info) => this.Write(new LogData
+        public virtual void Record(string message, LogType type = LogType.Info) => this.Write(new LogData
         {
             LogType = type,
             Message = message,
@@ -174,18 +174,17 @@ namespace XiaoFeng.Log
         public virtual void Write(LogData log)
         {
             /*if (log.RequestUrl.IsNotNullOrEmpty() && Web.HttpContext.Current != null && Web.HttpContext.Current.Request != null)
-                log.RequestUrl = Web.HttpContext.Current.Request.GetUri().ToString();*/
-
-            StackTrace trace = new StackTrace();
-
-            /*ThreadPool.QueueUserWorkItem((o) =>
+                log.RequestUrl = Web.HttpContext.Current.Request.GetUri().ToString();
+            var trace = new StackTrace();
+            ThreadPool.QueueUserWorkItem((o) =>
             {
                 StackTrace stack = o as StackTrace;
                 Thread.CurrentThread.IsBackground = true;
                 if (log.Tracking == null) log.Tracking = stack;
                 Run(log);
             }, trace);*/
-            if (log.Tracking == null) log.Tracking = trace;
+            if (log.Tracking == null)
+                log.Tracking = new StackTrace();
             Run(log);
         }
         /// <summary>

@@ -98,10 +98,10 @@ namespace XiaoFeng
         }
         #endregion
 
-            #region 构造器
-            /// <summary>
-            /// 构造器
-            /// </summary>
+        #region 构造器
+        /// <summary>
+        /// 构造器
+        /// </summary>
         public SnowFlake()
         {
             SnowFlakes(0L, -1);

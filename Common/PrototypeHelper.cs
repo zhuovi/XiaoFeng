@@ -11,6 +11,7 @@ using System.ComponentModel;
 using XiaoFeng.IO;
 using XiaoFeng.Json;
 using XiaoFeng.Xml;
+using XiaoFeng.Redis;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -488,7 +489,15 @@ namespace XiaoFeng
             if (t == type) return o;
             if (o.ToString().IsNumberic())
             {
-                var val = o.ToCast<int>();
+                object val;
+                if (o is Byte b)
+                    val = o;
+                else if (o is int i)
+                    val = i;
+                else if (o is long l)
+                    val = l;
+                else
+                    val = o.ToCast<int>();
                 if (Enum.IsDefined(type, val))
                     return Enum.Parse(type, o.ToString(), ignoreCase);
                 if (type.IsDefined(typeof(FlagsAttribute), false))
@@ -497,7 +506,7 @@ namespace XiaoFeng
                     Enum.GetNames(type).Each(v =>
                     {
                         var _val = (int)Enum.Parse(type, v);
-                        if ((val & _val) == _val) _ += "," + v;
+                        if (((int)val & _val) == _val) _ += "," + v;
                     });
                     return _.IsNullOrEmpty() ? type.GetEnumNames().First().ToEnum(type, ignoreCase) : Enum.Parse(type, _.Trim(','), ignoreCase);
                 }
@@ -3091,13 +3100,14 @@ namespace XiaoFeng
         public static string ToStringX(this object o)
         {
             if (o.IsNullOrEmpty()) return string.Empty;
+            if (o is string) return o.ToString();
+            var baseValueType = o.GetType().GetValueType();
+            if (baseValueType == ValueTypes.String || baseValueType == ValueTypes.Value) return o.ToString();
             if (o is JsonValue jsonValue)
                 return jsonValue.ToString();
             if (o is XmlValue xmlValue)
                 return xmlValue.ToString();
-            if (o is string) return o.ToString();
-            var baseValueType = o.GetType().GetValueType();
-            if (baseValueType == ValueTypes.String || baseValueType == ValueTypes.Value) return o.ToString();
+            
             if (baseValueType == ValueTypes.Anonymous || baseValueType == ValueTypes.Array|| baseValueType == ValueTypes.ArrayList || baseValueType== ValueTypes.List|| baseValueType== ValueTypes.DataTable || baseValueType == ValueTypes.Dictionary || baseValueType == ValueTypes.IDictionary || baseValueType == ValueTypes.IEnumerable || baseValueType == ValueTypes.Struct)
                 return o.ToJson();
             if (baseValueType == ValueTypes.Class)

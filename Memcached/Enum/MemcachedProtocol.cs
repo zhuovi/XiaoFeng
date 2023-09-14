@@ -16,6 +16,8 @@ namespace XiaoFeng.Memcached
 {
     /// <summary>
     /// Memcached协议
+    /// https://github.com/memcached/memcached/blob/master/doc/protocol.txt
+    /// https://github.com/memcached/memcached/blob/master/doc/protocol-binary.txt
     /// </summary>
     public enum MemcachedProtocol
     {

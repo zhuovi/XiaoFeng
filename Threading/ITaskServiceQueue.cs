@@ -71,10 +71,6 @@ namespace XiaoFeng.Threading
         /// <returns></returns>
         Task PrependWorkItem(Func<T> func);
         /// <summary>
-        /// 消费运行状态
-        /// </summary>
-        Boolean ConsumeState { get; }
-        /// <summary>
         /// 执行
         /// </summary>
         /// <param name="workItem">数据</param>

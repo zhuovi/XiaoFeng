@@ -88,7 +88,6 @@ namespace XiaoFeng.Memcached
             MemoryStream buffer = new MemoryStream();
             int c;
             bool Return = false;
-            var reader = this.Reader as System.Net.Sockets.NetworkStream;
             while ((c = Reader.ReadByte()) != -1)
             {
                 if (Return)

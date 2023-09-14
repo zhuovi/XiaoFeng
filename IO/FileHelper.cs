@@ -244,15 +244,6 @@ MIDI (mid)，文件头：4D546864
         public static Boolean WriteText(string path, string content, Encoding encoding = null)
         {
             if (path.IsNullOrEmpty()) return false;
-            //try
-            //{
-            //    File.WriteAllText(path, content, encoding == null ? Encoding.UTF8 : encoding);
-            //    return true;
-            //}
-            //catch
-            //{
-            //    return false;
-            //}
             return WriteBytes(path, content.GetBytes(encoding), 0);
         }
         /// <summary>
@@ -269,7 +260,7 @@ MIDI (mid)，文件头：4D546864
             Create(_path.GetDirectoryName(), FileAttribute.Directory);
             try
             {
-                using (var fs = new FileStream(_path, offset == 0 ? FileMode.Create : FileMode.Append, FileAccess.Write, FileShare.Read,4096))
+                using (var fs = new FileStream(_path, offset == 0 ? FileMode.Create : FileMode.Append, FileAccess.Write, FileShare.Read, 4096))
                 {
                     if (offset == 0)
                     {
@@ -310,18 +301,9 @@ MIDI (mid)，文件头：4D546864
         /// <param name="content">文件内容</param>
         /// <param name="encoding">文件编码</param>
         /// <returns></returns>
-        public static Boolean AppendText(string path, string content, Encoding encoding)
+        public static Boolean AppendText(string path, string content, Encoding encoding = null)
         {
             if (path.IsNullOrEmpty() || content.IsNullOrEmpty()) return false;
-            //try
-            //{
-            //    File.AppendAllText(path, content, encoding);
-            //    return true;
-            //}
-            //catch
-            //{
-            //    return false;
-            //}
             return WriteBytes(path, content.GetBytes(encoding), -1);
         }
         /// <summary>

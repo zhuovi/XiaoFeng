@@ -77,7 +77,7 @@ namespace XiaoFeng.Memcached
             if (this.CommandType == CommandType.AUTH)
             {
                 this.Value = Helper.Serialize(value, out var type, this.CompressLength);
-                line += $"auth {value.GetByteCount()}";
+                line += $"auth   {value.GetByteCount()}";
             }
             else
             {

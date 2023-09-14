@@ -6,6 +6,7 @@ using System.Threading;
 using System.Security;
 using System.Collections.Concurrent;
 using XiaoFeng.Config;
+using XiaoFeng.Data.SQL;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -62,11 +63,11 @@ namespace XiaoFeng.Threading
         /// <summary>
         /// 消费运行状态
         /// </summary>
-        private Boolean ConsumeState { get; set; } = false;
+        private int ConsumeState = 0;
         /// <summary>
         /// 取消信号
         /// </summary>
-        public CancellationTokenSource CancelToken { get; set; } = new CancellationTokenSource();
+        public CancellationTokenSource CancelTokenSource { get; set; } = new CancellationTokenSource();
         /// <summary>
         /// 线程同步信号
         /// </summary>
@@ -186,7 +187,20 @@ namespace XiaoFeng.Threading
                 job.Times = job.Times.OrderBy(a => a.Month).ThenBy(a => a.Day).ThenBy(a => a.Week).ThenBy(a => a.TotalSeconds).ToList();
             }
             job.Status = JobStatus.Waiting;
+            if (job.CancelToken == null || job.CancelToken.IsCancellationRequested) job.CancelToken = new CancellationTokenSource();
+            job.CancelToken.Token.Register(() =>
+            {
+                if (this.SchedulerJobs.TryRemove(job.ID, out var joba))
+                {
+                    joba.StopCallBack?.Invoke(joba);
+                    joba.TryDispose();
+                    joba = null;
+                    GC.Collect();
+                }
+            });
             this.SchedulerJobs.TryAdd(job.ID, job);
+            IntervalJob(job);
+            OnceJob(job);
             this.Wake();
             await Task.CompletedTask;
         }
@@ -221,8 +235,10 @@ namespace XiaoFeng.Threading
         public void Remove(Guid ID)
         {
             if (ID == Guid.Empty) return;
-            this.SchedulerJobs.TryRemove(ID, out var job);
-            if (job != null) job.CancelToken.Cancel();
+            if (this.SchedulerJobs.TryRemove(ID, out var job))
+            {
+                if (!job.CancelToken.IsCancellationRequested) job.CancelToken.Cancel();
+            }
             this.Wake();
         }
         /// <summary>
@@ -242,31 +258,19 @@ namespace XiaoFeng.Threading
         public void Wake()
         {
             Manual.Set();
-            Synchronized.Run(() =>
+            if (Interlocked.CompareExchange(ref ConsumeState, 1, 0) == 0)
             {
-                if (this.CancelToken.IsCancellationRequested || !this.ConsumeState)
+                this.Manual = new ManualResetEventSlim(false);
+                if (this.CancelTokenSource == null || this.CancelTokenSource.IsCancellationRequested) this.CancelTokenSource = new CancellationTokenSource();
+                this.CancelTokenSource.Token.Register(() =>
                 {
-                    this.CancelToken = new CancellationTokenSource();
-                    this.CancelToken.Token.Register(() =>
-                    {
-                        Synchronized.Run(() =>
-                        {
-                            this.ConsumeState = false;
-                        });
-                    });
-                    this.ConsumeState = true;
-                    //Console.ForegroundColor = ConsoleColor.Magenta;
-                    this.Log($"-- 有新作业任务,启动调度器[{this.Name}]. --");
-                    //Console.ResetColor();
-                    this.Process();
-                }
-            });
-            /*var e = this.WaitForTimer;
-            if (e != null)
-            {
-                var swh = e.SafeWaitHandle;
-                if (swh != null && !swh.IsClosed) e.Set();
-            }*/
+                    Interlocked.CompareExchange(ref ConsumeState, 0, 1);
+                    this.SchedulerJobs.Clear();
+                    GC.Collect();
+                });
+                this.Log($"-- 有新作业任务,启动调度器[{this.Name}]. --");
+                this.Process();
+            }
         }
         #endregion
 
@@ -281,12 +285,12 @@ namespace XiaoFeng.Threading
             {
                 if (this.Name.IsNotNullOrEmpty())
                     Thread.CurrentThread.Name = this.Name;
-                while (!this.CancelToken.IsCancellationRequested)
+                while (!this.CancelTokenSource.IsCancellationRequested)
                 {
                     if (this.SchedulerJobs.Count == 0)
                     {
                         this.Period = this.Setting.JobSchedulerWaitTimeout * 1000;
-                        this.CancelToken.Cancel();
+                        this.CancelTokenSource.Cancel();
                         this.Log($"-- 暂无作业任务,终止调度器[{this.Name}]. --");
                         break;
                     }
@@ -295,6 +299,7 @@ namespace XiaoFeng.Threading
                     var now = DateTime.Now;
                     this.SchedulerJobs.Values.Each(job =>
                     {
+                        if (job.TimerType == TimerType.Interval || job.TimerType == TimerType.Once) return;
                         long period = 0;
                         if (job.Status == JobStatus.Waiting && this.CheckTimes(job, now, out period))
                         {
@@ -315,12 +320,13 @@ namespace XiaoFeng.Threading
                                  * Date:2022-04-01
                                  * 优化调度执行完成后再间隔时间
                                  */
-                                Task.Factory.StartNew(this.Execute, job, CancellationTokenSource.CreateLinkedTokenSource(this.CancelToken.Token, job.CancelToken.Token).Token, TaskCreationOptions.LongRunning, TaskScheduler.Current).ContinueWith((t, j) =>
+                                var cancel = CancellationTokenSource.CreateLinkedTokenSource(this.CancelTokenSource.Token, job.CancelToken.Token);
+                                Task.Factory.StartNew(this.Execute, job, cancel.Token, TaskCreationOptions.LongRunning, TaskScheduler.Current).ContinueWith((t, j) =>
                                 {
                                     var _job = (IJob)j;
                                     if (_job.CompleteCallBack != null)
                                         _job.Status = JobStatus.Waiting;
-                                }, job, CancellationTokenSource.CreateLinkedTokenSource(this.CancelToken.Token, job.CancelToken.Token).Token);
+                                }, job, cancel.Token);
                             }
                             /*计算下次运行时长*/
                             this.CheckTimes(job, DateTime.Now.AddMilliseconds(job.Deviation * 2), out period);
@@ -331,14 +337,82 @@ namespace XiaoFeng.Threading
                             {
                                 this.Period = Math.Min(this.Period, period);
                             });
-                        this.Log($"-- 下一次运行作业时间为:{now.AddMilliseconds(this.Period):yyyy-MM-dd HH:mm:ss.ffff} --");
+                        this.Log($"-- 下一次检测作业时间为:{now.AddMilliseconds(this.Period):yyyy-MM-dd HH:mm:ss.ffff} --");
                     });
                     //this.Log($"等待间隔:{this.Period}");
                     if (this.Manual == null) this.Manual = new ManualResetEventSlim(false);
                     Manual.Reset();
                     Manual.Wait(TimeSpan.FromMilliseconds(this.Period < 0 ? 10 : this.Period));
                 }
-            }, CancelToken.Token, TaskCreationOptions.LongRunning).Start();
+                GC.Collect();
+            }, CancelTokenSource.Token, TaskCreationOptions.LongRunning).Start();
+        }
+        /// <summary>
+        /// 只运行一次的作业
+        /// </summary>
+        /// <param name="job"></param>
+        private void OnceJob(IJob job)
+        {
+            if (job.TimerType == TimerType.Once)
+            {
+                var cancel = CancellationTokenSource.CreateLinkedTokenSource(this.CancelTokenSource.Token, job.CancelToken.Token);
+                Task.Run(async () =>
+                {
+                    if (job.NextTime.HasValue)
+                        await Task.Delay(job.NextTime.Value.Subtract(DateTime.Now)).ConfigureAwait(false);
+                    job.Status = JobStatus.Runing;
+                    job.LastTime = DateTime.Now;
+                    this.Log($"开始运行作业 [{job.Name}] - {this.SchedulerJobs.Count}");
+                    if (job.CompleteCallBack == null) job.Status = JobStatus.Waiting;
+                    Execute(job);
+                    job.Stop();
+                }, cancel.Token);
+            }
+        }
+        /// <summary>
+        /// 专一处理定时间隔作业
+        /// </summary>
+        /// <param name="job">作业</param>
+        private void IntervalJob(IJob job)
+        {
+            if (job.TimerType == TimerType.Interval)
+            {
+                var cancel = CancellationTokenSource.CreateLinkedTokenSource(this.CancelTokenSource.Token, job.CancelToken.Token);
+                Task.Run(async () =>
+                {
+                    if (job.ExpireTime.HasValue)
+                    {
+                        if (job.ExpireTime.Value > DateTime.Now)
+                            cancel.CancelAfter(job.ExpireTime.Value.Subtract(DateTime.Now));
+
+                        await Task.Delay(job.NextTime.Value.Subtract(DateTime.Now)).ConfigureAwait(false);
+                    }
+                    while (!cancel.IsCancellationRequested)
+                    {
+                        job.Status = JobStatus.Runing;
+                        job.LastTime = DateTime.Now;
+                        this.Log($"开始运行作业 [{job.Name}] - {this.SchedulerJobs.Count}");
+                        if (job.CompleteCallBack == null) job.Status = JobStatus.Waiting;
+                        if (!job.Async)
+                            Execute(job);
+                        else
+                        {
+                            /*
+                             * Date:2022-04-01
+                             * 优化调度执行完成后再间隔时间
+                             */
+                            var task = Task.Factory.StartNew(this.Execute, job, cancel.Token, TaskCreationOptions.LongRunning, TaskScheduler.Current).ContinueWith((t, j) =>
+                             {
+                                 var _job = (IJob)j;
+                                 if (_job.CompleteCallBack != null)
+                                     _job.Status = JobStatus.Waiting;
+                             }, job, cancel.Token);
+                            if (job.CompleteCallBack != null) await task;
+                        }
+                        await Task.Delay(TimeSpan.FromMilliseconds(job.Period)).ConfigureAwait(false);
+                    }
+                }, cancel.Token);
+            }
         }
         #endregion
 
@@ -398,6 +472,8 @@ namespace XiaoFeng.Threading
         /// <param name="job">作业</param>
         private void Success(IJob job)
         {
+            if (job.Message.Count >= this.Setting.JobMessageCount)
+                job.Message.Clear();
             job.Message.Add("执行作业[{0}]成功.[{1}]".format(job.Name, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")));
             this.Log($"执行作业 [{job.Name}] 完成.");
             job.SuccessCount++;
@@ -415,6 +491,8 @@ namespace XiaoFeng.Threading
         /// <param name="job">作业</param>
         private void Failure(IJob job)
         {
+            if (job.Message.Count >= this.Setting.JobMessageCount)
+                job.Message.Clear();
             job.Message.Add("执行作业[{0}]失败.[{1}]".format(job.Name, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")));
             job.FailureCount++;
             if (job.TimerType == TimerType.Once || job.IsDestroy || (job.MaxCount.HasValue && job.SuccessCount + job.FailureCount >= job.MaxCount))
@@ -423,8 +501,6 @@ namespace XiaoFeng.Threading
             }
         }
         #endregion
-
-        
 
         #region 检查定时器是否到期 升级
         /// <summary>检查定时器是否到期</summary>
@@ -804,7 +880,11 @@ namespace XiaoFeng.Threading
         /// <summary>
         /// 停止调度器
         /// </summary>
-        public void Stop() => this.CancelToken.Cancel();
+        public void Stop()
+        {
+            if (this.CancelTokenSource != null && !this.CancelTokenSource.IsCancellationRequested)
+                this.CancelTokenSource.Cancel();
+        }
         #endregion
 
         #region 作业列表

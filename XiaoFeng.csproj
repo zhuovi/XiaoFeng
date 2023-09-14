@@ -24,7 +24,7 @@
 		<PackageProjectUrl>https://www.eelf.cn</PackageProjectUrl>
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>增加扩展方法Object.ToStringX();优化扩展方法GetValue中字符串转换对象的匹配;优化Json可以把对象转成字符串的属性StringObjectConverter;</PackageReleaseNotes>
+		<PackageReleaseNotes>增加扩展方法Object.ToStringX();优化扩展方法GetValue中字符串转换对象的匹配;优化Json可以把对象转成字符串的属性StringObjectConverter;Setting设置Job消息日志最大条数;优化作业调度,把一次性作业,间隔作业独立处理,提高定时调度性能,优化作业记录日志最大记录减少内存开支;任务队列升级到可多线程消费任务;优化调度作业取消事件;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>
