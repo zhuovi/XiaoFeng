@@ -315,7 +315,7 @@ namespace XiaoFeng.Json
                     if (m.MemberType == MemberTypes.Property)
                     {
                         var p = m as PropertyInfo;
-                        if (!p.CanWrite || !p.CanRead) return;
+                        if (!p.CanWrite && !p.CanRead) return;
                         mType = p.PropertyType;
                         value = p.GetValue(obj, null);
                     }
