@@ -47,7 +47,7 @@ namespace XiaoFeng.Collections
         /// <summary>
         /// 最小数量
         /// </summary>
-        public virtual int Min { get; set; } = 0;
+        public virtual int Min { get; set; } = 1;
         /// <summary>
         /// 空闲多长时间关闭资源 单位为秒 0为不清除
         /// </summary>
@@ -216,7 +216,7 @@ namespace XiaoFeng.Collections
         {
             if (value == null || value.Value == null) return false;
             //关闭资源
-            this.Close(value.Value);
+            //this.Close(value.Value);
             try
             {
                 //从繁忙队列找到并移除缓存项
@@ -295,6 +295,7 @@ namespace XiaoFeng.Collections
         /// </summary>
         public override void Dispose()
         {
+            this.BusyItems.Clear();
             base.Dispose();
             if (Job.Status == JobStatus.Waiting) Job.Stop();
             Job.TryDispose();

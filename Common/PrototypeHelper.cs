@@ -12,6 +12,7 @@ using XiaoFeng.IO;
 using XiaoFeng.Json;
 using XiaoFeng.Xml;
 using XiaoFeng.Redis;
+using System.Runtime.CompilerServices;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -498,7 +499,7 @@ namespace XiaoFeng
                     val = l;
                 else
                     val = o.ToCast<int>();
-                if (Enum.IsDefined(type, val))
+                if (Enum.IsDefined(type, Convert.ChangeType(val, type.GetEnumUnderlyingType())))
                     return Enum.Parse(type, o.ToString(), ignoreCase);
                 if (type.IsDefined(typeof(FlagsAttribute), false))
                 {
@@ -2092,7 +2093,7 @@ namespace XiaoFeng
         /// <param name="_">字符串</param>
         /// <param name="encoding">编码</param>
         /// <returns>一个字节数组，包含对指定的字符集进行编码的结果</returns>
-        public static byte[] GetBytes(this String _, Encoding encoding = null) => _.IsNullOrEmpty() ? null : (encoding ?? Encoding.UTF8).GetBytes(_);
+        public static byte[] GetBytes(this String _, Encoding encoding = null) => _.IsNullOrEmpty() ? Array.Empty<byte>() : (encoding ?? Encoding.UTF8).GetBytes(_);
         /// <summary>
         /// 字符串转字节
         /// </summary>
@@ -3129,6 +3130,49 @@ namespace XiaoFeng
                     return o.ToJson();
             }
             return o.ToString();
+        }
+        #endregion
+
+        #region 创建实例
+        /// <summary>
+        /// 实例化对象 只实例化 类 结构 匿名对象
+        /// </summary>
+        /// <param name="type">类型</param>
+        /// <param name="data">数据</param>
+        /// <returns></returns>
+        public static object CreateInstance(this Type type, IDictionary<string, object> data)
+        {
+            var BaseType = type.GetValueType();
+            if (BaseType == ValueTypes.Anonymous)
+            {
+                var constructor = type.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                                 .OrderBy(c => c.GetParameters().Length).First();
+                var parameters = constructor.GetParameters();
+                var values = new object[parameters.Length];
+                int index = 0;
+                parameters.Each(item => values[index++] = data[item.Name].GetValue(item.ParameterType));
+                return constructor.Invoke(values);
+            }
+            if (BaseType == ValueTypes.Dictionary || BaseType == ValueTypes.IDictionary) return data;
+            if(BaseType == ValueTypes.Class)
+            {
+                var val = Activator.CreateInstance(type);
+                type.GetProperties(BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance).Each(p =>
+                {
+                    p.SetValue(val, data[p.Name]?.GetValue(p.PropertyType));
+                });
+                return val;
+            }
+            if(BaseType == ValueTypes.Struct)
+            {
+                var val = Activator.CreateInstance(type);
+                type.GetFields(BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance).Each(p =>
+                {
+                    p.SetValue(val, data[p.Name]?.GetValue(p.FieldType));
+                });
+                return val;
+            }
+            return null;
         }
         #endregion
     }

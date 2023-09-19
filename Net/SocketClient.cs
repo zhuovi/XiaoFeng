@@ -192,31 +192,36 @@ namespace XiaoFeng.Net
             if (port <= 0) port = 1006;
             if (this.Active)
                 throw new Exception("Socket已经连接.");
-            IPAddress[] addresses = Dns.GetHostAddresses(hostname);
-            ExceptionDispatchInfo lastex = null;
 
-            try
+            IPAddress[] addresses = Dns.GetHostAddresses(hostname);
+
+            this.EndPoint = new IPEndPoint(addresses.First(a => a.AddressFamily == AddressFamily.InterNetwork), port);
+
+            return this.CompleteConnect(() =>
             {
-                foreach (IPAddress address in addresses)
+                ExceptionDispatchInfo lastex = null;
+
+                try
                 {
-                    try
+                    foreach (IPAddress address in addresses)
                     {
-                        if (this.Client == null)
+                        try
                         {
-                            if ((address.AddressFamily == AddressFamily.InterNetwork && Socket.OSSupportsIPv4) || Socket.OSSupportsIPv6)
+                            if (this.Client == null)
                             {
-                                if (address.IsIPv4MappedToIPv6)
+                                if ((address.AddressFamily == AddressFamily.InterNetwork && Socket.OSSupportsIPv4) || Socket.OSSupportsIPv6)
                                 {
-                                    this.Client.DualMode = true;
-                                }
-                                try
-                                {
-                                    this.EndPoint = new IPEndPoint(address, port);
-                                    InitializeClientSocket();
-                                    if (this.ConnectTimeout <= 0)
-                                        this.Client.Connect(address, port);
-                                    else
+                                    if (address.IsIPv4MappedToIPv6)
                                     {
+                                        this.Client.DualMode = true;
+                                    }
+                                    try
+                                    {
+                                        this.EndPoint = new IPEndPoint(address, port);
+                                        InitializeClientSocket();
+                                        if (this.ConnectTimeout <= 0)
+                                            this.ConnectTimeout = 10_000;
+
                                         var result = this.Client.BeginConnect(address, port, null, null);
                                         if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
                                         {
@@ -224,39 +229,36 @@ namespace XiaoFeng.Net
                                             return SocketError.TimedOut;
                                         }
                                         this.Client.EndConnect(result);
+                                        return SocketError.Success;
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        this.Client = null;
+                                        this.OnClientError?.Invoke(this, this.EndPoint, ex);
                                     }
                                 }
-                                catch (Exception ex)
-                                {
-                                    this.Client = null;
-                                    this.OnClientError?.Invoke(this, this.EndPoint, ex);
-                                }
+                                break;
                             }
-                            this._Active = true;
-                            this.SocketState = SocketState.Runing;
-                            break;
+                            else if (address.AddressFamily == AddressFamily.Unknown)
+                            {
+                               return this.Connect(new IPEndPoint(address, port));
+                            }
                         }
-                        else if (address.AddressFamily == AddressFamily.Unknown)
+                        catch (Exception ex) when (!(ex is OutOfMemoryException))
                         {
-                            this.Connect(new IPEndPoint(address, port));
-                            this.EndPoint = new IPEndPoint(address, port);
-                            this._Active = true;
+                            lastex = ExceptionDispatchInfo.Capture(ex);
                         }
                     }
-                    catch (Exception ex) when (!(ex is OutOfMemoryException))
+                    return SocketError.SocketError;
+                }
+                finally
+                {
+                    if (!this.Active)
                     {
-                        lastex = ExceptionDispatchInfo.Capture(ex);
+                        lastex?.Throw();
                     }
                 }
-            }
-            finally
-            {
-                if (!this.Active)
-                {
-                    lastex?.Throw();
-                }
-            }
-            return Active ? SocketError.Success : SocketError.SocketError;
+            });
         }
         ///<inheritdoc/>
         public virtual SocketError Connect(IPAddress address, int port)
@@ -274,13 +276,12 @@ namespace XiaoFeng.Net
                 remoteEP = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1006);
             }
             this.EndPoint = remoteEP;
-            InitializeClientSocket();
-            try
+            return this.CompleteConnect(() =>
             {
-                if (this.ConnectTimeout <= 0)
-                    this.Client.Connect(remoteEP);
-                else
+                try
                 {
+                    if (this.ConnectTimeout <= 0)
+                        this.ConnectTimeout = 10_000;
                     var result = this.Client.BeginConnect(this.EndPoint, null, null);
                     if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
                     {
@@ -288,31 +289,28 @@ namespace XiaoFeng.Net
                         return SocketError.TimedOut;
                     }
                     this.Client.EndConnect(result);
-                    this._Active = true;
-                    this.SocketState = SocketState.Runing;
+                    return SocketError.Success;
                 }
-                return SocketError.Success;
-            }
-            catch (Exception ex)
-            {
-                this.OnClientError?.Invoke(this, this.EndPoint, ex);
-                this._Active = false;
-                this.SocketState = SocketState.Stop;
-                return SocketError.SocketError;
-            }
+                catch (Exception ex)
+                {
+                    this.OnClientError?.Invoke(this, this.EndPoint, ex);
+                    return SocketError.SocketError;
+                }
+            });
         }
         ///<inheritdoc/>
         public virtual SocketError Connect(IPAddress[] ipAddresses, int port)
         {
             if (ipAddresses == null || ipAddresses.Length == 0) throw new Exception("服务端地址为空.");
             if (port <= 0) port = 1006;
-            InitializeClientSocket();
-            try
+            this.EndPoint = new IPEndPoint(ipAddresses.First(a => a.AddressFamily == AddressFamily.InterNetwork), port);
+            return this.CompleteConnect(() =>
             {
-                if (this.ConnectTimeout <= 0)
-                    this.Client.Connect(ipAddresses, port);
-                else
+                try
                 {
+                    if (this.ConnectTimeout <= 0)
+                        this.ConnectTimeout = 10_000;
+
                     var result = this.Client.BeginConnect(ipAddresses, port, null, null);
                     if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
                     {
@@ -320,40 +318,36 @@ namespace XiaoFeng.Net
                         return SocketError.TimedOut;
                     }
                     this.Client.EndConnect(result);
+                    return SocketError.Success;
                 }
-            }
-            catch (Exception ex)
-            {
-                this.Client = null;
-                this.OnClientError?.Invoke(this, this.EndPoint, ex);
-                return SocketError.SocketError;
-            }
-            this.EndPoint = this.Client.RemoteEndPoint.ToIPEndPoint();
-            this._Active = true;
-            this.SocketState = SocketState.Runing;
-            return SocketError.Success;
+                catch (Exception ex)
+                {
+                    this.Client = null;
+                    this.OnClientError?.Invoke(this, this.EndPoint, ex);
+                    return SocketError.SocketError;
+                }
+            });
         }
         ///<inheritdoc/>
         public virtual async Task<SocketError> ConnectAsync(IPAddress address, int port)
         {
             if (address == null) address = IPAddress.Parse("127.0.0.1");
             if (port <= 0) port = 1006;
+            this.EndPoint = new IPEndPoint(address, port);
             return await this.CompleteConnectAsync(async () =>
              {
                  try
                  {
                      if (this.ConnectTimeout <= 0)
-                         await this.Client.ConnectAsync(address, port).ConfigureAwait(false);
-                     else
+                         this.ConnectTimeout = 10_000;
+
+                     var result = this.Client.BeginConnect(address, port, null, null);
+                     if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
                      {
-                         var result = this.Client.BeginConnect(address, port, null, null);
-                         if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
-                         {
-                             this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
-                             return await Task.FromResult(SocketError.TimedOut).ConfigureAwait(false);
-                         }
-                         this.Client.EndConnect(result);
+                         this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
+                         return await Task.FromResult(SocketError.TimedOut).ConfigureAwait(false);
                      }
+                     this.Client.EndConnect(result);
                      return await Task.FromResult(SocketError.Success).ConfigureAwait(false);
                  }
                  catch (Exception ex)
@@ -371,22 +365,21 @@ namespace XiaoFeng.Net
         {
             if (host.IsNullOrEmpty()) host = "127.0.0.1";
             if (port <= 0) port = 1006;
+            this.EndPoint = new IPEndPoint(Dns.GetHostAddresses(host).First(a=>a.AddressFamily == AddressFamily.InterNetwork), port);
             return await this.CompleteConnectAsync(async () =>
             {
                 try
                 {
                     if (this.ConnectTimeout <= 0)
-                        await this.Client.ConnectAsync(host, port).ConfigureAwait(false);
-                    else
+                        this.ConnectTimeout = 10_000;
+
+                    var result = this.Client.BeginConnect(host, port, null, null);
+                    if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
                     {
-                        var result = this.Client.BeginConnect(host, port, null, null);
-                        if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
-                        {
-                            this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
-                            return await Task.FromResult(SocketError.TimedOut).ConfigureAwait(false);
-                        }
-                        this.Client.EndConnect(result);
+                        this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
+                        return await Task.FromResult(SocketError.TimedOut).ConfigureAwait(false);
                     }
+                    this.Client.EndConnect(result);
                     return await Task.FromResult(SocketError.Success).ConfigureAwait(false);
                 }
                 catch (Exception ex)
@@ -402,22 +395,21 @@ namespace XiaoFeng.Net
         {
             if (addresses == null || addresses.Length == 0) addresses = new IPAddress[] { IPAddress.Parse("127.0.0.1") };
             if (port <= 0) port = 1006;
+            this.EndPoint = new IPEndPoint(addresses.First(a => a.AddressFamily == AddressFamily.InterNetwork), port);
             return await this.CompleteConnectAsync(async () =>
             {
                 try
                 {
                     if (this.ConnectTimeout <= 0)
-                        await this.Client.ConnectAsync(addresses, port).ConfigureAwait(false);
-                    else
+                        this.ConnectTimeout = 10_000;
+
+                    var result = this.Client.BeginConnect(addresses, port, null, null);
+                    if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
                     {
-                        var result = this.Client.BeginConnect(addresses, port, null, null);
-                        if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
-                        {
-                            this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
-                            return await Task.FromResult(SocketError.TimedOut).ConfigureAwait(false);
-                        }
-                        this.Client.EndConnect(result);
+                        this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
+                        return await Task.FromResult(SocketError.TimedOut).ConfigureAwait(false);
                     }
+                    this.Client.EndConnect(result);
                     return await Task.FromResult(SocketError.Success).ConfigureAwait(false);
                 }
                 catch (Exception ex)
@@ -435,22 +427,21 @@ namespace XiaoFeng.Net
             {
                 remoteEP = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1006);
             }
+            this.EndPoint = remoteEP;
             return await this.CompleteConnectAsync(async () =>
             {
                 try
                 {
                     if (this.ConnectTimeout <= 0)
-                        await this.Client.ConnectAsync(remoteEP).ConfigureAwait(false);
-                    else
+                        this.ConnectTimeout = 10_000;
+
+                    var result = this.Client.BeginConnect(remoteEP, null, null);
+                    if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
                     {
-                        var result = this.Client.BeginConnect(remoteEP, null, null);
-                        if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
-                        {
-                            this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
-                            return await Task.FromResult(SocketError.TimedOut).ConfigureAwait(false);
-                        }
-                        this.Client.EndConnect(result);
+                        this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
+                        return await Task.FromResult(SocketError.TimedOut).ConfigureAwait(false);
                     }
+                    this.Client.EndConnect(result);
                     return await Task.FromResult(SocketError.Success).ConfigureAwait(false);
                 }
                 catch (Exception ex)
@@ -470,10 +461,38 @@ namespace XiaoFeng.Net
         {
             InitializeClientSocket();
             var result = await task.Invoke().ConfigureAwait(false);
-            this.EndPoint = this.Client.RemoteEndPoint.ToIPEndPoint();
-            this._Active = true;
-            this.SocketState = SocketState.Runing;
+            if (result == SocketError.Success)
+            {
+                this.EndPoint = this.Client.RemoteEndPoint.ToIPEndPoint();
+                this._Active = true;
+                this.SocketState = SocketState.Runing;
+            }
+            else
+            {
+                this.SocketState = SocketState.Idle;
+            }
             return await Task.FromResult(result);
+        }
+        /// <summary>
+        /// 连接完成
+        /// </summary>
+        /// <param name="func">回调</param>
+        /// <returns></returns>
+        private SocketError CompleteConnect(Func<SocketError> func)
+        {
+            InitializeClientSocket();
+            var result = func.Invoke();
+            if (result == SocketError.Success)
+            {
+                this.EndPoint = this.Client.RemoteEndPoint.ToIPEndPoint();
+                this._Active = true;
+                this.SocketState = SocketState.Runing;
+            }
+            else
+            {
+                this.SocketState = SocketState.Idle;
+            }
+            return result;
         }
         #endregion
 

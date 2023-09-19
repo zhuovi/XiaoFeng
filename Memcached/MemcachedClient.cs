@@ -10,6 +10,7 @@ using XiaoFeng.Data;
 using XiaoFeng.Threading;
 using XiaoFeng.Memcached.Transform;
 using System.Linq;
+using XiaoFeng.Memcached.Protocol.Binary;
 /****************************************************************
 *  Copyright © (2023) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -290,6 +291,7 @@ namespace XiaoFeng.Memcached
         /// <returns></returns>
         public Boolean Auth()
         {
+            return true;
             /*
              * Authentication
 set <key> <flags> <exptime> <bytes>\r\n
@@ -313,6 +315,7 @@ of the username/password payload.
         /// <returns></returns>
         public async Task<Boolean> AuthAsync()
         {
+            return true;
             /*
              * Authentication
 set <key> <flags> <exptime> <bytes>\r\n

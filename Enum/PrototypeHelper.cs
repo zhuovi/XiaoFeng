@@ -44,7 +44,7 @@ namespace XiaoFeng
         public static string GetEnumName(this Enum e)
         {
             var f = e.GetType().GetField(e.ToString());
-            if (f!=null && f.IsDefined(typeof(EnumNameAttribute), false))
+            if (f != null && f.IsDefined(typeof(EnumNameAttribute), false))
                 return f.GetEnumName(false);
             return e.ToString();
         }

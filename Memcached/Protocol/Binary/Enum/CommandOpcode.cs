@@ -72,8 +72,8 @@ namespace XiaoFeng.Memcached.Protocol.Binary
         /// 清理缓存
         /// </summary>
         [Description("清理缓存")]
-        [EnumName("Flush")]
-        Flush = 0x08,
+        [EnumName("FlushAll")]
+        FlushAll = 0x08,
         /// <summary>
         /// GetQ
         /// </summary>
@@ -85,7 +85,7 @@ namespace XiaoFeng.Memcached.Protocol.Binary
         /// </summary>
         [Description("No-op")]
         [EnumName("No-op")]
-        NoOp = 0x0A,
+        Noop = 0x0A,
         /// <summary>
         /// 版本
         /// </summary>
@@ -189,9 +189,9 @@ namespace XiaoFeng.Memcached.Protocol.Binary
         [EnumName("Verbosity")]
         Verbosity = 0x1B,
         /// <summary>
-        /// Touch
+        /// 更新过期时间
         /// </summary>
-        [Description("Touch")]
+        [Description("更新过期时间")]
         [EnumName("Touch")]
         Touch = 0x1C,
         /// <summary>

@@ -1397,6 +1397,16 @@ namespace XiaoFeng.Json
             ValueTypes types = type.GetValueType();
             if (type == typeof(object)) return jsonValue.value;
             Dictionary<string, JsonValue> list = jsonValue.AsObject();
+            if (type.Name.IndexOf("AnonymousType", StringComparison.OrdinalIgnoreCase) > -1)
+            {
+                var constructor = type.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                            .OrderBy(c => c.GetParameters().Length).First();
+                var parameters = constructor.GetParameters();
+                var values = new object[parameters.Length];
+                int index = 0;
+                parameters.Each(item => values[index++] = list[item.Name].GetValue(item.ParameterType));
+                return constructor.Invoke(values);
+            }
             try
             {
                 if (target == null) target = Activator.CreateInstance(type);

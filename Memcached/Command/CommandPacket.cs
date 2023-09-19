@@ -137,6 +137,13 @@ namespace XiaoFeng.Memcached
             if (stream == null || !stream.CanWrite) return;
             var lines = this.ToBytes();
             await stream.WriteAsync(lines, 0, lines.Length).ConfigureAwait(false);
+           await stream.WriteAsync(this.EOF, 0, this.EOF.Length).ConfigureAwait(false);
+
+            if (this.Value != null)
+            {
+               await stream.WriteAsync(this.Value, 0, this.Value.Length).ConfigureAwait(false);
+                await stream.WriteAsync(this.EOF, 0, this.EOF.Length).ConfigureAwait(false); 
+            }
             await stream.FlushAsync().ConfigureAwait(false);
         }
         #endregion

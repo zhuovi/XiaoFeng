@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net.Sockets;
+using XiaoFeng.Net;
 
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
@@ -63,6 +64,10 @@ namespace XiaoFeng.Memcached.IO
         /// 库索引
         /// </summary>
         int? DbNum { get; set; }
+        /// <summary>
+        /// 客户端
+        /// </summary>
+        ISocketClient Client { get; set; }
         /// <summary>
         /// 连接
         /// </summary>

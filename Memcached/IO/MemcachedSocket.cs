@@ -93,7 +93,7 @@ namespace XiaoFeng.Memcached.IO
         /// <summary>
         /// 客户端
         /// </summary>
-        private ISocketClient Client { get; set; }
+        public ISocketClient Client { get; set; }
         #endregion
 
         #region 方法
