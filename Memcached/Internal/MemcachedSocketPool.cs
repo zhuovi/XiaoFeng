@@ -18,7 +18,7 @@ using XiaoFeng.Net;
 namespace XiaoFeng.Memcached.Internal
 {
     /// <summary>
-    /// MemcachedSocketPool 类说明
+    /// Memcached 线程池
     /// </summary>
     public class MemcachedSocketPool : ObjectPool<ISocketClient>
     {

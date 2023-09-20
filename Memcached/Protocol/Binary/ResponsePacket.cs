@@ -60,7 +60,7 @@ namespace XiaoFeng.Memcached.Protocol.Binary
             var reader = new MemoryStream(buffers);
             this.Magic = reader.ReadByte().ToEnum<MagicType>();
 
-            this.Opcode = reader.ReadByte().ToEnum<CommandOpcode>();
+            this.Opcode = reader.ReadByte().ToEnum<CommandType>();
 
             var Keys = new byte[2];
             reader.Read(Keys, 0, 2);

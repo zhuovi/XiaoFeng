@@ -28,7 +28,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// 同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议
         /// </remarks>
         [Description("获取key的value值，若key不存在，返回空。支持多个key")]
-        [ProtocolBinary,ProtocolText]
+        [ProtocolBinary, ProtocolText]
         [EnumName("get")]
         [CommandGroup(CommandFlags.Get)]
         Get = 0x00,
@@ -102,9 +102,9 @@ namespace XiaoFeng.Memcached.Protocol
         /// 同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议
         /// </remarks>
         [Description("退出")]
-        [EnumName("Quit")]
-        [ProtocolBinary, ProtocolText] 
-        Quit =0x07,
+        [EnumName("quit")]
+        [ProtocolBinary, ProtocolText]
+        Quit = 0x07,
         /// <summary>
         /// 用于清理缓存中的所有 key=>value(键=>值) 对
         /// </summary>
@@ -113,7 +113,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("用于清理缓存中的所有 key=>value(键=>值) 对")]
         [EnumName("flush_all")]
-        [ProtocolBinary,ProtocolText]
+        [ProtocolBinary, ProtocolText]
         [CommandGroup(CommandFlags.Stats)]
         FlushAll = 0x08,
         /// <summary>
@@ -143,8 +143,8 @@ namespace XiaoFeng.Memcached.Protocol
         /// 同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议
         /// </remarks>
         [Description("版本")]
-        [EnumName("Version")]
-        [ProtocolBinary, ProtocolText] 
+        [EnumName("version")]
+        [ProtocolBinary, ProtocolText]
         Version = 0x0B,
         /// <summary>
         /// GetK
@@ -205,7 +205,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("SetQ")]
         [EnumName("SetQ")]
-        [ProtocolBinary] 
+        [ProtocolBinary]
         SetQ = 0x11,
         /// <summary>
         /// AddQ
@@ -215,7 +215,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("AddQ")]
         [EnumName("AddQ")]
-        [ProtocolBinary] 
+        [ProtocolBinary]
         AddQ = 0x12,
         /// <summary>
         /// ReplaceQ
@@ -225,7 +225,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("ReplaceQ")]
         [EnumName("ReplaceQ")]
-        [ProtocolBinary] 
+        [ProtocolBinary]
         ReplaceQ = 0x13,
         /// <summary>
         /// DeleteQ
@@ -235,7 +235,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("DeleteQ")]
         [EnumName("DeleteQ")]
-        [ProtocolBinary] 
+        [ProtocolBinary]
         DeleteQ = 0x14,
         /// <summary>
         /// IncrementQ
@@ -245,7 +245,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("IncrementQ")]
         [EnumName("IncrementQ")]
-        [ProtocolBinary] 
+        [ProtocolBinary]
         IncrementQ = 0x15,
         /// <summary>
         /// DecrementQ
@@ -265,7 +265,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("QuitQ")]
         [EnumName("QuitQ")]
-        [ProtocolBinary] 
+        [ProtocolBinary]
         QuitQ = 0x17,
         /// <summary>
         /// FlushQ
@@ -275,7 +275,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("FlushQ")]
         [EnumName("FlushQ")]
-        [ProtocolBinary] 
+        [ProtocolBinary]
         FlushQ = 0x18,
         /// <summary>
         /// AppendQ
@@ -285,7 +285,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("AppendQ")]
         [EnumName("AppendQ")]
-        [ProtocolBinary] 
+        [ProtocolBinary]
         AppendQ = 0x19,
         /// <summary>
         /// PrependQ
@@ -295,7 +295,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("PrependQ")]
         [EnumName("PrependQ")]
-        [ProtocolBinary] 
+        [ProtocolBinary]
         PrependQ = 0x1A,
         /// <summary>
         /// Verbosity
@@ -305,7 +305,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("Verbosity")]
         [EnumName("Verbosity")]
-        [ProtocolBinary,ProtocolText] 
+        [ProtocolBinary, ProtocolText]
         Verbosity = 0x1B,
         /// <summary>
         /// 修改key过期时间
@@ -337,7 +337,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("GATQ")]
         [EnumName("GATQ")]
-        [ProtocolBinary] 
+        [ProtocolBinary]
         GATQ = 0x1E,
         /// <summary>
         /// SASL list mechs
@@ -347,8 +347,8 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("SASL list mechs")]
         [EnumName("SASL list mechs")]
-        [ProtocolBinary] 
-        SASLListtMechs = 0x20,
+        [ProtocolBinary]
+        SASLListMechs = 0x20,
         /// <summary>
         /// SASL Auth
         /// </summary>
@@ -357,7 +357,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("SASL Auth")]
         [EnumName("SASL Auth")]
-        [ProtocolBinary] 
+        [ProtocolBinary]
         SASLAuth = 0x21,
         /// <summary>
         /// SASL Step
@@ -367,7 +367,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("SASL Step")]
         [EnumName("SASL Step")]
-        [ProtocolBinary] 
+        [ProtocolBinary]
         SASLStep = 0x22,
         /// <summary>
         /// RGet
@@ -377,7 +377,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("RGet")]
         [EnumName("RGet")]
-        [ProtocolBinary] 
+        [ProtocolBinary]
         RGet = 0x30,
         /// <summary>
         /// RSet
@@ -387,7 +387,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("RSet")]
         [EnumName("RSet")]
-        [ProtocolBinary] 
+        [ProtocolBinary]
         RSet = 0x31,
         /// <summary>
         /// RSetQ
@@ -397,7 +397,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("RSetQ")]
         [EnumName("RSetQ")]
-        [ProtocolBinary] 
+        [ProtocolBinary]
         RSetQ = 0x32,
         /// <summary>
         /// RAppend
@@ -407,7 +407,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("RAppend")]
         [EnumName("RAppend")]
-        [ProtocolBinary] 
+        [ProtocolBinary]
         RAppend = 0x33,
         /// <summary>
         /// RAppendQ
@@ -417,7 +417,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("RAppendQ")]
         [EnumName("RAppendQ")]
-        [ProtocolBinary] 
+        [ProtocolBinary]
         RAppendQ = 0x34,
         /// <summary>
         /// RPrepend
@@ -427,7 +427,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("RPrepend")]
         [EnumName("RPrepend")]
-        [ProtocolBinary] 
+        [ProtocolBinary]
         RPrepend = 0x35,
         /// <summary>
         /// RPrependQ
@@ -437,7 +437,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("RPrependQ")]
         [EnumName("RPrependQ")]
-        [ProtocolBinary] 
+        [ProtocolBinary]
         RPrependQ = 0x36,
         /// <summary>
         /// RDelete
@@ -447,7 +447,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("RDelete")]
         [EnumName("RDelete")]
-        [ProtocolBinary] 
+        [ProtocolBinary]
         RDelete = 0x37,
         /// <summary>
         /// RDeleteQ
@@ -457,7 +457,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("RDeleteQ")]
         [EnumName("RDeleteQ")]
-        [ProtocolBinary] 
+        [ProtocolBinary]
         RDeleteQ = 0x38,
         /// <summary>
         /// RIncr
@@ -467,7 +467,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("RIncr")]
         [EnumName("RIncr")]
-        [ProtocolBinary] 
+        [ProtocolBinary]
         RIncr = 0x39,
         /// <summary>
         /// RIncrQ
@@ -477,7 +477,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("RIncrQ")]
         [EnumName("RIncrQ")]
-        [ProtocolBinary] 
+        [ProtocolBinary]
         RIncrQ = 0x3A,
         /// <summary>
         /// RDecr
@@ -487,7 +487,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("RDecr")]
         [EnumName("RDecr")]
-        [ProtocolBinary] 
+        [ProtocolBinary]
         RDecr = 0x3B,
         /// <summary>
         /// RDecrQ
@@ -497,7 +497,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("RDecrQ")]
         [EnumName("RDecrQ")]
-        [ProtocolBinary] 
+        [ProtocolBinary]
         RDecrQ = 0x3C,
         /// <summary>
         /// Set VBucket
@@ -507,7 +507,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("Set VBucket")]
         [EnumName("Set VBucket")]
-        [ProtocolBinary] 
+        [ProtocolBinary]
         SetVBucket = 0x3D,
         /// <summary>
         /// Get VBucket
@@ -517,7 +517,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("Get VBucket")]
         [EnumName("Get VBucket")]
-        [ProtocolBinary] 
+        [ProtocolBinary]
         GetVBucket = 0x3E,
         /// <summary>
         /// Del VBucket
@@ -527,7 +527,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("Del VBucket")]
         [EnumName("Del VBucket")]
-        [ProtocolBinary] 
+        [ProtocolBinary]
         DelVBucket = 0x3F,
         /// <summary>
         /// TAP Connect
@@ -537,7 +537,7 @@ namespace XiaoFeng.Memcached.Protocol
         /// </remarks>
         [Description("TAP Connect")]
         [EnumName("TAP Connect")]
-        [ProtocolBinary] 
+        [ProtocolBinary]
         TAPConnect = 0x40,
         /*
          * 下边为自定义数据 主要应用于Text通讯

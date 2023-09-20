@@ -85,7 +85,7 @@ namespace XiaoFeng.Memcached.Protocol.Binary
         /// <returns></returns>
         public async Task<Boolean> Quit()
         {
-            this.Opcode = CommandOpcode.Quit;
+            this.Opcode = CommandType.Quit;
             var response = await this.GetResponseAsync().ConfigureAwait(false);
             return response.Status == ResponseStatus.Success;
         }
@@ -95,7 +95,7 @@ namespace XiaoFeng.Memcached.Protocol.Binary
         /// <returns></returns>
         public async Task<Boolean> Noop()
         {
-            this.Opcode = CommandOpcode.Noop;
+            this.Opcode = CommandType.Noop;
             var response = await this.GetResponseAsync().ConfigureAwait(false);
             return response.Status == ResponseStatus.Success;
         }
@@ -105,7 +105,7 @@ namespace XiaoFeng.Memcached.Protocol.Binary
         /// <returns></returns>
         public async Task<string> Version()
         {
-            this.Opcode = CommandOpcode.Version;
+            this.Opcode = CommandType.Version;
             var response = await this.GetResponseAsync().ConfigureAwait(false);
             return response.Status == ResponseStatus.Success ? response.Value.GetString() : string.Empty;
         }
@@ -121,7 +121,7 @@ namespace XiaoFeng.Memcached.Protocol.Binary
             {
                 ValueType valueType;
                 object val;
-                if (Opcode == CommandOpcode.Increment || Opcode == CommandOpcode.Decrement)
+                if (Opcode == CommandType.Increment || Opcode == CommandType.Decrement)
                 {
                     val = this.ToValue(response.Value);
                     valueType = ValueType.Int;

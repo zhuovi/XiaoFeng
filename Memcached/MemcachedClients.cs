@@ -19,7 +19,7 @@ namespace XiaoFeng.Memcached
     /// <summary>
     /// Memcatched客户端
     /// </summary>
-    public class MemcachedClients
+    public class MemcachedClients : Disposable
     {
         #region 构造器
         /// <summary>
@@ -51,7 +51,7 @@ namespace XiaoFeng.Memcached
         /// <summary>
         /// 操作工厂
         /// </summary>
-        public IOperationFactory Factory
+        private IOperationFactory Factory
         {
             get
             {
@@ -84,6 +84,7 @@ namespace XiaoFeng.Memcached
         }
         #endregion
 
+        #region GET
         /// <summary>
         /// 获取key的value值，若key不存在，返回空。
         /// </summary>
@@ -143,6 +144,9 @@ namespace XiaoFeng.Memcached
         /// <param name="keys">key</param>
         /// <returns></returns>
         public async Task<GetOperationResult> TouchAsync(uint expiry, params string[] keys) => await Factory.TouchAsync(expiry, keys).ConfigureAwait(false);
+        #endregion
+
+        #region STORE
         /// <summary>
         /// 给key设置一个值
         /// </summary>
@@ -192,6 +196,9 @@ namespace XiaoFeng.Memcached
         /// <param name="expiry">过期时间 单位为秒 默认不限制</param>
         /// <returns></returns>
         public async Task<StoreOperationResult> CasAsync(string key, object value, ulong casToken, uint expiry = 0) => await Factory.CasAsync(key, value, casToken, expiry).ConfigureAwait(false);
+        #endregion
+
+        #region STAT
         /// <summary>
         /// 统计信息
         /// </summary>
@@ -206,7 +213,7 @@ namespace XiaoFeng.Memcached
         /// 显示各个slab的信息，包括chunk的大小、数目、使用情况等
         /// </summary>
         /// <returns></returns>
-        public async Task<StatsOperationResult> StatsSlabsAsync()=> await Factory.StatsSlabsAsync().ConfigureAwait(false);
+        public async Task<StatsOperationResult> StatsSlabsAsync() => await Factory.StatsSlabsAsync().ConfigureAwait(false);
         /// <summary>
         /// 显示所有item的大小和个数
         /// </summary>
@@ -218,6 +225,32 @@ namespace XiaoFeng.Memcached
         /// <param name="timeout">延迟多长时间执行清理 单位为秒</param>
         /// <returns></returns>
         public async Task<StatsOperationResult> FulshAllAsync(uint timeout = 0) => await Factory.FulshAllAsync(timeout).ConfigureAwait(false);
+        /// <summary>
+        /// 服务器版本
+        /// </summary>
+        /// <returns></returns>
+        public async Task<StatsOperationResult> VersionAsync() => await Factory.VersionAsync().ConfigureAwait(false);
+        #endregion
+
+        #region 释放
+        /// <summary>
+        /// 释放
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected override void Dispose(bool disposing)
+        {
+            this.Factory?.TryDispose();
+            base.Dispose(disposing);
+        }
+        /// <summary>
+        /// 析构器
+        /// </summary>
+        ~MemcachedClients()
+        {
+            this.Dispose(true);
+        }
+        #endregion
+
         #endregion
     }
 }

@@ -52,27 +52,27 @@ namespace XiaoFeng.Memcached.Protocol.Binary
         ///<inheritdoc/>
         public async Task<GetOperationResult> GetAsync(params string[] keys)
         {
-            return await GetAsync(CommandOpcode.Get,null, keys);
+            return await GetAsync(CommandType.Get,null, keys);
         }
         ///<inheritdoc/>
         public async Task<GetOperationResult> GetsAsync(params string[] keys)
         {
-            return await GetAsync(CommandOpcode.GetK,null, keys);
+            return await GetAsync(CommandType.GetK,null, keys);
         }
         ///<inheritdoc/>
         public async Task<GetOperationResult> GatAsync(uint expiry, params string[] keys)
         {
-            return await GetAsync(CommandOpcode.GAT, ToBytes(expiry, 4), keys).ConfigureAwait(false);
+            return await GetAsync(CommandType.Gat, ToBytes(expiry, 4), keys).ConfigureAwait(false);
         }
         ///<inheritdoc/>
         public async Task<GetOperationResult> GatsAsync(uint expiry, params string[] keys)
         {
-            return await GetAsync(CommandOpcode.GATQ, ToBytes(expiry, 4), keys).ConfigureAwait(false);
+            return await GetAsync(CommandType.GATQ, ToBytes(expiry, 4), keys).ConfigureAwait(false);
         }
         ///<inheritdoc/>
         public async Task<GetOperationResult> DeleteAsync(params string[] keys)
         {
-            return await GetAsync(CommandOpcode.Delete, null, keys).ConfigureAwait(false);
+            return await GetAsync(CommandType.Delete, null, keys).ConfigureAwait(false);
         }
         ///<inheritdoc/>
         public async Task<GetOperationResult> IncrementAsync(string key, ulong step, ulong defaultValue, uint expiry)
@@ -80,7 +80,7 @@ namespace XiaoFeng.Memcached.Protocol.Binary
             var delta = ToBytes((long)step, 8);
             var initial = ToBytes((long)defaultValue, 8);
             var expire = ToBytes(expiry, 4);
-            return await GetAsync(CommandOpcode.Increment, delta.Concat(initial).Concat(expire).ToArray(), new string[] { key }).ConfigureAwait(false);
+            return await GetAsync(CommandType.Increment, delta.Concat(initial).Concat(expire).ToArray(), new string[] { key }).ConfigureAwait(false);
         }
         ///<inheritdoc/>
         public async Task<GetOperationResult> DecrementAsync(string key, ulong step, ulong defaultValue, uint expiry)
@@ -88,12 +88,12 @@ namespace XiaoFeng.Memcached.Protocol.Binary
             var delta = ToBytes((long)step, 8);
             var initial = ToBytes((long)defaultValue, 8);
             var expire = ToBytes(expiry, 4);
-            return await GetAsync(CommandOpcode.Decrement, delta.Concat(initial).Concat(expire).ToArray(), new string[] { key }).ConfigureAwait(false);
+            return await GetAsync(CommandType.Decrement, delta.Concat(initial).Concat(expire).ToArray(), new string[] { key }).ConfigureAwait(false);
         }
         ///<inheritdoc/>
         public async Task<GetOperationResult> TouchAsync(uint expiry, params string[] keys)
         {
-            return await GetAsync(CommandOpcode.Touch, ToBytes(expiry, 4), keys).ConfigureAwait(false);
+            return await GetAsync(CommandType.Touch, ToBytes(expiry, 4), keys).ConfigureAwait(false);
         }
         /// <summary>
         /// 获取Get数据
@@ -102,7 +102,7 @@ namespace XiaoFeng.Memcached.Protocol.Binary
         /// <param name="extras">扩展数据</param>
         /// <param name="keys">键</param>
         /// <returns></returns>
-        private async Task<GetOperationResult> GetAsync(CommandOpcode commandOpcode, byte[] extras, string[] keys)
+        private async Task<GetOperationResult> GetAsync(CommandType commandOpcode, byte[] extras, string[] keys)
         {
             var result = new GetOperationResult() { Value = new List<MemcachedValue>() };
 
@@ -132,27 +132,27 @@ namespace XiaoFeng.Memcached.Protocol.Binary
         ///<inheritdoc/>
         public async Task<StoreOperationResult> SetAsync(string key, object value, uint expiry)
         {
-            return await StoreAsync(CommandOpcode.Set, key, value, expiry).ConfigureAwait(false);
+            return await StoreAsync(CommandType.Set, key, value, expiry).ConfigureAwait(false);
         }
         ///<inheritdoc/>
         public async Task<StoreOperationResult> AddAsync(string key, object value, uint expiry)
         {
-            return await StoreAsync(CommandOpcode.Add, key, value, expiry).ConfigureAwait(false);
+            return await StoreAsync(CommandType.Add, key, value, expiry).ConfigureAwait(false);
         }
         ///<inheritdoc/>
         public async Task<StoreOperationResult> ReplaceAsync(string key, object value, uint expiry)
         {
-            return await StoreAsync(CommandOpcode.Replace, key, value, expiry).ConfigureAwait(false);
+            return await StoreAsync(CommandType.Replace, key, value, expiry).ConfigureAwait(false);
         }
         ///<inheritdoc/>
         public async Task<StoreOperationResult> AppendAsync(string key, object value, uint expiry)
         {
-            return await StoreAsync(CommandOpcode.Append, key, value, expiry).ConfigureAwait(false);
+            return await StoreAsync(CommandType.Append, key, value, expiry).ConfigureAwait(false);
         }
         ///<inheritdoc/>
         public async Task<StoreOperationResult> PrependAsync(string key, object value, uint expiry)
         {
-            return await StoreAsync(CommandOpcode.Prepend, key, value, expiry).ConfigureAwait(false);
+            return await StoreAsync(CommandType.Prepend, key, value, expiry).ConfigureAwait(false);
         }
         ///<inheritdoc/>
         public async Task<StoreOperationResult> CasAsync(string key, object value, ulong casToken, uint expiry)
@@ -171,7 +171,7 @@ namespace XiaoFeng.Memcached.Protocol.Binary
         /// <param name="value">值</param>
         /// <param name="expiry">过期时间</param>
         /// <returns></returns>
-        private async Task<StoreOperationResult> StoreAsync(CommandOpcode commandOpcode, string key, object value, uint expiry)
+        private async Task<StoreOperationResult> StoreAsync(CommandType commandOpcode, string key, object value, uint expiry)
         {
             return await this.Execute(key, async socket =>
             {
@@ -199,27 +199,32 @@ namespace XiaoFeng.Memcached.Protocol.Binary
         ///<inheritdoc/>
         public async Task<StatsOperationResult> StatsAsync()
         {
-            return await StatAsync(CommandOpcode.Stat, "", 0).ConfigureAwait(false);
+            return await StatAsync(CommandType.Stats, "", 0).ConfigureAwait(false);
         }
         ///<inheritdoc/>
         public async Task<StatsOperationResult> StatsItemsAsync()
         {
-            return await StatAsync(CommandOpcode.Stat, "items", 0).ConfigureAwait(false);
+            return await StatAsync(CommandType.Stats, "items", 0).ConfigureAwait(false);
         }
         ///<inheritdoc/>
         public async Task<StatsOperationResult> StatsSlabsAsync()
         {
-            return await StatAsync(CommandOpcode.Stat, "slabs", 0).ConfigureAwait(false);
+            return await StatAsync(CommandType.Stats, "slabs", 0).ConfigureAwait(false);
         }
         ///<inheritdoc/>
         public async Task<StatsOperationResult> StatsSizesAsync()
         {
-            return await StatAsync(CommandOpcode.Stat, "sizes", 0).ConfigureAwait(false);
+            return await StatAsync(CommandType.Stats, "sizes", 0).ConfigureAwait(false);
         }
         ///<inheritdoc/>
         public async Task<StatsOperationResult> FulshAllAsync(uint timeout)
         {
-            return await StatAsync(CommandOpcode.FlushAll, "", 0).ConfigureAwait(false);
+            return await StatAsync(CommandType.FlushAll, "", 0).ConfigureAwait(false);
+        }
+        ///<inheritdoc/>
+        public async Task<StatsOperationResult> VersionAsync()
+        {
+            return await StatAsync(CommandType.Version, "", 0).ConfigureAwait(false);
         }
         /// <summary>
         /// 获取Store数据
@@ -228,7 +233,7 @@ namespace XiaoFeng.Memcached.Protocol.Binary
         /// <param name="key">key</param>
         /// <param name="timeout">延迟多长时间执行清理</param>
         /// <returns></returns>
-        private async Task<StatsOperationResult> StatAsync(CommandOpcode commandOpcode,string key, uint timeout)
+        private async Task<StatsOperationResult> StatAsync(CommandType commandOpcode,string key, uint timeout)
         {
             var result = new StatsOperationResult() { Value = new Dictionary<System.Net.IPEndPoint, Dictionary<string, string>>() };
             var val = this.Execute(socket =>
@@ -244,6 +249,11 @@ namespace XiaoFeng.Memcached.Protocol.Binary
                     request.Extras = this.ToBytes(timeout, 4);
                 }
                 var response = request.GetResponseAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+                if (response != null && response.Key.IsNullOrEmpty() && commandOpcode == CommandType.Version)
+                {
+                    dict.Add("Version", response.Value.GetString());
+                    return dict;
+                }
                 if (response != null && response.Key?.Length > 0)
                 {
                     if (key.EqualsIgnoreCase("sizes"))
@@ -272,44 +282,6 @@ namespace XiaoFeng.Memcached.Protocol.Binary
                 return dict;
             });
             result.Value = val;
-            return result;
-            //var memcached = await this.GetMemcached().ConfigureAwait(false);
-            //var request = new RequestPacket(memcached, this.MemcachedConfig, "")
-            //{
-            //    Opcode = commandOpcode
-            //};
-            //if (key.IsNotNullOrEmpty()) request.Key = key.GetBytes();
-            //if (timeout > 0)
-            //{
-            //    request.Extras = this.ToBytes(timeout, 4);
-            //}
-            //var response = await request.GetResponseAsync().ConfigureAwait(false);
-            //if (response != null && response.Key?.Length > 0)
-            //{
-            //    if (key.EqualsIgnoreCase("sizes"))
-            //    {
-            //        result.Value.Add("Item Size", response.Key.GetString());
-            //        result.Value.Add("Item Count", response.Value.GetString());
-            //    }
-            //    else
-            //    {
-            //        var startIndex = 0;
-            //        var Key = response.Key.GetString();
-            //        if (key.EqualsIgnoreCase("slabs")) Key = Key.TrimStart(new char[] { '1', ':' });
-            //        result.Value.Add(Key.Substring(startIndex), response.Value.GetString());
-            //        do
-            //        {
-            //            response = new ResponsePacket(response.PayLoad);
-            //            if (response != null && response.Key != null && response.Key.Length > 0)
-            //            {
-            //                Key = response.Key.GetString();
-            //                if (key.EqualsIgnoreCase("slabs")) Key = Key.TrimStart(new char[] { '1', ':' });
-            //                result.Value.Add(Key, response.Value.GetString());
-            //            }
-            //        } while (response.PayLoad != null && response.PayLoad.Length > 0);
-            //    }
-            //}
-
             return await Task.FromResult(result);
         }
         #endregion

@@ -72,7 +72,7 @@ namespace XiaoFeng.Memcached.Protocol.Binary
         /// <summary>
         /// 操作码命令码，也就是对应的命令
         /// </summary>
-        public CommandOpcode Opcode { get; set; }
+        public CommandType Opcode { get; set; }
         /// <summary>
         /// 保留字段 目前只有一个固定的值：0x00
         /// </summary>

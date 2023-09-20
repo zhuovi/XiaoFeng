@@ -30,10 +30,7 @@ namespace XiaoFeng.Memcached.Internal
         /// <summary>
         /// 无参构造器
         /// </summary>
-        public BaseOperationFactory()
-        {
-            
-        }
+        public BaseOperationFactory() { }
         #endregion
 
         #region 属性
@@ -62,6 +59,8 @@ namespace XiaoFeng.Memcached.Internal
         #endregion
 
         #region 方法
+
+        #region 运行
         /// <summary>
         /// 运行
         /// </summary>
@@ -69,30 +68,23 @@ namespace XiaoFeng.Memcached.Internal
         /// <param name="key">key</param>
         /// <param name="func">回调</param>
         /// <returns></returns>
-        public T Execute<T>(string key, Func<ISocketClient, T> func) where T : class
-        {
-            return this.Memcached.Execute((int)GetHash(key) % this.MemcachedConfig.Servers.Count, socket =>
-            {
-                return func?.Invoke(socket);
-            });
-        }
+        public T Execute<T>(string key, Func<ISocketClient, T> func) where T : class => this.Memcached.Execute((int)GetHash(key) % this.MemcachedConfig.Servers.Count, func);
         /// <summary>
         /// 运行
         /// </summary>
         /// <typeparam name="T">类型</typeparam>
         /// <param name="func">回调</param>
         /// <returns></returns>
-        public Dictionary<IPEndPoint,T> Execute<T>(Func<ISocketClient,T> func) where T : class
-        {
-            return this.Memcached.Execute(func);
-        }
+        public Dictionary<IPEndPoint, T> Execute<T>(Func<ISocketClient, T> func) where T : class => this.Memcached.Execute(func);
+        #endregion
+
         #region Hash
         /// <summary>
-		/// 获取Hash
-		/// </summary>
-		/// <param name="key">Key</param>
-		/// <returns>Hash值</returns>
-		public uint GetHash(string key)
+        /// 获取Hash
+        /// </summary>
+        /// <param name="key">Key</param>
+        /// <returns>Hash值</returns>
+        public uint GetHash(string key)
         {
             if (key.IsNullOrEmpty()) return 0;
             Helper.CheckKey(key);

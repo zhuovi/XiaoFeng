@@ -167,6 +167,11 @@ namespace XiaoFeng.Memcached.Internal
         /// <param name="timeout">延迟多长时间执行清理 单位为秒</param>
         /// <returns></returns>
         Task<StatsOperationResult> FulshAllAsync(uint timeout);
+        /// <summary>
+        /// 服务器版本
+        /// </summary>
+        /// <returns></returns>
+        Task<StatsOperationResult> VersionAsync();
         #endregion
     }
 }

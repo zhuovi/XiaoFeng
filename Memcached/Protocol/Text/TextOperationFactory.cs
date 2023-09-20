@@ -245,6 +245,11 @@ namespace XiaoFeng.Memcached.Protocol.Text
         {
             return await this.StatAsync(CommandType.FlushAll, timeout).ConfigureAwait(false);
         }
+        ///<inheritdoc/>
+        public async Task<Internal.StatsOperationResult> VersionAsync()
+        {
+            return await this.StatAsync(CommandType.Version, 0).ConfigureAwait(false);
+        }
         /// <summary>
         /// Store操作
         /// </summary>

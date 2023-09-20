@@ -95,6 +95,12 @@ namespace XiaoFeng.Memcached.Protocol.Text
             this.Status = OperationStatus.Success;
             if (this.Value == null) this.Value = new Dictionary<System.Net.IPEndPoint, Dictionary<string, string>>();
             var dict = new Dictionary<string, string>();
+            this.Value.Add(new System.Net.IPEndPoint(System.Net.IPAddress.Any, 11211), dict);
+            if (line.StartsWith("Version", StringComparison.OrdinalIgnoreCase))
+            {
+                dict.Add("Version", line.RemovePattern(@"^version\s+"));
+                return;
+            }
             while (line.StartsWith("STAT", StringComparison.OrdinalIgnoreCase) && !line.EqualsIgnoreCase(ReturnResult.END.GetEnumName()))
             {
                 var args = line.RemovePattern(@"^STAT\s+(Items:\d+:|\d+:)?").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -118,7 +124,6 @@ namespace XiaoFeng.Memcached.Protocol.Text
                 }
                 line = reader.ReadLine();
             }
-            this.Value.Add(new System.Net.IPEndPoint(System.Net.IPAddress.Any, 11211), dict);
         }
     }
 }
