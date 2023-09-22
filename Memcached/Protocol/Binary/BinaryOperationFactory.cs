@@ -36,7 +36,7 @@ namespace XiaoFeng.Memcached.Protocol.Binary
         /// 设置配置
         /// </summary>
         /// <param name="config">配置</param>
-        public BinaryOperationFactory(Internal.MemcachedConfig config)
+        public BinaryOperationFactory(MemcachedConfig config)
         {
             this.MemcachedConfig = config;
         }
@@ -286,6 +286,7 @@ namespace XiaoFeng.Memcached.Protocol.Binary
         }
         #endregion
 
+        #region 数值转字节
         /// <summary>
         /// 数值转字节
         /// </summary>
@@ -296,6 +297,8 @@ namespace XiaoFeng.Memcached.Protocol.Binary
         {
             return val.ToString("X").PadLeft(2 * length, '0').HexStringToBytes();
         }
+        #endregion
+
         #endregion
     }
 }

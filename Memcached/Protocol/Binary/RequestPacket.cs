@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using XiaoFeng.Memcached.Internal;
-using XiaoFeng.Memcached.IO;
 using XiaoFeng.Net;
 
 /****************************************************************
@@ -62,7 +58,7 @@ namespace XiaoFeng.Memcached.Protocol.Binary
         /// <param name="memcachedSocket">socket</param>
         /// <param name="memcachedConfig">配置</param>
         /// <param name="opaque">附加数据</param>
-        public RequestPacket(ISocketClient memcachedSocket, Internal.MemcachedConfig memcachedConfig, string opaque)
+        public RequestPacket(ISocketClient memcachedSocket, MemcachedConfig memcachedConfig, string opaque)
         {
             this.Magic = MagicType.Request;
             this.MemcachedSocket = memcachedSocket;

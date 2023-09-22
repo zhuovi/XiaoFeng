@@ -32,7 +32,7 @@ namespace XiaoFeng.Memcached.Protocol.Text
         /// <param name="config">配置</param>
         /// <param name="commandType">命令</param>
         /// <param name="values">值</param>
-        public StoreCommand(ISocketClient socket,Internal.MemcachedConfig config, CommandType commandType, object[] values)
+        public StoreCommand(ISocketClient socket,MemcachedConfig config, CommandType commandType, object[] values)
         {
             this.SocketClient = socket;
             this.CommandType = commandType;
@@ -49,7 +49,7 @@ namespace XiaoFeng.Memcached.Protocol.Text
         /// <summary>
         /// 配置
         /// </summary>
-        public Internal.MemcachedConfig Config { get; set; }
+        public MemcachedConfig Config { get; set; }
         #endregion
 
         #region 方法
@@ -105,7 +105,7 @@ namespace XiaoFeng.Memcached.Protocol.Text
         /// <param name="commandType">命令</param>
         public StoreOperationResult(byte[] buffers, Encoding encoding, CommandType commandType)
         {
-            this.PayLoad = buffers;
+            //this.PayLoad = buffers;
             var val = buffers.GetString(encoding);
             this.Status = val.StartsWith(ReturnResult.STORED.GetEnumName(), StringComparison.OrdinalIgnoreCase) ? OperationStatus.Success : OperationStatus.Error;
             if (this.Status == OperationStatus.Success) this.Value = true;

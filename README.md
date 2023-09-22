@@ -858,9 +858,9 @@ Memcached缓存数据库连接驱动
 Memcached连接串 
 
 ```csharp
-memcached://memcached:123456@127.0.0.1:11211?ConnectionTimeout=3000&ReadTimeout=3000&SendTimeout=3000&pool=3
+memcached://memcached:123456@127.0.0.1:11211?ConnectionTimeout=10&ReadTimeout=10&SendTimeout=10&PoolSize=3
 
-[<protocol>]://[[<username>:<password>@]<host>:<port>][/<database>][?<p1>=<v1>[&<p2>=<v2>]]
+[<protocol>]://[[<username>:<password>@]<host>:<port>][?<p1>=<v1>[&<p2>=<v2>]]
 |----------|---|-----------|-----------|------|------|------------|-----------------------|
 | protocol |   | username  | password  | host | port |  database  |  params               |
 
@@ -880,7 +880,7 @@ ReadTimeout		    读取数据超时时长
 
 SendTimeout		    发送数据超时时长
 
-pool			    连接池中连接数量
+PoolSize			连接池中连接数量
 
 最小的连接串是：memcached://127.0.0.1
 
@@ -903,63 +903,47 @@ memcached.MemcachedProtocol = MemcachedProtocol.Text;
 memcached.Transform = new XiaoFeng.Memcached.Transform.FNV1_64();
 
 //给key设置一个值
-var set = memcached.Set("abc", "abcda");
-//如果key不存在的话，就添加
-var add1 = memcached.Add("abc", "abcde");
-//如果key不存在的话，就添加
-var add2 = memcached.Add("a1", "abcde");
+var set = await memcached.SetAsync("abc", "abcda");
 //如果key不存在的话，就添加 异步
-var add3 = await memcached.AddAsync("a2", "abcde");
+var add = await memcached.AddAsync("a2", "abcde");
 //用来替换已知key的value
-var replace1 = memcached.Replace("a3", "abc3");
-//用来替换已知key的value
-var replace2 = memcached.Replace("a2", "abc3");
+var replace = await memcached.ReplaceAsync("a3", "abc3");
 //表示将提供的值附加到现有key的value之后，是一个附加操作
-var append1 = memcached.Append("a3", "a4f");
-//表示将提供的值附加到现有key的value之后，是一个附加操作
-var append2 = memcached.Append("a2", "a2f");
+var append = await memcached.AppendAsync("a3", "a4f");
 //将此数据添加到现有数据之前的现有键中
-var prepend1 = memcached.Prepend("a3", "a3d");
-//将此数据添加到现有数据之前的现有键中
-var prepend2 = memcached.Prepend("a2", "a3d");
+var prepend = await memcached.PrependAsync("a3", "a3d");
 //一个原子操作，只有当casunique匹配的时候，才会设置对应的值
-var cas = memcached.Cas("a1", "aaa", 113);
+var cas = await memcached.CasAsync("a1", "aaa", 113);
 //获取key的value值，若key不存在，返回空。
-var get1 = memcached.Get("a1");
-//获取key的value值，若key不存在，返回空。
-var get2 = memcached.Get("a1", "a2");
+var get = await memcached.GetAsync("a1");
 //用于获取key的带有CAS令牌值的value值，若key不存在，返回空。
-var gets1 = memcached.Gets("a1");
-//用于获取key的带有CAS令牌值的value值，若key不存在，返回空。
-var gets2 = memcached.Gets("a1", "a2");
+var gets = await memcached.GetsAsync("a1");
 //获取key的value值，若key不存在，返回空。更新缓存时间
-var gat = memcached.Gat(5*24 * 60, "a1");
+var gat = await memcached.GatAsync(5*24 * 60, "a1");
 //获取key的value值，若key不存在，返回空。更新缓存时间
-var gat1 = memcached.Gat(6*24 * 60, "a1","a2");
+var gat = await memcached.GatAsync(6*24 * 60, "a1","a2");
 //用于获取key的带有CAS令牌值的value值，若key不存在，返回空。支持多个key 更新缓存时间
-var gats = memcached.Gats(5 * 24 * 60, "a1");
-//用于获取key的带有CAS令牌值的value值，若key不存在，返回空。支持多个key 更新缓存时间
-var gats1 = memcached.Gats(6 * 24 * 60, "a1", "a2");
+var gats = await memcached.GatsAsync(5 * 24 * 60, "a1");
 //删除已存在的 key(键)
-var delete = memcached.Delete("a10");
+var delete = await memcached.DeleteAsync("a10");
 //给key设置一个值
-var set3 = memcached.Set("a10", 100);
+var set = await memcached.SetAsync("a10", 100);
 //递增
-var incr1 = memcached.Increment("a10", 10);
+var incr = await memcached.IncrementAsync("a10", 10);
 //递减
-var decr1 = memcached.Decrement("a10", 10);
+var decr = await memcached.DecrementAsync("a10", 10);
 //修改key过期时间
-var touch = memcached.Touch("a10", 24 * 60);
+var touch = await memcached.TouchAsync("a10", 24 * 60);
 //统计信息
-var stats = memcached.Stats();
+var stats = await memcached.StatsAsync();
 //显示各个 slab 中 item 的数目和存储时长(最后一次访问距离现在的秒数)
-var items = memcached.StatsItems();
+var items = await memcached.StatsItemsAsync();
 //显示各个slab的信息，包括chunk的大小、数目、使用情况等
-var slabs = memcached.StatsSlabs();
+var slabs = await memcached.StatsSlabsAsync();
 //显示所有item的大小和个数
-var sizes = memcached.StatsSizes();
+var sizes = await memcached.StatsSizesAsync();
 //用于清理缓存中的所有 key=>value(键=>值) 对
-var flushall = memcached.FulshAll();
+var flushall = await memcached.FulshAllAsync();
 ```
 
 # XiaoFeng.Http.HttpHelper 网络请求库

@@ -4,12 +4,8 @@ using System.Linq;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Threading.Tasks;
-using XiaoFeng.Memcached.IO;
-using XiaoFeng.Memcached.Protocol.Binary;
-using XiaoFeng.Memcached.Protocol.Text;
+using XiaoFeng.Collections;
 using XiaoFeng.Memcached.Transform;
-using XiaoFeng.Net;
 
 /****************************************************************
 *  Copyright © (2023) www.eelf.cn All Rights Reserved.          *
@@ -21,7 +17,7 @@ using XiaoFeng.Net;
 *  Version : v 1.0.0                                            *
 *  CLR Version : 4.0.30319.42000                                *
 *****************************************************************/
-namespace XiaoFeng.Memcached.Internal
+namespace XiaoFeng.Memcached
 {
     /// <summary>
     /// Memcached配置
@@ -53,31 +49,33 @@ namespace XiaoFeng.Memcached.Internal
             this.AddServer(host, port);
         }
         /// <summary>
+        /// 设置服务器
+        /// </summary>
+        /// <param name="iPEndPoints">网络终节点</param>
+        /// <param name="username">用户名</param>
+        /// <param name="password">密码</param>
+        public MemcachedConfig(IEnumerable<IPEndPoint> iPEndPoints, string username, string password):this()
+        {
+            this.AddServer(iPEndPoints);
+            this.UserName = username;
+            this.Password = password;
+        }
+        /// <summary>
         /// 设置配置
         /// </summary>
         /// <param name="connString">连接串</param>
         /// <remarks>
-        /// 格式如 memcached://[[username][:password]@]host[:port]?[readtimeout=10]&amp;[writetimeout=10]&amp;[pool=3]
-        /// <para>
-        /// <see langword="username"/> 帐号
-        /// </para>
-        /// <para>
-        /// <see langword="username"/> 密码
-        /// </para>
-        /// <para>
-        /// <see langword="host"/> 主机
-        /// </para>
-        /// <para>
-        /// <see langword="port"/> 端口号
-        /// </para>
-        /// <para>
-        /// <see langword="readtimeout"/> 读超时时间长 单位为秒
-        /// </para>
-        /// <para>
-        /// <see langword="writetimeout"/> 写超时时间长 单位为秒
-        /// </para>
-        /// <para>
-        /// <see langword="pool"/> 线程池数量
+        /// <para><see langword="格式"/> : [&lt;protocol&gt;]://[[&lt;username&gt;:&lt;password&gt;@]&lt;host&gt;:&lt;port&gt;][?&lt;ConnectionTimeout&gt;=10[&amp;&lt;ReadTimeout&gt;=10][&amp;&lt;WiteTimeout&gt;=10][&amp;&lt;PoolSize&gt;=10]]</para>
+        /// <para><term>protocol</term> 协议，固定值为memcached</para>
+        /// <para><term>username</term> 帐号</para>
+        /// <para><term>password</term> 密码</para>
+        /// <para><term>host</term> 服务器地址或DNS</para>
+        /// <para><term>port</term> 服务器端口 默认为11211</para>
+        /// <para><term>ConnectionTimeout</term> 连接超时时间 单位为秒</para>
+        /// <para><term>ReadTimeout</term> 读取超时时间 单位为秒</para>
+        /// <para><term>WiteTimeout</term> 写入超时时间 单位为秒</para>
+        /// <para><term>PoolSize</term> 连接池数量</para>
+        /// <para>例子 : memcached://memcached:7092734@127.0.0.01:11211?ConnectionTimeout=10&amp;ReadTimeout=10&amp;WiteTimeout=10&amp;PoolSize=10
         /// </para>
         /// </remarks>
         public MemcachedConfig(string connString) : this()
@@ -91,6 +89,22 @@ namespace XiaoFeng.Memcached.Internal
                 if (vals.Length == 1) return;
                 this.UserName = vals[0];
                 this.Password = vals[1];
+            }
+            if (uri.Query.IsNotNullOrEmpty())
+            {
+                var paramers = new ParameterCollection(uri.Query);
+                if (paramers.Contains("ConnectionTimeout"))
+                {
+                    this.ConnectTimeout = paramers["ConnectionTimeout"].ToCast<int>();
+                }
+                if (paramers.Contains("readtimeout"))
+                {
+                    this.ReadTimeout = paramers["readtimeout"].ToCast<int>();
+                }
+                if (paramers.Contains("writetimeout"))
+                {
+                    this.WriteTimeout = paramers["writetimeout"].ToCast<int>();
+                }
             }
         }
         #endregion
@@ -129,13 +143,17 @@ namespace XiaoFeng.Memcached.Internal
         /// </summary>
         public int WriteTimeout { get; set; }
         /// <summary>
+        /// 连接超时 单位秒
+        /// </summary>
+        public int ConnectTimeout { get; set; }
+        /// <summary>
         /// 编码
         /// </summary>
         public Encoding Encoding { get; set; }
         /// <summary>
-        /// 线程数量
+        /// 线程数量 设置当前线程数量则启用线程池来处理
         /// </summary>
-        public int Pool { get; set; }
+        public int PoolSize { get; set; }
         /// <summary>
         /// 压缩长度 默认是1M
         /// </summary>
@@ -170,6 +188,17 @@ namespace XiaoFeng.Memcached.Internal
         {
             if (this.Servers.Contains(endPoint)) return;
             this.Servers.Add(endPoint);
+        }
+        /// <summary>
+        /// 添加服务器
+        /// </summary>
+        /// <param name="iPEndPoints">终点</param>
+        public void AddServer(IEnumerable<IPEndPoint> iPEndPoints)
+        {
+            foreach (var iPEndPoint in iPEndPoints)
+            {
+                this.AddServer(iPEndPoint);
+            }
         }
         #endregion
     }

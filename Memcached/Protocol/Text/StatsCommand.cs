@@ -83,7 +83,7 @@ namespace XiaoFeng.Memcached.Protocol.Text
         /// <param name="commandType">命令</param>
         public StatsOperationResult(byte[] buffers, Encoding encoding, CommandType commandType)
         {
-            this.PayLoad = buffers;
+            //this.PayLoad = buffers;
             var val = buffers.GetString(encoding);
             var reader = new StringReader(val);
             var line = reader.ReadLine();

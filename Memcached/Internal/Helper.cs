@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO.Compression;
 using System.IO;
 using System.Text;
-using System.Runtime.Serialization.Formatters.Binary;
-using XiaoFeng.Memcached.Transform;
 
 /****************************************************************
 *  Copyright © (2023) www.fayelf.com All Rights Reserved.       *
@@ -16,7 +13,7 @@ using XiaoFeng.Memcached.Transform;
 *  Version : v 1.0.0                                            *
 *  CLR Version : 4.0.30319.42000                                *
 *****************************************************************/
-namespace XiaoFeng.Memcached
+namespace XiaoFeng.Memcached.Internal
 {
     /// <summary>
     /// 帮助类

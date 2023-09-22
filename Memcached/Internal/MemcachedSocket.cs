@@ -25,7 +25,7 @@ namespace XiaoFeng.Memcached.Internal
     /// <summary>
     /// Memcached客户端
     /// </summary>
-    public class MemcachedSocket
+    public class MemcachedSocket : Disposable
     {
         #region 构造器
         /// <summary>
@@ -49,11 +49,11 @@ namespace XiaoFeng.Memcached.Internal
         /// <summary>
         /// 网络池
         /// </summary>
-        private ConcurrentDictionary<IPEndPoint, MemcachedSocketPool> Pools { get; set; }
+        private ConcurrentDictionary<IPEndPoint, MemcachedSocketClientPool> Pools { get; set; }
         /// <summary>
         /// 网络端
         /// </summary>
-        public ConcurrentDictionary<IPEndPoint, ISocketClient> Clients { get; set; }
+        public ConcurrentDictionary<IPEndPoint, IMemcachedSocketClient> Clients { get; set; }
         /// <summary>
         /// 是否初始化
         /// </summary>
@@ -77,59 +77,31 @@ namespace XiaoFeng.Memcached.Internal
         private void Init()
         {
             if (this.MemcachedConfig == null) return;
-            if (this.MemcachedConfig.Pool <= 1)
+            IsInit = true;
+            if (this.MemcachedConfig.PoolSize >= 1)
             {
-                this.Clients = new ConcurrentDictionary<IPEndPoint, ISocketClient>();
-                this.Manuals = new List<AutoResetEvent>();
+                this.Pools = new ConcurrentDictionary<IPEndPoint, MemcachedSocketClientPool>();
                 this.MemcachedConfig.Servers.Each(s =>
                 {
-                    var client = new SocketClient(s)
-                    {
-                        ReceiveTimeout = this.MemcachedConfig.ReadTimeout,
-                        SendTimeout = this.MemcachedConfig.WriteTimeout,
-                        Encoding = this.MemcachedConfig.Encoding
-                    };
-                    if (this.MemcachedConfig.Certificates != null && this.MemcachedConfig.Certificates.Count > 0)
-                    {
-                        client.ClientCertificates = this.MemcachedConfig.Certificates;
-                        client.SslProtocols = System.Security.Authentication.SslProtocols.Tls12;
-                    }
-                    client.OnClientError += (c,e,ex) =>
-                    {
-                        Console.WriteLine($"{c.EndPoint}出错[{ex.Message}].{DateTime.Now:yyyy-MM-dd HH:mm:ss.fffffff}");
-                    };
-                    client.OnStart += (c,e) =>
-                    {
-                        Console.WriteLine($"{c.EndPoint}已启动.{DateTime.Now:yyyy-MM-dd HH:mm:ss.fffffff}");
-
-                    };
-                    client.OnStop += (c, e) =>
-                    {
-                        Console.WriteLine($"{c.EndPoint}已停止.{DateTime.Now:yyyy-MM-dd HH:mm:ss.fffffff}");
-
-                    };
-                    var status = client.Connect();
-                    if (status == SocketError.Success)
-                    {
-                        this.Clients.TryAdd(s, client);
-                        IsInit = true;
-                    }
-                    this.Manuals.Add(new AutoResetEvent(true));
-                });
-            }
-            else
-            {
-                this.Pools = new ConcurrentDictionary<IPEndPoint, MemcachedSocketPool>();
-                this.MemcachedConfig.Servers.Each(s =>
-                {
-                    var pool = new MemcachedSocketPool(this.MemcachedConfig, s);
+                    var pool = new MemcachedSocketClientPool(this.MemcachedConfig, s);
                     this.Pools.TryAdd(s, pool);
                 });
-                IsInit = true;
+                return;
             }
+            this.Clients = new ConcurrentDictionary<IPEndPoint, IMemcachedSocketClient>();
+            this.Manuals = new List<AutoResetEvent>();
+            this.MemcachedConfig.Servers.Each(s =>
+            {
+                var client = new MemcachedSocketClient(this.MemcachedConfig, s);
+
+                this.Clients.TryAdd(s, client);
+
+                this.Manuals.Add(new AutoResetEvent(true));
+            });
         }
         #endregion
 
+        #region 执行
         /// <summary>
         /// 执行
         /// </summary>
@@ -137,14 +109,20 @@ namespace XiaoFeng.Memcached.Internal
         /// <param name="index">索引</param>
         /// <param name="func">回调</param>
         /// <returns></returns>
-        public T Execute<T>(int index, Func<ISocketClient,T> func) where T : class
+        public T Execute<T>(int index, Func<ISocketClient, T> func) where T : class
         {
-            if (this.MemcachedConfig.Pool >= 1)
+            if (!this.IsInit) return default(T);
+            if (this.MemcachedConfig.PoolSize >= 1)
             {
                 if (this.Pools.TryGetValue(this.MemcachedConfig.Servers[index], out var pool))
                 {
                     var item = pool.Get();
-                    var v = func?.Invoke(item.Value);
+                    var client = item.Value;
+                    if (!client.Connected && client.Connect() != SocketError.Success)
+                    {
+                        return default(T);
+                    }
+                    var v = func?.Invoke(client.Socket);
                     pool.Put(item);
                     return v;
                 }
@@ -157,7 +135,7 @@ namespace XiaoFeng.Memcached.Internal
                     var ma = this.Manuals[index];
                     ma.WaitOne(TimeSpan.FromSeconds(this.Timeout));
                     if (!client.Connected) client.Connect();
-                    var v = func?.Invoke(client);
+                    var v = func?.Invoke(client.Socket);
                     ma.Set();
                     return v;
                 }
@@ -173,31 +151,37 @@ namespace XiaoFeng.Memcached.Internal
         public Dictionary<IPEndPoint, T> Execute<T>(Func<ISocketClient, T> func)
         {
             var dic = new Dictionary<IPEndPoint, T>();
-            if (this.MemcachedConfig.Pool >= 1)
+            if (!this.IsInit) return dic;
+            for (var i = 0; i < this.MemcachedConfig.Servers.Count; i++)
             {
-                for (var i = 0; i < this.MemcachedConfig.Servers.Count; i++)
+                var endpoint = this.MemcachedConfig.Servers[i];
+                if (this.MemcachedConfig.PoolSize >= 1)
                 {
-                    var endpoint = this.MemcachedConfig.Servers[i];
                     if (this.Pools.TryGetValue(endpoint, out var pool))
                     {
                         var item = pool.Get();
-                        var v = func.Invoke(item.Value);
+                        var client = item.Value;
+                        if (!client.Connected && client.Connect() != SocketError.Success)
+                        {
+                            continue;
+                        }
+                        var v = func.Invoke(client.Socket);
                         pool.Put(item);
                         dic.Add(endpoint, v);
                     }
                 }
-            }
-            else
-            {
-                for (var i = 0; i < this.MemcachedConfig.Servers.Count; i++)
+                else
                 {
-                    var endpoint = this.MemcachedConfig.Servers[i];
                     var ma = this.Manuals[i];
                     if (this.Clients.TryGetValue(endpoint, out var client))
                     {
                         ma.WaitOne(TimeSpan.FromSeconds(this.Timeout));
-                        if (!client.Connected) client.Connect();
-                        var v = func.Invoke(client);
+                        if (!client.Connected && client.Connect() != SocketError.Success)
+                        {
+                            ma.Set();
+                            continue;
+                        }
+                        var v = func.Invoke(client.Socket);
                         ma.Set();
                         dic.Add(endpoint, v);
                     }
@@ -205,6 +189,43 @@ namespace XiaoFeng.Memcached.Internal
             }
             return dic;
         }
+        #endregion
+
+        #region 关闭
+        /// <summary>
+        /// 释放
+        /// </summary>
+        /// <param name="disposing">标识</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (this.IsInit)
+            {
+                if (this.Clients?.Count > 0)
+                {
+                    this.Clients.Values.Each(v =>
+                    {
+                        v.Dispose();
+                    });
+                    this.Clients.Clear();
+                    this.Clients.TryDispose();
+                    this.Clients = null;
+                }
+                if (this.Pools?.Count > 0)
+                {
+                    this.Pools.Values.Each(v =>
+                    {
+                        v.Dispose();
+                    });
+                    this.Pools.Clear();
+                    this.Pools.TryDispose();
+                    this.Pools = null;
+                }
+            }
+            base.Dispose(disposing);
+            GC.Collect();
+        }
+        #endregion
+
         #endregion
     }
 }

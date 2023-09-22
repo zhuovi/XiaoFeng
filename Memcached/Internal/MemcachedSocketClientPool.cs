@@ -20,7 +20,7 @@ namespace XiaoFeng.Memcached.Internal
     /// <summary>
     /// Memcached 线程池
     /// </summary>
-    public class MemcachedSocketPool : ObjectPool<ISocketClient>
+    public class MemcachedSocketClientPool : ObjectPool<IMemcachedSocketClient>
     {
         #region 构造器
         /// <summary>
@@ -28,11 +28,11 @@ namespace XiaoFeng.Memcached.Internal
         /// </summary>
         /// <param name="memcachedConfig">配置</param>
         /// <param name="endPoint">网络终结点</param>
-        public MemcachedSocketPool(MemcachedConfig memcachedConfig,IPEndPoint endPoint)
+        public MemcachedSocketClientPool(MemcachedConfig memcachedConfig, IPEndPoint endPoint)
         {
             this.MemcachedConfig = memcachedConfig;
             this.EndPoint = endPoint;
-            this.Max = this.MemcachedConfig.Pool;
+            this.Max = this.MemcachedConfig.PoolSize;
         }
 
         #endregion
@@ -53,43 +53,27 @@ namespace XiaoFeng.Memcached.Internal
         /// 创建对象
         /// </summary>
         /// <returns></returns>
-        protected override ISocketClient OnCreate()
+        protected override IMemcachedSocketClient OnCreate()
         {
-            var socket = new SocketClient(this.EndPoint)
-            {
-                ReceiveTimeout = this.MemcachedConfig.ReadTimeout,
-                SendTimeout = this.MemcachedConfig.WriteTimeout,
-                Encoding = this.MemcachedConfig.Encoding
-            };
-            if (this.MemcachedConfig.Certificates != null && this.MemcachedConfig.Certificates.Count > 0)
-            {
-                socket.ClientCertificates = this.MemcachedConfig.Certificates;
-                socket.SslProtocols = System.Security.Authentication.SslProtocols.Tls12;
-            }
-            var status = socket.Connect();
-            if (status == System.Net.Sockets.SocketError.Success)
-            {
-                return socket;
-            }
-            else
-                return null;
+            return new MemcachedSocketClient(this.MemcachedConfig, this.EndPoint);
         }
         /// <summary>
         /// 关闭
         /// </summary>
         /// <param name="item">项</param>
-        public override void Close(ISocketClient item)
+        public override void Close(IMemcachedSocketClient item)
         {
-            item.Stop();
+            item.Close();
         }
         /// <summary>
         /// 释放资源
         /// </summary>
         /// <param name="value">项</param>
-        public override void OnDispose(ISocketClient value)
+        public override void OnDispose(IMemcachedSocketClient value)
         {
             this.Close(value);
             base.OnDispose(value);
+            GC.Collect();
         }
         #endregion
     }

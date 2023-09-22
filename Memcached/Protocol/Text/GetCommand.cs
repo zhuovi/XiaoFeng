@@ -86,7 +86,7 @@ namespace XiaoFeng.Memcached.Protocol.Text
         /// <param name="commandType">命令</param>
         public GetOperationResult(byte[] buffers, Encoding encoding, CommandType commandType)
         {
-            this.PayLoad = buffers;
+            //this.PayLoad = buffers;
             var val = buffers.GetString(encoding);
             if (val.StartsWith(ReturnResult.END.GetEnumName(), StringComparison.OrdinalIgnoreCase))
             {

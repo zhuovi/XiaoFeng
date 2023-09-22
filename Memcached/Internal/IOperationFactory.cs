@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using XiaoFeng.Memcached.IO;
-using XiaoFeng.Memcached.Protocol.Text;
-using XiaoFeng.Net;
+﻿using System.Threading.Tasks;
 
 /****************************************************************
 *  Copyright © (2023) www.eelf.cn All Rights Reserved.          *
@@ -172,6 +166,10 @@ namespace XiaoFeng.Memcached.Internal
         /// </summary>
         /// <returns></returns>
         Task<StatsOperationResult> VersionAsync();
+        /// <summary>
+        /// 释放
+        /// </summary>
+        void Dispose();
         #endregion
     }
 }

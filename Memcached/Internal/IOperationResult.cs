@@ -43,9 +43,11 @@ namespace XiaoFeng.Memcached.Internal
         /// 消息
         /// </summary>
         string Message { get; set; }
+        /*
         /// <summary>
         /// 响应数据
         /// </summary>
         byte[] PayLoad { get; set; }
+        */
     }
 }

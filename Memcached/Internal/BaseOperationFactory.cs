@@ -24,7 +24,7 @@ namespace XiaoFeng.Memcached.Internal
     /// <summary>
     /// 操作工厂基本类
     /// </summary>
-    public class BaseOperationFactory
+    public class BaseOperationFactory : Disposable
     {
         #region 构造器
         /// <summary>
@@ -148,8 +148,22 @@ namespace XiaoFeng.Memcached.Internal
             };
             if (this.MemcachedConfig.Certificates != null) client.ClientCertificates = this.MemcachedConfig.Certificates;
 
-           var status = await client.ConnectAsync(endPoint).ConfigureAwait(false);
+            var status = await client.ConnectAsync(endPoint).ConfigureAwait(false);
             return await Task.FromResult(status == System.Net.Sockets.SocketError.Success && client.Connected ? client : null);
+        }
+        #endregion
+
+        #region 释放
+        /// <summary>
+        /// 释放
+        /// </summary>
+        /// <param name="disposing">标识</param>
+        protected override void Dispose(bool disposing)
+        {
+            this.Memcached.Dispose();
+            this.Memcached = null;
+            base.Dispose(disposing);
+            GC.Collect();
         }
         #endregion
 

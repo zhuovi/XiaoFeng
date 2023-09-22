@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using XiaoFeng.Memcached.Internal;
-using XiaoFeng.Memcached.IO;
 using XiaoFeng.Net;
 
 /****************************************************************
@@ -64,7 +60,7 @@ namespace XiaoFeng.Memcached.Protocol.Binary
         /// <summary>
         /// 配置
         /// </summary>
-        public Internal.MemcachedConfig Config { get; set; }
+        public MemcachedConfig Config { get; set; }
         /// <summary>
         /// 魔法数字，用来区分包头是请求包头还是响应包头
         /// </summary>

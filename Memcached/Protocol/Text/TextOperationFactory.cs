@@ -35,7 +35,7 @@ namespace XiaoFeng.Memcached.Protocol.Text
         /// 设置配置
         /// </summary>
         /// <param name="config">配置</param>
-        public TextOperationFactory(Internal.MemcachedConfig config)
+        public TextOperationFactory(MemcachedConfig config)
         {
             this.MemcachedConfig = config;
         }

@@ -15,7 +15,7 @@ using System.Text;
 namespace XiaoFeng.Memcached
 {
     /// <summary>
-    /// MemcachedValue 类说明
+    /// MemcachedValue
     /// </summary>
     public class MemcachedValue
     {

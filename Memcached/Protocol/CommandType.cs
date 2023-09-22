@@ -22,10 +22,11 @@ namespace XiaoFeng.Memcached.Protocol
     public enum CommandType
     {
         /// <summary>
-        /// 获取key的value值，若key不存在，返回空。支持多个key
+        /// 获取key的value值，若key不存在，返回空，支持多个key。
         /// </summary>
         /// <remarks>
-        /// 同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议
+        /// <para>同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议。</para>
+        /// <para><see langword="Text"/> 传输协议命令行: <see langword="get &lt;key&gt;*"/></para>
         /// </remarks>
         [Description("获取key的value值，若key不存在，返回空。支持多个key")]
         [ProtocolBinary, ProtocolText]
@@ -33,20 +34,22 @@ namespace XiaoFeng.Memcached.Protocol
         [CommandGroup(CommandFlags.Get)]
         Get = 0x00,
         /// <summary>
-        /// 给key设置一个值
+        /// 给key设置一个值。
         /// </summary>
         /// <remarks>
-        /// 同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议
+        /// <para>同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议。</para>
+        /// <para><see langword="Text"/> 传输协议命令行: <see langword="set &lt;key&gt; &lt;flags&gt; &lt;exptime> &lt;bytes&gt; [noreply]"/></para>
         /// </remarks>
         [Description("给key设置一个值")]
         [ProtocolBinary, ProtocolText]
         [CommandGroup(CommandFlags.Store)]
         Set = 0x01,
         /// <summary>
-        /// 如果key不存在的话，就添加
+        /// 如果key不存在的话，就添加。
         /// </summary>
         /// <remarks>
-        /// 同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议
+        /// <para>同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议。</para>
+        /// <para><see langword="Text"/> 传输协议命令行: <see langword="add &lt;key&gt; &lt;flags&gt; &lt;exptime> &lt;bytes&gt; [noreply]"/></para>
         /// </remarks>
         [Description("如果key不存在的话，就添加")]
         [ProtocolBinary, ProtocolText]
@@ -56,7 +59,8 @@ namespace XiaoFeng.Memcached.Protocol
         /// 用来替换已知key的value
         /// </summary>
         /// <remarks>
-        /// 同时支持 <see langword="Binary"/> <see langword="Text"/>
+        /// <para>同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议。</para>
+        /// <para><see langword="Text"/> 传输协议命令行: <see langword="replace &lt;key&gt; &lt;flags&gt; &lt;exptime> &lt;bytes&gt; [noreply]"/></para>
         /// </remarks>
         [Description("用来替换已知key的value")]
         [ProtocolBinary, ProtocolText]
@@ -66,7 +70,8 @@ namespace XiaoFeng.Memcached.Protocol
         /// 删除Key
         /// </summary>
         /// <remarks>
-        /// v支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议
+        /// <para>同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议。</para>
+        /// <para><see langword="Text"/> 传输协议命令行: <see langword="delete &lt;key&gt; [noreply]"/></para>
         /// </remarks>
         [Description("删除Key")]
         [EnumName("delete")]
@@ -77,7 +82,8 @@ namespace XiaoFeng.Memcached.Protocol
         /// 递增
         /// </summary>
         /// <remarks>
-        /// 同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议
+        /// <para>同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议。</para>
+        /// <para><see langword="Text"/> 传输协议命令行: <see langword="incr &lt;key&gt; &lt;increment_value&gt; [noreply]"/></para>
         /// </remarks>
         [Description("递增")]
         [EnumName("Incr")]
@@ -88,7 +94,8 @@ namespace XiaoFeng.Memcached.Protocol
         /// 递减
         /// </summary>
         /// <remarks>
-        /// 同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议
+        /// <para>同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议。</para>
+        /// <para><see langword="Text"/> 传输协议命令行: <see langword="decr &lt;key&gt; &lt;increment_value&gt; [noreply]"/></para>
         /// </remarks>
         [Description("递减")]
         [EnumName("Decr")]
@@ -99,7 +106,8 @@ namespace XiaoFeng.Memcached.Protocol
         /// 退出
         /// </summary>
         /// <remarks>
-        /// 同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议
+        /// <para>同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议。</para>
+        /// <para><see langword="Text"/> 传输协议命令行: <see langword="quit"/></para>
         /// </remarks>
         [Description("退出")]
         [EnumName("quit")]
@@ -109,7 +117,8 @@ namespace XiaoFeng.Memcached.Protocol
         /// 用于清理缓存中的所有 key=>value(键=>值) 对
         /// </summary>
         /// <remarks>
-        /// 同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议
+        /// <para>同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议。</para>
+        /// <para><see langword="Text"/> 传输协议命令行: <see langword="flush_all [time] [noreply]"/></para>
         /// </remarks>
         [Description("用于清理缓存中的所有 key=>value(键=>值) 对")]
         [EnumName("flush_all")]
@@ -130,7 +139,8 @@ namespace XiaoFeng.Memcached.Protocol
         /// No-op
         /// </summary>
         /// <remarks>
-        /// 同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议
+        /// <para>同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议。</para>
+        /// <para><see langword="Text"/> 传输协议命令行: <see langword="mn"/> 返回结果为:MN\r\n</para>
         /// </remarks>
         [Description("No-op")]
         [EnumName("No-op")]
@@ -140,7 +150,8 @@ namespace XiaoFeng.Memcached.Protocol
         /// 版本
         /// </summary>
         /// <remarks>
-        /// 同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议
+        /// <para>同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议。</para>
+        /// <para><see langword="Text"/> 传输协议命令行: <see langword="version"/></para>
         /// </remarks>
         [Description("版本")]
         [EnumName("version")]
@@ -170,7 +181,8 @@ namespace XiaoFeng.Memcached.Protocol
         /// 表示将提供的值附加到现有key的value之后，是一个附加操作
         /// </summary>
         /// <remarks>
-        /// 同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议
+        /// <para>同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议。</para>
+        /// <para><see langword="Text"/> 传输协议命令行: <see langword="append &lt;key&gt; &lt;flags&gt; &lt;exptime> &lt;bytes&gt; [noreply]"/></para>
         /// </remarks>
         [Description("表示将提供的值附加到现有key的value之后，是一个附加操作")]
         [ProtocolBinary, ProtocolText]
@@ -180,7 +192,8 @@ namespace XiaoFeng.Memcached.Protocol
         /// 将此数据添加到现有数据之前的现有键中
         /// </summary>
         /// <remarks>
-        /// 同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议
+        /// <para>同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议。</para>
+        /// <para><see langword="Text"/> 传输协议命令行: <see langword="prepend &lt;key&gt; &lt;flags&gt; &lt;exptime> &lt;bytes&gt; [noreply]"/></para>
         /// </remarks>
         [Description("将此数据添加到现有数据之前的现有键中")]
         [ProtocolBinary, ProtocolText]
@@ -190,7 +203,8 @@ namespace XiaoFeng.Memcached.Protocol
         /// 返回统计信息
         /// </summary>
         /// <remarks>
-        /// 同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议
+        /// <para>同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议。</para>
+        /// <para><see langword="Text"/> 传输协议命令行: <see langword="stats"/></para>
         /// </remarks>
         [Description("返回统计信息")]
         [ProtocolBinary, ProtocolText]
@@ -301,7 +315,8 @@ namespace XiaoFeng.Memcached.Protocol
         /// Verbosity
         /// </summary>
         /// <remarks>
-        /// 同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议
+        /// <para>同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议。</para>
+        /// <para><see langword="Text"/> 传输协议命令行: <see langword="verbosity"/></para>
         /// </remarks>
         [Description("Verbosity")]
         [EnumName("Verbosity")]
@@ -311,7 +326,8 @@ namespace XiaoFeng.Memcached.Protocol
         /// 修改key过期时间
         /// </summary>
         /// <remarks>
-        /// 同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议
+        /// <para>同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议。</para>
+        /// <para><see langword="Text"/> 传输协议命令行: <see langword="touch &lt;key&gt; &lt;exptime> [noreply]"/></para>
         /// </remarks>
         [Description("修改key过期时间")]
         [EnumName("touch")]
@@ -322,7 +338,8 @@ namespace XiaoFeng.Memcached.Protocol
         /// 获取key的value值，若key不存在，返回空。支持多个key 更新缓存时间
         /// </summary>
         /// <remarks>
-        /// 同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议
+        /// <para>同时支持 <see langword="Binary"/> , <see langword="Text"/> 传输协议。</para>
+        /// <para><see langword="Text"/> 传输协议命令行: <see langword="gat &lt;exptime> &lt;key&gt;*"/></para>
         /// </remarks>
         [Description("获取key的value值，若key不存在，返回空。支持多个key 更新缓存时间")]
         [ProtocolBinary, ProtocolText]
@@ -546,7 +563,8 @@ namespace XiaoFeng.Memcached.Protocol
         /// 用于获取key的带有CAS令牌值的value值，若key不存在，返回空。支持多个key
         /// </summary>
         /// <remarks>
-        /// 仅支持 <see langword="Text"/> 传输协议
+        /// <para>仅支持 <see langword="Text"/> 传输协议。</para>
+        /// <para><see langword="Text"/> 传输协议命令行: <see langword="gets &lt;key&gt;*"/></para>
         /// </remarks>
         [Description("用于获取key的带有CAS令牌值的value值，若key不存在，返回空。支持多个key")]
         [ProtocolText]
@@ -557,7 +575,8 @@ namespace XiaoFeng.Memcached.Protocol
         /// 用于获取key的带有CAS令牌值的value值，若key不存在，返回空。支持多个key 更新缓存时间
         /// </summary>
         /// <remarks>
-        /// 仅支持 <see langword="Text"/> 传输协议
+        /// <para>仅支持 <see langword="Text"/> 传输协议。</para>
+        /// <para><see langword="Text"/> 传输协议命令行: <see langword="gats &lt;exptime> &lt;key&gt;*"/></para>
         /// </remarks>
         [Description("用于获取key的带有CAS令牌值的value值，若key不存在，返回空。支持多个key 更新缓存时间")]
         [ProtocolText]
@@ -567,7 +586,8 @@ namespace XiaoFeng.Memcached.Protocol
         /// 一个原子操作，只有当casunique匹配的时候，才会设置对应的值
         /// </summary>
         /// <remarks>
-        /// 仅支持 <see langword="Text"/> 传输协议
+        /// <para>仅支持 <see langword="Text"/> 传输协议。</para>
+        /// <para><see langword="Text"/> 传输协议命令行: <see langword="cas &lt;key&gt; &lt;flags&gt; &lt;exptime> &lt;bytes&gt; unique_cas_token [noreply]"/></para>
         /// </remarks>
         [Description("一个原子操作，只有当casunique匹配的时候，才会设置对应的值")]
         [ProtocolText]
@@ -577,7 +597,8 @@ namespace XiaoFeng.Memcached.Protocol
         /// 显示各个 slab 中 item 的数目和存储时长(最后一次访问距离现在的秒数)
         /// </summary>
         /// <remarks>
-        /// 仅支持 <see langword="Text"/> 传输协议
+        /// <para>仅支持 <see langword="Text"/> 传输协议。</para>
+        /// <para><see langword="Text"/> 传输协议命令行: <see langword="stats items"/></para>
         /// </remarks>
         [Description("显示各个 slab 中 item 的数目和存储时长")]
         [EnumName("stats items")]
@@ -588,7 +609,8 @@ namespace XiaoFeng.Memcached.Protocol
         /// 显示各个slab的信息，包括chunk的大小、数目、使用情况等
         /// </summary>
         /// <remarks>
-        /// 仅支持 <see langword="Text"/> 传输协议
+        /// <para>仅支持 <see langword="Text"/> 传输协议。</para>
+        /// <para><see langword="Text"/> 传输协议命令行: <see langword="stats slabs"/></para>
         /// </remarks>
         [Description("显示各个slab的信息，包括chunk的大小、数目、使用情况等")]
         [EnumName("stats slabs")]
@@ -599,7 +621,8 @@ namespace XiaoFeng.Memcached.Protocol
         /// 显示所有item的大小和个数
         /// </summary>
         /// <remarks>
-        /// 仅支持 <see langword="Text"/> 传输协议
+        /// <para>仅支持 <see langword="Text"/> 传输协议。</para>
+        /// <para><see langword="Text"/> 传输协议命令行: <see langword="stats sizes"/></para>
         /// </remarks>
         [Description("显示所有item的大小和个数")]
         [EnumName("stats sizes")]

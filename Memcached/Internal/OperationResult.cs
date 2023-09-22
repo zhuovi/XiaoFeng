@@ -38,10 +38,12 @@ namespace XiaoFeng.Memcached.Internal
         /// 消息
         /// </summary>
         public string Message { get; set; }
+        /*
         /// <summary>
         /// 响应数据
         /// </summary>
         public byte[] PayLoad { get; set; }
+        */
         #endregion
 
         #region 方法
