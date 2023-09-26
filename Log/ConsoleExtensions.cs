@@ -20,7 +20,6 @@ namespace XiaoFeng.Log
     /// </summary>
     public static class ConsoleX
     {
-
         #region 属性
 
         #endregion

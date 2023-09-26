@@ -331,6 +331,20 @@ namespace XiaoFeng.Threading
             Console.WriteLine("".PadLeft(70, '='));
             Console.ResetColor();
         }
-        #endregion
+        /// <summary>
+        /// 清空数据
+        /// </summary>
+        public virtual Task Clear()
+        {
+            return Task.Run(() =>
+            {
+#if NETSTANDARD2_1
+            this.QueueData.Clear();
+#else
+            while (this.QueueData.TryDequeue(out var _)) { }
+#endif
+            });
+        }
+#endregion
     }
 }

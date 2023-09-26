@@ -39,42 +39,10 @@ namespace XiaoFeng
         static LogHelper()
         {
             Log = LogFactory.Create(typeof(Logger), "LogTask");
-            /*初始化数据*/
-            //ThreadPool.SetMaxThreads(30, 30);
-            //ThreadPool.SetMinThreads(1, 1);
-
-            //var config = LoggerConfig.Current;
-            /*是否写日志*/
-            //IsWriteLog = config.OpenLog;
-            //if (!IsWriteLog) return;
-            /*路径*/
-            //if (LogPath == "")
-            {
-                //LogPath = config.Path;
-                //if (LogPath.IsNullOrEmpty()) LogPath = "Log";
-                //LogPath = LogPath.GetBasePath();
-            }
-            //FileHelper.Create(LogPath, FileAttribute.Directory);
         }
         #endregion
 
         #region 属性
-        ///// <summary>
-        ///// 日志保存路径
-        ///// </summary>
-        //private static string LogPath = "";
-        /// <summary>
-        /// 文件锁
-        /// </summary>
-        private static readonly object FileLock = new object();
-        ///// <summary>
-        ///// 是否写日志
-        ///// </summary>
-        //private static Boolean IsWriteLog = true;
-        ///// <summary>
-        ///// 计时器
-        ///// </summary>
-        //private static int Count = 0;
         /// <summary>
         /// 日志对象
         /// </summary>
@@ -82,8 +50,7 @@ namespace XiaoFeng
         /// <summary>
         /// 日志队列
         /// </summary>
-        //private static IBackgroundTaskQueue LogQueue = new BackgroundTaskQueue("LogTaskQueue");
-        private static ITaskServiceQueue<LogData> LogTaskQueue = new LogTaskQueue();
+        private static ITaskServiceQueue<LogData> LogTaskQueue = new LogTask();
         #endregion
 
         #region 方法
@@ -95,15 +62,6 @@ namespace XiaoFeng
         /// <param name="logData">日志对象</param>
         public static void WriteLog(LogData logData)
         {
-            //lock (FileLock)
-            {
-                //if (LogQueue == null) LogQueue = new BackgroundTaskQueue("LogTaskQueue");
-                //if (Log == null) Log = LogFactory.Create(typeof(Logger), "LogTaskQueue");
-            }
-            //LogQueue.AddWorkItem(() =>
-            //{
-            //Log.Write(logData);
-            //});
             LogTaskQueue.AddWorkItem(logData);
         }
         /// <summary>
@@ -205,27 +163,13 @@ namespace XiaoFeng
         /// </summary>
         /// <param name="Message">信息</param>
         /// <param name="logType">日志类型</param>
-        public static void Record(string Message,LogType logType =  LogType.Info) => WriteLog(new LogData
+        public static void Record(string Message, LogType logType = LogType.Info) => WriteLog(new LogData
         {
             IsRecord = true,
             Message = Message,
             LogType = logType
         });
         #endregion
-
-        #region 设置日志目录
-        /// <summary>
-        /// 设置日志目录
-        /// </summary>
-        /// <param name="path">目录</param>
-        public static void SetLogPath(string path)
-        {
-            if (Log == null)
-                Log = LogFactory.Create(typeof(Logger), "LogTask");
-            Log.LogPath = path;
-        }
-        #endregion
-
         #endregion
     }
 }
