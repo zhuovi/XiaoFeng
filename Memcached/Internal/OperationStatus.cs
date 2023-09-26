@@ -15,17 +15,17 @@ using System.Text;
 namespace XiaoFeng.Memcached.Internal
 {
     /// <summary>
-    /// OperationStatus 类说明
+    /// 操作状态
     /// </summary>
     public enum OperationStatus
     {
         /// <summary>
         /// 成功
         /// </summary>
-       Success=0,
-       /// <summary>
-       /// 失败
-       /// </summary>
-       Error = 1
+        Success = 0,
+        /// <summary>
+        /// 失败
+        /// </summary>
+        Error = 1
     }
 }
