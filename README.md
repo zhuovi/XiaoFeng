@@ -31,44 +31,76 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 4.2.0
+$ dotnet add package XiaoFeng --version 4.3.0
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 4.2.0
+PM> Install-Package XiaoFeng -Version 4.3.0
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="4.2.0" />
+<PackageReference Include="XiaoFeng" Version="4.3.0" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 4.2.0
+> paket add XiaoFeng --version 4.3.0
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 4.2.0"
+> #r "nuget: XiaoFeng, 4.3.0"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=4.2.0
+#addin nuget:?package=XiaoFeng&version=4.3.0
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=4.2.0
+#tool nuget:?package=XiaoFeng&version=4.3.0
 ```
 
 # 更新日志
+
+## 2023-09-26   v 4.3.0
+
+### XiaoFeng.Socket 网络库
+
+1.优化SocketClient连接方法;
+
+### XiaoFeng.PrototypeHelper 扩展方法
+
+1.增加扩展方法Object.ToStringX();
+
+2.优化扩展方法GetValue中字符串转换对象的匹配;
+
+3.增加创建实例扩展方法，类 结构体 匿名对象实例化;
+
+### XiaoFeng.Threading 线程
+
+1.etting设置Job消息日志最大条数;优化作业调度,把一次性作业,间隔作业独立处理,提高定时调度性能,优化作业记录日志最大记录减少内存开支;
+
+2.任务队列升级到可多线程消费任务;优化调度作业取消事件;
+
+### XiaoFeng.Json Json库
+
+1.优化Json可以把对象转成字符串的属性StringObjectConverter;
+
+### XiaoFeng.Memcached Memcached库
+
+1.Memcached增加二进制协议传输入，重构Memcached类库;
+
+### XiaoFeng.Log 日志库
+
+1.升级日志,增加高并发下日志写的没有输入多时导致内存一直上涨的问题,队列数据超过65535就清空一次队列;
 
 ## 2023-09-07   v 4.2.0
 
