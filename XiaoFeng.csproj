@@ -24,7 +24,7 @@
 		<PackageProjectUrl>https://www.eelf.cn</PackageProjectUrl>
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>增加Memcached查找所有key方法 StatsKeysAsync();</PackageReleaseNotes>
+		<PackageReleaseNotes>增加Memcached查找所有key方法 StatsKeysAsync();修复SocketClient连接DNS时的bug;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>

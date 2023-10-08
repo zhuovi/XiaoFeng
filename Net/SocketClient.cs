@@ -205,9 +205,15 @@ namespace XiaoFeng.Net
                 {
                     foreach (IPAddress address in addresses)
                     {
+                        this.EndPoint = new IPEndPoint(address, port);
+                        InitializeClientSocket();
                         try
                         {
-                            if (this.Client == null)
+                            if (address.AddressFamily == AddressFamily.Unknown)
+                            {
+                                return this.Connect(new IPEndPoint(address, port));
+                            }
+                            else
                             {
                                 if ((address.AddressFamily == AddressFamily.InterNetwork && Socket.OSSupportsIPv4) || Socket.OSSupportsIPv6)
                                 {
@@ -217,8 +223,6 @@ namespace XiaoFeng.Net
                                     }
                                     try
                                     {
-                                        this.EndPoint = new IPEndPoint(address, port);
-                                        InitializeClientSocket();
                                         if (this.ConnectTimeout <= 0)
                                             this.ConnectTimeout = 10_000;
 
@@ -229,6 +233,7 @@ namespace XiaoFeng.Net
                                             return SocketError.TimedOut;
                                         }
                                         this.Client.EndConnect(result);
+                                        this._Active = true;
                                         return SocketError.Success;
                                     }
                                     catch (Exception ex)
@@ -238,10 +243,6 @@ namespace XiaoFeng.Net
                                     }
                                 }
                                 break;
-                            }
-                            else if (address.AddressFamily == AddressFamily.Unknown)
-                            {
-                               return this.Connect(new IPEndPoint(address, port));
                             }
                         }
                         catch (Exception ex) when (!(ex is OutOfMemoryException))
