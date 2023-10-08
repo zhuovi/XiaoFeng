@@ -30,11 +30,15 @@ namespace XiaoFeng.Memcached.Protocol.Text
         /// <param name="socket">网络</param>
         /// <param name="commandType">命令</param>
         /// <param name="timeout">延时时间</param>
-        public StatsCommand(ISocketClient socket, CommandType commandType, uint timeout)
+        /// <param name="itemValue">指定需要查看的items的值</param>
+        /// <param name="itemCount">指定需要查看多少个key</param>
+        public StatsCommand(ISocketClient socket, CommandType commandType, uint timeout,int itemValue,int itemCount)
         {
             this.SocketClient = socket;
             this.CommandType = commandType;
             this.Timeout = timeout;
+            this.ItemValue = itemValue;
+            this.ItemCount = itemCount;
         }
         #endregion
 
@@ -43,6 +47,14 @@ namespace XiaoFeng.Memcached.Protocol.Text
         /// 延时时间
         /// </summary>
         public uint Timeout { get; set; }
+        /// <summary>
+        /// 指定需要查看的items的值
+        /// </summary>
+        public int ItemValue { get; set; }
+        /// <summary>
+        /// 指定需要查看多少个key
+        /// </summary>
+        public int ItemCount { get; set; }
         #endregion
 
         #region 方法
@@ -59,7 +71,10 @@ namespace XiaoFeng.Memcached.Protocol.Text
         ///<inheritdoc/>
         public async override Task<Internal.StatsOperationResult> GetStatResponseAsync()
         {
-            var line = this.CommandType.GetEnumName() + this.CRLF;
+            var line = this.CommandType.GetEnumName();
+            if (this.CommandType == CommandType.StatsKeys)
+                line += $" {this.ItemValue} {this.ItemCount}";
+            line += this.CRLF;
             await this.SocketClient.SendAsync(line).ConfigureAwait(false);
             var bytes = await this.SocketClient.ReceviceMessageAsync().ConfigureAwait(false);
             return await Task.FromResult(new StatsOperationResult(bytes, this.SocketClient.Encoding, this.CommandType));
@@ -101,9 +116,23 @@ namespace XiaoFeng.Memcached.Protocol.Text
                 dict.Add("Version", line.RemovePattern(@"^version\s+"));
                 return;
             }
+            if(commandType== CommandType.StatsKeys)
+            {
+                while(line.StartsWith("ITEM", StringComparison.OrdinalIgnoreCase) && !line.EqualsIgnoreCase(ReturnResult.END.GetEnumName()))
+                {
+                    var args = line.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+                    if (args.Length == 6)
+                    {
+                        var length = args[2].Trim('[');
+                        dict.Add(args[1], length);
+                    }
+                    line = reader.ReadLine();
+                }
+                return;
+            }
             while (line.StartsWith("STAT", StringComparison.OrdinalIgnoreCase) && !line.EqualsIgnoreCase(ReturnResult.END.GetEnumName()))
             {
-                var args = line.RemovePattern(@"^STAT\s+(Items:\d+:|\d+:)?").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                var args = line.RemovePattern(@"^STAT\s+").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 if (args.Length == 1)
                 {
                     if (!dict.ContainsKey(args[0]))
@@ -113,6 +142,7 @@ namespace XiaoFeng.Memcached.Protocol.Text
                 {
                     if (commandType == CommandType.StatsSizes)
                     {
+                        if (dict.ContainsKey("Item Size") || dict.ContainsKey("Item Count")) return;
                         dict.Add("Item Size", args[0]);
                         dict.Add("Item Count", args[1]);
                     }

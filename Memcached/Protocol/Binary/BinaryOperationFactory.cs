@@ -217,6 +217,11 @@ namespace XiaoFeng.Memcached.Protocol.Binary
             return await StatAsync(CommandType.Stats, "sizes", 0).ConfigureAwait(false);
         }
         ///<inheritdoc/>
+        public async Task<StatsOperationResult> StatsKeysAsync(int itemCount = 10000, int itemValue = 1)
+        {
+            return await StatAsync(CommandType.Stats, "cachedump", 0).ConfigureAwait(false);
+        }
+        ///<inheritdoc/>
         public async Task<StatsOperationResult> FulshAllAsync(uint timeout)
         {
             return await StatAsync(CommandType.FlushAll, "", 0).ConfigureAwait(false);
@@ -258,6 +263,7 @@ namespace XiaoFeng.Memcached.Protocol.Binary
                 {
                     if (key.EqualsIgnoreCase("sizes"))
                     {
+                        if (dict.ContainsKey("Item Size") || dict.ContainsKey("Item Count")) return dict;
                         dict.Add("Item Size", response.Key.GetString());
                         dict.Add("Item Count", response.Value.GetString());
                     }
@@ -265,7 +271,7 @@ namespace XiaoFeng.Memcached.Protocol.Binary
                     {
                         var startIndex = 0;
                         var Key = response.Key.GetString();
-                        if (key.EqualsIgnoreCase("slabs")) Key = Key.TrimStart(new char[] { '1', ':' });
+                        //if (key.EqualsIgnoreCase("slabs")) Key = Key.TrimStart(new char[] { '1', ':' });
                         dict.Add(Key.Substring(startIndex), response.Value.GetString());
                         do
                         {

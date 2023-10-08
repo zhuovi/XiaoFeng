@@ -628,6 +628,18 @@ namespace XiaoFeng.Memcached.Protocol
         [EnumName("stats sizes")]
         [ProtocolText]
         [CommandGroup(CommandFlags.Stats)]
-        StatsSizes = 0x95
+        StatsSizes = 0x95,
+        /// <summary>
+        /// 显示所有item的大小和个数
+        /// </summary>
+        /// <remarks>
+        /// <para>仅支持 <see langword="Text"/> 传输协议。</para>
+        /// <para><see langword="Text"/> 传输协议命令行: <see langword="stats sizes"/></para>
+        /// </remarks>
+        [Description("显示所有Key")]
+        [EnumName("stats cachedump")]
+        [ProtocolText]
+        [CommandGroup(CommandFlags.Stats)]
+        StatsKeys = 0x96
     }
 }

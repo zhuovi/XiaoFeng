@@ -169,6 +169,13 @@ namespace XiaoFeng.Memcached
         /// <returns></returns>
         Task<StatsOperationResult> StatsSizesAsync();
         /// <summary>
+        /// 显示所有item 的Key及值长度
+        /// </summary>
+        /// <param name="itemCount">指定需要查看多少个key</param>
+        /// <param name="itemValue">指定需要查看的items的值 默认是1</param>
+        /// <returns></returns>
+        Task<StatsOperationResult> StatsKeysAsync(int itemCount = 10000, int itemValue = 1);
+        /// <summary>
         /// 用于清理缓存中的所有 key=>value(键=>值) 对
         /// </summary>
         /// <param name="timeout">延迟多长时间执行清理 单位为秒</param>

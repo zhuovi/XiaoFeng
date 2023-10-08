@@ -241,6 +241,9 @@ namespace XiaoFeng.Memcached
         /// </summary>
         /// <returns></returns>
         public async Task<StatsOperationResult> StatsSizesAsync() => await Factory.StatsSizesAsync().ConfigureAwait(false);
+        ///<inheritdoc/>
+        ///<remarks>Binary暂不支持</remarks>
+        public async Task<StatsOperationResult> StatsKeysAsync(int itemCount = 0, int itemValue = 1) => await Factory.StatsKeysAsync(itemCount, itemValue).ConfigureAwait(false);
         /// <summary>
         /// 用于清理缓存中的所有 key=>value(键=>值) 对
         /// </summary>

@@ -241,6 +241,11 @@ namespace XiaoFeng.Memcached.Protocol.Text
             return await this.StatAsync(CommandType.StatsSizes, 0).ConfigureAwait(false);
         }
         ///<inheritdoc/>
+        public async Task<Internal.StatsOperationResult> StatsKeysAsync(int itemCount = 10000, int itemValue = 1)
+        {
+            return await this.StatAsync(CommandType.StatsKeys, 0, itemValue, itemCount).ConfigureAwait(false);
+        }
+        ///<inheritdoc/>
         public async Task<Internal.StatsOperationResult> FulshAllAsync(uint timeout)
         {
             return await this.StatAsync(CommandType.FlushAll, timeout).ConfigureAwait(false);
@@ -255,8 +260,10 @@ namespace XiaoFeng.Memcached.Protocol.Text
         /// </summary>
         /// <param name="commandType">命令</param>
         /// <param name="timeout">延迟多长时间执行清理</param>
+        /// <param name="itemValue">指定需要查看的items的值 默认是1</param>
+        /// <param name="itemCount">指定需要查看多少个key</param>
         /// <returns></returns>
-        private async Task<Internal.StatsOperationResult> StatAsync(CommandType commandType, uint timeout)
+        private async Task<Internal.StatsOperationResult> StatAsync(CommandType commandType, uint timeout, int itemValue = 0, int itemCount = 0)
         {
             var result = new StatsOperationResult()
             {
@@ -264,8 +271,8 @@ namespace XiaoFeng.Memcached.Protocol.Text
             };
             var val = this.Execute(socket =>
             {
-                var cmd = new StatsCommand(socket, commandType, timeout);
-                var response =  cmd.GetStatResponseAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+                var cmd = new StatsCommand(socket, commandType, timeout, itemValue, itemCount);
+                var response = cmd.GetStatResponseAsync().ConfigureAwait(false).GetAwaiter().GetResult();
                 if (response != null && response.Status == OperationStatus.Success)
                 {
                     return response.Value.Values.First();
