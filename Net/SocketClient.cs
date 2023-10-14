@@ -467,6 +467,7 @@ namespace XiaoFeng.Net
                 this.EndPoint = this.Client.RemoteEndPoint.ToIPEndPoint();
                 this._Active = true;
                 this.SocketState = SocketState.Runing;
+                this.ConnectedTime = DateTime.Now;
             }
             else
             {
@@ -488,6 +489,7 @@ namespace XiaoFeng.Net
                 this.EndPoint = this.Client.RemoteEndPoint.ToIPEndPoint();
                 this._Active = true;
                 this.SocketState = SocketState.Runing;
+                this.ConnectedTime = DateTime.Now;
             }
             else
             {
@@ -878,38 +880,9 @@ namespace XiaoFeng.Net
                 }
                 var ReceiveMessage = this.DataType == SocketDataType.String ? bytes.GetString(this.Encoding) : bytes.ByteToHexString();
 
-                if (ReceiveMessage.IndexOf("Sec-WebSocket-Key", StringComparison.OrdinalIgnoreCase) > -1)
-                {
-                    this.ConnectionType = ConnectionType.WebSocket;
-                    this._RequestHeader = ReceiveMessage;
-                    if (this is IWebSocketClient webSocket)
-                    {
-                        webSocket.Request = new WebSocketRequest(webSocket.HostName.IsNullOrEmpty() ? "ws" : "wss", this.RequestHeader);
-                    }
-                    //开始握手
-                    var packet = new WebSocketPacket(this, ReceiveMessage)
-                    {
-                        Encoding = this.Encoding,
-                        DataType = this.DataType
-                    };
-                    var len = await packet.HandshakeAsync().ConfigureAwait(false);
-                    if (len == 0)
-                    {
-                        this.OnClientError?.Invoke(this, this.EndPoint, new Exception("网络客户端已经关闭."));
-                        this.Stop();
-                        return;
-                    }
-                    else if (len == -1)
-                    {
-                        this.OnClientError?.Invoke(this, this.EndPoint, new Exception("Sec-WebSocket-Key接收到是空数据,握手失败."));
-                        this.Stop();
-                        return;
-                    }
-                    this._Active = true;
-                    this.OnStart?.Invoke(this, EventArgs.Empty);
-                    await this.CheckClientAuthenticatedAsync().ConfigureAwait(false);
-                }
-                else
+                var flags = await this.CheckWebSocketAsync(ReceiveMessage).ConfigureAwait(false);
+                if (flags == -1) return;
+                if (flags == 0)
                 {
                     this._Active = true;
                     this.ConnectionType = ConnectionType.Socket;
@@ -927,6 +900,51 @@ namespace XiaoFeng.Net
                 await this.CheckClientAuthenticatedAsync().ConfigureAwait(false);
             }
             await this.ReceviceDataAsync().ConfigureAwait(false);
+        }
+        #endregion
+
+        #region 检测是否是websocket请求
+        /// <summary>
+        /// 检测是否是websocket请求
+        /// </summary>
+        /// <param name="receiveMessage">接收数据</param>
+        /// <returns></returns>
+        private async Task<int> CheckWebSocketAsync(string receiveMessage)
+        {
+            if (this.ConnectionType == ConnectionType.WebSocket) return await Task.FromResult(0);
+            if (receiveMessage.IndexOf("Sec-WebSocket-Key", StringComparison.OrdinalIgnoreCase) > -1)
+            {
+                this.ConnectionType = ConnectionType.WebSocket;
+                this._RequestHeader = receiveMessage;
+                if (this is IWebSocketClient webSocket)
+                {
+                    webSocket.Request = new WebSocketRequest(webSocket.HostName.IsNullOrEmpty() ? "ws" : "wss", this.RequestHeader);
+                }
+                //开始握手
+                var packet = new WebSocketPacket(this, receiveMessage)
+                {
+                    Encoding = this.Encoding,
+                    DataType = this.DataType
+                };
+                var len = await packet.HandshakeAsync().ConfigureAwait(false);
+                if (len == 0)
+                {
+                    this.OnClientError?.Invoke(this, this.EndPoint, new Exception("网络客户端已经关闭."));
+                    this.Stop();
+                    return await Task.FromResult(-1);
+                }
+                else if (len == -1)
+                {
+                    this.OnClientError?.Invoke(this, this.EndPoint, new Exception("Sec-WebSocket-Key接收到是空数据,握手失败."));
+                    this.Stop();
+                    return await Task.FromResult(-1);
+                }
+                this._Active = true;
+                this.OnStart?.Invoke(this, EventArgs.Empty);
+                await this.CheckClientAuthenticatedAsync().ConfigureAwait(false);
+                return await Task.FromResult(1);
+            }
+            return await Task.FromResult(0);
         }
         #endregion
 
@@ -964,6 +982,9 @@ namespace XiaoFeng.Net
                 var ReceiveMessage = this.DataType == SocketDataType.String ? bytes.GetString(this.Encoding) : bytes.ByteToHexString();
                 if (this.IsServer)
                 {
+                    var flags = await this.CheckWebSocketAsync(ReceiveMessage).ConfigureAwait(false);
+                    if (flags == -1) break;
+                    if (flags == 1) continue;
                     if (!this._IsAuthenticated.HasValue || !this.IsAuthenticated)
                         this._IsAuthenticated = this.Authentication(this);
                     if (!this.IsAuthenticated)
@@ -988,7 +1009,7 @@ namespace XiaoFeng.Net
                     }
                     if (packet.OpCode == OpCode.Ping)
                     {
-                        SendPongAsync().ConfigureAwait(false);
+                        SendPongAsync().ConfigureAwait(false).GetAwaiter();
                         if (bytes.Length == 0) continue;
                     }
                     /*
@@ -1292,9 +1313,14 @@ namespace XiaoFeng.Net
         ///<inheritdoc/>
         public virtual object GetData(string key)
         {
-            if (this.TagsData.TryGetValue(key, out var data))
+            if (this.TryGetData(key, out var data))
                 return data;
-            else return null;
+            return null;
+        }
+        ///<inheritdoc/>
+        public virtual bool TryGetData(string key, out object data)
+        {
+            return this.TagsData.TryGetValue(key, out data);
         }
         ///<inheritdoc/>
         public virtual void AddData(string key, object value)

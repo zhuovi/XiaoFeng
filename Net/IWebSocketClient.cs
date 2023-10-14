@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using System.Text;
 
 /****************************************************************
@@ -36,5 +37,16 @@ namespace XiaoFeng.Net
         /// </summary>
         /// <param name="options">请求配置</param>
         void Start(WebSocketRequestOptions options);
+        /// <summary>
+        /// 连接到服务端
+        /// </summary>
+        /// <returns></returns>
+        new SocketError Connect();
+        /// <summary>
+        /// 连接到服务端
+        /// </summary>
+        /// <param name="uri">服务端网址</param>
+        /// <returns></returns>
+        SocketError Connect(Uri uri);
     }
 }

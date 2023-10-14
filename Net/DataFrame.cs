@@ -138,6 +138,7 @@ namespace XiaoFeng.Net
         /// <param name="opcode">命令</param>
         public DataFrame(byte[] bytes, OpCode opcode = OpCode.Text)
         {
+            //this.Opcode= opcode;
             if (bytes == null) bytes = new byte[0];
             int length = bytes.Length;
             _Content = bytes;
