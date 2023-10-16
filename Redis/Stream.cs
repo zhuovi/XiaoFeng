@@ -40,8 +40,8 @@ namespace XiaoFeng.Redis
             var list = new List<object> { key, id };
             values.Each(a =>
             {
-                list.Add(a.Value);
-                list.Add(this.GetValue(a.Key));
+                list.Add(a.Key);
+                list.Add(this.GetValue(a.Value));
             });
             return this.Execute(CommandType.XADD, dbNum, result => result.Value.ToString(), list.ToArray());
         }
@@ -60,8 +60,8 @@ namespace XiaoFeng.Redis
             var list = new List<object> { key, id };
             values.Each(a =>
             {
-                list.Add(a.Value);
-                list.Add(this.GetValue(a.Key));
+                list.Add(a.Key);
+                list.Add(this.GetValue(a.Value));
             });
             return await this.ExecuteAsync(CommandType.XADD, dbNum, async result => await Task.FromResult(result.Value.ToString()), list.ToArray());
         }

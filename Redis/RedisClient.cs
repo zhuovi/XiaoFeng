@@ -206,7 +206,6 @@ namespace XiaoFeng.Redis
         /// <returns>执行结果</returns>
         protected T Execute<T>(CommandType commandType, int? dbNum, Func<RedisReader, T> func, params object[] args)
         {
-            Mutex.WaitOne(TimeSpan.FromMilliseconds(1000));
             this.Init();
             if (!this.Redis.IsAuth && commandType != CommandType.AUTH && this.ConnConfig.Password.IsNotNullOrEmpty())
             {
@@ -225,6 +224,7 @@ namespace XiaoFeng.Redis
             }
             try
             {
+                Mutex.WaitOne(TimeSpan.FromMilliseconds(1000));
                 new CommandPacket(commandType, args).SendCommand(this.Redis.GetStream() as NetworkStream);
                 var result = func.Invoke(new RedisReader(commandType, this.Redis.GetStream() as NetworkStream, args));
                 return result;
@@ -250,7 +250,6 @@ namespace XiaoFeng.Redis
         /// <returns>执行结果</returns>
         protected async Task<T> ExecuteAsync<T>(CommandType commandType, int? dbNum, Func<RedisReader, Task<T>> func, params object[] args)
         {
-            Mutex.WaitOne(TimeSpan.FromMilliseconds(1000));
             this.Init();
             if (commandType != CommandType.AUTH && this.ConnConfig.Password.IsNotNullOrEmpty())
             {
@@ -267,6 +266,7 @@ namespace XiaoFeng.Redis
             }
             try
             {
+                Mutex.WaitOne(TimeSpan.FromMilliseconds(1000));
                 await new CommandPacket(commandType, args).SendCommandAsync(this.Redis.GetStream() as NetworkStream).ConfigureAwait(false);
                 var result = await func.Invoke(new RedisReader(commandType, this.Redis.GetStream() as NetworkStream, args)).ConfigureAwait(false);
                 return result;
