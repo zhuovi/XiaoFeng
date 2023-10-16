@@ -48,7 +48,7 @@ namespace XiaoFeng.Net
         /// WebSocket SSL
         /// </summary>
         [Description("WebSocket SSL")]
-        [Port(1006)]
+        [Port(1006), Ssl]
         Wss = 4,
         /// <summary>
         /// Http
@@ -60,7 +60,7 @@ namespace XiaoFeng.Net
         /// Https
         /// </summary>
         [Description("Https")]
-        [Port(443)]
+        [Port(443), Ssl]
         Https = 6,
         /// <summary>
         /// Ftp
@@ -72,13 +72,13 @@ namespace XiaoFeng.Net
         /// Ftps
         /// </summary>
         [Description("Ftps")]
-        [Port(21)]
+        [Port(21), Ssl]
         Ftps = 8,
         /// <summary>
         /// Sftp
         /// </summary>
         [Description("Sftp")]
-        [Port(22)]
+        [Port(22), Ssl]
         Sftp = 9,
         /// <summary>
         /// Ssh
@@ -120,7 +120,7 @@ namespace XiaoFeng.Net
         /// Redis SSL
         /// </summary>
         [Description("Redis SSL")]
-        [Port(6379)]
+        [Port(6379), Ssl]
         Rediss = 102,
         /// <summary>
         /// Memcached
@@ -132,7 +132,7 @@ namespace XiaoFeng.Net
         /// Memcached SSL
         /// </summary>
         [Description("Memcached SSL")]
-        [Port(11211)]
+        [Port(11211), Ssl]
         Memcacheds = 104,
         /// <summary>
         /// Mqtt
@@ -144,7 +144,7 @@ namespace XiaoFeng.Net
         /// Mqtts
         /// </summary>
         [Description("Mqtts")]
-        [Port(1883)]
+        [Port(1883), Ssl]
         Mqtts = 106
     }
 }

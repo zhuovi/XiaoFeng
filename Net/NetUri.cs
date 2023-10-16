@@ -88,25 +88,18 @@ namespace XiaoFeng.Net
             this._Scheme = netType.ToString().ToLower();
             if (pathAndQuery.IsNotNullOrEmpty())
             {
-                this._PathAndQuery = "/" + pathAndQuery.TrimStart('/');
-                var querys = this._PathAndQuery.Split('?');
-                this._AbsolutePath = querys[0];
-                this._Segments = this._AbsolutePath.Split('/');
+                pathAndQuery = "/" + pathAndQuery.TrimStart('/');
+                var querys = pathAndQuery.Split('?');
+                this.AbsolutePath = querys[0];
                 if (querys.Length == 2)
                 {
-                    this._Query = "?" + querys[1];
+                    this._Query = querys[1];
                     this._Parameters = new ParameterCollection(this._Query);
                 }
             }
             this._UserName = userName;
             this._Password = password;
             this._EndPoint = new IPEndPoint(Dns.GetHostAddresses(this.Host).LastOrDefault(), this.Port);
-            var userInfo = "";
-            if (this.UserName.IsNotNullOrEmpty())
-                userInfo = $"{this.UserName}:{this.Password}@";
-            else if (this.Password.IsNotNullOrEmpty())
-                userInfo = $"{this.Password}@";
-            this._OriginalString = $"{this.NetType.ToString().ToLower()}://{userInfo}{this.Host}:{this.Port}{this.PathAndQuery}";
         }
         #endregion
 
@@ -118,7 +111,16 @@ namespace XiaoFeng.Net
         /// <summary>
         /// 方案名称
         /// </summary>
-        public string Scheme => this._Scheme;
+        public string Scheme
+        {
+            get => this._Scheme;
+            set
+            {
+                if (value == this._Scheme) return;
+                this._Scheme = value;
+                this._NetType = value.ToEnum<NetType>();
+            }
+        }
         /// <summary>
         /// 方案类型
         /// </summary>
@@ -126,7 +128,16 @@ namespace XiaoFeng.Net
         /// <summary>
         /// 方案类型
         /// </summary>
-        public NetType NetType => this._NetType;
+        public NetType NetType
+        {
+            get => this._NetType;
+            set
+            {
+                if (value == this._NetType) return;
+                this._NetType = value;
+                this._Scheme = value.ToString().ToLower();
+            }
+        }
         /// <summary>
         /// 帐号
         /// </summary>
@@ -134,7 +145,14 @@ namespace XiaoFeng.Net
         /// <summary>
         /// 帐号
         /// </summary>
-        public string UserName => this._UserName;
+        public string UserName
+        {
+            get => this._UserName;
+            set {
+                if (value == this._UserName) return;
+                this._UserName = value;
+            }
+        }
         /// <summary>
         /// 密码
         /// </summary>
@@ -142,7 +160,14 @@ namespace XiaoFeng.Net
         /// <summary>
         /// 密码
         /// </summary>
-        public string Password => this._Password;
+        public string Password
+        {
+            get => this._Password;
+            set {
+                if (value == this._Password) return;
+                this._Password = value;
+            }
+        }
         /// <summary>
         /// 主机名
         /// </summary>
@@ -150,7 +175,15 @@ namespace XiaoFeng.Net
         /// <summary>
         /// 主机名
         /// </summary>
-        public string Host => this._Host;
+        public string Host
+        {
+            get => this._Host;
+            set {
+                if (value == this._Host) return;
+                this._Host = value;
+                this._EndPoint = new IPEndPoint(Dns.GetHostAddresses(this.Host).LastOrDefault(), this.Port);
+            }
+        }
         /// <summary>
         /// 端口号
         /// </summary>
@@ -158,23 +191,30 @@ namespace XiaoFeng.Net
         /// <summary>
         /// 端口号
         /// </summary>
-        public int Port => this._Port;
+        public int Port
+        {
+            get => this._Port;
+            set {
+                if (value == this._Port) return;
+                this._Port = value;
+                this._EndPoint = new IPEndPoint(Dns.GetHostAddresses(this.Host).LastOrDefault(), this.Port);
+            }
+        }
         /// <summary>
         /// 获取用问号 (?) 分隔的 System.Uri.AbsolutePath 和 System.Uri.Query 属性
         /// </summary>
-        private string _PathAndQuery;
-        /// <summary>
-        /// 获取用问号 (?) 分隔的 System.Uri.AbsolutePath 和 System.Uri.Query 属性
-        /// </summary>
-        public string PathAndQuery => this._PathAndQuery;
+        public string PathAndQuery
+        {
+            get
+            {
+                var query = this.Query.IsNullOrEmpty() ? "" : ("?" + this.Query);
+                return this.AbsolutePath + query;
+            }
+        }
         /// <summary>
         /// 获取包含构成指定 URI 的路径段的数组
         /// </summary>
-        private string[] _Segments;
-        /// <summary>
-        /// 获取包含构成指定 URI 的路径段的数组
-        /// </summary>
-        public string[] Segments => this._Segments;
+        public string[] Segments => this.AbsolutePath.Split('/', StringSplitOptions.RemoveEmptyEntries);
         /// <summary>
         /// 资源的绝对路径
         /// </summary>
@@ -182,15 +222,16 @@ namespace XiaoFeng.Net
         /// <summary>
         /// 资源的绝对路径。
         /// </summary>
-        public string AbsolutePath => this._AbsolutePath;
-        /// <summary>
-        /// 原始数据
-        /// </summary>
-        private string _OriginalString;
-        /// <summary>
-        /// 原始数据
-        /// </summary>
-        public string OriginalString => this._OriginalString;
+        public string AbsolutePath
+        {
+            get => this._AbsolutePath.StartsWith("/") ? this._AbsolutePath : ("/" + this._AbsolutePath);
+            set
+            {
+                if (value == this._AbsolutePath) return;
+                this._AbsolutePath = value.StartsWith("/") ? value : ("/" + value);
+            }
+        }
+
         /// <summary>
         /// 参数集合
         /// </summary>
@@ -206,7 +247,16 @@ namespace XiaoFeng.Net
         /// <summary>
         /// 参数信息
         /// </summary>
-        public string Query => this._Query;
+        public string Query
+        {
+            get => this._Query.IsNullOrEmpty() ? string.Empty : this._Query.Trim('?');
+            set
+            {
+                if (value == this._Query) return;
+                this._Query = value.Trim('?');
+                this._Parameters = new ParameterCollection(this._Query);
+            }
+        }
         /// <summary>
         /// 网络终结点
         /// </summary>
@@ -214,7 +264,24 @@ namespace XiaoFeng.Net
         /// <summary>
         /// 网络终结点
         /// </summary>
-        public IPEndPoint EndPoint => this._EndPoint;
+        public IPEndPoint EndPoint
+        {
+            get
+            {
+                if (this._EndPoint == null)
+                {
+                    var host = this.Host.IsNullOrEmpty() ? IPAddress.Any : Dns.GetHostAddresses(this.Host).LastOrDefault();
+                    var port = this.Port <= 0 ? this.NetType.GetPort() : this.Port;
+                    this._EndPoint = new IPEndPoint(host, port);
+                }
+                return this._EndPoint;
+            }
+            set
+            {
+                if (value == this._EndPoint) return;
+                this._EndPoint = value;
+            }
+        }
         #endregion
 
         #region 方法
@@ -235,11 +302,8 @@ namespace XiaoFeng.Net
             }
             else if (userInfo.Length == 1)
                 this._Password = userInfo[0];
-            this._OriginalString = uri.OriginalString;
             this._Host = uri.Host;
             this._Port = uri.Port == 0 ? this.NetType.GetPort() : uri.Port;
-            this._PathAndQuery = uri.PathAndQuery;
-            this._Segments = uri.Segments;
             this._Query = uri.Query;
             if (this._Query.IsNotNullOrEmpty())
                 this._Parameters = new ParameterCollection(this._Query.TrimStart('?'));
@@ -276,15 +340,29 @@ namespace XiaoFeng.Net
         /// <returns></returns>
         public override string ToString()
         {
-            return this.OriginalString;
+            var userinfo = "";
+            if (this.UserName.IsNotNullOrEmpty()) userinfo += this.UserName;
+            if (this.Password.IsNotNullOrEmpty()) userinfo += $":{this.Password}";
+            if (userinfo.IsNotNullOrEmpty()) userinfo += "@";
+            var port = this.Port.ToString();
+            if (this.NetType == NetType.Http && this.Port == 80) port = "";
+            if (this.NetType == NetType.Https && this.Port == 443) port = "";
+            if (this.NetType == NetType.Ws && this.Port == 80) port = "";
+            if (this.NetType == NetType.Wss && this.Port == 443) port = "";
+            if (port.IsNotNullOrEmpty()) port = $":{port}";
+            var path = this.AbsolutePath.IsNullOrEmpty() ? "/" : this.AbsolutePath;
+            if (!path.StartsWith("/")) path = $"/{path}";
+            var query = this.Query.IsNullOrEmpty() ? "" : "?" + this.Query;
+            return $"{this.Scheme}://{userinfo}{this.Host}{port}{path}{query}";
         }
+        
         /// <summary>
         /// HashCode
         /// </summary>
         /// <returns></returns>
         public override int GetHashCode()
         {
-            return this.OriginalString.GetHashCode();
+            return this.ToString().GetHashCode();
         }
         /// <summary>
         /// 强制转换
@@ -300,7 +378,7 @@ namespace XiaoFeng.Net
         /// <param name="uri">网络地址</param>
         public static explicit operator Uri(NetUri uri)
         {
-            return new Uri(uri.OriginalString);
+            return new Uri(uri.ToString());
         }
         /// <summary>
         /// 强制转换
@@ -308,7 +386,7 @@ namespace XiaoFeng.Net
         /// <param name="uri">网络地址</param>
         public static implicit operator string(NetUri uri)
         {
-            return uri.OriginalString;
+            return uri.ToString();
         }
         /// <summary>
         /// 隐式转换

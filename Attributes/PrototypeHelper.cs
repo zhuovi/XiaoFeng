@@ -200,6 +200,17 @@ namespace XiaoFeng
             return _.GetType().GetMember(_.ToString())[0].GetDefaultValue(inherit);
         }
         /// <summary>
+        /// 是否包含指定特性
+        /// </summary>
+        /// <typeparam name="T">特性</typeparam>
+        /// <param name="_">枚举</param>
+        /// <param name="inherit">是否向父类查找</param>
+        /// <returns></returns>
+        public static bool IsDefined<T>(this Enum _, bool inherit = true) where T : Attribute
+        {
+            return _.GetType().GetMember(_.ToString())[0].IsDefined(typeof(T), inherit);
+        }
+        /// <summary>
         /// 获取指定属性或事件的描述
         /// </summary>
         /// <param name="m">类型</param>

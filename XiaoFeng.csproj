@@ -24,7 +24,7 @@
 		<PackageProjectUrl>https://www.eelf.cn</PackageProjectUrl>
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>增加PortAttribute属性类;增加NetUri网络地址解析器;增加扩展方法GetPort方法;重构WebSocketClient连接方法Connect();</PackageReleaseNotes>
+		<PackageReleaseNotes>增加Memcached查找所有key方法 StatsKeysAsync();修复SocketClient连接DNS时的bug;修复SocketClient在网络延迟大时,websocket判断不成功的问题;修复SocketClient发送MessageType.Binary数据时的bug;新增NetUri网络地址类;新增Enum判断是否有指定特性方法IsDefined;修改WebSocketClient连接偶尔出现的bug;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>

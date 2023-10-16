@@ -107,7 +107,7 @@ namespace XiaoFeng.Net
         /// <returns></returns>
         public SocketError Connect(Uri uri)
         {
-            if (this.Uri == null)
+            if (uri == null)
             {
                 throw new Exception("请求地址出错.");
             }
@@ -128,6 +128,7 @@ namespace XiaoFeng.Net
                 base.Stop();
                 return SocketError.NetworkDown;
             }
+            if (this.WebSocketRequestOptions == null) this.WebSocketRequestOptions = new WebSocketRequestOptions { Uri = uri };
             this.WebSocketRequestOptions.SecWebSocketKey = RandomHelper.GetRandomString(16).ToBase64String();
             if (this.WebSocketRequestOptions.Origin.IsNullOrEmpty()) this.WebSocketRequestOptions.Origin = $"{uri.Scheme.ReplacePattern(@"^ws", "http")}://{uri.Host}{(uri.Port == 80 || uri.Port == 443 ? "" : (":" + uri.Port))}";
             var packet = new WebSocketPacket(this, this.WebSocketRequestOptions);
@@ -145,6 +146,7 @@ namespace XiaoFeng.Net
                 base.Stop();
                 return SocketError.OperationAborted;
             }
+            base.ConnectionType = ConnectionType.WebSocket;
             return SocketError.Success;
         }
         ///<inheritdoc/>

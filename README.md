@@ -31,44 +31,60 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 4.3.1
+$ dotnet add package XiaoFeng --version 4.3.2
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 4.3.1
+PM> Install-Package XiaoFeng -Version 4.3.2
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="4.3.1" />
+<PackageReference Include="XiaoFeng" Version="4.3.2" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 4.3.1
+> paket add XiaoFeng --version 4.3.2
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 4.3.1"
+> #r "nuget: XiaoFeng, 4.3.2"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=4.3.1
+#addin nuget:?package=XiaoFeng&version=4.3.2
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=4.3.1
+#tool nuget:?package=XiaoFeng&version=4.3.2
 ```
 
 # 更新日志
+
+## 2023-10-14   v 4.3.2
+
+1.增加Memcached查找所有key方法 StatsKeysAsync();
+
+2.修复SocketClient连接DNS时的bug;
+
+3.修复SocketClient在网络延迟大时,websocket判断不成功的问题;
+
+4.修复SocketClient发送MessageType.Binary数据时的bug;
+
+5.新增NetUri网络地址类;
+
+6.新增Enum判断是否有指定特性方法IsDefined;
+
+7.修改WebSocketClient连接偶尔出现的bug;
 
 ## 2023-10-08   v 4.3.1
 
@@ -320,6 +336,8 @@ Cake
 | XiaoFeng.GB28181 | XiaoFeng.GB28181 | :white_check_mark: | 视频监控库，SIP类库，GB28181协议 | 开发中 |
 | XiaoFeng.Onvif | XiaoFeng.Onvif | :white_check_mark: | 视频监控库Onvif协议 | XiaoFeng.Onvif 基于.NET平台使用C#封装Onvif常用接口、设备、媒体、云台等功能， 拒绝WCF服务引用动态代理生成wsdl类文件 ， 使用原生XML扩展标记语言封装参数，所有的数据流向都可控。 |
 | FayElf.Plugins.WeChat | FayElf.Plugins.WeChat | :white_check_mark: | 微信公众号，小程序类库 | 微信公众号，小程序类库。 |
+| XiaoFeng.Mqtt | XiaoFeng.Mqtt | :white_check_mark: | MQTT协议 | XiaoFeng.Mqtt中间件,支持.NET框架、.NET内核和.NET标准库,一种非常方便操作的客户端工具。实现了MQTT客户端，MQTT服务端,同时支持TCP，WebSocket连接。支持协议版本3.0.0,3.1.0,5.0.0。 |
+
 
 
 # XiaoFeng 扩展方法
