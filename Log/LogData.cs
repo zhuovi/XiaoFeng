@@ -39,6 +39,7 @@ namespace XiaoFeng.Log
         public LogData(string customMesssage)
         {
             this.CustomMessage = customMesssage;
+            this.LogType = LogType.Info;
         }
         #endregion
 

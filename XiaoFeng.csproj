@@ -8,7 +8,7 @@
 		<Copyright>CopyRight @ 2008-2024 魔法精灵(www.eelf.cn) QQ:7092734 Email:jacky@eelf.cn</Copyright>
 		<Company>魔法精灵</Company>
 		<VersionPrefix>4.3</VersionPrefix>
-		<VersionSuffix>1</VersionSuffix>
+		<VersionSuffix>2</VersionSuffix>
 		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
 		<FileVersion>$(Version)</FileVersion>
 		<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
@@ -24,7 +24,7 @@
 		<PackageProjectUrl>https://www.eelf.cn</PackageProjectUrl>
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>增加Memcached查找所有key方法 StatsKeysAsync();修复SocketClient连接DNS时的bug;</PackageReleaseNotes>
+		<PackageReleaseNotes>增加PortAttribute属性类;增加NetUri网络地址解析器;增加扩展方法GetPort方法;重构WebSocketClient连接方法Connect();</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>

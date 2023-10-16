@@ -373,8 +373,15 @@ namespace XiaoFeng.Net
         /// 获取数据
         /// </summary>
         /// <param name="key">key</param>
-        /// <returns>自定议数据</returns>
+        /// <returns>自定义数据</returns>
         object GetData(string key);
+        /// <summary>
+        /// 获取数据
+        /// </summary>
+        /// <param name="key">key</param>
+        /// <param name="data">数据</param>
+        /// <returns>是否存在</returns>
+        bool TryGetData(string key, out object data);
         /// <summary>
         /// 添加数据
         /// </summary>

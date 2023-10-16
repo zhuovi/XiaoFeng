@@ -1292,9 +1292,14 @@ namespace XiaoFeng.Net
         ///<inheritdoc/>
         public virtual object GetData(string key)
         {
-            if (this.TagsData.TryGetValue(key, out var data))
+            if (this.TryGetData(key, out var data))
                 return data;
-            else return null;
+            return null;
+        }
+        ///<inheritdoc/>
+        public virtual bool TryGetData(string key, out object data)
+        {
+            return this.TagsData.TryGetValue(key, out data);
         }
         ///<inheritdoc/>
         public virtual void AddData(string key, object value)

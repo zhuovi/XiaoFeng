@@ -86,25 +86,50 @@ namespace XiaoFeng.Net
             {
                 throw new Exception("请求地址出错.");
             }
-            if (this.Uri.Scheme == "wss")
+            var status = this.Connect();
+            if (status != SocketError.Success) return;
+            base.StartEventHandler();
+            Task.Run(() =>
             {
-                this.HostName = this.Uri.Host;
+                this.ReceviceDataAsync().ConfigureAwait(false);
+            }, this.CancelToken.Token);
+            if (!this.IsPing) return;
+        }
+        ///<inheritdoc/>
+        public override SocketError Connect()
+        {
+            return this.Connect(this.Uri);
+        }
+        /// <summary>
+        /// 连接到服务端
+        /// </summary>
+        /// <param name="uri">服务端网址</param>
+        /// <returns></returns>
+        public SocketError Connect(Uri uri)
+        {
+            if (this.Uri == null)
+            {
+                throw new Exception("请求地址出错.");
+            }
+            if (uri.Scheme == "wss")
+            {
+                this.HostName = uri.Host;
                 if (this.ClientCertificates == null)
                     this.SslProtocols = System.Security.Authentication.SslProtocols.None;
                 else
                     this.SslProtocols = System.Security.Authentication.SslProtocols.Tls12;
             }
-            base.Connect(this.Uri.Host, this.Uri.Port);
+            base.Connect(uri.Host, uri.Port);
             //发请求包
             var stream = base.GetSslStream();
             if (stream == null)
             {
                 ClientErrorEventHandler(this.EndPoint, new Exception(stream is NetworkStream ? "请求网络流失败." : "注册SSL失败."));
                 base.Stop();
-                return;
+                return SocketError.NetworkDown;
             }
             this.WebSocketRequestOptions.SecWebSocketKey = RandomHelper.GetRandomString(16).ToBase64String();
-            if (this.WebSocketRequestOptions.Origin.IsNullOrEmpty()) this.WebSocketRequestOptions.Origin = $"{this.Uri.Scheme.ReplacePattern(@"^ws", "http")}://{this.Uri.Host}{(this.Uri.Port == 80 || this.Uri.Port == 443 ? "" : (":" + this.Uri.Port))}";
+            if (this.WebSocketRequestOptions.Origin.IsNullOrEmpty()) this.WebSocketRequestOptions.Origin = $"{uri.Scheme.ReplacePattern(@"^ws", "http")}://{uri.Host}{(uri.Port == 80 || uri.Port == 443 ? "" : (":" + uri.Port))}";
             var packet = new WebSocketPacket(this, this.WebSocketRequestOptions);
             var data = packet.GetRequestData();
             var bytes = data.GetBytes(this.Encoding);
@@ -118,13 +143,9 @@ namespace XiaoFeng.Net
             {
                 ClientErrorEventHandler(this.EndPoint, new Exception("握手失败.\r\n请求包:\r\n" + data + "握手包:\r\n" + msg));
                 base.Stop();
+                return SocketError.OperationAborted;
             }
-            base.StartEventHandler();
-            Task.Run(() =>
-            {
-                this.ReceviceDataAsync().ConfigureAwait(false);
-            }, this.CancelToken.Token);
-            if (!this.IsPing) return;
+            return SocketError.Success;
         }
         ///<inheritdoc/>
         public void Start(WebSocketRequestOptions options)
