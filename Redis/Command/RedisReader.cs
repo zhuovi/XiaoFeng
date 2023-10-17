@@ -127,6 +127,22 @@ namespace XiaoFeng.Redis
         public RedisValue GetValue()
         {
             var type = this.ReadType();
+            if (this.CommandType.Name.EqualsIgnoreCase("publish"))
+            {
+                this.Status = ResultType.Status;
+                if (type == 0)
+                {
+                    this.OK = false;
+                    this.Value = null;
+                }
+                else
+                {
+                    this.OK = true;
+                    var size = new byte[] { (byte)type }.GetString().ToCast<int>();
+                    this.Value = this.ReadMultiBulk(size);
+                }
+                return this.Value;
+            }
             this.Status = type;
             var result = this.ReadValue(type);
             switch (this.CommandType.Name)
@@ -965,10 +981,11 @@ namespace XiaoFeng.Redis
         /// <summary>
         /// 读取多行数据
         /// </summary>
+        /// <param name="size">数据块数量</param>
         /// <returns></returns>
-        public RedisValue ReadMultiBulk()
+        public RedisValue ReadMultiBulk(int size = -1)
         {
-            var size = this.ReadInt().ToInt();
+            size = size == -1 ? this.ReadInt().ToInt() : size;
             if (size <= -1) return new RedisValue();
             var value = new RedisValue(new List<RedisValue>());
             for(var i = 0; i < size; i++)

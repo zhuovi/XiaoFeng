@@ -224,7 +224,7 @@ namespace XiaoFeng.Redis
             }
             try
             {
-                Mutex.WaitOne(TimeSpan.FromMilliseconds(1000));
+                //Mutex.WaitOne(TimeSpan.FromMilliseconds(1000));
                 new CommandPacket(commandType, args).SendCommand(this.Redis.GetStream() as NetworkStream);
                 var result = func.Invoke(new RedisReader(commandType, this.Redis.GetStream() as NetworkStream, args));
                 return result;
@@ -236,7 +236,7 @@ namespace XiaoFeng.Redis
             }
             finally
             {
-                Mutex.ReleaseMutex();
+                //Mutex.ReleaseMutex();
             }
         }
         /// <summary>
@@ -266,7 +266,7 @@ namespace XiaoFeng.Redis
             }
             try
             {
-                Mutex.WaitOne(TimeSpan.FromMilliseconds(1000));
+                //Mutex.WaitOne(TimeSpan.FromMilliseconds(1000));
                 await new CommandPacket(commandType, args).SendCommandAsync(this.Redis.GetStream() as NetworkStream).ConfigureAwait(false);
                 var result = await func.Invoke(new RedisReader(commandType, this.Redis.GetStream() as NetworkStream, args)).ConfigureAwait(false);
                 return result;
@@ -278,7 +278,7 @@ namespace XiaoFeng.Redis
             }
             finally
             {
-                 Mutex.ReleaseMutex();
+                 //Mutex.ReleaseMutex();
             }
         }
         #endregion
