@@ -31,44 +31,48 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 4.3.3
+$ dotnet add package XiaoFeng --version 4.3.4
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 4.3.3
+PM> Install-Package XiaoFeng -Version 4.3.4
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="4.3.3" />
+<PackageReference Include="XiaoFeng" Version="4.3.4" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 4.3.3
+> paket add XiaoFeng --version 4.3.4
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 4.3.3"
+> #r "nuget: XiaoFeng, 4.3.4"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=4.3.3
+#addin nuget:?package=XiaoFeng&version=4.3.4
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=4.3.3
+#tool nuget:?package=XiaoFeng&version=4.3.4
 ```
 
 # 更新日志
+
+## 2023-10-18   v 4.3.4
+
+修复Redis中publish时返回结果状态不对的bug;
 
 ## 2023-10-14   v 4.3.3
 
