@@ -51,7 +51,6 @@ namespace XiaoFeng.Redis
         #endregion
 
         #region 属性
-        public byte[] Buffers { get; set; }
         /// <summary>
         /// 参数
         /// </summary>
