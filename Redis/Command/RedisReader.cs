@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using System.Text;
 using XiaoFeng;
 using XiaoFeng.IO;
 /****************************************************************
@@ -50,6 +51,7 @@ namespace XiaoFeng.Redis
         #endregion
 
         #region 属性
+        public byte[] Buffers { get; set; }
         /// <summary>
         /// 参数
         /// </summary>
@@ -127,22 +129,6 @@ namespace XiaoFeng.Redis
         public RedisValue GetValue()
         {
             var type = this.ReadType();
-            if (this.CommandType.Name.EqualsIgnoreCase("publish"))
-            {
-                this.Status = ResultType.Status;
-                if (type == 0)
-                {
-                    this.OK = false;
-                    this.Value = null;
-                }
-                else
-                {
-                    this.OK = true;
-                    var size = new byte[] { (byte)type }.GetString().ToCast<int>();
-                    this.Value = this.ReadMultiBulk(size);
-                }
-                return this.Value;
-            }
             this.Status = type;
             var result = this.ReadValue(type);
             switch (this.CommandType.Name)

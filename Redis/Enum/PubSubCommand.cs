@@ -27,12 +27,12 @@ namespace XiaoFeng.Redis
         /// <summary>
         /// 查询一个或多个频道的订阅数
         /// </summary>
-        [Description("查询一个或多个频道的订阅数")] 
-        NUMSUB =1,
+        [Description("查询一个或多个频道的订阅数")]
+        NUMSUB = 1,
         /// <summary>
         /// 查询当前客户端订阅了多少频道
         /// </summary>
-        [Description("查询当前客户端订阅了多少频道")] 
+        [Description("查询当前客户端订阅了多少频道")]
         NUMPAT = 2
     }
 }
