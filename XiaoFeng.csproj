@@ -24,7 +24,7 @@
 		<PackageProjectUrl>https://www.eelf.cn</PackageProjectUrl>
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>增加内存流的读写类MemoryBuffer;</PackageReleaseNotes>
+		<PackageReleaseNotes>增加内存流的读写类MemoryBufferWriter,MemoryBufferReader;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>
