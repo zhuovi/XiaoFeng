@@ -46,7 +46,7 @@ namespace XiaoFeng.IO
         /// <param name="length">可变字节长度</param>
         /// <returns></returns>
         /// <exception cref="Exception">超过指定长度则抛出异常</exception>
-        public int GetVariableByteIntegerSize(ulong length);
+        int GetVariableByteIntegerSize(ulong length);
         /// <summary>
         /// 获取可变字节长度字节数据
         /// </summary>
