@@ -208,7 +208,7 @@ namespace XiaoFeng.Log
                         foreColor = ConsoleColor.Magenta;
                         break;
                     case LogType.Trace:
-                        foreColor = ConsoleColor.Yellow;
+                        foreColor = ConsoleColor.Blue;
                         break;
                     case LogType.Task:
                         foreColor = ConsoleColor.Cyan;
