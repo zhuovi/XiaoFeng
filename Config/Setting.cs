@@ -80,7 +80,7 @@ namespace XiaoFeng.Config
         /// </summary>
         [Description("作业调度日志等级")]
         [JsonConverter(typeof(StringEnumConverter))]
-        public LogType? JobLogLevel { get; set; } = LogType.Warn;
+        public LogType? JobLogLevel { get; set; } = LogType.Trace;
         /// <summary>
         /// 作业记录记录次数
         /// </summary>

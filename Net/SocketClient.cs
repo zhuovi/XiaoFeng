@@ -523,7 +523,7 @@ namespace XiaoFeng.Net
         public virtual async Task StartAsync(string host, int port)
         {
             await this.ConnectAsync(host, port).ConfigureAwait(false);
-            this.AutoReceviceData().ConfigureAwait(false);
+            this.AutoReceviceData().ConfigureAwait(false).GetAwaiter();
         }
         ///<inheritdoc/>
         public virtual void Start(IPAddress address, int port)
@@ -535,7 +535,7 @@ namespace XiaoFeng.Net
         public virtual async Task StartAsync(IPAddress address, int port)
         {
             await this.ConnectAsync(address, port).ConfigureAwait(false);
-            this.AutoReceviceData().ConfigureAwait(false);
+            this.AutoReceviceData().ConfigureAwait(false).GetAwaiter();
         }
         ///<inheritdoc/>
         public virtual void Start(IPEndPoint endPoint)
@@ -547,7 +547,7 @@ namespace XiaoFeng.Net
         public virtual async Task StartAsync(IPEndPoint endPoint)
         {
             await this.ConnectAsync(endPoint).ConfigureAwait(false);
-            this.AutoReceviceData().ConfigureAwait(false);
+            this.AutoReceviceData().ConfigureAwait(false).GetAwaiter();
         }
         ///<inheritdoc/>
         public virtual void Start(IPAddress[] addresses, int port)
@@ -559,7 +559,7 @@ namespace XiaoFeng.Net
         public virtual async Task StartAsync(IPAddress[] addresses, int port)
         {
             await this.ConnectAsync(addresses, port).ConfigureAwait(false);
-            this.AutoReceviceData().ConfigureAwait(false);
+            this.AutoReceviceData().ConfigureAwait(false).GetAwaiter();
         }
         /// <summary>
         /// 自动接收数据
@@ -1327,9 +1327,12 @@ namespace XiaoFeng.Net
         {
             if (key.IsNullOrEmpty() || key.EqualsIgnoreCase(CHANNEL_KEY)) return;
             if (this.TagsData == null) this.TagsData = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-            if (this.ContainsData(key))
-                this.TagsData[key] = value;
-            else this.TagsData.Add(key, value);
+            lock (this.TagsData)
+            {
+                if (this.ContainsData(key))
+                    this.TagsData[key] = value;
+                else this.TagsData.Add(key, value);
+            }
         }
         ///<inheritdoc/>
         public virtual void RemoveData(string key)
@@ -1385,8 +1388,12 @@ namespace XiaoFeng.Net
             {
                 if (this.Client.Connected)
                 {
-                    this.Client.Shutdown(SocketShutdown.Both);
-                    this.Client.Close(3);
+                    try
+                    {
+                        this.Client.Shutdown(SocketShutdown.Both);
+                        this.Client.Close(3);
+                    }
+                    catch (Exception _) { }
                 }
                 this.Client.Dispose();
                 this.Client = null;
