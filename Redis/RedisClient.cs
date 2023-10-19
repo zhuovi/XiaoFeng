@@ -195,6 +195,7 @@ namespace XiaoFeng.Redis
         #endregion
 
         #region 执行
+        public static Object RedisLock = new object();
         /// <summary>
         /// 执行
         /// </summary>
@@ -225,9 +226,12 @@ namespace XiaoFeng.Redis
             try
             {
                 //Mutex.WaitOne(TimeSpan.FromMilliseconds(1000));
-                new CommandPacket(commandType, args).SendCommand(this.Redis.GetStream() as NetworkStream);
-                var result = func.Invoke(new RedisReader(commandType, this.Redis.GetStream() as NetworkStream, args));
-                return result;
+                lock (RedisLock)
+                {
+                    new CommandPacket(commandType, args).SendCommand(this.Redis.GetStream() as NetworkStream);
+                    var result = func.Invoke(new RedisReader(commandType, this.Redis.GetStream() as NetworkStream, args));
+                    return result;
+                }
             }
             catch (Exception ex)
             {
