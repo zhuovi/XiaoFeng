@@ -353,7 +353,7 @@ namespace XiaoFeng
         /// <param name="hashIterations">要加密的次数</param>
         /// <param name="type">类型</param>
         /// <returns></returns>
-        public static byte[] SimpleHashEncrypt(this byte[] _, byte[] salt, int hashIterations, SHAType type = SHAType.MD5) => new SimpleHashEncryption().Encode(_, salt, hashIterations, type);
+        public static byte[] SimpleHashEncrypt(this byte[] _, byte[] salt, int hashIterations, SHAType type = SHAType.MD5) => new SimpleHashEncryption().Encrypt(_, salt, hashIterations, type);
         /// <summary>
         /// 加密
         /// </summary>
@@ -363,7 +363,7 @@ namespace XiaoFeng
         /// <param name="type">类型</param>
         /// <param name="mode">输出编码</param>
         /// <returns></returns>
-        public static string SimpleHashEncrypt(this string _, string salt, int hashIterations, SHAType type = SHAType.MD5, OutputMode mode = OutputMode.Hex) => new SimpleHashEncryption().Encode(_, salt, hashIterations, type, mode);
+        public static string SimpleHashEncrypt(this string _, string salt, int hashIterations, SHAType type = SHAType.MD5, OutputMode mode = OutputMode.Hex) => new SimpleHashEncryption().Encrypt(_, salt, hashIterations, type, mode);
         #endregion
 
         #region 转字符串

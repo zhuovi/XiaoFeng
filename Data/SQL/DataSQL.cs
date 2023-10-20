@@ -275,7 +275,7 @@ namespace XiaoFeng.Data.SQL
         {
             if (where.IsNullOrEmpty()) return;
             if (this.WhereString.IsNullOrEmpty()) this.WhereString = "";
-            if (where.IsNotNullOrEmpty()) where = where.RemovePattern(@"^\s*(and|where|or)\s*");
+            if (where.IsNotNullOrEmpty()) where = where.RemovePattern(@"^\s*(and|where|or)\s+");
             this.WhereString += "{0}{1}".format(this.WhereString == "" ? "" : " AND ", where);
 
         }

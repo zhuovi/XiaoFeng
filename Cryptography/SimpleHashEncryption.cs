@@ -19,7 +19,7 @@ namespace XiaoFeng.Cryptography
     /// <summary>
     /// SimpleHash加密类
     /// </summary>
-    public class SimpleHashEncryption: BaseCrypto
+    public class SimpleHashEncryption : BaseCrypto
     {
         #region 构造器
         /// <summary>
@@ -27,10 +27,17 @@ namespace XiaoFeng.Cryptography
         /// </summary>
         public SimpleHashEncryption()
         {
-            
+
         }
+        #endregion
+
+        #region 属性
+
+        #endregion
+
+        #region 方法
         ///<inheritdoc/>
-        public override byte[] Encode(byte[] data, byte[] slatKey, byte[] vector, CryptographyType type = CryptographyType.Encrypt, CipherMode cipherMode = CipherMode.CBC, PaddingMode paddingMode = PaddingMode.PKCS7) => data;
+        public override byte[] Encode(byte[] data, byte[] slatKey, byte[] vector, CryptographyType type = CryptographyType.Encrypt, CipherMode cipherMode = CipherMode.CBC, PaddingMode paddingMode = PaddingMode.PKCS7) => this.Encrypt(data, slatKey, 2, SHAType.MD5);
         /// <summary>
         /// 加密
         /// </summary>
@@ -38,10 +45,7 @@ namespace XiaoFeng.Cryptography
         /// <param name="hashIterations">要加密的次数</param>
         /// <param name="type">类型</param>
         /// <returns>加密后的数据</returns>
-        public byte[] Encode(byte[] data, int hashIterations, SHAType type = SHAType.MD5)
-        {
-            return this.Encode(data, Array.Empty<byte>(), hashIterations, type);
-        }
+        public byte[] Encrypt(byte[] data, int hashIterations, SHAType type = SHAType.MD5) => this.Encrypt(data, Array.Empty<byte>(), hashIterations, type);
         /// <summary>
         /// 加密
         /// </summary>
@@ -50,7 +54,7 @@ namespace XiaoFeng.Cryptography
         /// <param name="hashIterations">要加密的次数</param>
         /// <param name="type">类型</param>
         /// <returns></returns>
-        public byte[] Encode(byte[] data, byte[] salt, int hashIterations, SHAType type = SHAType.MD5)
+        public byte[] Encrypt(byte[] data, byte[] salt, int hashIterations, SHAType type = SHAType.MD5)
         {
             if (hashIterations <= 0) hashIterations = 1;
             var hash = HashAlgorithm.Create(type.GetDescription());
@@ -72,19 +76,11 @@ namespace XiaoFeng.Cryptography
         /// <param name="type">类型</param>
         /// <param name="mode">输出编码</param>
         /// <returns></returns>
-        public string Encode(string data, string salt, int hashIterations = 2, SHAType type = SHAType.MD5, OutputMode mode = OutputMode.Hex)
+        public string Encrypt(string data, string salt, int hashIterations = 2, SHAType type = SHAType.MD5, OutputMode mode = OutputMode.Hex)
         {
-            var encryptdata = this.Encode(data.GetBytes(), salt.GetBytes(), hashIterations, type);
+            var encryptdata = this.Encrypt(data.GetBytes(), salt.GetBytes(), hashIterations, type);
             return this.OutputString(encryptdata, mode);
         }
-        #endregion
-
-        #region 属性
-
-        #endregion
-
-        #region 方法
-
         #endregion
     }
 }

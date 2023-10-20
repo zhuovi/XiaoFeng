@@ -197,9 +197,9 @@ namespace {namespace}
 
             if (tableName.IsNotNullOrEmpty())
             {
-                var tableNames = tableName.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                var tableNames = from a in tableName.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries) select a.ToLower();
                 //this.ModelType = !tableName.IsMatch(@"VIEW_") ? ModelType.Table : ModelType.View;
-                Tables = Tables.Where(a => tableNames.Contains(a.Name)).ToList();
+                Tables = Tables.Where(a => tableNames.Contains(a.Name.ToLower())).ToList();
             }
             var providerType = this.DataHelper.ProviderType;
             DataType dataType = new DataType(providerType);

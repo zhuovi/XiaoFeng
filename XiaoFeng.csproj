@@ -24,7 +24,7 @@
 		<PackageProjectUrl>https://www.eelf.cn</PackageProjectUrl>
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>增加内存流的读写类MemoryBufferWriter,MemoryBufferReader;优化生成模型时字段名称有保留关键词时增加@;</PackageReleaseNotes>
+		<PackageReleaseNotes>增加内存流的读写类MemoryBufferWriter,MemoryBufferReader;优化生成模型时字段名称有保留关键词时增加@;优化QueryableX中mysql date_format参数;优化生成模型时表名或视图名不区分大小适配;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>

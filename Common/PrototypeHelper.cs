@@ -2067,8 +2067,6 @@ namespace XiaoFeng
             {
                 _ += new string('=', 4 - mod);
             }
-            /*var _len = Math.Ceiling(len / 4) * 4;
-            if (_len > len) _ = _.PadRight((int)_len, '=');*/
             return Convert.FromBase64String(_);
         }
         #endregion
@@ -2200,7 +2198,7 @@ namespace XiaoFeng
         /// <returns></returns>
         public static String InnerText(this String _)
         {
-            if (_.IsNullOrEmpty()) return "";
+            if (_.IsNullOrEmpty()) return string.Empty;
             _ = _.RemovePattern(@"<!--[\s\S]*?-->");
             _ = _.RemovePattern(@"<script[^>]*>[\s\S]*?</\s*script>");
             _ = _.RemovePattern(@"<(script|style|textarea)[^>]*>[\s\S]*?</\s*(script|style|textarea)>");
@@ -2248,11 +2246,11 @@ namespace XiaoFeng
         /// <returns></returns>
         public static string HexToString(this string _, Encoding encoding = null)
         {
-            if (_.IsNullOrEmpty()) return "";
+            if (_.IsNullOrEmpty()) return string.Empty;
             _ = _.RemovePattern(@"0x");
             _ = _.RemovePattern(@"\s+");
             int len = _.Length;
-            if (len % 2 != 0) return "";
+            if (len % 2 != 0) return string.Empty;
             byte[] bytes = new byte[len / 2];
             for (int i = 0; i < len / 2; i++)
                 bytes[i] = byte.Parse(_.Substring(i * 2, 2), System.Globalization.NumberStyles.HexNumber);
@@ -2267,16 +2265,19 @@ namespace XiaoFeng
         /// <param name="_">字符串</param>
         /// <param name="encoding">编码</param>
         /// <returns></returns>
-        public static string StringToHex(this string _, Encoding encoding = null)
+        public static string StringToHex(this string _, Encoding encoding = null) => _.ToHexString(encoding);
+        /// <summary>
+        /// 字符串转16进制
+        /// </summary>
+        /// <param name="_">字符串</param>
+        /// <param name="encoding">编码</param>
+        /// <returns></returns>
+        public static string ToHexString(this string _, Encoding encoding = null)
         {
-            if (_.IsNullOrEmpty()) return "";
+            if (_.IsNullOrEmpty()) return string.Empty;
             byte[] bytes = _.GetBytes(encoding ?? Encoding.UTF8);
             string str = string.Empty;
-            bytes.Each(a =>
-            {
-                str += "{0:X}".format(a).PadLeft(2, '0');
-                //str += Convert.ToString(a, 16);
-            });
+            bytes.Each(a => str += "{0:X}".format(a).PadLeft(2, '0'));
             return str;
         }
         #endregion
@@ -2288,15 +2289,7 @@ namespace XiaoFeng
         /// <param name="bytes">字节</param>
         /// <param name="isSpace">是否有空格隔开 默认为有空格</param>
         /// <returns></returns>
-        public static string ByteToHexString(this byte[] bytes, bool isSpace = true)
-        {
-            if (bytes?.Length == 0) return string.Empty;
-            string _ = "";
-            string space = isSpace ? " " : "";
-            for (int i = 0; i < bytes.Length; i++)
-                _ += bytes[i].ToString("X2") + space;
-            return _.TrimEnd(' ');
-        }
+        public static string ByteToHexString(this byte[] bytes, bool isSpace = true) => bytes.ToHexString(0, bytes.Length, isSpace);
         /// <summary>
         /// 字节数组转16进制字符串
         /// </summary>
@@ -2305,7 +2298,23 @@ namespace XiaoFeng
         /// <param name="length">长度</param>
         /// <param name="isSpace">是否有空格隔开 默认为有空格</param>
         /// <returns></returns>
-        public static string ByteToHexString(this byte[] bytes, int start, int length, bool isSpace = true)
+        public static string ByteToHexString(this byte[] bytes, int start, int length, bool isSpace = true) => bytes.ToHexString(start, length, isSpace);
+        /// <summary>
+        /// 字节数组转16进制字符串
+        /// </summary>
+        /// <param name="bytes">字节</param>
+        /// <param name="isSpace">是否有空格隔开 默认为有空格</param>
+        /// <returns></returns>
+        public static string ToHexString(this byte[] bytes, bool isSpace = true) => bytes.ToHexString(0, bytes.Length, isSpace);
+        /// <summary>
+        /// 字节数组转16进制字符串
+        /// </summary>
+        /// <param name="bytes">字节数组</param>
+        /// <param name="start">开始位置</param>
+        /// <param name="length">长度</param>
+        /// <param name="isSpace">是否有空格隔开 默认为有空格</param>
+        /// <returns></returns>
+        public static string ToHexString(this byte[] bytes, int start, int length, bool isSpace = true)
         {
             if (bytes != null)
             {
@@ -2332,7 +2341,7 @@ namespace XiaoFeng
             try
             {
                 hexString = hexString.RemovePattern(@"[\r\n\s]+");
-                if (hexString.IsNullOrEmpty()) return null;
+                if (hexString.IsNullOrEmpty()) return Array.Empty<byte>();
                 if (hexString.Length % 2 != 0)
                     hexString += "0";
                 byte[] _ = new byte[hexString.Length / 2];
@@ -2928,6 +2937,7 @@ namespace XiaoFeng
                 size %= mod;
                 i++;
             }
+            if (i >= Units.Length) return string.Empty;
             return Math.Round(size, digits) + Units[i];
         }
         #endregion

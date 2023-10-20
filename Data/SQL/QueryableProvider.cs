@@ -705,6 +705,8 @@ namespace XiaoFeng.Data.SQL
                                 dfType = "'%S'";
                             else if (dfType == "ms")
                                 dfType = "'%f'";
+                            else
+                                dfType = $"'{dfType.Trim('\'')}'";
                         }
                         this.RemoveParam(b);
                         if (!MethodName.EqualsIgnoreCase("DateAddSQL") && this.DataHelper.ProviderType == DbProviderType.Dameng)
@@ -1004,6 +1006,8 @@ namespace XiaoFeng.Data.SQL
                                 dfType = "'%S'";
                             else if (dfType == "ms")
                                 dfType = "'%f'";
+                            else
+                                dfType = $"'{dfType.Trim('\'')}'";
                         }
                         this.RemoveParam(b);
                         if (this.DataHelper.ProviderType == DbProviderType.Dameng)
@@ -1292,6 +1296,8 @@ namespace XiaoFeng.Data.SQL
                                 dfType = "'%S'";
                             else if (dfType == "ms")
                                 dfType = "'%f'";
+                            else
+                                dfType = $"'{dfType.Trim('\'')}'";
                         }
                         this.RemoveParam(b);
                         if (this.DataHelper.ProviderType == DbProviderType.Dameng)
