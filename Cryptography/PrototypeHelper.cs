@@ -344,6 +344,28 @@ namespace XiaoFeng
         public static string SM4Decrypt(this string _, string key, string iv) => _.IsNullOrEmpty() ? string.Empty : new SM4Encryption().Decrypt(_, key, iv, OutputMode.Base64);
         #endregion
 
+        #region SimpleHash
+        /// <summary>
+        /// 加密
+        /// </summary>
+        /// <param name="_">数据</param>
+        /// <param name="salt">盐</param>
+        /// <param name="hashIterations">要加密的次数</param>
+        /// <param name="type">类型</param>
+        /// <returns></returns>
+        public static byte[] SimpleHashEncrypt(this byte[] _, byte[] salt, int hashIterations, SHAType type = SHAType.MD5) => new SimpleHashEncryption().Encode(_, salt, hashIterations, type);
+        /// <summary>
+        /// 加密
+        /// </summary>
+        /// <param name="_">数据</param>
+        /// <param name="salt">盐</param>
+        /// <param name="hashIterations">要加密的次数</param>
+        /// <param name="type">类型</param>
+        /// <param name="mode">输出编码</param>
+        /// <returns></returns>
+        public static string SimpleHashEncrypt(this string _, string salt, int hashIterations, SHAType type = SHAType.MD5, OutputMode mode = OutputMode.Hex) => new SimpleHashEncryption().Encode(_, salt, hashIterations, type, mode);
+        #endregion
+
         #region 转字符串
         /// <summary>
         /// 转字符串
