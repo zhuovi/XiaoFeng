@@ -148,7 +148,7 @@ namespace {namespace}
         [Description(""{Description}"")]
 		[DataObjectField({PrimaryKey}, {IsIdentity}, {isNull}, {Length})]
 		[Column(Name = ""{Name}"", PrimaryKey = {PrimaryKey}, AutoIncrement = {IsIdentity}, DataType = ""{Type}"", DefaultValue = ""{DefaultValue}"", Description = ""{Description}"", IsNullable = {isNull}, Length = {Length}, Digit = {Digits}, IsUnique = {IsUnique}, IsIndex = {IsIndex}, AutoIncrementSeed = {AutoIncrementSeed}, AutoIncrementStep = {AutoIncrementStep})]
-        public {getType} {Name}
+        public {getType} {FieldName}
         {
             get { return this._{Name}; }
             set
@@ -246,6 +246,7 @@ namespace {namespace}
                     if (c.Description.IsNullOrWhiteSpace()) c.Description = c.Name;
                     else c.Description = c.Description.RemovePattern(@"[\r\n\t\s]+");
                     IDictionary<string, string> dic = c.ObjectToDictionary();
+                    dic.Add("FieldName", GetPreservedKeywords(dic["Name"]));
                     string _type = dataType.GetDotNetType(c.Type);
                     dic.Add("getType", _type + (_type.ToLower() != "string" ? "?" : ""));
                     dic["Type"] = c.Type;
@@ -280,6 +281,19 @@ namespace {namespace}
                 FileHelper.WriteText(classPath, this.ModelTemplate.format(keys));
             });
             return true;
+        }
+        /// <summary>
+        /// 保留关键字
+        /// </summary>
+        const string PreservedKeywords = @"^(abstract|base|as|bool|Boolean|catch|case|byte|char|checked|class|const|continue|decimal|private|protected|public|return|readonly|ref|sbyte|explicit|extern|false|finally|fixed|float|for|foreach|goto|if|implicit|in|int|ulong|ushort|unchecked|using|unsafe|virtual|void|null|object|operator|out|override|params|default|delegate|do|double|else|enum|event|sealed|short|sizeof|stackalloc|static|string|struct|switch|this|throw|ture|try|typeof|uint|volatile|while|int16|int32|int64|uint16|uint32|uint64|long)$";
+        /// <summary>
+        /// 是否包含保留关键词
+        /// </summary>
+        /// <param name="key">名称</param>
+        /// <returns></returns>
+        private string GetPreservedKeywords(string key)
+        {
+            return (key.IsMatch(PreservedKeywords) ? "@" : "") + key;
         }
         #endregion
 
