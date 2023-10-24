@@ -129,7 +129,7 @@ namespace XiaoFeng.Log
                     this.Writer.Close();
                     this.Writer.Dispose();
                 }
-                this.Writer = new StreamWriter(new FileStream(this.FilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite, 4096, FileOptions.Asynchronous), Encoding.UTF8)
+                this.Writer = new StreamWriter(new FileStream(this.FilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite, 8192, FileOptions.Asynchronous), Encoding.UTF8)
                 {
                     AutoFlush = true
                 };

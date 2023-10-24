@@ -538,7 +538,8 @@ namespace XiaoFeng.Model
         /// <returns></returns>
         public virtual List<object> ToObjectList(string whereString)
         {
-            return this.QueryableX.Where(whereString).ToList().ToList<object>();
+            var QueryX = this.QueryableX;
+            return QueryX.Where(whereString).ToList().ToList<object>();
         }
         /// <summary>
         /// 返回列表
