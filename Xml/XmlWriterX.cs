@@ -104,14 +104,14 @@ namespace XiaoFeng.Xml
                     NamespaceHandling= this.SerializerSetting.NamespaceHandling
                 }))
                 {
-                    XmlWriter.WriteStartElement(rootName);
+                    if (rootName.IsNotNullOrEmpty()) XmlWriter.WriteStartElement(rootName);
                     if (!this.SerializerSetting.OmitNamespace)
                     {
                         XmlWriter.WriteAttributeString("xmlns", "xsi", "", "http://www.w3.org/2001/XMLSchema-instance");
                         XmlWriter.WriteAttributeString("xmlns", "xsd", "", "http://www.w3.org/2001/XMLSchema");
                     }
                     this.WriteValue(this.Data);
-                    XmlWriter.WriteEndDocument();
+                    if (rootName.IsNotNullOrEmpty()) XmlWriter.WriteEndDocument();
                 }
                 this.Bytes = ms.ToArray();
                 XmlWriter.Close();
@@ -183,6 +183,38 @@ namespace XiaoFeng.Xml
                 else
                     XmlWriter.WriteString(EncodeString(data.ToString()));
                 if (tagName.IsNotNullOrEmpty()) XmlWriter.WriteEndElement();
+                return;
+            }else if(data is XmlValue xvalue)
+            {
+                if (xvalue.IsEmpty && this.SerializerSetting.OmitEmptyNode) return;
+
+                if (tagName.IsNullOrEmpty()) tagName = xvalue.Name;
+                XmlWriter.WriteStartElement(tagName);
+                if (xvalue.HasAttributes)
+                {
+                    xvalue.Attributes.Each(a =>
+                    {
+                        XmlWriter.WriteAttributeString(a.Name, a.Value.getValue());
+                    });
+                }
+                if (xvalue.HasChildNodes)
+                {
+                    xvalue.ChildNodes.Each(c =>
+                    {
+                        this.WriteValue(c, c.ElementType == XmlType.CDATA, c.Name);
+                    });
+                }
+                else
+                {
+                    if (xvalue.Value.IsNotNullOrEmpty())
+                    {
+                        if (xvalue.ElementType == XmlType.CDATA)
+                            XmlWriter.WriteCData(xvalue.Value.getValue());
+                        else
+                            XmlWriter.WriteString(xvalue.Value.getValue());
+                    }
+                }
+                XmlWriter.WriteEndElement();
                 return;
             }
             else

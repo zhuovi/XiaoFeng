@@ -21,7 +21,7 @@ using System.Collections;
 namespace XiaoFeng.Xml
 {
     /// <summary>
-    /// 类说明
+    /// Xml序列化类
     /// </summary>
     public static class XmlSerializer
     {

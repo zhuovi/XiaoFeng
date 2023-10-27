@@ -64,7 +64,7 @@ namespace XiaoFeng.Xml
         /// <summary>
         /// 默认根目录节点名称
         /// </summary>
-        public string DefaultRootName { get; set; } = "Root";
+        public string DefaultRootName { get; set; }
         /// <summary>
         /// 默认编码
         /// </summary>

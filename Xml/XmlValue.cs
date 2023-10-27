@@ -364,6 +364,47 @@ namespace XiaoFeng.Xml
             return list;
         }
         /// <summary>
+        /// 转换类型
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <returns></returns>
+        public T ToCast<T>()
+        {
+            return (T)ToCast(typeof(T));
+        }
+        /// <summary>
+        /// 转类型
+        /// </summary>
+        /// <param name="type">类型</param>
+        /// <returns></returns>
+        public object ToCast(Type type)
+        {
+            if (type == typeof(XmlValue)) return this;
+            var baseType = type.GetValueType();
+            if (baseType == ValueTypes.String || baseType == ValueTypes.Value)
+            {
+                return this.Value.GetValue(type);
+            }
+            if (baseType == ValueTypes.Class || baseType == ValueTypes.Struct)
+            {
+                return ParseObject(this, type, null);
+            }
+            if (baseType == ValueTypes.Array)
+            {
+                return ParseArray(this, type, null);
+            }
+            if (baseType == ValueTypes.ArrayList || baseType == ValueTypes.IEnumerable || baseType == ValueTypes.List)
+            {
+                return ParseList(this, type, null);
+            }
+            if (baseType == ValueTypes.Enum)
+            {
+                return this.Value.ToEnum(type);
+            }
+            else
+                return this.Value.GetValue(type);
+        }
+        /// <summary>
         /// 比较
         /// </summary>
         /// <param name="other">其它对象</param>
