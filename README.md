@@ -31,44 +31,56 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 4.3.4
+$ dotnet add package XiaoFeng --version 4.3.5
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 4.3.4
+PM> Install-Package XiaoFeng -Version 4.3.5
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="4.3.4" />
+<PackageReference Include="XiaoFeng" Version="4.3.5" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 4.3.4
+> paket add XiaoFeng --version 4.3.5
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 4.3.4"
+> #r "nuget: XiaoFeng, 4.3.5"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=4.3.4
+#addin nuget:?package=XiaoFeng&version=4.3.5
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=4.3.4
+#tool nuget:?package=XiaoFeng&version=4.3.5
 ```
 
 # 更新日志
+
+## 2023-10-27   v 4.3.5
+
+1.增加内存流的读写类MemoryBufferWriter,MemoryBufferReader;
+
+2.优化生成模型时字段名称有保留关键词时增加@;
+
+3.优化QueryableX中mysql date_format参数;
+
+4.优化生成模型时表名或视图名不区分大小适配;
+
+5.去除Xml序列化时默认根目录
 
 ## 2023-10-18   v 4.3.4
 
