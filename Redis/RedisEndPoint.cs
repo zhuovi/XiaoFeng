@@ -107,10 +107,7 @@ namespace XiaoFeng.Redis
         /// 主机名或 IP 地址和端口号的字符串表示形式
         /// </summary>
         /// <returns>主机名或 IP 地址和端口号的字符串表示形式</returns>
-        public override string ToString()
-        {
-            return this.Host + ":" + this.Port;
-        }
+        public override string ToString() => $"{this.Host}:{this.Port}";
         #endregion
     }
 }

@@ -812,6 +812,27 @@ namespace XiaoFeng.Model
                 return (T)this;
             }
         }
+        /// <summary>
+        /// 使用分库
+        /// </summary>
+        /// <param name="config">数据库配置</param>
+        /// <param name="suffix">分表后缀</param>
+        /// <param name="isGlobal">是否全局使用</param>
+        /// <returns></returns>
+        public T SubDataBase(ConnectionConfig config, string suffix = "", bool isGlobal = false)
+        {
+            this.Config = config;
+
+            this.DataBaseNum = 0;
+
+            if (suffix.IsNotNullOrEmpty())
+                return this.SubTable(suffix, isGlobal);
+            else
+            {
+                this.SetDataX();
+                return (T)this;
+            }
+        }
         #endregion
 
         #region 使用分表

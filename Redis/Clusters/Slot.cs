@@ -52,10 +52,7 @@ namespace XiaoFeng.Redis.Clusters
         /// 数据槽区间
         /// </summary>
         /// <returns></returns>
-        public override string ToString()
-        {
-            return this.From + "-" + To;
-        }
+        public override string ToString() => $"{this.From}:{this.To}";
         #endregion
     }
 }
