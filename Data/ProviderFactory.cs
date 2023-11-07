@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data.Common;
 using System.Reflection;
 /****************************************************************
@@ -106,7 +103,8 @@ namespace XiaoFeng.Data
                     {
                         providerName = "Microsoft.Data.Sqlite.SqliteFactory,Microsoft.Data.Sqlite";
                         type = Type.GetType(providerName);
-                    }else if(providerType == DbProviderType.MySql)
+                    }
+                    else if (providerType == DbProviderType.MySql)
                     {
                         providerName = "MySqlConnector.MySqlConnectorFactory,MySqlConnector";
                         type = Type.GetType(providerName);
@@ -127,7 +125,7 @@ namespace XiaoFeng.Data
 #endif
                 }
                 FieldInfo field = type.GetField("Instance", BindingFlags.DeclaredOnly | BindingFlags.Static | BindingFlags.Public);
-                
+
 #if NETSTANDARD1_3
                 if (field != null && field.FieldType.GetTypeInfo().IsSubclassOf(typeof(DbProviderFactory)))
 #elif NETSTANDARD2_0

@@ -78,7 +78,7 @@ namespace XiaoFeng.Memcached.Internal
         /// <param name="defaultValue">默认值</param>
         /// <param name="expiry">过期时间</param>
         /// <returns></returns>
-        Task<GetOperationResult> DecrementAsync(string key, ulong step, ulong defaultValue,uint expiry);
+        Task<GetOperationResult> DecrementAsync(string key, ulong step, ulong defaultValue, uint expiry);
         /// <summary>
         /// 修改key过期时间
         /// </summary>
@@ -134,7 +134,7 @@ namespace XiaoFeng.Memcached.Internal
         /// <param name="casToken">通过 gets 命令获取的一个唯一的64位值</param>
         /// <param name="expiry">过期时间 单位为秒 默认不限制</param>
         /// <returns></returns>
-        Task<StoreOperationResult> CasAsync(string key, object value,ulong casToken, uint expiry);
+        Task<StoreOperationResult> CasAsync(string key, object value, ulong casToken, uint expiry);
         /// <summary>
         /// 统计信息
         /// </summary>

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
 
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
@@ -34,7 +32,7 @@ namespace XiaoFeng.Excel
         /// <param name="minColumnIndex">最小列索引</param>
         /// <param name="maxColumnIndex">最大列索引</param>
         /// <param name="hidden">是否隐藏</param>
-        public Row(int index,double height,int minColumnIndex,int maxColumnIndex, Boolean hidden)
+        public Row(int index, double height, int minColumnIndex, int maxColumnIndex, Boolean hidden)
         {
             this.Index = index;
             this.Height = height;
@@ -84,7 +82,7 @@ namespace XiaoFeng.Excel
             get
             {
                 if (this.CurrentRowCells == null || this.CurrentRowCells.Count == 0) return null;
-                return this.Sheet.Workbook.Option.IncludeHiddenColumn?this.CurrentRowCells.OrderBy(c => c.Column.Index): this.CurrentRowCells.Where(a => a.Column.Hidden == false).OrderBy(c => c.Column.Index);
+                return this.Sheet.Workbook.Option.IncludeHiddenColumn ? this.CurrentRowCells.OrderBy(c => c.Column.Index) : this.CurrentRowCells.Where(a => a.Column.Hidden == false).OrderBy(c => c.Column.Index);
             }
         }
 

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using XiaoFeng.Config;
@@ -339,12 +337,12 @@ namespace XiaoFeng.Threading
             return Task.Run(() =>
             {
 #if NETSTANDARD2_1
-            this.QueueData.Clear();
+                this.QueueData.Clear();
 #else
             while (this.QueueData.TryDequeue(out var _)) { }
 #endif
             });
         }
-#endregion
+        #endregion
     }
 }

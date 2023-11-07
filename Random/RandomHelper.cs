@@ -112,7 +112,7 @@ namespace XiaoFeng
         {
             get
             {
-                if(_Helper == null )_Helper= new RandomHelper();
+                if (_Helper == null) _Helper = new RandomHelper();
                 return _Helper;
             }
         }
@@ -127,7 +127,7 @@ namespace XiaoFeng
         /// <param name="min">最小值</param>
         /// <param name="max">最大值</param>
         /// <returns></returns>
-        public static int GetRandomInt(int min,int max) { return Helper.GetRandom(min, max); }
+        public static int GetRandomInt(int min, int max) { return Helper.GetRandom(min, max); }
         #endregion
 
         #region 获取一组随机数字

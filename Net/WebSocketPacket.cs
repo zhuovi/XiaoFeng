@@ -41,7 +41,7 @@ namespace XiaoFeng.Net
     /// <summary>
     /// WebSocket消息包
     /// </summary>
-    public class WebSocketPacket: Disposable
+    public class WebSocketPacket : Disposable
     {
         #region 构造器
         /// <summary>
@@ -74,10 +74,11 @@ namespace XiaoFeng.Net
                 if (index == -1) continue;
                 var key = line.Substring(0, index).Trim();
                 var val = line.Substring(index + 1).Trim();
-                if(this.Data.TryGetValue(key,out var _))
+                if (this.Data.TryGetValue(key, out var _))
                 {
                     this.Data[key] = val;
-                }else
+                }
+                else
                     this.Data.Add(key, val);
             } while (line != null);
             if (this.Data.TryGetValue("Host", out var host))
@@ -117,7 +118,7 @@ namespace XiaoFeng.Net
         /// <summary>
         /// 数据
         /// </summary>
-        private Dictionary<string,string> Data { get; set; }
+        private Dictionary<string, string> Data { get; set; }
         /// <summary>
         /// 数据类型
         /// </summary>

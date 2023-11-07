@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 /****************************************************************
 *  Copyright © (2023) www.fayelf.com All Rights Reserved.       *
@@ -22,22 +20,22 @@ namespace XiaoFeng.Memcached
         /// <summary>
         /// 未知
         /// </summary>
-        [Range(-1, -1)] 
+        [Range(-1, -1)]
         Unknow = 0,
         /// <summary>
         /// 存储
         /// </summary>
-        [Range(0,19)]
+        [Range(0, 19)]
         Store = 1,
         /// <summary>
         /// 检索
         /// </summary>
-        [Range(20, 39)] 
+        [Range(20, 39)]
         Get = 2,
         /// <summary>
         /// 其它
         /// </summary>
-        [Range(40, 59)] 
+        [Range(40, 59)]
         Other = 3,
         /// <summary>
         /// 统计

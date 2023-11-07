@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
-using System.IO.Pipes;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Security;
-using System.Net.Sockets;
 using System.Reflection;
-using System.Runtime.ConstrainedExecution;
-using System.Runtime.InteropServices.ComTypes;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
@@ -152,22 +147,22 @@ namespace XiaoFeng.Http
         /// 请求标头值 默认为text/html, application/xhtml+xml, */*
         /// </summary>
         public string Accept { get; set; } = "text/html, application/xhtml+xml, */*";
-		/// <summary>
-		/// Accept-Charset 标头，指定响应可接受的内容编码。
-		/// </summary>
-		public string AcceptEncoding { get; set; }
-		/// <summary>
-		/// Accept-Langauge 标头，指定用于响应的首选自然语言。
-		/// </summary>
-		public string AcceptLanguage { get; set; }
-		/// <summary>
-		/// Cache-Control 标头，指定请求/响应链上所有缓存控制机制必须服从的指令。
-		/// </summary>
-		public CacheControlHeaderValue CacheControl { get; set; }
-		/// <summary>
-		/// 获取或设置一个值，该值指示请求是否应跟随重定向响应。
-		/// </summary>
-		public Boolean AllowAutoRedirect { get; set; } = true;
+        /// <summary>
+        /// Accept-Charset 标头，指定响应可接受的内容编码。
+        /// </summary>
+        public string AcceptEncoding { get; set; }
+        /// <summary>
+        /// Accept-Langauge 标头，指定用于响应的首选自然语言。
+        /// </summary>
+        public string AcceptLanguage { get; set; }
+        /// <summary>
+        /// Cache-Control 标头，指定请求/响应链上所有缓存控制机制必须服从的指令。
+        /// </summary>
+        public CacheControlHeaderValue CacheControl { get; set; }
+        /// <summary>
+        /// 获取或设置一个值，该值指示请求是否应跟随重定向响应。
+        /// </summary>
+        public Boolean AllowAutoRedirect { get; set; } = true;
         /// <summary>
         /// 获取或设置请求将跟随的重定向的最大数目。
         /// </summary>
@@ -195,7 +190,7 @@ namespace XiaoFeng.Http
         /// <summary>
         /// 指定 Schannel 安全包支持的安全协议
         /// </summary>
-        public SecurityProtocolType ProtocolType { get; set; } = SecurityProtocolType.Tls12 ;
+        public SecurityProtocolType ProtocolType { get; set; } = SecurityProtocolType.Tls12;
         /// <summary>
         /// 获取或设置用于请求的 HTTP 版本。返回结果:用于请求的 HTTP 版本。默认为 System.Net.HttpVersion.Version11。
         /// </summary>
@@ -283,7 +278,7 @@ namespace XiaoFeng.Http
             {
                 RequestUri = new Uri(this.Address)
             };
-            
+
             if (",POST,GET,DELETE,PUT,".IndexOf("," + this.Method.Method.ToUpper() + ",", StringComparison.OrdinalIgnoreCase) > -1 && this.HttpContent == null)
             {
                 if (this.FormData == null)
@@ -352,10 +347,10 @@ namespace XiaoFeng.Http
             }
             /*设置Http版本*/
             if (this.ProtocolVersion != null) this.Request.Version = this.ProtocolVersion;
-            
+
             this.Request.Headers.ExpectContinue = this.Expect100Continue;
             this.ClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, error) => true;
-            
+
             if (this.Host.IsNotNullOrWhiteSpace()) this.Request.Headers.Host = this.Host;
             else this.Request.Headers.Host = this.Request.RequestUri.Host;
             if (this.IfModifiedSince != null) this.Request.Headers.IfModifiedSince = this.IfModifiedSince.Value;
@@ -363,14 +358,14 @@ namespace XiaoFeng.Http
             /*Accept*/
             if (this.Accept.IsNotNullOrWhiteSpace())
                 this.Request.Headers.Accept.ParseAdd(this.Accept);
-            
+
             /*UserAgent客户端的访问类型，包括浏览器版本和操作系统信息*/
             this.Request.Headers.UserAgent.Clear();
             this.Request.Headers.UserAgent.ParseAdd(this.UserAgent);
             /*编码*/
             if (this.AcceptEncoding.IsNotNullOrWhiteSpace())
             {
-            this.Request.Headers.AcceptEncoding.Clear();
+                this.Request.Headers.AcceptEncoding.Clear();
                 this.Request.Headers.AcceptEncoding.ParseAdd(this.AcceptEncoding);
             }
             if (this.AcceptLanguage.IsNotNullOrWhiteSpace())
@@ -570,8 +565,8 @@ namespace XiaoFeng.Http
             /*设置Cookie*/
             if (this.CookieContainer != null) this.RequestHttp.CookieContainer = this.CookieContainer;
             /*来源地址*/
-            if(this.Referer.IsNotNullOrEmpty())
-            this.RequestHttp.Referer = this.Referer;
+            if (this.Referer.IsNotNullOrEmpty())
+                this.RequestHttp.Referer = this.Referer;
             /*是否执行跳转功能*/
             this.RequestHttp.AllowAutoRedirect = this.AllowAutoRedirect;
             if (this.MaximumAutomaticRedirections > 0) this.RequestHttp.MaximumAutomaticRedirections = this.MaximumAutomaticRedirections;
@@ -695,8 +690,8 @@ namespace XiaoFeng.Http
         /// <returns>请求Body</returns>
         public byte[] GetReuqestBody()
         {
-			byte[] RequestData = Array.Empty<byte>();
-			if (",POST,GET,DELETE,PUT,".IndexOf("," + this.Method.Method.ToUpper() + ",", StringComparison.OrdinalIgnoreCase) > -1)
+            byte[] RequestData = Array.Empty<byte>();
+            if (",POST,GET,DELETE,PUT,".IndexOf("," + this.Method.Method.ToUpper() + ",", StringComparison.OrdinalIgnoreCase) > -1)
             {
                 if (this.FormData == null)
                 {
@@ -736,14 +731,14 @@ namespace XiaoFeng.Http
                 this.ContentLength = RequestData.Length;
             }
             return RequestData;
-		}
-		#endregion
+        }
+        #endregion
 
-		#region 分界线
-		/// <summary>
-		/// 分界线
-		/// </summary>
-		public string GetBoundary()
+        #region 分界线
+        /// <summary>
+        /// 分界线
+        /// </summary>
+        public string GetBoundary()
         {
             var Boundary =
 #if NETCORE
@@ -920,14 +915,14 @@ namespace XiaoFeng.Http
             if (this.Data == null) this.Data = new Dictionary<string, string>();
             model.GetType().GetPropertiesAndFields().Each(m =>
             {
-                if(m is PropertyInfo p)
+                if (m is PropertyInfo p)
                 {
                     this.Data.Add(m.Name, p.GetValue(model).getValue());
                 }
                 else
                 {
                     var f = m as FieldInfo;
-                    this.Data.Add(m.Name,f.GetValue(model).getValue());
+                    this.Data.Add(m.Name, f.GetValue(model).getValue());
                 }
             });
             return this;

@@ -32,7 +32,7 @@ namespace XiaoFeng.Memcached
         {
             this.Servers = new List<IPEndPoint>();
             this.Protocol = MemcachedProtocol.Text;
-            this.Transform= new ModifiedFNV1_32();
+            this.Transform = new ModifiedFNV1_32();
             this.Encoding = Encoding.UTF8;
         }
         /// <summary>
@@ -54,7 +54,7 @@ namespace XiaoFeng.Memcached
         /// <param name="iPEndPoints">网络终节点</param>
         /// <param name="username">用户名</param>
         /// <param name="password">密码</param>
-        public MemcachedConfig(IEnumerable<IPEndPoint> iPEndPoints, string username, string password):this()
+        public MemcachedConfig(IEnumerable<IPEndPoint> iPEndPoints, string username, string password) : this()
         {
             this.AddServer(iPEndPoints);
             this.UserName = username;

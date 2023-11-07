@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 /****************************************************
  *  Copyright © www.fayelf.com All Rights Reserved  *
@@ -81,7 +77,7 @@ namespace XiaoFeng.FTP
         /// <summary>
         /// 重试连接次数
         /// </summary>
-        [Description("重试连接次数")] 
+        [Description("重试连接次数")]
         public int ConnectCount { get; set; }
         /// <summary>
         /// 本地目录
@@ -95,22 +91,22 @@ namespace XiaoFeng.FTP
         /// <summary>
         /// 编码名称
         /// </summary>
-        [Description("编码名称")] 
+        [Description("编码名称")]
         public string CharsetName { get; set; }
         /// <summary>
         /// 代理地址
         /// </summary>
-        [Description("代理地址")] 
+        [Description("代理地址")]
         public string ProxyHost { get; set; }
         /// <summary>
         /// 代理端口
         /// </summary>
-        [Description("代理端口")] 
+        [Description("代理端口")]
         public int ProxyPort { get; set; }
         /// <summary>
         /// 代理帐号
         /// </summary>
-        [Description("代理帐号")] 
+        [Description("代理帐号")]
         public string ProxyUserName { get; set; }
         /// <summary>
         /// 代理密码

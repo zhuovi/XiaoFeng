@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using XiaoFeng.Xml;
 using System.Xml.Linq;
+using XiaoFeng.Xml;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -102,7 +100,7 @@ namespace XiaoFeng
         /// <param name="xElement">节点</param>
         /// <param name="elementName">节点名称</param>
         /// <returns></returns>
-        public static XElement GetXElement(this XElement xElement,string elementName)
+        public static XElement GetXElement(this XElement xElement, string elementName)
         {
             if (!xElement.HasElements) return null;
             var name = xElement.GetDefaultNamespace();
@@ -126,7 +124,7 @@ namespace XiaoFeng
         /// <param name="xElement">节点</param>
         /// <param name="elementName">节点名称</param>
         /// <returns></returns>
-        public static IEnumerable<XElement> GetXDescendants(this XElement xElement,string elementName)
+        public static IEnumerable<XElement> GetXDescendants(this XElement xElement, string elementName)
         {
             if (!xElement.HasElements) return null;
             var name = xElement.GetDefaultNamespace();

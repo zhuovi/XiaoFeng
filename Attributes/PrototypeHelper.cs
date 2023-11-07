@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
-using System.ComponentModel;
 using System.Collections;
-using XiaoFeng.Data;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
 using XiaoFeng.Net;
 
 namespace XiaoFeng
@@ -35,7 +32,7 @@ namespace XiaoFeng
         /// <param name="t">对象</param>
         /// <param name="inherit">是否向父类查找</param>
         /// <returns></returns>
-        public static TableIndexAttribute[] GetTableIndexAttributes<T>(this T t,bool inherit = true)
+        public static TableIndexAttribute[] GetTableIndexAttributes<T>(this T t, bool inherit = true)
         {
             Type type = t is Type ? t as Type : typeof(T);
             return type.GetCustomAttributes<TableIndexAttribute>(inherit)?.ToArray();
@@ -175,7 +172,7 @@ namespace XiaoFeng
         /// <returns></returns>
         public static string GetDefaultValue(this MemberInfo m, bool inherit = true)
         {
-            if(m == null || !m.IsDefined(typeof(DefaultValueAttribute), inherit)) return String.Empty;
+            if (m == null || !m.IsDefined(typeof(DefaultValueAttribute), inherit)) return String.Empty;
             object val = m.GetCustomAttributeValue<DefaultValueAttribute>(a => a.Value, inherit);
             return val == null ? String.Empty : val.ToString();
         }

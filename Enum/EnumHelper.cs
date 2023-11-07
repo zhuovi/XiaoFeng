@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
+﻿using System.ComponentModel;
 /****************************************************************
 *  Copyright © (2016) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -21,7 +18,7 @@ namespace XiaoFeng
     /// Update Date : 2016-07-04
     /// </summary>
     public class EnumHelper { }
-    
+
     #region 输出类型
     /// <summary>
     /// 输出类型
@@ -36,17 +33,17 @@ namespace XiaoFeng
         /// <summary>
         /// JSON
         /// </summary>
-        [Description("JSON")] 
+        [Description("JSON")]
         JSON = 1,
         /// <summary>
         /// XML
         /// </summary>
-        [Description("XML")] 
+        [Description("XML")]
         XML = 2,
         /// <summary>
         /// 空
         /// </summary>
-        [Description("空")] 
+        [Description("空")]
         Null = 3
     }
     #endregion
@@ -60,77 +57,77 @@ namespace XiaoFeng
         /// <summary>
         /// 空
         /// </summary>
-        [Description("空")] 
+        [Description("空")]
         Null = 0,
         /// <summary>
         /// 值
         /// </summary>
-        [Description("值")] 
+        [Description("值")]
         Value = 1,
         /// <summary>
         /// 类
         /// </summary>
-        [Description("类")] 
+        [Description("类")]
         Class = 2,
         /// <summary>
         /// 结构体
         /// </summary>
-        [Description("结构体")] 
+        [Description("结构体")]
         Struct = 3,
         /// <summary>
         /// 枚举
         /// </summary>
-        [Description("枚举")] 
+        [Description("枚举")]
         Enum = 4,
         /// <summary>
         /// 字符串
         /// </summary>
-        [Description("字符串")] 
+        [Description("字符串")]
         String = 5,
         /// <summary>
         /// 数组
         /// </summary>
-        [Description("数组")] 
+        [Description("数组")]
         Array = 6,
         /// <summary>
         /// List
         /// </summary>
-        [Description("List")] 
+        [Description("List")]
         List = 7,
         /// <summary>
         /// 字典
         /// </summary>
-        [Description("字典")] 
+        [Description("字典")]
         Dictionary = 8,
         /// <summary>
         /// ArrayList
         /// </summary>
-        [Description("ArrayList")] 
+        [Description("ArrayList")]
         ArrayList = 9,
         /// <summary>
         /// 是否是集合类型
         /// </summary>
-        [Description("是否是集合类型")] 
+        [Description("是否是集合类型")]
         IEnumerable = 10,
         /// <summary>
         /// 字典类型
         /// </summary>
-        [Description("字典类型")] 
+        [Description("字典类型")]
         IDictionary = 11,
         /// <summary>
         /// 匿名类型
         /// </summary>
-        [Description("匿名类型")] 
+        [Description("匿名类型")]
         Anonymous = 12,
         /// <summary>
         /// DataTable
         /// </summary>
-        [Description("DataTable")] 
+        [Description("DataTable")]
         DataTable = 13,
         /// <summary>
         /// 其它
         /// </summary>
-        [Description("其它")] 
+        [Description("其它")]
         Other = 20
     }
     #endregion
@@ -275,7 +272,8 @@ namespace XiaoFeng
     /// <summary>
     /// 系统类型
     /// </summary>
-    public enum PlatformOS{
+    public enum PlatformOS
+    {
         /// <summary>
         /// linux os
         /// </summary>
@@ -376,12 +374,12 @@ namespace XiaoFeng
         /// <summary>
         /// 名称
         /// </summary>
-        [Description("名称")] 
+        [Description("名称")]
         Name = 1,
         /// <summary>
         /// 说明
         /// </summary>
-        [Description("说明")] 
+        [Description("说明")]
         Description = 2
     }
     #endregion

@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Threading.Tasks;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -307,9 +303,9 @@ namespace XiaoFeng.Net
                 DataType = this.DataType
             };
             this.OpCode = dr.Opcode;
-            if(this.OpCode == OpCode.Ping)
+            if (this.OpCode == OpCode.Ping)
             {
-                this.Send(new DataFrame(dr.Text,this.Encoding,OpCode.Pong,this.DataType).GetBytes());
+                this.Send(new DataFrame(dr.Text, this.Encoding, OpCode.Pong, this.DataType).GetBytes());
                 return;
             }
             try
@@ -488,7 +484,7 @@ namespace XiaoFeng.Net
                 }
             }
             if (HandshakeLength == 0 || HandshakeLength - 8 < 0) return;
-            
+
             /*现在使用的是比较新的WebSocket协议*/
             if (RawClientHandshake.IndexOf(header) != -1)
             {
@@ -691,7 +687,7 @@ namespace XiaoFeng.Net
             {
                 this.SslStream = new SslStream(netStream, false, (sender, cert, chain, errors) =>
                 {
-                    
+
                     return errors == SslPolicyErrors.None;
                 }, (sender, targethost, localcert, remotecert, acceptableissuers) =>
                 {
@@ -699,7 +695,7 @@ namespace XiaoFeng.Net
                 }, EncryptionPolicy.RequireEncryption);
                 this.SslStream = new SslStream(netStream, true);
                 this.SslStream.ReadTimeout = netStream.ReadTimeout;
-                
+
                 this.SslStream.WriteTimeout = netStream.WriteTimeout;
                 this.SslStream.AuthenticateAsServer(this.Certificate, false, this.SslProtocols, true);
                 //this.SslStream.AuthenticateAsServer(this.Certificate);
@@ -722,7 +718,7 @@ namespace XiaoFeng.Net
             {
                 readsize = stream.Read(this.ReceivedDataBuffer, 0, this.ReceivedDataBuffer.Length);
                 if (readsize <= 0) break;
-                buffer.Write(this.ReceivedDataBuffer, 0,readsize);
+                buffer.Write(this.ReceivedDataBuffer, 0, readsize);
             } while (readsize > 0);
             if (buffer.Length == 0) return;
             var bytes = buffer.ToArray();

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -62,7 +58,7 @@ namespace XiaoFeng
             Int64 NewTimer = DateTime.Now.ToTimeStamps();
 
             if (NewTimer == OldTimer) { Counter++; if (Counter >= MaxCounter) Counter = 1; } else { OldTimer = NewTimer; Counter = 1; }
-            string OrderNumber = NewTimer.ToString() + RandomHelper.GetRandomInt(100,1000) + Counter.ToString().PadLeft(MaxCounter.ToString().Length, '0');
+            string OrderNumber = NewTimer.ToString() + RandomHelper.GetRandomInt(100, 1000) + Counter.ToString().PadLeft(MaxCounter.ToString().Length, '0');
             Monitor.Exit(OrderNumberLock);
             return OrderNumber;
         }
@@ -71,7 +67,7 @@ namespace XiaoFeng
         /// </summary>
         /// <param name="format">时间格式 如yyyyMMdd</param>
         /// <returns></returns>
-        public static string GetDateTime(string format= "yyyyMMddHHmmssfff")
+        public static string GetDateTime(string format = "yyyyMMddHHmmssfff")
         {
             Monitor.Enter(OrderNumberLock);
             string NewTime = DateTime.Now.ToString(format);

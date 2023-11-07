@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Text;
 
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
@@ -125,7 +124,7 @@ namespace XiaoFeng.Device
             if (cmd.IsNullOrEmpty()) return result;
             try
             {
-               using (var process = new Process())
+                using (var process = new Process())
                 {
                     var fileName = string.Empty;
                     if (OS.Platform.GetOSPlatform() == PlatformOS.Windows)

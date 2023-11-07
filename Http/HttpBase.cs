@@ -42,7 +42,7 @@ namespace XiaoFeng.Http
         /// <summary>
         /// 指定构成 HTTP 标头的名称/值对的集合。
         /// </summary>
-        public IDictionary<string,string> Headers { get; set; }
+        public IDictionary<string, string> Headers { get; set; }
         /// <summary>
         /// 获取或设置请求的方法
         /// </summary>
@@ -51,14 +51,14 @@ namespace XiaoFeng.Http
         /// 请求或响应内容类型
         /// </summary>
         public string ContentType { get; set; }
-		/// <summary>
-		/// 请求内容长度
-		/// </summary>
-		public long ContentLength { get; set; }
-		/// <summary>
-		/// 开始请求时间
-		/// </summary>
-		public DateTime BeginTime { get; protected set; }
+        /// <summary>
+        /// 请求内容长度
+        /// </summary>
+        public long ContentLength { get; set; }
+        /// <summary>
+        /// 开始请求时间
+        /// </summary>
+        public DateTime BeginTime { get; protected set; }
         /// <summary>
         /// 请求结束时间
         /// </summary>

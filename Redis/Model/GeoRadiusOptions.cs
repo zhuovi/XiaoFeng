@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 /****************************************************************
 *  Copyright © (2021) www.fayelf.com All Rights Reserved.       *
@@ -19,7 +16,7 @@ namespace XiaoFeng.Redis
     /// <summary>
     /// 位置半径选项
     /// </summary>
-    public class GeoRadiusOptions:GeoModel
+    public class GeoRadiusOptions : GeoModel
     {
         #region 构造器
         /// <summary>

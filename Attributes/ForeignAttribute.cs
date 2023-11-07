@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
@@ -20,7 +16,7 @@ namespace XiaoFeng
     /// 外键特性
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public class ForeignAttribute:Attribute
+    public class ForeignAttribute : Attribute
     {
         #region 构造器
         /// <summary>

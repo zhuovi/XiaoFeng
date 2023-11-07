@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using XiaoFeng.Expressions;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
@@ -56,12 +53,12 @@ namespace XiaoFeng
             else
                 parameter = first.Parameters[0];
             var member = Expression.PropertyOrField(parameter, propertyName);
-            
+
             var val = Expression.Constant(value, member.Type);
 
             var body = Expression.MakeBinary(expressionType, member, val);
-            if(first!=null)
-            body = Expression.AndAlso(first.Body, body);
+            if (first != null)
+                body = Expression.AndAlso(first.Body, body);
             return Expression.Lambda<Func<T, bool>>(body, parameter);
         }
         /// <summary>
@@ -261,7 +258,7 @@ namespace XiaoFeng
         /// <typeparam name="TResult">结果</typeparam>
         /// <param name="expression">表达式</param>
         /// <returns></returns>
-        public static Expression<Func<NewParam, TResult>> To<NewParam, OldParam, TResult>(this 
+        public static Expression<Func<NewParam, TResult>> To<NewParam, OldParam, TResult>(this
     Expression<Func<OldParam, TResult>> expression)
     where NewParam : OldParam
         {
@@ -283,7 +280,7 @@ namespace XiaoFeng
         {
             var propertyInfo = typeof(T);
             var instance = Expression.Parameter(propertyInfo, paramName);
-            
+
             var lambda = Expression.Lambda<Func<T, bool>>(expression, instance);
             return lambda.Compile();
         }

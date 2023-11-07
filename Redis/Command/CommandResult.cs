@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 /****************************************************************
 *  Copyright © (2021) www.fayelf.com All Rights Reserved.       *
@@ -264,7 +262,7 @@ namespace XiaoFeng.Redis
             if (str.Length == 0) return;
             var KeyLength = str.GetMatch(@"^\$(?<a>\d+)\r\n").ToCast<int>(-1);
             if (KeyLength == -1) return;
-            str = str.RemovePattern(@"^\$(?<a>\d+)\r\n"); 
+            str = str.RemovePattern(@"^\$(?<a>\d+)\r\n");
             if (KeyLength == 0)
             {
                 str = str.RemovePattern(@"^\r\n");

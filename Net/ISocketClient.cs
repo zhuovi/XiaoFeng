@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading.Tasks;
 
 /****************************************************************
@@ -100,7 +98,7 @@ namespace XiaoFeng.Net
         /// </summary>
         /// <param name="address">主机</param>
         /// <param name="port">端口</param>
-        void Start(IPAddress address,int port);
+        void Start(IPAddress address, int port);
         /// <summary>
         /// 启动（异步）
         /// </summary>

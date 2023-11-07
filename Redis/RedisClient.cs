@@ -25,7 +25,7 @@ namespace XiaoFeng.Redis
     /// v 1.1.0
     /// 修改提取数据用正则改为字符提取 更加精确
     /// </summary>
-    public partial class RedisClient : Disposable,IRedisClient
+    public partial class RedisClient : Disposable, IRedisClient
     {
         #region 构造器
         /// <summary>
@@ -68,7 +68,7 @@ namespace XiaoFeng.Redis
         /// 设置配置
         /// </summary>
         /// <param name="config">配置</param>
-        public RedisClient(ConnectionConfig config)  { this.ConnConfig = config.ToRedisConfig(); }
+        public RedisClient(ConnectionConfig config) { this.ConnConfig = config.ToRedisConfig(); }
         /// <summary>
         /// 设置配置
         /// </summary>
@@ -285,7 +285,7 @@ namespace XiaoFeng.Redis
             }
             finally
             {
-                 //Mutex.ReleaseMutex();
+                //Mutex.ReleaseMutex();
             }
         }
         #endregion
@@ -326,7 +326,7 @@ namespace XiaoFeng.Redis
         /// PING 异步
         /// </summary>
         /// <returns></returns>
-        public async Task<Boolean> PingAsync() =>await this.ExecuteAsync(CommandType.PING, null,async result =>await Task.FromResult(result.OK && result.Value.ToString() == "PONG"));
+        public async Task<Boolean> PingAsync() => await this.ExecuteAsync(CommandType.PING, null, async result => await Task.FromResult(result.OK && result.Value.ToString() == "PONG"));
         #endregion
 
         #region 打印字符串
@@ -399,7 +399,7 @@ namespace XiaoFeng.Redis
         /// <param name="value">值</param>
         /// <param name="isValue">是否是值类型</param>
         /// <returns></returns>
-        private string GetValue<T>(T value,out Boolean isValue)
+        private string GetValue<T>(T value, out Boolean isValue)
         {
             var type = value.GetType();
             var valueType = type.GetValueType();
@@ -454,7 +454,8 @@ namespace XiaoFeng.Redis
         /// <summary>
         /// 析构
         /// </summary>
-        ~RedisClient(){
+        ~RedisClient()
+        {
             this.Dispose();
         }
         #endregion

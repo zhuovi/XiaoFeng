@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using XiaoFeng.Data;
 using System.Data.Common;
-using XiaoFeng.Redis;
+using XiaoFeng.Data;
 using XiaoFeng.Model;
+using XiaoFeng.Redis;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -48,7 +44,7 @@ namespace XiaoFeng
         /// <param name="cmd">命令</param>
         /// <param name="isNull">参数是否是?号</param>
         /// <returns></returns>
-        public static string GetParameterCommandText(this DbCommand cmd,Boolean isNull = false)
+        public static string GetParameterCommandText(this DbCommand cmd, Boolean isNull = false)
         {
             var paramSQLString = cmd.CommandText;
             if (paramSQLString.IsNullOrEmpty()) return "";
@@ -97,18 +93,18 @@ namespace XiaoFeng
         /// <returns></returns>
         public static string CreateTable(this ConnectionConfig config, Type modelType, string tableName = "", string connName = "", int index = -1)
         {
-           return new Table.MakeTable(config).Create(modelType, tableName, connName, index);
-           /* if (modelType == null) return false;
-            var tableAttr = modelType.GetTableAttribute();
-            if (tableAttr == null) tableAttr = new TableAttribute();
-            if (connName.IsNotNullOrEmpty()) tableAttr.ConnName = connName;
-            if (index != -1) tableAttr.ConnIndex = index;
-            modelType.GetPropertiesAndFields().Each(c =>
-            {
-                var columnAttr = c.GetColumnAttribute();
-                if (columnAttr == null) columnAttr = new ColumnAttribute();
-            });
-            return true;*/
+            return new Table.MakeTable(config).Create(modelType, tableName, connName, index);
+            /* if (modelType == null) return false;
+             var tableAttr = modelType.GetTableAttribute();
+             if (tableAttr == null) tableAttr = new TableAttribute();
+             if (connName.IsNotNullOrEmpty()) tableAttr.ConnName = connName;
+             if (index != -1) tableAttr.ConnIndex = index;
+             modelType.GetPropertiesAndFields().Each(c =>
+             {
+                 var columnAttr = c.GetColumnAttribute();
+                 if (columnAttr == null) columnAttr = new ColumnAttribute();
+             });
+             return true;*/
         }
         /// <summary>
         /// 模型生成表

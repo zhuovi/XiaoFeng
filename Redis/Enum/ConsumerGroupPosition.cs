@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-/****************************************************************
+﻿/****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
 *  QQ : 7092734                                                 *
@@ -22,10 +18,10 @@ namespace XiaoFeng.Redis
         /// <summary>
         /// 从头开始
         /// </summary>
-         TOP = 0,
-         /// <summary>
-         /// 从尾开始
-         /// </summary>
-         END = 1
+        TOP = 0,
+        /// <summary>
+        /// 从尾开始
+        /// </summary>
+        END = 1
     }
 }

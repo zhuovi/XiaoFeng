@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Text;
+﻿using System.Security.Cryptography;
 
 /****************************************************************
 *  Copyright © (2023) www.fayelf.com All Rights Reserved.       *
@@ -18,7 +15,7 @@ namespace XiaoFeng.Cryptography
     /// <summary>
     /// SM4加密器
     /// </summary>
-    public class SM4Cipher: SymmetricAlgorithm
+    public class SM4Cipher : SymmetricAlgorithm
     {
         #region 构造器
         /// <summary>

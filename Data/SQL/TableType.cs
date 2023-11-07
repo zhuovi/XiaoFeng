@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -35,32 +30,32 @@ namespace XiaoFeng.Data.SQL
         /// <summary>
         /// 第2张表
         /// </summary>
-        [Description("第2张表")] 
+        [Description("第2张表")]
         T2 = 2,
         /// <summary>
         /// 第3张表
         /// </summary>
-        [Description("第3张表")] 
+        [Description("第3张表")]
         T3 = 3,
         /// <summary>
         /// 第4张表
         /// </summary>
-        [Description("第4张表")] 
+        [Description("第4张表")]
         T4 = 4,
         /// <summary>
         /// 第5张表
         /// </summary>
-        [Description("第5张表")] 
+        [Description("第5张表")]
         T5 = 5,
         /// <summary>
         /// 第6张表
         /// </summary>
-        [Description("第6张表")] 
+        [Description("第6张表")]
         T6 = 6,
         /// <summary>
         /// 第7张表
         /// </summary>
-        [Description("第7张表")] 
+        [Description("第7张表")]
         T7 = 7,
         /// <summary>
         /// 第8张表

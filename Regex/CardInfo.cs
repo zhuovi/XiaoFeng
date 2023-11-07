@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
@@ -17,7 +16,7 @@ namespace XiaoFeng
     /// <summary>
     /// 身份证验证类
     /// </summary>
-    public class CardInfo: Disposable
+    public class CardInfo : Disposable
     {
         #region 构造器
         /// <summary>
@@ -88,7 +87,7 @@ namespace XiaoFeng
         /// </summary>
         /// <param name="cardNumber">身份证号</param>
         /// <returns></returns>
-        public Boolean Valid(string cardNumber= "")
+        public Boolean Valid(string cardNumber = "")
         {
             if (cardNumber.IsNullOrEmpty())
                 cardNumber = this.CardNumber;
@@ -101,7 +100,7 @@ namespace XiaoFeng
             /*
              * 验证出生年月日
              */
-            int year = length == 15?(cardNumber.Substring(6, 2).ToInt32() + 1900): cardNumber.Substring(6, 4).ToInt32();
+            int year = length == 15 ? (cardNumber.Substring(6, 2).ToInt32() + 1900) : cardNumber.Substring(6, 4).ToInt32();
             string pattern;
             if (year % 4 == 0 || (year % 4 == 0 && year % 100 == 0))
                 pattern = @"^[1-9][0-9]{5}(19|20)[0-9]{2}((01|03|05|07|08|10|12)(0[1-9]|[1-2][0-9]|3[0-1])|(04|06|09|11)(0[1-9]|[1-2][0-9]|30)|02(0[1-9]|[1-2][0-9]))[0-9]{3}[0-9Xx]$";
@@ -111,7 +110,7 @@ namespace XiaoFeng
             if (length == 18)
             {
                 var M = CreateCode(cardNumber);
-                return M.EqualsIgnoreCase(cardNumber[17].ToString());                
+                return M.EqualsIgnoreCase(cardNumber[17].ToString());
             }
             return true;
         }
@@ -138,8 +137,8 @@ namespace XiaoFeng
             int[] factor = new int[] { 7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2, 1 };
             var parity = "10X98765432";
             var total = 0;
-            for(var i = 0; i < cardNumber.Length; i++)
-                total += cardNumber.Substring(i,1).ToCast<int>() * factor[i];
+            for (var i = 0; i < cardNumber.Length; i++)
+                total += cardNumber.Substring(i, 1).ToCast<int>() * factor[i];
             return parity[total % parity.Length].ToString();
         }
         /// <summary>

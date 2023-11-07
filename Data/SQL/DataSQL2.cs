@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using XiaoFeng.Json;
 using XiaoFeng.Xml;
@@ -181,14 +179,14 @@ select {Limits} row_number() over({OrderBy}) as TempID, * from
                             {
                                 case JoinType.Inner:
                                     //WhereStrings += (WhereStrings.IsNullOrEmpty() ? " where " : " and ") + w.Value.ReplacePattern(@"(\s|,|\(|^)([\[`""])", "$1" + this.Prefix[w.Key] + ".$2");
-                                    WhereStrings += (WhereStrings.IsNullOrEmpty() ? " where " : " and ") + this.SetColumnPrefix(w.Value, this.Prefix[w.Key]); 
+                                    WhereStrings += (WhereStrings.IsNullOrEmpty() ? " where " : " and ") + this.SetColumnPrefix(w.Value, this.Prefix[w.Key]);
                                     break;
                                 case JoinType.Right:
                                     if (w.Key == TableType.T1)
                                     {
                                         //OnString += " AND " + w.Value.ReplacePattern(@"(\s|,|\(|^)([\[`""])", "$1" + this.Prefix[w.Key] + ".$2");
                                         OnString += " AND " + this.SetColumnPrefix(w.Value, this.Prefix[w.Key]);
-                                    } 
+                                    }
                                     else if (w.Key == TableType.T2)
                                     {
                                         //WhereStrings += (WhereStrings.IsNullOrEmpty() ? " where " : " and ") + w.Value.ReplacePattern(@"(\s|,|\(|^)([\[`""])", "$1" + this.Prefix[w.Key] + ".$2");
@@ -482,7 +480,7 @@ select {Limits} row_number() over({OrderBy}) as TempID, * from
             }
             if (str.IsNotNullOrEmpty())
             {
-                var dic = new Dictionary<string,string>();
+                var dic = new Dictionary<string, string>();
                 var index = 0;
                 var _str = str.ReplacePattern(@"'[^']*?'", m =>
                 {
@@ -496,7 +494,7 @@ select {Limits} row_number() over({OrderBy}) as TempID, * from
                     _str = _str.ReplacePattern(@"\{R:(?<a>\d+)\}", m =>
                     {
                         var a = m.Groups["a"].Value;
-                        if(dic.TryGetValue(a,out var val))
+                        if (dic.TryGetValue(a, out var val))
                         {
                             return val;
                         }

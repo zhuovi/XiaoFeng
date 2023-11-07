@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-/****************************************************************
+﻿/****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
 *  QQ : 7092734                                                 *
@@ -40,7 +36,7 @@ namespace XiaoFeng.Excel.Model
         /// <summary>
         /// 开始位置
         /// </summary>
-        public CellLocation Begin { get;private set; }
+        public CellLocation Begin { get; private set; }
         /// <summary>
         /// 结束位置
         /// </summary>
@@ -52,7 +48,7 @@ namespace XiaoFeng.Excel.Model
         /// <summary>
         /// 总列数
         /// </summary>
-        public int Columns=>this.End.ColumnIndex - this.Begin.ColumnIndex + 1;
+        public int Columns => this.End.ColumnIndex - this.Begin.ColumnIndex + 1;
         #endregion
 
         #region 方法

@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using XiaoFeng.Collections;
 
 /****************************************************************
@@ -148,7 +144,8 @@ namespace XiaoFeng.Net
         public string UserName
         {
             get => this._UserName;
-            set {
+            set
+            {
                 if (value == this._UserName) return;
                 this._UserName = value;
             }
@@ -163,7 +160,8 @@ namespace XiaoFeng.Net
         public string Password
         {
             get => this._Password;
-            set {
+            set
+            {
                 if (value == this._Password) return;
                 this._Password = value;
             }
@@ -178,7 +176,8 @@ namespace XiaoFeng.Net
         public string Host
         {
             get => this._Host;
-            set {
+            set
+            {
                 if (value == this._Host) return;
                 this._Host = value;
                 this._EndPoint = new IPEndPoint(Dns.GetHostAddresses(this.Host).LastOrDefault(), this.Port);
@@ -194,7 +193,8 @@ namespace XiaoFeng.Net
         public int Port
         {
             get => this._Port;
-            set {
+            set
+            {
                 if (value == this._Port) return;
                 this._Port = value;
                 this._EndPoint = new IPEndPoint(Dns.GetHostAddresses(this.Host).LastOrDefault(), this.Port);
@@ -355,7 +355,7 @@ namespace XiaoFeng.Net
             var query = this.Query.IsNullOrEmpty() ? "" : "?" + this.Query;
             return $"{this.Scheme}://{userinfo}{this.Host}{port}{path}{query}";
         }
-        
+
         /// <summary>
         /// HashCode
         /// </summary>

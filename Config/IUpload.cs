@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -36,7 +33,7 @@ namespace XiaoFeng.Config
         /// <summary>
         /// 最大允许上传大小 单位为B 默认为10M
         /// </summary>
-       long MaxLength { get; set; }
+        long MaxLength { get; set; }
         /// <summary>
         /// 生成文件名格式
         /// </summary>

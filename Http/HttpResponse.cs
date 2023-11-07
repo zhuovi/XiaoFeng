@@ -231,99 +231,99 @@ namespace XiaoFeng.Http
             /*读取数据*/
             this.Data = await this.GetBytesAsync().ConfigureAwait(false);
         }
-		/// <summary>
-		/// 初始化数据
-		/// </summary>
-		public async Task InitSocketAsync()
-		{
+        /// <summary>
+        /// 初始化数据
+        /// </summary>
+        public async Task InitSocketAsync()
+        {
             if (this.Headers == null || this.Headers.Count == 0) return;
 
             this.ProtocolVersion = this.Request.ProtocolVersion;
-            if(this.Headers.TryGetValue("Content-Encoding",out var ContentEncoding))
+            if (this.Headers.TryGetValue("Content-Encoding", out var ContentEncoding))
             {
                 this.ContentEncoding = ContentEncoding;
             }
-			if (this.Headers.TryGetValue("Content-Length", out var ContentLength))
-			{
-				this.ContentLength = ContentLength.ToCast<long>();
-			}
-			if (this.Headers.TryGetValue("Content-Type", out var ContentType))
-			{
+            if (this.Headers.TryGetValue("Content-Length", out var ContentLength))
+            {
+                this.ContentLength = ContentLength.ToCast<long>();
+            }
+            if (this.Headers.TryGetValue("Content-Type", out var ContentType))
+            {
                 if (ContentType.Contains(";"))
                 {
                     var _ContentType = ContentType.Split(';');
 
-					this.ContentType = _ContentType[0];
+                    this.ContentType = _ContentType[0];
                     var charset = _ContentType[1].Split(':');
                     if (charset.Length == 2) this.CharacterSet = charset[1];
-				}
+                }
                 else
                     this.ContentType = ContentType;
-			}
-			if (this.Headers.TryGetValue("Server", out var Server))
-			{
-				this.Server = Server;
-			}
-			this.Method = (HttpMethod)this.Request.Method;
-			if (this.Headers.TryGetValue("Last-Modified", out var LastModified))
-			{
-                this.LastModified = new DateTimeOffset(DateTime.Parse(LastModified,CultureInfo.InvariantCulture));
-			}
-			//获取CookieCollection
-			if (this.CookieContainer == null) this.CookieContainer = new CookieContainer();
-			if (this.Headers.TryGetValue("Set-Cookie", out var Cookies))
-			{
+            }
+            if (this.Headers.TryGetValue("Server", out var Server))
+            {
+                this.Server = Server;
+            }
+            this.Method = (HttpMethod)this.Request.Method;
+            if (this.Headers.TryGetValue("Last-Modified", out var LastModified))
+            {
+                this.LastModified = new DateTimeOffset(DateTime.Parse(LastModified, CultureInfo.InvariantCulture));
+            }
+            //获取CookieCollection
+            if (this.CookieContainer == null) this.CookieContainer = new CookieContainer();
+            if (this.Headers.TryGetValue("Set-Cookie", out var Cookies))
+            {
                 var uri = new Uri(this.Request.Address);
-					var cookie = new Cookie
-					{
-						HttpOnly = Cookies.ToLower().EndsWith("httponly"),
-						Domain = uri.Host
-					};
-					//lang=zh-CN; path=/; secure; samesite=lax; httponly
-					var _c = Cookies.RemovePattern(@"\s+(httponly|samesite=lax|secure)(;|$)");
-					var cs = _c.GetMatches(@"(^|\s+)(?<name>[^=]+)=(?<value>[^;]*)(;|$)");
-					var dict = new Dictionary<string, string>();
-					cs.Each(a =>
-					{
-						dict.Add(a["name"], a["value"]);
-					});
-					if (dict.ContainsKey("domain"))
-					{
-						cookie.Domain = dict["domain"];
-						dict.Remove("domain");
-					}
-					if (dict.ContainsKey("path"))
-					{
-						cookie.Path = dict["path"];
-						dict.Remove("path");
-					}
-					if (dict.ContainsKey("expires"))
-					{
-						//cookie.Expires = DateTime.Parse(dict["expires"]);
-						dict.Remove("expires");
-					}
-					if (dict.ContainsKey("max-age"))
-					{
-						dict.Remove("max-age");
-					}
-					dict.Each(a =>
-					{
-						cookie.Name = a.Key; cookie.Value = a.Value;
-					});
-					this.CookieContainer.Add(cookie);
-			
-			}
-			/*读取数据*/
-			this.Data = await this.GetBytesAsync().ConfigureAwait(false);
-		}
-		#endregion
+                var cookie = new Cookie
+                {
+                    HttpOnly = Cookies.ToLower().EndsWith("httponly"),
+                    Domain = uri.Host
+                };
+                //lang=zh-CN; path=/; secure; samesite=lax; httponly
+                var _c = Cookies.RemovePattern(@"\s+(httponly|samesite=lax|secure)(;|$)");
+                var cs = _c.GetMatches(@"(^|\s+)(?<name>[^=]+)=(?<value>[^;]*)(;|$)");
+                var dict = new Dictionary<string, string>();
+                cs.Each(a =>
+                {
+                    dict.Add(a["name"], a["value"]);
+                });
+                if (dict.ContainsKey("domain"))
+                {
+                    cookie.Domain = dict["domain"];
+                    dict.Remove("domain");
+                }
+                if (dict.ContainsKey("path"))
+                {
+                    cookie.Path = dict["path"];
+                    dict.Remove("path");
+                }
+                if (dict.ContainsKey("expires"))
+                {
+                    //cookie.Expires = DateTime.Parse(dict["expires"]);
+                    dict.Remove("expires");
+                }
+                if (dict.ContainsKey("max-age"))
+                {
+                    dict.Remove("max-age");
+                }
+                dict.Each(a =>
+                {
+                    cookie.Name = a.Key; cookie.Value = a.Value;
+                });
+                this.CookieContainer.Add(cookie);
 
-		#region 提取网页Byte
-		/// <summary>
-		/// 提取网页Byte
-		/// </summary>
-		/// <returns></returns>
-		private async Task<byte[]> GetBytesAsync()
+            }
+            /*读取数据*/
+            this.Data = await this.GetBytesAsync().ConfigureAwait(false);
+        }
+        #endregion
+
+        #region 提取网页Byte
+        /// <summary>
+        /// 提取网页Byte
+        /// </summary>
+        /// <returns></returns>
+        private async Task<byte[]> GetBytesAsync()
         {
             byte[] ResponseByte = null;
             using (MemoryStream _stream = new MemoryStream())
@@ -340,7 +340,7 @@ namespace XiaoFeng.Http
                 }
                 else
                     stream = new MemoryStream(this.Data);
-                
+
                 /*GZIP处理*/
                 if (ContentEncoding.IsNotNullOrEmpty())
                 {
@@ -401,19 +401,19 @@ namespace XiaoFeng.Http
             this.BeginTime = begin;
             this.EndTime = end;
         }
-		/// <summary>
-		/// 设置开始时间
-		/// </summary>
-		public void SetBeginTime() => this.BeginTime = DateTime.Now;
-		#endregion
+        /// <summary>
+        /// 设置开始时间
+        /// </summary>
+        public void SetBeginTime() => this.BeginTime = DateTime.Now;
+        #endregion
 
-		#region 下载文件
-		/// <summary>
-		/// 下载文件
-		/// </summary>
-		/// <param name="path">文件保存路径</param>
-		/// <returns>运行时长</returns>
-		public async Task<long> DownFileAsync(string path)
+        #region 下载文件
+        /// <summary>
+        /// 下载文件
+        /// </summary>
+        /// <param name="path">文件保存路径</param>
+        /// <returns>运行时长</returns>
+        public async Task<long> DownFileAsync(string path)
         {
             path = path.GetBasePath();
             FileHelper.CreateDirectory(path.GetDirectoryName());

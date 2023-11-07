@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
+﻿using System.ComponentModel;
 
 /****************************************************************
 *  Copyright © (2023) www.fayelf.com All Rights Reserved.       *
@@ -28,12 +25,12 @@ namespace XiaoFeng.Model
         /// <summary>
         /// 非聚簇索引
         /// </summary>
-        [Description("非聚簇索引")] 
+        [Description("非聚簇索引")]
         NonClustered = 1,
         /// <summary>
         /// 唯一索引 
         /// </summary>
-        [Description("唯一索引")] 
+        [Description("唯一索引")]
         Unique = 2
     }
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-using XiaoFeng;
-using XiaoFeng.Config;
+﻿using XiaoFeng.Config;
 using XiaoFeng.IO;
 /****************************************************************
 *  Copyright © (2015) www.fayelf.com All Rights Reserved.       *
@@ -22,7 +17,7 @@ namespace XiaoFeng.Data
     /// Version : v 1.0.0
     /// Create Date : 2015-12-26
     /// </summary>
-    public class Encrypt 
+    public class Encrypt
     {
         #region 构造器
         /// <summary>

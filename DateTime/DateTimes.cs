@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -146,7 +143,7 @@ namespace XiaoFeng
         /// <returns></returns>
         public static DateTimes Parse(string v)
         {
-            if (!IsDateTimes(v)) return null;   
+            if (!IsDateTimes(v)) return null;
             return new DateTimes(v);
         }
         /// <summary>

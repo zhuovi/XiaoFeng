@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using XiaoFeng.Config;
-using XiaoFeng.IO;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -478,9 +474,9 @@ namespace XiaoFeng
         /// <para><term>5</term> 包含五种</para>
         /// <para><term>6</term> 包含六种</para>
         /// </returns>
-        public static int GetStringStrength(this string str, StrengthType strengthType = StrengthType.Number | StrengthType.LowwerLetter| StrengthType.UpperLetter| StrengthType.HalfSymbol| StrengthType.FullSymbol| StrengthType.Chinese)
-        {            
-            if (str.Length <= 5 || (int)strengthType<1) return 0;
+        public static int GetStringStrength(this string str, StrengthType strengthType = StrengthType.Number | StrengthType.LowwerLetter | StrengthType.UpperLetter | StrengthType.HalfSymbol | StrengthType.FullSymbol | StrengthType.Chinese)
+        {
+            if (str.Length <= 5 || (int)strengthType < 1) return 0;
             var matchs = new List<string>();
             strengthType.ToString().Split(',', StringSplitOptions.RemoveEmptyEntries).Each(s =>
             {

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-/****************************************************************
+﻿/****************************************************************
 *  Copyright © (2021) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
 *  QQ : 7092734                                                 *
@@ -19,7 +13,7 @@ namespace XiaoFeng.Redis
     /// <summary>
     /// GeoRadiusModel 类说明
     /// </summary>
-    public class GeoRadiusModel:GeoModel
+    public class GeoRadiusModel : GeoModel
     {
         #region 构造器
         /// <summary>

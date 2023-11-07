@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
 using System.Data;
+using System.Reflection;
+using System.Text;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -31,13 +30,13 @@ namespace XiaoFeng
         {
             string str = string.Empty;
             if (model == null) return str;
-            PropertyInfo[] properties = model.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public| BindingFlags.IgnoreCase);
+            PropertyInfo[] properties = model.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
             if (properties.Length <= 0) return str;
             foreach (PropertyInfo item in properties)
             {
                 string name = item.Name;
                 object value = item.GetValue(model, null);
-                if (item.PropertyType.IsValueType || item.PropertyType.Name.StartsWith("String",StringComparison.OrdinalIgnoreCase))
+                if (item.PropertyType.IsValueType || item.PropertyType.Name.StartsWith("String", StringComparison.OrdinalIgnoreCase))
                     str += string.Format("{0}:{1},", name, value);
                 else
                     GetProperties(value);

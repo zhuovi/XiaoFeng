@@ -1,18 +1,16 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Reflection;
 using System.Xml;
-using System.Collections;
-using System.Data;
-using System.ComponentModel;
 using XiaoFeng.IO;
 using XiaoFeng.Json;
 using XiaoFeng.Xml;
-using XiaoFeng.Redis;
-using System.Runtime.CompilerServices;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -153,7 +151,7 @@ namespace XiaoFeng
                 else if (valueTypes == ValueTypes.Class || valueTypes == ValueTypes.Struct)
                 {
                     model = Activator.CreateInstance<T>();
-                    var foreignKeys = 
+                    var foreignKeys =
                     dr.Table.Columns.Each<DataColumn>(dc =>
                     {
                         object drValue = dr[dc.ColumnName];
@@ -219,7 +217,7 @@ namespace XiaoFeng
         /// <param name="dataTable">DataTable</param>
         /// <param name="type">类型</param>
         /// <returns></returns>
-        public static object ToEntity(this DataTable dataTable,Type type)
+        public static object ToEntity(this DataTable dataTable, Type type)
         {
             if (dataTable == null || dataTable.Rows.Count == 0) return null;
             return dataTable.Rows[0].ToEntity(type);
@@ -1770,7 +1768,7 @@ namespace XiaoFeng
                     return o.ToString();
                 else if (targetType.IsGenericType)
                 {
-                    if(targetType.GenericTypeArguments.Length == 1 && targetType.GenericTypeArguments[0].IsEnum)
+                    if (targetType.GenericTypeArguments.Length == 1 && targetType.GenericTypeArguments[0].IsEnum)
                     {
                         return Enum.Parse(targetType.GenericTypeArguments[0], o.ToString(), true);
                     }
@@ -2986,7 +2984,7 @@ namespace XiaoFeng
         /// <param name="startIndex">查找索引</param>
         /// <param name="count">查找元素个数</param>
         /// <returns></returns>
-        public static int LastIndexOf<T>(this T[] array,T value,int startIndex=0,int count = 0)
+        public static int LastIndexOf<T>(this T[] array, T value, int startIndex = 0, int count = 0)
         {
             var length = array.Length;
             var _count = count == 0 ? (length - startIndex) : (count + startIndex) > length ? (length - startIndex) : count;
@@ -3026,7 +3024,7 @@ namespace XiaoFeng
         /// <param name="count">查找元素个数</param>
         /// <param name="match">要搜索的元素的条件</param>
         /// <returns></returns>
-        public static int FindIndex<T>(this T[] array, int startIndex,int count, Predicate<T> match) => Array.FindIndex(array, startIndex,count, match);
+        public static int FindIndex<T>(this T[] array, int startIndex, int count, Predicate<T> match) => Array.FindIndex(array, startIndex, count, match);
         /// <summary>
         /// 查找数组中数据
         /// </summary>
@@ -3118,8 +3116,8 @@ namespace XiaoFeng
                 return jsonValue.ToString();
             if (o is XmlValue xmlValue)
                 return xmlValue.ToString();
-            
-            if (baseValueType == ValueTypes.Anonymous || baseValueType == ValueTypes.Array|| baseValueType == ValueTypes.ArrayList || baseValueType== ValueTypes.List|| baseValueType== ValueTypes.DataTable || baseValueType == ValueTypes.Dictionary || baseValueType == ValueTypes.IDictionary || baseValueType == ValueTypes.IEnumerable || baseValueType == ValueTypes.Struct)
+
+            if (baseValueType == ValueTypes.Anonymous || baseValueType == ValueTypes.Array || baseValueType == ValueTypes.ArrayList || baseValueType == ValueTypes.List || baseValueType == ValueTypes.DataTable || baseValueType == ValueTypes.Dictionary || baseValueType == ValueTypes.IDictionary || baseValueType == ValueTypes.IEnumerable || baseValueType == ValueTypes.Struct)
                 return o.ToJson();
             if (baseValueType == ValueTypes.Class)
             {
@@ -3164,7 +3162,7 @@ namespace XiaoFeng
                 return constructor.Invoke(values);
             }
             if (BaseType == ValueTypes.Dictionary || BaseType == ValueTypes.IDictionary) return data;
-            if(BaseType == ValueTypes.Class)
+            if (BaseType == ValueTypes.Class)
             {
                 var val = Activator.CreateInstance(type);
                 type.GetProperties(BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance).Each(p =>
@@ -3173,7 +3171,7 @@ namespace XiaoFeng
                 });
                 return val;
             }
-            if(BaseType == ValueTypes.Struct)
+            if (BaseType == ValueTypes.Struct)
             {
                 var val = Activator.CreateInstance(type);
                 type.GetFields(BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance).Each(p =>

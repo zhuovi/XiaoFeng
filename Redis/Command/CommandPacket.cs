@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -59,7 +56,7 @@ namespace XiaoFeng.Redis
         {
             var SubCommands = this.CommandType.Commands;
             var line = $"*{this.Datas.Length + (SubCommands != null && SubCommands.Length > 0 ? SubCommands.Length : 1)}\r\n";
-            if(SubCommands != null && SubCommands.Length > 0)
+            if (SubCommands != null && SubCommands.Length > 0)
                 SubCommands.Each(a => line += $"${a.Length}\r\n{a}\r\n");
             else
                 line += $"${this.CommandType.ToString().Length}\r\n{this.CommandType}\r\n";

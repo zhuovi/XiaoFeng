@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data;
 using System.Data.Common;
-using XiaoFeng.Threading;
 using XiaoFeng.Data;
+using XiaoFeng.Threading;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -33,7 +29,7 @@ namespace XiaoFeng.Collections
         /// 设置应用池名称
         /// </summary>
         /// <param name="poolName">应用池名称</param>
-        private ConnectionPool(string poolName):this() => this.Name = poolName;
+        private ConnectionPool(string poolName) : this() => this.Name = poolName;
         /// <summary>
         /// 设置连接
         /// </summary>
@@ -62,7 +58,7 @@ namespace XiaoFeng.Collections
             this.Max = Math.Max(Environment.ProcessorCount, config.MaxPool);
             this.Min = Environment.ProcessorCount;
             if (poolName.IsNullOrEmpty())
-                this.Name = $"Pool<ConnectionPool>[{this.ConnectionString.ReplacePattern(@"((password|pwd)=)([^;]*)(;|$)","$1******$4")}]";
+                this.Name = $"Pool<ConnectionPool>[{this.ConnectionString.ReplacePattern(@"((password|pwd)=)([^;]*)(;|$)", "$1******$4")}]";
             //this.Init();
         }
         #endregion

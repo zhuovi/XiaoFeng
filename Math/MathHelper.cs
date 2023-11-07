@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -45,7 +43,7 @@ namespace XiaoFeng
             return _value;
         }
         #endregion
-        
+
         #region 10进制转任意进制
         /// <summary>
         /// 生成编码字符

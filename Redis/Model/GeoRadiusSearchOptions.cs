@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 /****************************************************************
 *  Copyright © (2021) www.fayelf.com All Rights Reserved.       *
@@ -19,7 +15,7 @@ namespace XiaoFeng.Redis
     /// <summary>
     /// GeoRadiusSearchOptions 类说明
     /// </summary>
-    public class GeoRadiusSearchOptions:GeoRadiusOptions
+    public class GeoRadiusSearchOptions : GeoRadiusOptions
     {
         #region 构造器
         /// <summary>
@@ -51,7 +47,7 @@ namespace XiaoFeng.Redis
                 list.Add("FROMMEMBER");
                 list.Add(this.Address);
             }
-            if(this.Latitude.HasValue && this.Longitude.HasValue)
+            if (this.Latitude.HasValue && this.Longitude.HasValue)
             {
                 list.Add("FROMLONLAT");
                 list.Add(this.Longitude);

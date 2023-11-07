@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 /****************************************************************
 *  Copyright © (2023) www.eelf.cn All Rights Reserved.          *
@@ -17,7 +15,7 @@ namespace XiaoFeng.Memcached.Internal
     /// <summary>
     /// Store操作结果
     /// </summary>
-    public class StoreOperationResult: OperationResult<Boolean>
+    public class StoreOperationResult : OperationResult<Boolean>
     {
         #region 构造器
         /// <summary>

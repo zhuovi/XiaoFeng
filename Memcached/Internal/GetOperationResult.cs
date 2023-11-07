@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 /****************************************************************
 *  Copyright © (2023) www.eelf.cn All Rights Reserved.          *
@@ -17,7 +15,7 @@ namespace XiaoFeng.Memcached.Internal
     /// <summary>
     /// Get操作结果
     /// </summary>
-    public class GetOperationResult: OperationResult<List<MemcachedValue>>
+    public class GetOperationResult : OperationResult<List<MemcachedValue>>
     {
         #region 构造器
         /// <summary>

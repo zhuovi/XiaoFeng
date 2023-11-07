@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -96,13 +92,13 @@ namespace XiaoFeng.Data
         /// <summary>
         /// 神州通用
         /// </summary>
-        [Description("神州通用")] 
-        Shentong = 1<<14,
+        [Description("神州通用")]
+        Shentong = 1 << 14,
         /// <summary>
         /// 瀚高
         /// </summary>
-        [Description("瀚高")] 
-        Highgo = 1<<15,
+        [Description("瀚高")]
+        Highgo = 1 << 15,
         /// <summary>
         /// Memcached
         /// </summary>

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 /****************************************************************
@@ -182,7 +180,7 @@ namespace XiaoFeng.Redis
         /// <param name="key">key</param>
         /// <param name="members">元素</param>
         /// <returns>位置列表</returns>
-       Task<List<GeoModel>> GetGeoPosAsync(string key, params object[] members);
+        Task<List<GeoModel>> GetGeoPosAsync(string key, params object[] members);
         /// <summary>
         /// 返回两个给定位置之间的距离
         /// </summary>

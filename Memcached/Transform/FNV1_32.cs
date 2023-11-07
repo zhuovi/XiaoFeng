@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Security.Cryptography;
-using System.Text;
 
 /****************************************************************
 *  Copyright © (2023) www.fayelf.com All Rights Reserved.       *
@@ -18,7 +16,7 @@ namespace XiaoFeng.Memcached.Transform
     /// <summary>
     /// FNV1_32 
     /// </summary>
-    public class FNV1_32: HashAlgorithm,IMemcachedTransform
+    public class FNV1_32 : HashAlgorithm, IMemcachedTransform
     {
         #region 构造器
         /// <summary>

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -22,7 +19,7 @@ namespace XiaoFeng.Redis
         /// <summary>
         /// 未知
         /// </summary>
-        [Description("未知")] 
+        [Description("未知")]
         Unknow = 0,
         /// <summary>
         /// 错误消息
@@ -32,22 +29,22 @@ namespace XiaoFeng.Redis
         /// <summary>
         /// 状态消息
         /// </summary>
-        [Description("状态消息")] 
+        [Description("状态消息")]
         Status = '+',
         /// <summary>
         /// 单条消息
         /// </summary>
-        [Description("单条消息")] 
+        [Description("单条消息")]
         Bulk = '$',
         /// <summary>
         /// 多条消息
         /// </summary>
-        [Description("多条消息")] 
+        [Description("多条消息")]
         MultiBulk = '*',
         /// <summary>
         /// 整型消息
         /// </summary>
-        [Description("整型消息")] 
+        [Description("整型消息")]
         Int = ':'
     }
 }

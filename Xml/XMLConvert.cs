@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
 using System.IO;
-using XiaoFeng;
+using System.Text;
+using System.Xml;
 using System.Xml.Serialization;
 using XiaoFeng.IO;
 /****************************************************************
@@ -187,7 +183,7 @@ namespace XiaoFeng
                     if (removeNamespaces) ns.Add("", "");
                     XmlSerializer xml = new XmlSerializer(model.GetType());
                     try { xml.Serialize(writer, model, ns); }
-                    catch(XmlException ex)
+                    catch (XmlException ex)
                     {
                         LogHelper.WriteLog(ex); return "";
                     }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
@@ -28,8 +27,8 @@ namespace XiaoFeng.Excel
         /// <param name="hidden">是否隐藏</param>
         public Column(int index, Boolean hidden = false)
         {
-            this.Index=index;
-            this.Hidden=hidden;
+            this.Index = index;
+            this.Hidden = hidden;
         }
         #endregion
 
@@ -75,7 +74,7 @@ namespace XiaoFeng.Excel
         /// </summary>
         /// <param name="rowIndex">行索引</param>
         /// <returns></returns>
-        public Cell Cell(int rowIndex) => this.CurrentColumnCells.SingleOrDefault(c => c.Row.Index == rowIndex && (this.Sheet.Workbook.Option.IncludeHiddenRow ||c.Row.Hidden == false));
+        public Cell Cell(int rowIndex) => this.CurrentColumnCells.SingleOrDefault(c => c.Row.Index == rowIndex && (this.Sheet.Workbook.Option.IncludeHiddenRow || c.Row.Hidden == false));
         #endregion
     }
 }

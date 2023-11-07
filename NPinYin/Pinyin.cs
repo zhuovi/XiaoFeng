@@ -55,10 +55,10 @@ namespace XiaoFeng
         /// <returns>返回中文文本的拼音</returns>
         public static string GetPinyin(string text, Boolean IsFirstUpper = false)
         {
-            PhraseSpecial.Each<KeyValuePair<string,string>>(a =>
+            PhraseSpecial.Each<KeyValuePair<string, string>>(a =>
             {
-				text = text.Replace(a.Key.ToString(), a.Value.ToString());
-			});
+                text = text.Replace(a.Key.ToString(), a.Value.ToString());
+            });
             StringBuilder pinyin = new StringBuilder();
             for (var i = 0; i < text.Length; ++i)
             {
@@ -66,7 +66,7 @@ namespace XiaoFeng
                 if (py != "") pinyin.Append(py);
                 pinyin.Append(" ");
             }
-            PhraseSpecial.Each<KeyValuePair<string,string>>(a =>
+            PhraseSpecial.Each<KeyValuePair<string, string>>(a =>
             {
                 pinyin = pinyin.Replace(a.Value.ToString().ToCharArray().Join(" "), a.Value.ToString());
             });
@@ -165,7 +165,7 @@ namespace XiaoFeng
         /// <summary>
         /// 设置或获取包含例外词组读音的键/值对的组合
         /// </summary>
-        private static IDictionary _PhraseSpecial = new Dictionary<string,string>();
+        private static IDictionary _PhraseSpecial = new Dictionary<string, string>();
         /// <summary>
         /// 设置或获取包含例外词组读音的键/值对的组合
         /// </summary>
@@ -175,8 +175,8 @@ namespace XiaoFeng
             {
                 if (_PhraseSpecial == null || _PhraseSpecial.Count == 0)
                 {
-                    _PhraseSpecial = new Dictionary<string,string>
-					{
+                    _PhraseSpecial = new Dictionary<string, string>
+                    {
                         { "重庆", "chong qing" },
                         { "银行", "yin hang" },
                         { "了解", "liao jie" },
@@ -186,7 +186,7 @@ namespace XiaoFeng
                         { "三行","san hang" },
                         { "四行","si hang" },
                         { "行行","hang hang" },
-						{ "便宜", "pian yi" },
+                        { "便宜", "pian yi" },
                         { "提防", "di fang" },
                         { "人参", "ren shen" },
                         { "朝夕", "zhao xi" },

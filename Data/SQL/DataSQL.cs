@@ -1,20 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using XiaoFeng;
-using XiaoFeng.Data;
-using System.Linq.Expressions;
-using System.IO;
-using XiaoFeng.Json;
-using XiaoFeng.Xml;
 using System.Diagnostics;
-using XiaoFeng.Cache;
+using System.Linq;
 using System.Reflection;
-using XiaoFeng.IO;
-using System.ComponentModel;
-using System.Xml.Serialization;
+using XiaoFeng.Cache;
+using XiaoFeng.Json;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -105,7 +95,8 @@ namespace XiaoFeng.Data.SQL
         /// <summary>
         /// 表名
         /// </summary>
-        public string TableName {
+        public string TableName
+        {
             get
             {
                 if (this._TableName.IsNullOrEmpty())
@@ -139,7 +130,7 @@ namespace XiaoFeng.Data.SQL
                         if (table != null)
                         {
                             this.TableSplit = table;
-                        }   
+                        }
                     }
                 }
                 this._TableName = val;
@@ -353,7 +344,8 @@ namespace XiaoFeng.Data.SQL
                     if ((DbProviderType.SQLite | DbProviderType.MySql | DbProviderType.Oracle | DbProviderType.Dameng).HasFlag(this.Config.ProviderType))
                     {
                         SQLTemplate = @"select {Column} from {TableName} {Where} {GroupBy} {OrderBy} limit {Limit},{Top}";
-                    }else if(this.Config.ProviderType== DbProviderType.OleDb)
+                    }
+                    else if (this.Config.ProviderType == DbProviderType.OleDb)
                     {
                         SQLTemplate = @"select {Top} {Column} from {TableName} {Wheres} ID not in(select top {Limit} ID from {TableName} {Where} {OrderBy}) {OrderBy}";
                     }
@@ -379,7 +371,7 @@ select {Limits} row_number() over({OrderBy}) as TempID, {Column} from {TableName
                     }
                     break;
                 case SQLType.exists:
-                    if ((DbProviderType.SQLite| DbProviderType.MySql).HasFlag(this.Config.ProviderType))
+                    if ((DbProviderType.SQLite | DbProviderType.MySql).HasFlag(this.Config.ProviderType))
                     {
                         SQLTemplate = @"if (exists(select {Columns} from {TableName} {Where} {GroupBy} {OrderBy} limit 0,1)) select 1;else select 0;";
                     }
@@ -445,14 +437,14 @@ select {Limits} row_number() over({OrderBy}) as TempID, * from
                 });
             }
             string Wheres = "", Where = this.GetWhere();
-            if(this.Config.ProviderType== DbProviderType.OleDb && SQLType== SQLType.limit)
+            if (this.Config.ProviderType == DbProviderType.OleDb && SQLType == SQLType.limit)
             {
                 //Wheres = Where;
                 if (Where.IsNullOrWhiteSpace())
                 {
                     Wheres = " where ";
                 }
-                else 
+                else
                 {
                     Wheres = " where " + Where + " and ";
                 }
@@ -506,7 +498,7 @@ select {Limits} row_number() over({OrderBy}) as TempID, * from
         {
             if (SqlString.IsNullOrEmpty() && this.SQLString.IsNullOrEmpty()) return "";
             if (SqlString.IsNullOrEmpty()) SqlString = this.SQLString;
-          
+
             this.Parameters.Each(a =>
             {
                 SqlString = SqlString.ReplacePattern(a.Key + @"([^0-9]|$)", "" + a.Value.GetSqlValue() + "$1");
@@ -638,7 +630,7 @@ select {Limits} row_number() over({OrderBy}) as TempID, * from
             list.Each(a =>
             {
                 if (!this.Columns.Contains(a)) this.Columns.Add(a);
-            }); 
+            });
             //this.Columns.AddRange(list);
         }
         /*
@@ -691,7 +683,7 @@ select {Limits} row_number() over({OrderBy}) as TempID, * from
             if (this.UpdateColumns == null) this.UpdateColumns = new List<object>();
             //if ((DbProviderType.Dameng | DbProviderType.MySql).HasFlag(this.Config.ProviderType))
             //    columns = columns.ToString().ReplacePattern(@"@[\s\S]+$", "?");
-            if(this.SQLType== SQLType.insert || !this.UpdateColumns.Contains(columns)) this.UpdateColumns.Add(columns);
+            if (this.SQLType == SQLType.insert || !this.UpdateColumns.Contains(columns)) this.UpdateColumns.Add(columns);
         }
         /// <summary>
         /// 设置更新列
@@ -706,7 +698,7 @@ select {Limits} row_number() over({OrderBy}) as TempID, * from
             {
                 var _ = a.TrimStart('(');
                 var m = _.GetMatches(@"(?<a>(" + SQLFunString + @")\()");
-                if (m.Count == 0) 
+                if (m.Count == 0)
                     _ = _.TrimEnd(')');
                 else
                 {
@@ -735,7 +727,7 @@ select {Limits} row_number() over({OrderBy}) as TempID, * from
             {
                 var _ = a.ReplacePattern(@"\s+is\s+null\s+", " = null");
                 if (!this.UpdateColumns.Contains(_)) this.UpdateColumns.Add(_);
-            }); 
+            });
             //this.UpdateColumns.AddRange(list);
         }
         #endregion
@@ -754,7 +746,8 @@ select {Limits} row_number() over({OrderBy}) as TempID, * from
                 {
                     this.LastSQLString = this.SQLString;
                     if (p.GetValue(this) != null && p.CanWrite) p.SetValue(this, null);
-                }else if (p.Name == "SQLParameter")
+                }
+                else if (p.Name == "SQLParameter")
                 {
                     this.LastSQLParameter = this.SQLParameter;
                     if (p.GetValue(this) != null && p.CanWrite) p.SetValue(this, null);
@@ -815,7 +808,7 @@ select {Limits} row_number() over({OrderBy}) as TempID, * from
         /// 获取缓存数据
         /// </summary>
         /// <returns></returns>
-        public virtual object GetCacheData<T>() where T:class
+        public virtual object GetCacheData<T>() where T : class
         {
             if (this.CacheKey.IsNullOrEmpty()) this.CreateCacheKey();
             object data = CacheFactory.Create(this.Config.CacheType).Get(this.CacheKey);
@@ -881,7 +874,7 @@ select {Limits} row_number() over({OrderBy}) as TempID, * from
             {
                 new RedisCache().Set(this.CacheKey, data, TimeSpan.FromSeconds(timeOut));
             }*/
-            
+
         }
         #endregion
 
@@ -907,7 +900,7 @@ select {Limits} row_number() over({OrderBy}) as TempID, * from
                 }
                 else
                 {
-                    if (cacheData.CacheType!= CacheType.No)
+                    if (cacheData.CacheType != CacheType.No)
                     {
                         IsCache = true;
                         this.CacheState = CacheState.Yes;

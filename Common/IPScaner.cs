@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.IO;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -37,9 +36,9 @@ namespace XiaoFeng
         /// 所在街道
         /// </summary>
         private string local;
-       /// <summary>
-       /// 开始IP段
-       /// </summary>
+        /// <summary>
+        /// 开始IP段
+        /// </summary>
         private long firstStartIp = 0;
         /// <summary>
         /// 结束IP段

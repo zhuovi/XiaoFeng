@@ -1,28 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data;
+using System.Data.Common;
+using System.Linq;
+using System.Reflection;
+using System.Text;
 using XiaoFeng;
 using XiaoFeng.IO;
-using System.Reflection;
-using System.Data.Common;
 using XiaoFeng.Model;
-using XiaoFeng.Data.SQL;
 
 namespace XiaoFeng.Data
 {
-/****************************************************************
-*  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
-*  Author : jacky                                               *
-*  QQ : 7092734                                                 *
-*  Email : jacky@fayelf.com                                     *
-*  Site : www.fayelf.com                                        *
-*  Create Time : 2017-09-22 0:11:53                            *
-*  Version : v 1.0.0                                            *
-*  CLR Version : 4.0.30319.42000                                *
-*****************************************************************/
+    /****************************************************************
+    *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
+    *  Author : jacky                                               *
+    *  QQ : 7092734                                                 *
+    *  Email : jacky@fayelf.com                                     *
+    *  Site : www.fayelf.com                                        *
+    *  Create Time : 2017-09-22 0:11:53                            *
+    *  Version : v 1.0.0                                            *
+    *  CLR Version : 4.0.30319.42000                                *
+    *****************************************************************/
     /// <summary>
     /// SQLite 数据库操作类
     /// Version : 1.0.0
@@ -193,7 +191,7 @@ namespace XiaoFeng.Data
                 {
                     defaultValue = "TIMESTAMP";
                 }
-                
+
                 DataColumns.Add(new DataColumns
                 {
                     Name = dr["name"].ToString(),
@@ -287,7 +285,7 @@ namespace XiaoFeng.Data
         /// <param name="modelType">model类型</param>
         /// <param name="tableName">表名</param>
         /// <returns></returns>
-        public virtual Boolean CreateTable(Type modelType,string tableName = "")
+        public virtual Boolean CreateTable(Type modelType, string tableName = "")
         {
             /*CREATE TABLE A 
                  * (ID INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -404,7 +402,7 @@ CREATE {(index.TableIndexType == TableIndexType.Unique ? "UNIQUE" : "")} INDEX {
                 });
             }
             var sql = SQLString.format(Table.Name, Fields.TrimEnd(','), SbrIndexs.ToString());
-                return base.ExecuteScalar(sql).ToString().ToInt16() == 1;
+            return base.ExecuteScalar(sql).ToString().ToInt16() == 1;
         }
         /// <summary>
         /// 创建数据库表 属性用 TableAttribute,ColumnAttribute
@@ -432,7 +430,7 @@ CREATE {(index.TableIndexType == TableIndexType.Unique ? "UNIQUE" : "")} INDEX {
                 this.MakeParam(@"tbname",tbName)
             });
             if (dt == null || dt.Rows.Count == 0) return null;
-            var list = new List<TableIndexAttribute>(); 
+            var list = new List<TableIndexAttribute>();
             dt.Rows.Each<DataRow>(a =>
             {
                 var index = new TableIndexAttribute
@@ -450,7 +448,7 @@ CREATE {(index.TableIndexType == TableIndexType.Unique ? "UNIQUE" : "")} INDEX {
                 keys.RemovePattern(@"[\r\n]+").Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Each(b =>
                 {
                     var ks = b.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                    if(ks.Length!=4)return;
+                    if (ks.Length != 4) return;
                     index.Keys.Add(ks[0].Trim('"') + "," + ks[3] + "," + ks[2]);
                 });
                 list.Add(index);

@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 /****************************************************************
 *  Copyright © (2015) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -35,7 +32,7 @@ namespace XiaoFeng.Data
         /// <param name="providerType">数据库驱动</param>
         public DataType(DbProviderType providerType) { this.ProviderType = providerType; }
         #endregion
-        
+
         #region 属性
         /// <summary>
         /// 数据库驱动类型
@@ -187,7 +184,7 @@ namespace XiaoFeng.Data
                         {"DateTime","DATETIME"},
                         {"Decimal","DECIMAL"},
                         {"Double","DOUBLE"},
-                        {"Float","DOUBLE"},            
+                        {"Float","DOUBLE"},
                         {"Object","NONE"}
                     };
                 }
@@ -337,8 +334,8 @@ namespace XiaoFeng.Data
             }
         }
         /// <summary>
-         /// Oracle
-         /// </summary>
+        /// Oracle
+        /// </summary>
         private Dictionary<string, string> _OracleToDotNet = null;
         /// <summary>
         /// Oracle
@@ -395,8 +392,8 @@ namespace XiaoFeng.Data
             }
         }
         /// <summary>
-         /// 达梦
-         /// </summary>
+        /// 达梦
+        /// </summary>
         private Dictionary<string, string> _DamengToDotNet = null;
         /// <summary>
         /// 达梦

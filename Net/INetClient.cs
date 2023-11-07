@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -58,5 +54,5 @@ namespace XiaoFeng.Net
         /// <param name="host">远程host</param>
         /// <param name="port">端口</param>
         void Start(string host, int port);
-	}
+    }
 }

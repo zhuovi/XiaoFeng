@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using XiaoFeng.Config;
 using XiaoFeng.Data;
 using XiaoFeng.IO;
@@ -155,95 +153,95 @@ namespace XiaoFeng.Log
                 //sb.AppendLine($"线程ID:{System.Threading.Tasks.Task.CurrentId.GetValueOrDefault()}");
                 //try
                 //{
-                    if (log.IsRecord)
+                if (log.IsRecord)
+                {
+                    if (log.Message.IsNotNullOrEmpty())
                     {
-                        if (log.Message.IsNotNullOrEmpty())
-                        {
-                            sb.AppendLine($"{log.LogType.GetValue(this.MessageType)}".PadRight(this.MessageType == EnumValueType.Description ? 2 : 5, ' ') + (this.Config.Fields.Contains("AddTime") ? DateTime.Now.ToString(": yyyy-MM-dd HH:mm:ss.fff") : ""));
-                            sb.AppendLine(log.Message);
-                        }
+                        sb.AppendLine($"{log.LogType.GetValue(this.MessageType)}".PadRight(this.MessageType == EnumValueType.Description ? 2 : 5, ' ') + (this.Config.Fields.Contains("AddTime") ? DateTime.Now.ToString(": yyyy-MM-dd HH:mm:ss.fff") : ""));
+                        sb.AppendLine(log.Message);
                     }
-                    else
+                }
+                else
+                {
+                    if (this.Config.Fields.Contains("LogType"))
                     {
-                        if (this.Config.Fields.Contains("LogType"))
-                        {
-                            sb.AppendLine("".PadLeft(70, '='));
-                            sb.AppendLine($"{log.LogType.GetValue(this.MessageType)}".PadRight(this.MessageType == EnumValueType.Description ? 2 : 5, ' ') + (this.Config.Fields.Contains("AddTime") ? DateTime.Now.ToString(": yyyy-MM-dd HH:mm:ss.fff") : ""));
-                            sb.AppendLine("".PadLeft(70, '='));
-                        }
-                        if (log.DataSource.IsNotNullOrEmpty() && (this.Config.Fields.Length == 0 || (this.Config.Fields.Length > 0 && this.Config.Fields.Contains("StackTrace")))) sb.AppendLine("数 据 源: " + log.DataSource);
-                        if (log.FunctionName.IsNotNullOrEmpty() && (this.Config.Fields.Length == 0 || (this.Config.Fields.Length > 0 && this.Config.Fields.Contains("FunctionName")))) sb.AppendLine("方 法 名: " + log.ClassName + "." + log.FunctionName);
-                        if (log.Message.IsNotNullOrEmpty() && (this.Config.Fields.Length == 0 || (this.Config.Fields.Length > 0 && this.Config.Fields.Contains("Message")))) sb.AppendLine("日志信息: " + log.Message);
-                        if (log.StackTrace.IsNotNullOrEmpty() && (this.Config.Fields.Length == 0 || (this.Config.Fields.Length > 0 && this.Config.Fields.Contains("StackTrace")))) sb.AppendLine("日志堆栈: " + log.StackTrace);
-                        if ((LogType.Error | LogType.Trace).HasFlag(log.LogType) && log.Tracking.IsNotNullOrEmpty() && (this.Config.Fields.Length == 0 || (this.Config.Fields.Length > 0 && this.Config.Fields.Contains("Tracking"))))
-                        {
-                            sb.AppendLine("堆栈跟踪".PadLeft(33, '*').PadRight(66, '*'));
-                            var trace = log.Tracking ?? new StackTrace();
-                            trace.GetFrames().Each(frame =>
-                            {
-                                System.Reflection.MethodBase method = frame?.GetMethod();
-                                if (method == null || method.DeclaringType?.FullName.IndexOf("LogHelper") > -1) return;
-                                sb.AppendLine("{0}.{1}({2});".format(method.DeclaringType?.FullName, method.Name, method.GetParameters().Join(",")));
-                                return;
-                            });
-                            sb.AppendLine("".PadLeft(70, '*'));
-                        }
+                        sb.AppendLine("".PadLeft(70, '='));
+                        sb.AppendLine($"{log.LogType.GetValue(this.MessageType)}".PadRight(this.MessageType == EnumValueType.Description ? 2 : 5, ' ') + (this.Config.Fields.Contains("AddTime") ? DateTime.Now.ToString(": yyyy-MM-dd HH:mm:ss.fff") : ""));
+                        sb.AppendLine("".PadLeft(70, '='));
                     }
-                    var logPath = this.LogPath;
-                    if (logPath.IsNullOrEmpty())
-                        logPath = "Log";
-                    logPath += FileHelper.AltDirectorySeparatorChar + (log.IsRecord ? "Record" : log.LogType.ToString());
-                    logPath = logPath.GetBasePath();
-                    FileHelper.Create(logPath, FileAttribute.Directory);
-                    var date = DateTime.Now.ToString("yyyy-MM-dd");
-                    string FilePath = "";
-                    var file = logPath.ToDirectoryInfo().GetFiles(date + "*", SearchOption.TopDirectoryOnly).OrderByDescending(a => a.Name.Contains("_") ? a.Name.GetMatch(@"_(?<a>\d+)\.log").ToCast<int>() : 0).FirstOrDefault();
+                    if (log.DataSource.IsNotNullOrEmpty() && (this.Config.Fields.Length == 0 || (this.Config.Fields.Length > 0 && this.Config.Fields.Contains("StackTrace")))) sb.AppendLine("数 据 源: " + log.DataSource);
+                    if (log.FunctionName.IsNotNullOrEmpty() && (this.Config.Fields.Length == 0 || (this.Config.Fields.Length > 0 && this.Config.Fields.Contains("FunctionName")))) sb.AppendLine("方 法 名: " + log.ClassName + "." + log.FunctionName);
+                    if (log.Message.IsNotNullOrEmpty() && (this.Config.Fields.Length == 0 || (this.Config.Fields.Length > 0 && this.Config.Fields.Contains("Message")))) sb.AppendLine("日志信息: " + log.Message);
+                    if (log.StackTrace.IsNotNullOrEmpty() && (this.Config.Fields.Length == 0 || (this.Config.Fields.Length > 0 && this.Config.Fields.Contains("StackTrace")))) sb.AppendLine("日志堆栈: " + log.StackTrace);
+                    if ((LogType.Error | LogType.Trace).HasFlag(log.LogType) && log.Tracking.IsNotNullOrEmpty() && (this.Config.Fields.Length == 0 || (this.Config.Fields.Length > 0 && this.Config.Fields.Contains("Tracking"))))
+                    {
+                        sb.AppendLine("堆栈跟踪".PadLeft(33, '*').PadRight(66, '*'));
+                        var trace = log.Tracking ?? new StackTrace();
+                        trace.GetFrames().Each(frame =>
+                        {
+                            System.Reflection.MethodBase method = frame?.GetMethod();
+                            if (method == null || method.DeclaringType?.FullName.IndexOf("LogHelper") > -1) return;
+                            sb.AppendLine("{0}.{1}({2});".format(method.DeclaringType?.FullName, method.Name, method.GetParameters().Join(",")));
+                            return;
+                        });
+                        sb.AppendLine("".PadLeft(70, '*'));
+                    }
+                }
+                var logPath = this.LogPath;
+                if (logPath.IsNullOrEmpty())
+                    logPath = "Log";
+                logPath += FileHelper.AltDirectorySeparatorChar + (log.IsRecord ? "Record" : log.LogType.ToString());
+                logPath = logPath.GetBasePath();
+                FileHelper.Create(logPath, FileAttribute.Directory);
+                var date = DateTime.Now.ToString("yyyy-MM-dd");
+                string FilePath = "";
+                var file = logPath.ToDirectoryInfo().GetFiles(date + "*", SearchOption.TopDirectoryOnly).OrderByDescending(a => a.Name.Contains("_") ? a.Name.GetMatch(@"_(?<a>\d+)\.log").ToCast<int>() : 0).FirstOrDefault();
 
-                    if (file == null)
+                if (file == null)
+                {
+                    FilePath = (logPath + FileHelper.AltDirectorySeparatorChar + date + ".log").GetBasePath();
+                    sb.Insert(0, GetFileHead());
+                    ClearLog();
+                }
+                else
+                {
+                    if (file.Length >= this.Config.FileLength)
                     {
-                        FilePath = (logPath + FileHelper.AltDirectorySeparatorChar + date + ".log").GetBasePath();
+                        FilePath = file.FullName.ReplacePattern(@"(_(?<a>\d+))?\.log$", m =>
+                        {
+                            var val = m.Groups["a"]?.Value.ToCast<int>();
+                            return $"_{++val}.log";
+                        });
                         sb.Insert(0, GetFileHead());
-                        ClearLog();
                     }
                     else
-                    {
-                        if (file.Length >= this.Config.FileLength)
-                        {
-                            FilePath = file.FullName.ReplacePattern(@"(_(?<a>\d+))?\.log$", m =>
-                            {
-                                var val = m.Groups["a"]?.Value.ToCast<int>();
-                                return $"_{++val}.log";
-                            });
-                            sb.Insert(0, GetFileHead());
-                        }
-                        else
-                            FilePath = file.FullName;
-                    }
-                    //readerWriterLock.EnterWriteLock();
+                        FilePath = file.FullName;
+                }
+                //readerWriterLock.EnterWriteLock();
 
-                    FileHelper.AppendText(FilePath, sb.ToString(), Encoding.UTF8);
-                    //lock (FileLock)
-                    /*{
-                        using (var fs = new FileStream(FilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read))
-                        {
-                            fs.Seek(0, SeekOrigin.End);
-                            fs.WriteLine(sb.ToString());
-                            fs.Flush();
-                            fs.Close();
-                            fs.Dispose();
-                        }
-                    }*/
-                    //readerWriterLock.ExitWriteLock();
+                FileHelper.AppendText(FilePath, sb.ToString(), Encoding.UTF8);
+                //lock (FileLock)
+                /*{
+                    using (var fs = new FileStream(FilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read))
+                    {
+                        fs.Seek(0, SeekOrigin.End);
+                        fs.WriteLine(sb.ToString());
+                        fs.Flush();
+                        fs.Close();
+                        fs.Dispose();
+                    }
+                }*/
+                //readerWriterLock.ExitWriteLock();
                 //}
                 //catch (Exception ex)
                 //{
-                   // Console.WriteLine($"写日志出错:{ex.Message}- {sb} - {DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ffffff")}");
-                    //if (Interlocked.Increment(ref Count) == 3)
-                    //{
-                    //    Count = 0;
-                    //    return;
-                    //}
-                    //Run(log);
+                // Console.WriteLine($"写日志出错:{ex.Message}- {sb} - {DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ffffff")}");
+                //if (Interlocked.Increment(ref Count) == 3)
+                //{
+                //    Count = 0;
+                //    return;
+                //}
+                //Run(log);
                 //}
             }
             /*数据库*/
@@ -286,7 +284,7 @@ namespace XiaoFeng.Log
                 var days = Config.StorageDays;
                 if (days == 0) return;
                 var filesPath = Config.Path.GetBasePath();
-                 if (Directory.Exists(filesPath))
+                if (Directory.Exists(filesPath))
                 {
                     var files = Directory.GetFiles(filesPath, "*.log", SearchOption.AllDirectories);
                     if (files.Length == 0) return;

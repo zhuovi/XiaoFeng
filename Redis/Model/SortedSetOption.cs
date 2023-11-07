@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 /****************************************************************
 *  Copyright © (2021) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -23,7 +19,7 @@ namespace XiaoFeng.Redis
         /// <summary>
         /// 有序集合key和权重
         /// </summary>
-        public Dictionary<string,int> KeyAndWeights { get; set; }
+        public Dictionary<string, int> KeyAndWeights { get; set; }
         /// <summary>
         /// 聚合联合类型
         /// </summary>

@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Text;
 
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
@@ -53,19 +51,19 @@ namespace XiaoFeng.Resource
         /// 程序集
         /// </summary>
 		Assembly Assembly { get; }
-		/// <summary>
-		/// 资源路径
-		/// </summary>
-		string ResourcePath { get; }
-		/// <summary>
-		/// 读取文件字节
-		/// </summary>
-		/// <returns></returns>
-		byte[] CreateReadBytes();
-		/// <summary>
-		/// 创建文件流
-		/// </summary>
-		/// <returns></returns>
-		Stream CreateReadStream();
+        /// <summary>
+        /// 资源路径
+        /// </summary>
+        string ResourcePath { get; }
+        /// <summary>
+        /// 读取文件字节
+        /// </summary>
+        /// <returns></returns>
+        byte[] CreateReadBytes();
+        /// <summary>
+        /// 创建文件流
+        /// </summary>
+        /// <returns></returns>
+        Stream CreateReadStream();
     }
 }

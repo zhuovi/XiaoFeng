@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-/****************************************************************
+﻿/****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
 *  QQ : 7092734                                                 *
@@ -27,9 +23,9 @@ namespace XiaoFeng.IO
         /// 创建
         /// </summary>
         Created = 1,
-       /// <summary>
-       /// 删除
-       /// </summary>
+        /// <summary>
+        /// 删除
+        /// </summary>
         Deleted = 2,
         /// <summary>
         /// 改变

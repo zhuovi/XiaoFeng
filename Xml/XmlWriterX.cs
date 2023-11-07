@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -101,7 +100,7 @@ namespace XiaoFeng.Xml
                     Encoding = this.SerializerSetting.DefaultEncoding.WebName == "UTF-8" ? new UTF8Encoding(false) : this.SerializerSetting.DefaultEncoding,
                     OmitXmlDeclaration = this.SerializerSetting.OmitXmlDeclaration,
                     NewLineChars = this.SerializerSetting.NewLineChars,
-                    NamespaceHandling= this.SerializerSetting.NamespaceHandling
+                    NamespaceHandling = this.SerializerSetting.NamespaceHandling
                 }))
                 {
                     if (rootName.IsNotNullOrEmpty()) XmlWriter.WriteStartElement(rootName);
@@ -184,7 +183,8 @@ namespace XiaoFeng.Xml
                     XmlWriter.WriteString(EncodeString(data.ToString()));
                 if (tagName.IsNotNullOrEmpty()) XmlWriter.WriteEndElement();
                 return;
-            }else if(data is XmlValue xvalue)
+            }
+            else if (data is XmlValue xvalue)
             {
                 if (xvalue.IsEmpty && this.SerializerSetting.OmitEmptyNode) return;
 

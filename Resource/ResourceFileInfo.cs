@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Reflection;
 using XiaoFeng.IO;
 /****************************************************************
@@ -186,7 +184,7 @@ namespace XiaoFeng.Resource
         /// <returns></returns>
         public byte[] CreateReadBytes()
         {
-            using(var stream = CreateReadStream())
+            using (var stream = CreateReadStream())
             {
                 var bytes = new byte[stream.Length];
                 stream.Read(bytes, 0, bytes.Length);

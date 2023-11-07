@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 /****************************************************************
 *  Copyright © (2021) www.fayelf.com All Rights Reserved.       *
@@ -21,7 +17,7 @@ namespace XiaoFeng.Cryptography
     /// <summary>
     /// 基础类
     /// </summary>
-    public class BaseSymmetricAlgorithm: BaseCrypto
+    public class BaseSymmetricAlgorithm : BaseCrypto
     {
         /// <summary>
         /// 无参构造器
@@ -66,7 +62,7 @@ namespace XiaoFeng.Cryptography
                 {
                     using (var memory = new MemoryStream())
                     {
-                         using (var encoder = new CryptoStream(memory, encryptor.CreateEncryptor(new byte[encryptor.Key.Length].Write(slatKey), new byte[encryptor.IV.Length].Write(vector)), CryptoStreamMode.Write))
+                        using (var encoder = new CryptoStream(memory, encryptor.CreateEncryptor(new byte[encryptor.Key.Length].Write(slatKey), new byte[encryptor.IV.Length].Write(vector)), CryptoStreamMode.Write))
                         //using (var encoder = new CryptoStream(memory, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
                         {
                             encoder.Write(data, 0, data.Length);

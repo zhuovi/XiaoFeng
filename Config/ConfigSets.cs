@@ -45,7 +45,7 @@ namespace XiaoFeng.Config
         /// </summary>
         /// <param name="func">条件</param>
         /// <returns></returns>
-        public override TConfig GetEntity(Func<TConfig,Boolean> func)
+        public override TConfig GetEntity(Func<TConfig, Boolean> func)
         {
             if (func == null) func = a => true;
             return this.GetEntities(func)?.FirstOrDefault();
@@ -55,7 +55,7 @@ namespace XiaoFeng.Config
         /// </summary>
         /// <param name="func">条件</param>
         /// <returns></returns>
-        public override IEnumerable<TConfig> GetEntities(Func<TConfig,Boolean> func)
+        public override IEnumerable<TConfig> GetEntities(Func<TConfig, Boolean> func)
         {
             if (func == null) func = a => true;
             return this.List.Any() ? this.List.Where(func) : null;
@@ -101,7 +101,7 @@ namespace XiaoFeng.Config
                 if (this.ConfigFileAttribute == null) this.ConfigFileAttribute = attr;
                 cache.Set(attr.CacheKey, list, attr.FileName);
                 var Config = new TConfig();
-                typeof(TConfig).GetProperty("List", BindingFlags.Public| BindingFlags.Instance| BindingFlags.IgnoreCase).SetValue(Config, list);
+                typeof(TConfig).GetProperty("List", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase).SetValue(Config, list);
                 return Config;
             }
             return null;

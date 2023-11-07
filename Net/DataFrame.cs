@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
@@ -107,8 +106,8 @@ namespace XiaoFeng.Net
                     _Content = Array.Empty<byte>();
                     return;
                 }
-                Buffer.BlockCopy(buffer, _Extend.Length + _Mask.Length + 2 , _Content, 0, _Content.Length);
-                
+                Buffer.BlockCopy(buffer, _Extend.Length + _Mask.Length + 2, _Content, 0, _Content.Length);
+
             }
             else if (_Extend.Length == 2)
             {
@@ -238,19 +237,19 @@ namespace XiaoFeng.Net
         /// <summary>
         /// 消息
         /// </summary>
-        public string Text 
+        public string Text
         {
             get
             {
                 //if (_Header.OpCode != 1)
-                   // return string.Empty;
+                // return string.Empty;
                 if (this.DataType == SocketDataType.HexString)
                 {
                     return _Content.ByteToHexString();
                 }
                 else
                     return _Content.GetString(this.Encoding);
-            } 
+            }
         }
         #endregion
 

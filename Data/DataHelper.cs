@@ -1,14 +1,13 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Configuration;
-using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using XiaoFeng.Cache;
-using XiaoFeng.Data.SQL;
 using XiaoFeng.Collections;
-using System.Collections.Concurrent;
+using XiaoFeng.Data.SQL;
 using XiaoFeng.Model;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
@@ -95,7 +94,7 @@ namespace XiaoFeng.Data
         /// </summary>
         /// <param name="provider">数据库驱动</param>
         /// <param name="connectionString">数据库连接串</param>
-        public DataHelper(DbProviderType provider, string connectionString):this()
+        public DataHelper(DbProviderType provider, string connectionString) : this()
         {
             this.ConnConfig.ProviderType = provider;
             this.ConnConfig.ConnectionString = connectionString;
@@ -806,7 +805,7 @@ namespace XiaoFeng.Data
             if (parameter != null && parameter.Length > 0)
                 parameter.Each(p =>
                 {
-                    paramString.AppendLine($"{p.ParameterName }[{p.DbType}]={p.Value}");
+                    paramString.AppendLine($"{p.ParameterName}[{p.DbType}]={p.Value}");
                     string c = (p.DbType == DbType.String || p.DbType == DbType.Date || p.DbType == DbType.DateTime || p.DbType == DbType.DateTime2 || p.DbType == DbType.DateTimeOffset || p.DbType == DbType.Time || p.DbType == DbType.Guid || p.DbType == DbType.StringFixedLength) ? "'" : "";
                     paramSQLString = paramSQLString.ReplacePattern(@"[@:]" + p.ParameterName.TrimStart(new char[] { '@', ':' }) + @"(\s*[,=\);\s]|$)", c + p.Value.GetValue() + c + "$1");
                 });
@@ -1165,12 +1164,12 @@ namespace XiaoFeng.Data
                         if (c.AllowDBNull.HasValue)
                             dc.AllowDBNull = c.AllowDBNull.Value;
 
-                            Dt.Columns.Add(dc);
+                        Dt.Columns.Add(dc);
                     });
                     while (sdr.Read())
                     {
                         var dr = Dt.NewRow();
-                        for(var i = 0; i < sdr.FieldCount; i++)
+                        for (var i = 0; i < sdr.FieldCount; i++)
                         {
                             dr[i] = sdr[i].GetValue(Dt.Columns[i].DataType);
                         }

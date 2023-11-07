@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-/****************************************************************
+﻿/****************************************************************
 *  Copyright © (2023) www.eelf.cn All Rights Reserved.          *
 *  Author : jacky                                               *
 *  QQ : 7092734                                                 *
@@ -17,7 +13,7 @@ namespace XiaoFeng.Json
     /// <summary>
     /// 对象字符串
     /// </summary>
-    public class StringObjectConverter: JsonConverter
+    public class StringObjectConverter : JsonConverter
     {
         #region 构造器
         /// <summary>

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-/****************************************************************
+﻿/****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
 *  QQ : 7092734                                                 *
@@ -24,7 +19,7 @@ namespace XiaoFeng
     public static class RegexPattern
     {
         #region 属性
-        
+
         #region 格式正则
         /// <summary>
         /// 物理路径
@@ -116,7 +111,7 @@ namespace XiaoFeng
         #endregion
 
         #region 方法
-        
+
         #endregion
     }
 }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 /****************************************************************
 *  Copyright © (2021) www.fayelf.com All Rights Reserved.       *
@@ -29,7 +25,7 @@ namespace XiaoFeng.Redis
         /// <typeparam name="TValue">值类型</typeparam>
         /// <param name="d">数据</param>
         /// <returns></returns>
-        public static Dictionary<TKey,TValue> ToDictionary<TKey,TValue>(this IDictionary<string, string> d)
+        public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IDictionary<string, string> d)
         {
             var ParamsTypes = d.GetType().GetGenericArguments();
             if (typeof(TKey) == ParamsTypes[0] && typeof(TValue) == ParamsTypes[1]) return (Dictionary<TKey, TValue>)d;

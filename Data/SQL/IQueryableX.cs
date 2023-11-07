@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -245,7 +242,7 @@ namespace XiaoFeng.Data.SQL
         /// <typeparam name="TOther">类型</typeparam>
         /// <param name="model">条件字符串</param>
         /// <returns></returns>
-        IQueryableX<T> Where<TOther>(TOther model) where TOther : class,new();
+        IQueryableX<T> Where<TOther>(TOther model) where TOther : class, new();
         #endregion
 
         #region 返回数据实体
@@ -649,14 +646,14 @@ namespace XiaoFeng.Data.SQL
         /// <typeparam name="T3">类型</typeparam>
         /// <returns></returns>
         IQueryableX<T, T2, T3> AS<T2, T3>()
-            where T2 : class,new()
-            where T3 : class,new();
+            where T2 : class, new()
+            where T3 : class, new();
         /// <summary>
         /// 转换关联表
         /// </summary>
         /// <typeparam name="T2">类型</typeparam>
         /// <returns></returns>
-        IQueryableX<T, T2> AS<T2>() where T2 : class,new();
+        IQueryableX<T, T2> AS<T2>() where T2 : class, new();
         /// <summary>
         /// 复制
         /// </summary>
@@ -667,7 +664,7 @@ namespace XiaoFeng.Data.SQL
         /// </summary>
         /// <typeparam name="T2">目标对象</typeparam>
         /// <returns></returns>
-        IQueryableX<T2> To<T2>() where T2 : class,new();
+        IQueryableX<T2> To<T2>() where T2 : class, new();
         #endregion
 
         #region 扩展Join
@@ -931,7 +928,7 @@ namespace XiaoFeng.Data.SQL
     /// </summary>
     /// <typeparam name="T">第一张表类型</typeparam>
     /// <typeparam name="T2">第二张表类型</typeparam>
-    public interface IQueryableX<T, T2> :IQueryableX
+    public interface IQueryableX<T, T2> : IQueryableX
     {
         #region 前几条数据
         /// <summary>
@@ -1208,7 +1205,7 @@ namespace XiaoFeng.Data.SQL
         /// <typeparam name="TResult">返回类型</typeparam>
         /// <param name="func">返回Lambda</param>
         /// <returns></returns>
-        TResult First<TResult>(Expression<Func<T, T2, T3, TResult>> func) where TResult : class,new();
+        TResult First<TResult>(Expression<Func<T, T2, T3, TResult>> func) where TResult : class, new();
         #endregion
 
         #region 扩展Last
@@ -1218,7 +1215,7 @@ namespace XiaoFeng.Data.SQL
         /// <typeparam name="TResult">返回类型</typeparam>
         /// <param name="func">返回Lambda</param>
         /// <returns></returns>
-        TResult Last<TResult>(Expression<Func<T, T2, T3, TResult>> func) where TResult : class,new();
+        TResult Last<TResult>(Expression<Func<T, T2, T3, TResult>> func) where TResult : class, new();
         #endregion
 
         #region 扩展On条件
@@ -1340,7 +1337,7 @@ namespace XiaoFeng.Data.SQL
         /// <param name="page">当前页</param>
         /// <param name="pageSize">一页多少条</param>
         /// <returns></returns>
-        List<TResult> ToList<TResult>(Expression<Func<T, T2, T3, TResult>> func, int page = 0, int pageSize = 0) where TResult : class,new();
+        List<TResult> ToList<TResult>(Expression<Func<T, T2, T3, TResult>> func, int page = 0, int pageSize = 0) where TResult : class, new();
         #endregion
 
         #region 返回实体
@@ -1350,7 +1347,7 @@ namespace XiaoFeng.Data.SQL
         /// <typeparam name="TResult">返回类型</typeparam>
         /// <param name="func">返回实例结构Lambda</param>
         /// <returns></returns>
-        TResult ToEntity<TResult>(Expression<Func<T, T2, T3, TResult>> func) where TResult : class,new();
+        TResult ToEntity<TResult>(Expression<Func<T, T2, T3, TResult>> func) where TResult : class, new();
         #endregion
 
         #region  扩展SQL 条件算法
@@ -1448,7 +1445,7 @@ namespace XiaoFeng.Data.SQL
         /// <typeparam name="TResult">返回类型</typeparam>
         /// <param name="func">返回Lambda</param>
         /// <returns></returns>
-        TResult First<TResult>(Expression<Func<T, T2, T3, T4, TResult>> func) where TResult : class,new();
+        TResult First<TResult>(Expression<Func<T, T2, T3, T4, TResult>> func) where TResult : class, new();
         #endregion
 
         #region 扩展Last
@@ -1458,7 +1455,7 @@ namespace XiaoFeng.Data.SQL
         /// <typeparam name="TResult">返回类型</typeparam>
         /// <param name="func">返回Lambda</param>
         /// <returns></returns>
-        TResult Last<TResult>(Expression<Func<T, T2, T3, T4, TResult>> func) where TResult : class,new();
+        TResult Last<TResult>(Expression<Func<T, T2, T3, T4, TResult>> func) where TResult : class, new();
         #endregion
 
         #region 扩展On条件
@@ -1582,7 +1579,7 @@ namespace XiaoFeng.Data.SQL
         /// <param name="page">当前页</param>
         /// <param name="pageSize">一页多少条</param>
         /// <returns></returns>
-        List<TResult> ToList<TResult>(Expression<Func<T, T2, T3, T4, TResult>> func, int page = 0, int pageSize = 0) where TResult : class,new();
+        List<TResult> ToList<TResult>(Expression<Func<T, T2, T3, T4, TResult>> func, int page = 0, int pageSize = 0) where TResult : class, new();
         #endregion
 
         #region 返回实体
@@ -1592,7 +1589,7 @@ namespace XiaoFeng.Data.SQL
         /// <typeparam name="TResult">返回类型</typeparam>
         /// <param name="func">返回实例结构Lambda</param>
         /// <returns></returns>
-        TResult ToEntity<TResult>(Expression<Func<T, T2, T3, T4, TResult>> func) where TResult : class,new();
+        TResult ToEntity<TResult>(Expression<Func<T, T2, T3, T4, TResult>> func) where TResult : class, new();
         #endregion
 
         #region  扩展SQL 条件算法
@@ -1660,7 +1657,7 @@ namespace XiaoFeng.Data.SQL
     /// <typeparam name="T3">第三张表类型</typeparam>
     /// <typeparam name="T4">第四张表类型</typeparam>
     /// <typeparam name="T5">第五张表类型</typeparam>
-    public interface IQueryableX<T, T2, T3, T4, T5> :IQueryableX
+    public interface IQueryableX<T, T2, T3, T4, T5> : IQueryableX
     {
         #region 前几条数据
         /// <summary>
@@ -1693,7 +1690,7 @@ namespace XiaoFeng.Data.SQL
         /// <typeparam name="TResult">返回类型</typeparam>
         /// <param name="func">返回Lambda</param>
         /// <returns></returns>
-        TResult First<TResult>(Expression<Func<T, T2, T3, T4, T5, TResult>> func) where TResult : class,new();
+        TResult First<TResult>(Expression<Func<T, T2, T3, T4, T5, TResult>> func) where TResult : class, new();
         #endregion
 
         #region 扩展Last
@@ -1703,7 +1700,7 @@ namespace XiaoFeng.Data.SQL
         /// <typeparam name="TResult">返回类型</typeparam>
         /// <param name="func">返回Lambda</param>
         /// <returns></returns>
-        TResult Last<TResult>(Expression<Func<T, T2, T3, T4, T5, TResult>> func) where TResult : class,new();
+        TResult Last<TResult>(Expression<Func<T, T2, T3, T4, T5, TResult>> func) where TResult : class, new();
         #endregion
 
         #region 扩展On条件
@@ -1829,7 +1826,7 @@ namespace XiaoFeng.Data.SQL
         /// <param name="page">当前页</param>
         /// <param name="pageSize">一页多少条</param>
         /// <returns></returns>
-        List<TResult> ToList<TResult>(Expression<Func<T, T2, T3, T4, T5, TResult>> func, int page = 0, int pageSize = 0) where TResult : class,new();
+        List<TResult> ToList<TResult>(Expression<Func<T, T2, T3, T4, T5, TResult>> func, int page = 0, int pageSize = 0) where TResult : class, new();
         #endregion
 
         #region 返回实体
@@ -1839,7 +1836,7 @@ namespace XiaoFeng.Data.SQL
         /// <typeparam name="TResult">返回类型</typeparam>
         /// <param name="func">返回实例结构Lambda</param>
         /// <returns></returns>
-        TResult ToEntity<TResult>(Expression<Func<T, T2, T3, T4, T5, TResult>> func) where TResult : class,new();
+        TResult ToEntity<TResult>(Expression<Func<T, T2, T3, T4, T5, TResult>> func) where TResult : class, new();
         #endregion
 
         #region  扩展SQL 条件算法
@@ -1941,7 +1938,7 @@ namespace XiaoFeng.Data.SQL
         /// <typeparam name="TResult">返回类型</typeparam>
         /// <param name="func">返回Lambda</param>
         /// <returns></returns>
-        TResult First<TResult>(Expression<Func<T, T2, T3, T4, T5, T6, TResult>> func) where TResult : class,new();
+        TResult First<TResult>(Expression<Func<T, T2, T3, T4, T5, T6, TResult>> func) where TResult : class, new();
         #endregion
 
         #region 扩展Last
@@ -1951,7 +1948,7 @@ namespace XiaoFeng.Data.SQL
         /// <typeparam name="TResult">返回类型</typeparam>
         /// <param name="func">返回Lambda</param>
         /// <returns></returns>
-        TResult Last<TResult>(Expression<Func<T, T2, T3, T4, T5, T6, TResult>> func) where TResult : class,new();
+        TResult Last<TResult>(Expression<Func<T, T2, T3, T4, T5, T6, TResult>> func) where TResult : class, new();
         #endregion
 
         #region 扩展On条件
@@ -2079,7 +2076,7 @@ namespace XiaoFeng.Data.SQL
         /// <param name="page">当前页</param>
         /// <param name="pageSize">一页多少条</param>
         /// <returns></returns>
-        List<TResult> ToList<TResult>(Expression<Func<T, T2, T3, T4, T5, T6, TResult>> func, int page = 0, int pageSize = 0) where TResult : class,new();
+        List<TResult> ToList<TResult>(Expression<Func<T, T2, T3, T4, T5, T6, TResult>> func, int page = 0, int pageSize = 0) where TResult : class, new();
         #endregion
 
         #region 返回实体
@@ -2089,7 +2086,7 @@ namespace XiaoFeng.Data.SQL
         /// <typeparam name="TResult">返回类型</typeparam>
         /// <param name="func">返回实例结构Lambda</param>
         /// <returns></returns>
-        TResult ToEntity<TResult>(Expression<Func<T, T2, T3, T4, T5, T6, TResult>> func) where TResult : class,new();
+        TResult ToEntity<TResult>(Expression<Func<T, T2, T3, T4, T5, T6, TResult>> func) where TResult : class, new();
         #endregion
 
         #region  扩展SQL 条件算法

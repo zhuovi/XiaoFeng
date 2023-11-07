@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.IO;
 using XiaoFeng;
 using XiaoFeng.Data;
 using XiaoFeng.IO;
@@ -29,7 +27,7 @@ namespace XiaoFeng.Model
     /// 2022-11-17
     /// 增加构造器
     /// </summary>
-    public class MakeModel: Disposable
+    public class MakeModel : Disposable
     {
         #region 构造器
         /// <summary>
@@ -69,7 +67,9 @@ namespace XiaoFeng.Model
         /// <summary>
         /// 类模板
         /// </summary>
-        private string ModelTemplate { get
+        private string ModelTemplate
+        {
+            get
             {
                 return @"using System;
 using System.Data;
@@ -128,7 +128,8 @@ namespace {namespace}
 	}
     #endregion
 }";
-            } }
+            }
+        }
         /// <summary>
         /// 类属性模板
         /// </summary>
@@ -222,7 +223,7 @@ namespace {namespace}
                 };
                 /*当前表的所有索引*/
                 var Indexs = this.DataHelper.GetTableIndexs(tbName);
-                if(Indexs!=null && Indexs.Any())
+                if (Indexs != null && Indexs.Any())
                 {
                     var index = new StringBuilder();
                     Indexs.Each(i =>

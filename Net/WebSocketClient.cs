@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
-using XiaoFeng.Threading;
 
 /****************************************************************
 *  Copyright © (2023) www.fayelf.com All Rights Reserved.       *
@@ -37,7 +33,7 @@ namespace XiaoFeng.Net
         /// 设置连接地址
         /// </summary>
         /// <param name="uri">连接地址</param>
-        public WebSocketClient(Uri uri) 
+        public WebSocketClient(Uri uri)
         {
             this.Uri = uri;
             base.ConnectionType = ConnectionType.WebSocket;

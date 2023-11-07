@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 using System.IO;
-using System.Xml.Serialization;
+using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Xml.Serialization;
+using XiaoFeng.Cache;
 using XiaoFeng.IO;
 using XiaoFeng.Json;
-using XiaoFeng.Cache;
-using System.Linq;
 
 namespace XiaoFeng.Config
 {
@@ -376,7 +376,7 @@ namespace XiaoFeng.Config
         public string GetConfigPath(string path)
         {
             return IsGenericPath(path) ?
-                 path.ReplacePattern(@"(?<a>\{[a-z0-9_-]+\})", m => GetValue(this[m.Groups["a"].Value.Trim(new char[] {'{','}'})])) : path;
+                 path.ReplacePattern(@"(?<a>\{[a-z0-9_-]+\})", m => GetValue(this[m.Groups["a"].Value.Trim(new char[] { '{', '}' })])) : path;
         }
         #endregion
 

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.Linq;
+using System.Text;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -66,7 +66,7 @@ namespace XiaoFeng.IO
                 //Create(path.GetDirectoryName(), FileAttribute.Directory);
                 var dir = _path.GetDirectoryName();
                 if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
-                if (!File.Exists(_path)) using (var fs = File.Create(_path)) { fs.Close();fs.Dispose(); }
+                if (!File.Exists(_path)) using (var fs = File.Create(_path)) { fs.Close(); fs.Dispose(); }
             }
         }
         /// <summary>
@@ -96,7 +96,7 @@ namespace XiaoFeng.IO
             if (path.IsNullOrEmpty()) return;
             var _path = GetBasePath(path);
             var file = new FileInfo(_path);
-            if ((FileAttributes.ReadOnly | FileAttributes.System | FileAttributes.Offline  | FileAttributes.Device).HasFlag(file.Attributes)) return;
+            if ((FileAttributes.ReadOnly | FileAttributes.System | FileAttributes.Offline | FileAttributes.Device).HasFlag(file.Attributes)) return;
             if (attribute == FileAttribute.UnKnown)
                 attribute = file.Attributes == FileAttributes.Directory ? FileAttribute.Directory : FileAttribute.File;
             if (attribute == FileAttribute.File)
@@ -327,10 +327,10 @@ MIDI (mid)，文件头：4D546864
         /// <returns></returns>
         public static Boolean DeleteFile(params string[] path)
         {
-            if(path.Length == 0) return false;
+            if (path.Length == 0) return false;
             try
             {
-                path.Each(p => Delete(p, FileAttribute.File));                
+                path.Each(p => Delete(p, FileAttribute.File));
                 return true;
             }
             catch (Exception ex)
@@ -552,13 +552,13 @@ MIDI (mid)，文件头：4D546864
             source.GetFiles().Each(f =>
             {
                 var path = dest.FullName + FileHelper.DirectorySeparatorChar + f.Name;
-                DeleteFile("{*}/"+path);
+                DeleteFile("{*}/" + path);
                 f.CopyTo(path);
             });
             source.GetDirectories().Each(d =>
             {
                 var dir = dest.FullName + FileHelper.DirectorySeparatorChar + d.Name;
-                Create("{*}/"+dir, FileAttribute.Directory);
+                Create("{*}/" + dir, FileAttribute.Directory);
                 d.CopyTo(dir);
             });
         }
@@ -597,7 +597,7 @@ MIDI (mid)，文件头：4D546864
             /*
              * 家目录路径
              */
-            if(path.StartsWith("{Root}",StringComparison.OrdinalIgnoreCase) || path.StartsWith("{/}") || path.StartsWith("{RootPath}", StringComparison.OrdinalIgnoreCase))
+            if (path.StartsWith("{Root}", StringComparison.OrdinalIgnoreCase) || path.StartsWith("{/}") || path.StartsWith("{RootPath}", StringComparison.OrdinalIgnoreCase))
             {
                 path = path.RemovePattern(@"\{(Root|RootPath|\/)\}[\\/]*");
             }

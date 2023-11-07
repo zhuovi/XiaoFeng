@@ -259,7 +259,7 @@ namespace XiaoFeng
         /// <summary>
         /// 金额
         /// </summary>
-        [Description("金额")] 
-        Money =1
+        [Description("金额")]
+        Money = 1
     }
 }

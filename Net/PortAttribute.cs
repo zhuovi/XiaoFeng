@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 /****************************************************************
 *  Copyright © (2023) www.eelf.cn All Rights Reserved.          *
@@ -18,7 +16,7 @@ namespace XiaoFeng.Net
     /// 网络端口属性
     /// </summary>
     [AttributeUsage(AttributeTargets.All)]
-    public class PortAttribute: Attribute
+    public class PortAttribute : Attribute
     {
         #region 构造器
         /// <summary>
@@ -27,7 +25,7 @@ namespace XiaoFeng.Net
         /// <param name="port">网络端口</param>
         public PortAttribute(int port)
         {
-            this.Port= port;
+            this.Port = port;
         }
         #endregion
 

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 
 /****************************************************************
 *  Copyright © (2023) www.eelf.cn All Rights Reserved.          *
@@ -115,7 +112,7 @@ namespace XiaoFeng.Memcached.Protocol.Binary
         #endregion
 
         #region 方法
-        
+
         #endregion
     }
 }

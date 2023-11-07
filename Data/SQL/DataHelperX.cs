@@ -1,14 +1,14 @@
-﻿using XiaoFeng.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
-using XiaoFeng.Config;
 using System.Reflection;
-using XiaoFeng.Model;
 using XiaoFeng.Cache;
+using XiaoFeng.Config;
+using XiaoFeng.Json;
+using XiaoFeng.Model;
 /*
 ===================================================================
 Author : jacky
@@ -1110,10 +1110,10 @@ namespace XiaoFeng.Data.SQL
         public int Count()
         {
             if (this.DataSQL.Columns != null) this.DataSQL.Columns.Clear();
-			//this.DataSQL.ClearColumns("count(0)");
+            //this.DataSQL.ClearColumns("count(0)");
             //string SQLString = this.DataSQL.GetSQLString();
-            
-			string SQLString = String.Empty;
+
+            string SQLString = String.Empty;
             if (this.DataSQL.Columns != null && this.DataSQL.Columns.Count == 0)
             {
                 this.DataSQL.SetColumns("count(0)");
@@ -1622,7 +1622,7 @@ namespace XiaoFeng.Data.SQL
                 p?.SetValue(data, this.DataSQL.TableName);
             }
             SetForeignKey(data);
-            
+
             sTime.Stop();
             this.DataSQL.RunSQLTime += sTime.ElapsedMilliseconds;
             if (this.SQLCallBack != null) this.SQLCallBack.Invoke(this.DataSQL);
@@ -1825,7 +1825,7 @@ namespace XiaoFeng.Data.SQL
                         data = this.DataHelper.ExecuteDataTable(_SQLString, CommandType.Text, this.GetDbParameters(SQLString)).ToEntity<T>();
                     }
                 }
-               if (data != null)
+                if (data != null)
                 {
                     /*设置分表*/
                     var p = typeof(T).GetProperty("TableName", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
@@ -2012,7 +2012,7 @@ namespace XiaoFeng.Data.SQL
             string OrderColumn = "", OrderType = "";
             if (this.DataSQL.OrderByString.IsNullOrEmpty())
             {
-                t.GetProperties(BindingFlags.Instance | BindingFlags.Public| BindingFlags.IgnoreCase).Each(p =>
+                t.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase).Each(p =>
                 {
                     if (p.IsIndexer()) return true;
                     ColumnAttribute Column = p.GetCustomAttribute<ColumnAttribute>();
@@ -2372,7 +2372,7 @@ namespace XiaoFeng.Data.SQL
                             f = false;
                             Dirtys.ToArray().Each(k =>
                             {
-                                var p = _t.GetProperty(k,BindingFlags.Public| BindingFlags.IgnoreCase | BindingFlags.Instance);
+                                var p = _t.GetProperty(k, BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance);
                                 if (p.IsDefined(typeof(FieldIgnoreAttribute))) return;
                                 object value = p.GetValue(model, null);
                                 ColumnAttribute column = p.GetCustomAttribute<ColumnAttribute>();
@@ -2780,7 +2780,7 @@ namespace XiaoFeng.Data.SQL
             if (this.DataSQL.UpdateColumns == null || this.DataSQL.UpdateColumns.Count == 0 || this.DataSQL.GetWhere().IsNullOrEmpty()) return false;
             string SQLString = this.DataSQL.GetSQLString();
             var sTime = new Stopwatch();
-           
+
             sTime.Start();
             int Non = this.DataHelper.ExecuteNonQuery(SQLString.SQLFormat(this.DataHelper.ProviderType), CommandType.Text, this.GetDbParameters(SQLString));
             sTime.Stop();
@@ -2812,7 +2812,7 @@ namespace XiaoFeng.Data.SQL
                         //f = false;
                         Dirtys.ToArray().Each(k =>
                         {
-                            var p = t.GetProperty(k, BindingFlags.IgnoreCase| BindingFlags.Public | BindingFlags.Instance);
+                            var p = t.GetProperty(k, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
                             if (p == null) return;
                             if (p.IsDefined(typeof(FieldIgnoreAttribute))) return;
                             object value = p.GetValue(model, null);
@@ -2823,7 +2823,7 @@ namespace XiaoFeng.Data.SQL
                                 {
                                     ColumnAttribute column = p.GetCustomAttribute<ColumnAttribute>();
                                     var ParamName = "@" + p.Name;
-                                    if ((column != null && (column.PrimaryKey || column.AutoIncrement))|| p.Name.EqualsIgnoreCase("ID"))
+                                    if ((column != null && (column.PrimaryKey || column.AutoIncrement)) || p.Name.EqualsIgnoreCase("ID"))
                                         Where = "{0} = {1}".format(FieldFormat(column.Name), value == null ? "null" : ParamName/*(DbProviderType.Dameng | DbProviderType.MySql).HasFlag(this.DataHelper.ProviderType) ? "?" : ParamName*/);
                                     else
                                         this.DataSQL.SetUpdateColumns("{0} = {1}".format(FieldFormat(p.Name), value == null ? "null" : ParamName));
@@ -2877,7 +2877,7 @@ namespace XiaoFeng.Data.SQL
             {
                 if (Where.IsNullOrEmpty())
                 {
-                    t.GetProperties( BindingFlags.Instance| BindingFlags.Public| BindingFlags.IgnoreCase).Each(p =>
+                    t.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase).Each(p =>
                     {
                         if (!p.CanRead || !p.CanWrite || p.IsIndexer() || !p.PropertyType.IsValueType()) return;
                         if (p.IsDefined(typeof(FieldIgnoreAttribute))) return;

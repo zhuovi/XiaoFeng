@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using XiaoFeng.Data;
 using XiaoFeng.Json;
 using XiaoFeng.Log;
 
@@ -87,7 +82,7 @@ namespace XiaoFeng.Config
         /// 输出控制台标识
         /// </summary>
         [Description("输出控制台标识")]
-        [JsonConverter(typeof(StringEnumConverter))] 
+        [JsonConverter(typeof(StringEnumConverter))]
         public LogType ConsoleFlags { get; set; } = LogType.Info | LogType.Debug | LogType.Error | LogType.Trace | LogType.Task | LogType.Warn;
         /// <summary>
         /// 存储类型

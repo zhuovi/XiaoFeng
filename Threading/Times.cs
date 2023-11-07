@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -195,7 +192,8 @@ namespace XiaoFeng.Threading
         /// <summary>
         /// 时
         /// </summary>
-        public int? Hour {
+        public int? Hour
+        {
             get { return this._Hour; }
             set
             {
@@ -220,7 +218,8 @@ namespace XiaoFeng.Threading
         /// <summary>
         /// 分
         /// </summary>
-        public int Minute {
+        public int Minute
+        {
             get { return this._Minute; }
             set
             {
@@ -245,7 +244,8 @@ namespace XiaoFeng.Threading
         /// <summary>
         /// 秒
         /// </summary>
-        public int Second {
+        public int Second
+        {
             get { return this._Second; }
             set
             {
@@ -416,7 +416,7 @@ namespace XiaoFeng.Threading
         /// 添加秒
         /// </summary>
         /// <param name="Seconds">几秒</param>
-        public void AddSeconds (int Seconds)
+        public void AddSeconds(int Seconds)
         {
             this.Second += Seconds;
         }

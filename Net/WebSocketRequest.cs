@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Text;
 using XiaoFeng.Http;
-using System.Text.RegularExpressions;
 /****************************************************************
 *  Copyright © (2023) www.eelf.cn All Rights Reserved.          *
 *  Author : jacky                                               *
@@ -45,7 +42,7 @@ namespace XiaoFeng.Net
                     {
                         if (line.StartsWith("get", StringComparison.OrdinalIgnoreCase))
                         {
-                            var s = line.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+                            var s = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                             this.Method = HttpMethod.Get;
                             if (s.Length > 2)
                             {

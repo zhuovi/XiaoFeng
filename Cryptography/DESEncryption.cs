@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-
-/****************************************************
+﻿/****************************************************
  *  Copyright © www.fayelf.com All Rights Reserved. *
  *  Author : jacky                                  *
  *  QQ : 7092734                                    *
@@ -39,7 +32,7 @@ namespace XiaoFeng.Cryptography
         #endregion
 
         #region 方法
-        
+
         #endregion
     }
 }

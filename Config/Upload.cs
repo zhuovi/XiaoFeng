@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using XiaoFeng.Cache;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -85,12 +80,12 @@ namespace XiaoFeng.Config
         /// <summary>
         /// 图片压缩最长边限制
         /// </summary>
-        [Description("图片压缩最长边限制")] 
+        [Description("图片压缩最长边限制")]
         public int ImageCompressLength { get; set; } = 2000;
         /// <summary>
         /// 图片压缩质量
         /// </summary>
-        [Description("图片压缩质量")] 
+        [Description("图片压缩质量")]
         public int ImageCompressQuality { get; set; } = 100;
         /// <summary>
         /// 上传路径是否带域名

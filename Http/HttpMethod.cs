@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -110,7 +106,7 @@ namespace XiaoFeng.Http
         /// 显示转换
         /// </summary>
         /// <param name="method">请求类型</param>
-        public static explicit operator System.Net.Http.HttpMethod(HttpMethod method) =>new System.Net.Http.HttpMethod(method.Method);
+        public static explicit operator System.Net.Http.HttpMethod(HttpMethod method) => new System.Net.Http.HttpMethod(method.Method);
         /// <summary>
         /// 隐式转换
         /// </summary>

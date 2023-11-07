@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
+﻿using System.Xml;
 using XiaoFeng.IO;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
@@ -35,7 +32,7 @@ namespace XiaoFeng.Xml
         public override void Load(string fileName)
         {
             if (fileName.IsNullOrEmpty()) return;
-           
+
             if (!FileHelper.Exists(fileName, FileAttribute.File)) return;
             //2022-07-12 为了兼容linux中{*}根目录，改到下面 赋值
             fileName = fileName.GetBasePath();

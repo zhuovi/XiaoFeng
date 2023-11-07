@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
@@ -31,9 +28,9 @@ namespace XiaoFeng.Validator
         /// </summary>
         /// <param name="name">参数名</param>
         /// <param name="value">参数值</param>
-        public ValidatorHelper(string name, object value):this()
+        public ValidatorHelper(string name, object value) : this()
         {
-            this.Name = name;this.Value = value;
+            this.Name = name; this.Value = value;
         }
         #endregion
 
@@ -41,7 +38,7 @@ namespace XiaoFeng.Validator
         /// <summary>
         /// 参数值
         /// </summary>
-        private object Value { get; set; } 
+        private object Value { get; set; }
         /// <summary>
         /// 参数名
         /// </summary>
@@ -53,7 +50,7 @@ namespace XiaoFeng.Validator
         /// <summary>
         /// 是否验证
         /// </summary>
-        public Boolean IsValid { get { return this.Result.Count > 0; }  }
+        public Boolean IsValid { get { return this.Result.Count > 0; } }
         #endregion
 
         #region 方法
@@ -65,7 +62,7 @@ namespace XiaoFeng.Validator
         /// <param name="name">参数名</param>
         /// <param name="value">参数值</param>
         /// <returns></returns>
-        public ValidatorHelper Requires(string name,object value)
+        public ValidatorHelper Requires(string name, object value)
         {
             var validator = new ValidatorHelper(name, value);
             validator.Result.AddRange(this.Result);
@@ -131,7 +128,7 @@ namespace XiaoFeng.Validator
         /// <param name="pattern">正则表达式</param>
         /// <param name="options">表达式选项</param>
         /// <returns></returns>
-        public ValidatorHelper IsPattern(string pattern,RegexOptions options = RegexOptions.IgnoreCase)
+        public ValidatorHelper IsPattern(string pattern, RegexOptions options = RegexOptions.IgnoreCase)
         {
             if (this.Value.IsNullOrEmpty() || pattern.IsNullOrEmpty()) return this;
             if (!this.Value.ToString().IsMatch(pattern, options))
@@ -154,7 +151,7 @@ namespace XiaoFeng.Validator
             {
                 this.Result.Add("参数[{0}]的值为 ' {1} ' 不等于 ' {2} '.".format(this.Name, this.Value, _));
             }
-            
+
             return this;
         }
         #endregion
@@ -182,11 +179,11 @@ namespace XiaoFeng.Validator
         /// <param name="min">最小值</param>
         /// <param name="max">最大值</param>
         /// <returns></returns>
-        public ValidatorHelper IsBetween(Int64 min,Int64 max)
+        public ValidatorHelper IsBetween(Int64 min, Int64 max)
         {
             if (min == max) return this;
             Int64 val = this.Value.ToCast<Int64>();
-            if(val<min || val > max)
+            if (val < min || val > max)
             {
                 this.Result.Add("参数[{0}]的值 ' {1} ' 不在 ' {2} ' 与 ' {3} ' 之间.".format(this.Name, this.Value, min, max));
             }

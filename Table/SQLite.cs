@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using XiaoFeng.Data;
-using XiaoFeng.Data.SQL;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -96,7 +93,7 @@ PRAGMA foreign_keys = on;
             var Indexs = new List<string>();
             var Description = "";
             var Unique = "";
-            
+
             type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase).Each(p =>
             {
                 if (p.GetCustomAttribute<FieldIgnoreAttribute>() != null) return;
@@ -106,11 +103,11 @@ PRAGMA foreign_keys = on;
                 if (columnAttr.DataType.IsNullOrEmpty()) columnAttr.DataType = dbType[p.PropertyType];
                 if (columnAttr.Description.IsNullOrEmpty()) columnAttr.Description = p.Name;
                 //Fields += new FieldPacket(table, this.Config.ProviderType, columnAttr).ToString();
-                if (columnAttr.IsIndex) Indexs.Add( columnAttr.Name);
+                if (columnAttr.IsIndex) Indexs.Add(columnAttr.Name);
                 if (columnAttr.PrimaryKey)
                 {
                     //PrimaryKey = $"{columnAttr.Name} PRIMARY KEY ASC,";
-                    if(!Indexs.Contains(columnAttr.Name)) Indexs.Add(columnAttr.Name);
+                    if (!Indexs.Contains(columnAttr.Name)) Indexs.Add(columnAttr.Name);
                 }
                 if (columnAttr.IsUnique) Unique += columnAttr.Name + ",";
             });

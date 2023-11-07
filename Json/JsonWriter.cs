@@ -2,13 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Data;
 using System.Globalization;
-using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -137,8 +134,8 @@ namespace XiaoFeng.Json
                 return;
             }
             if (
-                value is int || value is double || value is decimal || 
-                value is Single || value is float || value is byte || 
+                value is int || value is double || value is decimal ||
+                value is Single || value is float || value is byte ||
                 value is short || value is sbyte || value is ushort ||
                 value is uint
             )
@@ -146,7 +143,7 @@ namespace XiaoFeng.Json
                 Builder.Append(((IConvertible)value).ToString(NumberFormatInfo.InvariantInfo));
                 return;
             }
-            if(value is long l)
+            if (value is long l)
             {
                 if (this.SerializerSetting.LongSerializeString && (l < -9007199254740992 || l > 9007199254740992))
                     Builder.Append("\"" + value + "\"");
@@ -154,7 +151,7 @@ namespace XiaoFeng.Json
                     Builder.Append(((IConvertible)value).ToString(NumberFormatInfo.InvariantInfo));
                 return;
             }
-            if(value is ulong ul)
+            if (value is ulong ul)
             {
                 if (this.SerializerSetting.LongSerializeString && ul > 9007199254740992)
                     Builder.Append("\"" + value + "\"");
@@ -299,7 +296,7 @@ namespace XiaoFeng.Json
                 if (keys.Contains(m.Name) && m.DeclaringType != t) return;
                 /*如果有忽略属性 则跳过*/
                 if (m.IsDefined(typeof(JsonIgnoreAttribute), false)) return;
-                
+
                 string name = m.Name;
                 keys.Add(name);
 
@@ -523,7 +520,7 @@ namespace XiaoFeng.Json
         {
             Builder.Append('{');
             var first = true;
-            foreach(DictionaryEntry a in dic)
+            foreach (DictionaryEntry a in dic)
             {
                 var fw = WritePair(a.Key.ToString(), a.Value, first ? "" : ",");
                 if (first && fw) first = false;
@@ -701,7 +698,7 @@ namespace XiaoFeng.Json
             {
                 return _.ReplacePattern(@"/\*[\s\S]+?\*/", m =>
                 {
-                    return m.Groups[0].Value.RemovePattern(@"[\r\n]+").ReplacePattern(@"\s{2,}"," ");
+                    return m.Groups[0].Value.RemovePattern(@"[\r\n]+").ReplacePattern(@"\s{2,}", " ");
                 });
             }
             return _;

@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
-using System.Text;
 using XiaoFeng;
-using XiaoFeng.IO;
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -93,7 +91,7 @@ namespace XiaoFeng.Redis
         /// </summary>
         /// <param name="resultType">结果类型</param>
         /// <returns></returns>
-        public RedisValue ReadValue(ResultType? resultType=null)
+        public RedisValue ReadValue(ResultType? resultType = null)
         {
             if (!resultType.HasValue)
                 resultType = this.ReadType();
@@ -113,7 +111,7 @@ namespace XiaoFeng.Redis
                     result = this.ReadBulkString();
                     break;
                 case ResultType.MultiBulk:
-                   result = this.ReadMultiBulk();
+                    result = this.ReadMultiBulk();
                     break;
                 default:
                     result = new RedisValue();
@@ -221,7 +219,7 @@ namespace XiaoFeng.Redis
                 case "ZINCRBY":/*CommandType.ZINCRBY*/
                 case "ZREM":/*CommandType.ZREM*/
                 case "ZREMRANGEBYLEX":/*CommandType.ZREMRANGEBYLEX*/
-                case "ZREMRANGEBYSCORE":/*CommandType.ZREMRANGEBYSCORE*/ 
+                case "ZREMRANGEBYSCORE":/*CommandType.ZREMRANGEBYSCORE*/
                 case "ZREMRANGEBYRANK":/*CommandType.ZREMRANGEBYRANK*/
                 case "PFADD":/*CommandType.PFADD*/
                 case "PFCOUNT":/*CommandType.PFCOUNT*/
@@ -332,7 +330,7 @@ namespace XiaoFeng.Redis
                 case "BLPOP":/*CommandType.BLPOP*/
                 case "BRPOP":/*CommandType.BRPOP*/
                     this.OK = type == ResultType.MultiBulk;
-                    this.Value = new RedisValue(result.ToDictionary<RedisValue,RedisValue>());
+                    this.Value = new RedisValue(result.ToDictionary<RedisValue, RedisValue>());
                     break;
                 case "GEOPOS":/*CommandType.GEOPOS*/
                     this.OK = type == ResultType.MultiBulk && result.RedisType == RedisType.Array;
@@ -343,7 +341,7 @@ namespace XiaoFeng.Redis
                         {
                             if (r.RedisType == RedisType.Array)
                             {
-                                var rs= r.ToArray();
+                                var rs = r.ToArray();
                                 if (rs.Length <= 1)
                                     list.Add(null);
                                 else
@@ -582,16 +580,16 @@ namespace XiaoFeng.Redis
                         var list = new List<ConsumerGroupXInfoConsumerModel>();
                         result.ToList().Each(r =>
                         {
-                            if(r.RedisType == RedisType.Array)
+                            if (r.RedisType == RedisType.Array)
                             {
                                 var arr = r.ToArray();
                                 if (arr.Length == 6)
                                 {
                                     list.Add(new ConsumerGroupXInfoConsumerModel
                                     {
-                                         Name = arr[1].ToString(),
-                                         Pending = arr[3].ToInt(),
-                                         Idle = arr[5].ToInt()
+                                        Name = arr[1].ToString(),
+                                        Pending = arr[3].ToInt(),
+                                        Idle = arr[5].ToInt()
                                     });
                                 }
                             }
@@ -712,17 +710,17 @@ namespace XiaoFeng.Redis
                                     var entires = new List<ConsumerGroupXInfoStreamFullModel.Entries>(); ;
                                     stream.Entires = entires;
                                     var vals = arr["entries"];
-                                    if(vals.RedisType== RedisType.Array)
+                                    if (vals.RedisType == RedisType.Array)
                                     {
                                         vals.ToList().Each(r =>
                                         {
-                                            if(r.RedisType== RedisType.Array)
+                                            if (r.RedisType == RedisType.Array)
                                             {
                                                 var val = r.ToArray();
                                                 entires.Add(new ConsumerGroupXInfoStreamFullModel.Entries
                                                 {
                                                     ID = r[0].ToString(),
-                                                    Value= val.Length > 1 ? val[1].ToDictionary<string, string>() : null
+                                                    Value = val.Length > 1 ? val[1].ToDictionary<string, string>() : null
                                                 });
                                             }
                                         });
@@ -733,7 +731,7 @@ namespace XiaoFeng.Redis
                                     var groups = arr["groups"];
                                     var list = new List<ConsumerGroupXInfoStreamFullModel.FullGroups>();
                                     stream.Groups = list;
-                                    if(groups.RedisType== RedisType.Array)
+                                    if (groups.RedisType == RedisType.Array)
                                     {
                                         groups.ToList().Each(r =>
                                         {
@@ -752,7 +750,7 @@ namespace XiaoFeng.Redis
                                             if (dic.ContainsKey("pending"))
                                             {
                                                 var p = dic["pending"];
-                                                if(p.RedisType== RedisType.Array)
+                                                if (p.RedisType == RedisType.Array)
                                                 {
                                                     var pending = new List<ConsumerGroupXPendingConsumerModel>();
                                                     g.Pending = pending;
@@ -768,7 +766,7 @@ namespace XiaoFeng.Redis
                                                                     MessageID = raArr[0].ToString(),
                                                                     ConsumerName = raArr[1].ToString(),
                                                                     Milliseconds = raArr[2].ToLong(),
-                                                                    Count = raArr[3].ToInt()        
+                                                                    Count = raArr[3].ToInt()
                                                                 });
                                                             }
                                                         }
@@ -780,11 +778,11 @@ namespace XiaoFeng.Redis
                                                 var csv = dic["consumers"];
                                                 var cs = new List<ConsumerGroupXInfoStreamFullModel.FullCounsumer>();
                                                 g.Consumers = cs;
-                                                if(csv.RedisType== RedisType.Array)
+                                                if (csv.RedisType == RedisType.Array)
                                                 {
                                                     csv.ToList().Each(rs =>
                                                     {
-                                                        if(rs.RedisType== RedisType.Array)
+                                                        if (rs.RedisType == RedisType.Array)
                                                         {
                                                             var cdic = rs.ToDictionary<string, RedisValue>();
                                                             var c = new ConsumerGroupXInfoStreamFullModel.FullCounsumer();
@@ -855,7 +853,8 @@ namespace XiaoFeng.Redis
         /// :2\r\n 整型数字
         /// </summary>
         /// <returns>类型</returns>
-        public ResultType ReadType() {
+        public ResultType ReadType()
+        {
             try
             {
                 lock (StreamLock)
@@ -973,7 +972,7 @@ namespace XiaoFeng.Redis
             size = size == -1 ? this.ReadInt().ToInt() : size;
             if (size <= -1) return new RedisValue();
             var value = new RedisValue(new List<RedisValue>());
-            for(var i = 0; i < size; i++)
+            for (var i = 0; i < size; i++)
                 value.Add(this.ReadValue());
             return value;
         }

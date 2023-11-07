@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using XiaoFeng.Data;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
@@ -71,7 +67,7 @@ namespace XiaoFeng.Table
         /// <param name="column">字段配置</param>
         /// <param name="providerType">驱动类型</param>
         /// <returns></returns>
-        public virtual string GetField(ColumnAttribute column,DbProviderType providerType)
+        public virtual string GetField(ColumnAttribute column, DbProviderType providerType)
         {
             if (column == null) return "";
             var FieldFormat = "{0}  {1}{2}  {3} {4}," + Environment.NewLine;
@@ -110,14 +106,15 @@ namespace XiaoFeng.Table
              * AddDate      DATETIME      DEFAULT (datetime('now', 'localtime') ),
              * AddTimeStamp INTEGER       DEFAULT (strftime('%s', 'now') - strftime('%s', '2023-01-01') ) 
              */
-            if (",varchar,nvarchar,".IndexOf("," + dbType + ",",StringComparison.OrdinalIgnoreCase) > -1)
+            if (",varchar,nvarchar,".IndexOf("," + dbType + ",", StringComparison.OrdinalIgnoreCase) > -1)
             {
                 tLength = "({0})".format(column.Length == 0 ? "50" : column.Length == -1 ? "max" : column.Length.ToString());
             }
             else if ("decimal".Equals(dbType, StringComparison.CurrentCultureIgnoreCase))
             {
                 tLength = "({0},{1})".format(column.Length == 0 ? 18 : column.Length, column.Digit);
-            }else if ("boolean".EqualsIgnoreCase(dbType))
+            }
+            else if ("boolean".EqualsIgnoreCase(dbType))
             {
                 dbType = "BIT";
             }
@@ -160,14 +157,14 @@ namespace XiaoFeng.Table
                 else if (column.DefaultValue.ToString() == "''")
                     defaultValue = "''";
                 //else
-                    //defaultValue = GetDefaultValue(column.DefaultValue.ToString().Trim('\''), providerType);
+                //defaultValue = GetDefaultValue(column.DefaultValue.ToString().Trim('\''), providerType);
                 //DefaultValue = DefaultValue.format(defaultValue);
             }
             return FieldFormat.format(column.Name, dbType, tLength, NotNull, DefaultValue);
         }
         #endregion
 
-        
+
 
         #endregion
     }

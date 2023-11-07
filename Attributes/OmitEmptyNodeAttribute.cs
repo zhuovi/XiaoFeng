@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
@@ -19,7 +15,7 @@ namespace XiaoFeng
     /// <summary>
     /// 忽略空节点
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property| AttributeTargets.Field| AttributeTargets.Class| AttributeTargets.Struct)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Class | AttributeTargets.Struct)]
     public class OmitEmptyNodeAttribute : Attribute
     {
         #region 构造器

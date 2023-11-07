@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using XiaoFeng.Memcached.Internal;
-using XiaoFeng.Net;
 
 /****************************************************************
 *  Copyright © (2023) www.eelf.cn All Rights Reserved.          *
@@ -52,12 +48,12 @@ namespace XiaoFeng.Memcached.Protocol.Binary
         ///<inheritdoc/>
         public async Task<GetOperationResult> GetAsync(params string[] keys)
         {
-            return await GetAsync(CommandType.Get,null, keys);
+            return await GetAsync(CommandType.Get, null, keys);
         }
         ///<inheritdoc/>
         public async Task<GetOperationResult> GetsAsync(params string[] keys)
         {
-            return await GetAsync(CommandType.GetK,null, keys);
+            return await GetAsync(CommandType.GetK, null, keys);
         }
         ///<inheritdoc/>
         public async Task<GetOperationResult> GatAsync(uint expiry, params string[] keys)
@@ -238,7 +234,7 @@ namespace XiaoFeng.Memcached.Protocol.Binary
         /// <param name="key">key</param>
         /// <param name="timeout">延迟多长时间执行清理</param>
         /// <returns></returns>
-        private async Task<StatsOperationResult> StatAsync(CommandType commandOpcode,string key, uint timeout)
+        private async Task<StatsOperationResult> StatAsync(CommandType commandOpcode, string key, uint timeout)
         {
             var result = new StatsOperationResult() { Value = new Dictionary<System.Net.IPEndPoint, Dictionary<string, string>>() };
             var val = this.Execute(socket =>

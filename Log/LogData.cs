@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using XiaoFeng.Config;
 
 /****************************************************************
@@ -105,7 +102,7 @@ namespace XiaoFeng.Log
         /// <summary>
         /// 是否记录
         /// </summary>
-        [Description("是否记录")] 
+        [Description("是否记录")]
         public Boolean IsRecord { get; set; } = false;
         /// <summary>
         /// 输出字段

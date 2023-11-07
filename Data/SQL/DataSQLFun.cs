@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -1008,7 +1005,7 @@ namespace XiaoFeng.Data
         /// <summary>
         /// SQL 函数
         /// </summary>
-        public static string[] SQLFun = new string[] { "Upper","UCASE", "Lower","LCASE","MID", "Trim", "Substring", "Stuff", "Reverse","StrReverse", "Replicate", "Replace", "Len", "Right", "Left", "Round", "Ceiling", "Floor","FIX", "Abs","INT", "Charindex", "Date_Format","FORMAT", "INSTR", "DatePart", "DateDiff", "DATE_ADD","DATEADD", "Patindex", "CONVERT", "RTRIM", "LTRIM","ISNULL", "TIMESTAMPDIFF","STDEV","STDEVP" };
+        public static string[] SQLFun = new string[] { "Upper", "UCASE", "Lower", "LCASE", "MID", "Trim", "Substring", "Stuff", "Reverse", "StrReverse", "Replicate", "Replace", "Len", "Right", "Left", "Round", "Ceiling", "Floor", "FIX", "Abs", "INT", "Charindex", "Date_Format", "FORMAT", "INSTR", "DatePart", "DateDiff", "DATE_ADD", "DATEADD", "Patindex", "CONVERT", "RTRIM", "LTRIM", "ISNULL", "TIMESTAMPDIFF", "STDEV", "STDEVP" };
         #endregion
     }
 }

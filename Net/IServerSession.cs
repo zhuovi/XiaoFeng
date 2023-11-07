@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -100,6 +96,6 @@ namespace XiaoFeng.Net
         /// 启动
         /// </summary>
         void Start();
-		#endregion
-	}
+        #endregion
+    }
 }

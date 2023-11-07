@@ -1,7 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
-using System.Net.Security;
 using System.Net.Sockets;
 using XiaoFeng.Net;
 
@@ -139,7 +137,7 @@ namespace XiaoFeng.Redis.IO
             {
                 this.GetStream();
             }
-            else if(state == SocketError.TimedOut)
+            else if (state == SocketError.TimedOut)
             {
                 throw new RedisException($"连接服务器超时.{this.ConnConfig.ToJson()}");
             }
@@ -149,7 +147,7 @@ namespace XiaoFeng.Redis.IO
             
 			this.SocketClient.EndConnect(result);
 			this.GetStream();*/
-		}
+        }
         ///<inheritdoc/>
         public Stream GetStream()
         {

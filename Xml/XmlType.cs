@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
-
-/****************************************************************
+﻿/****************************************************************
  *  Copyright © (2021) www.fayelf.com All Rights Reserved.      *
  *  Author : jacky                                              *
  *  QQ : 7092734                                                *
@@ -23,9 +16,9 @@ namespace XiaoFeng.Xml
     public enum XmlType
     {
         #region 属性
-       /// <summary>
-       /// Null
-       /// </summary>
+        /// <summary>
+        /// Null
+        /// </summary>
         None = 0,
         /// <summary>
         /// 元素 (例如， item )
@@ -98,7 +91,7 @@ namespace XiaoFeng.Xml
         /// <summary>
         /// 数组
         /// </summary>
-        Array  = 18,
+        Array = 18,
         /// <summary>
         /// 对象
         /// </summary>

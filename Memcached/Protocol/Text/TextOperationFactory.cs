@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using XiaoFeng.Memcached.Internal;
-using XiaoFeng.Net;
 
 /****************************************************************
 *  Copyright © (2023) www.eelf.cn All Rights Reserved.          *
@@ -117,7 +114,7 @@ namespace XiaoFeng.Memcached.Protocol.Text
                             var cmd = new GetCommand(socket, commandType, ks);
                             return await cmd.GetGetResponseAsync().ConfigureAwait(false);
                         });
-                        
+
                         if (val != null && val.Status == OperationStatus.Success)
                         {
                             result.Value.Add(new MemcachedValue(k, ValueType.String, null, 0));
@@ -151,7 +148,7 @@ namespace XiaoFeng.Memcached.Protocol.Text
                     {
                         var cmd = new GetCommand(socket, commandType, k);
                         return await cmd.GetGetResponseAsync().ConfigureAwait(false);
-                    });                    
+                    });
                     if (val.Status == OperationStatus.Success)
                     {
                         result.Value.AddRange(val.Value);
@@ -209,7 +206,7 @@ namespace XiaoFeng.Memcached.Protocol.Text
                     Status = OperationStatus.Success
                 };
                 var cmd = new StoreCommand(socket, this.MemcachedConfig, commandType, values);
-                var response =await cmd.GetStoreResponseAsync().ConfigureAwait(false);
+                var response = await cmd.GetStoreResponseAsync().ConfigureAwait(false);
                 if (response != null && response.Status == OperationStatus.Success)
                 {
                     result.Value = response.Value;

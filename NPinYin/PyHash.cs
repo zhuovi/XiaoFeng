@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-/****************************************************************
+﻿/****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
 *  QQ : 7092734                                                 *
@@ -13,9 +10,9 @@ using System.Text;
 *****************************************************************/
 namespace XiaoFeng
 {
-  internal class PyHash
-  {
-    internal static short[][] hashes = new short[][] {
+    internal class PyHash
+    {
+        internal static short[][] hashes = new short[][] {
 new short[]{23, 70, 96, 128, 154, 165, 172, 195},
 new short[]{25, 35, 87, 108, 120, 128, 132, 137, 168, 180, 325, 334, 336, 353, 361, 380},
 new short[]{23, 34, 46, 81, 82, 87, 134, 237, 255, 288, 317, 322, 354, 359},
@@ -416,5 +413,5 @@ new short[]{5, 37, 58, 62, 67, 84, 87, 176, 237, 267, 333, 334, 347},
 new short[]{1, 7, 74, 110, 165, 168, 182, 233, 288, 305, 309, 315, 347, 351, 353, 358, 360, 375},
 new short[]{57, 84, 129, 138, 165, 243, 244, 259, 280, 282, 290, 380, 383}
 };
-  }
+    }
 }

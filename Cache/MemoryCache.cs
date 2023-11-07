@@ -1,9 +1,8 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Collections.Concurrent;
 using XiaoFeng.Threading;
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
@@ -141,7 +140,7 @@ namespace XiaoFeng.Cache
         public Boolean TryAdd(string key, object value, TimeSpan? expiresTime = null, TimeSpan? expiresSliding = null, string path = "")
         {
             this.ExpireCache();
-            if(this.ContainsKey(key))
+            if (this.ContainsKey(key))
                 this.Remove(key);
             var val = new CacheEntity
             {
@@ -297,7 +296,7 @@ namespace XiaoFeng.Cache
         /// </summary>
         private async Task Init()
         {
-            
+
             Synchronized.Run(() =>
             {
                 if (this.IsRunTime) return;

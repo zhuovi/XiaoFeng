@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using XiaoFeng.Json;
 
 /****************************************************************
@@ -28,7 +25,7 @@ namespace XiaoFeng.Cache
         /// </summary>
         public CacheModel()
         {
-            
+
         }
         #endregion
 
@@ -92,7 +89,7 @@ namespace XiaoFeng.Cache
             if (model == null) return model;
             if (model.ObjectType.Name.IsMatch(@"Dictionary"))
                 model.Value = (Dictionary<string, JsonValue>)model.Value;
-            else 
+            else
                 model.Value = model.Value.GetValue(model.ObjectType);
             return model;
         }

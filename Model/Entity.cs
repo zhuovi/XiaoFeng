@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Linq.Expressions;
-using XiaoFeng.Data.SQL;
+using System.Reflection;
+using System.Threading.Tasks;
+using System.Xml.Serialization;
 using XiaoFeng.Config;
+using XiaoFeng.Data;
+using XiaoFeng.Data.SQL;
 using XiaoFeng.Expressions;
 using XiaoFeng.Json;
-using System.Xml.Serialization;
-using System.Reflection;
-using XiaoFeng.Data;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -57,7 +56,7 @@ namespace XiaoFeng.Model
                         }
                     }
                 }
-                
+
                 this.TableName = table.Name.IfEmpty(this.ModelType.Name);
                 ConnectionConfig config;
                 var db = DataBase.Current;
@@ -125,7 +124,7 @@ namespace XiaoFeng.Model
         /// </summary>
         [JsonIgnore]
         [XmlIgnore]
-        [FieldIgnore] 
+        [FieldIgnore]
         private Type ModelType { get; set; }
         /// <summary>
         /// 基础类型
@@ -427,7 +426,7 @@ namespace XiaoFeng.Model
          /// <param name="whereString">条件</param>
          /// <param name="type">类型</param>
          /// <returns></returns>
-        public virtual object Find(string whereString,Type type)
+        public virtual object Find(string whereString, Type type)
         {
             var data = this.Where(whereString).ToEntity(type);
             if (data == null) return null;
@@ -457,10 +456,10 @@ namespace XiaoFeng.Model
         /// <param name="whereString">条件</param>
         /// <param name="type">类型</param>
         /// <returns></returns>
-        public virtual object Find(Expression<Func<T, bool>> func, string whereString,Type type)
+        public virtual object Find(Expression<Func<T, bool>> func, string whereString, Type type)
         {
             var data = this.Where(func).Where(whereString).ToEntity(type);
-            
+
             return data;
         }
         /// <summary>
@@ -497,7 +496,7 @@ namespace XiaoFeng.Model
         /// <param name="whereString">条件</param>
         /// <param name="type">type</param>
         /// <returns></returns>
-        public virtual List<object> ToList(string whereString,Type type)
+        public virtual List<object> ToList(string whereString, Type type)
         {
             return this.QueryableX.Where(whereString).ToList(type);
         }
@@ -685,7 +684,7 @@ namespace XiaoFeng.Model
         /// </summary>
         /// <param name="suffix">后缀</param>
         /// <returns>对象</returns>
-        [Obsolete("当前方法已过时,请使用SubTable",false)]
+        [Obsolete("当前方法已过时,请使用SubTable", false)]
         public T SetSubTable(string suffix)
         {
             this.TableName.IfEmptyValue(() => this.TableAttr?.Name.IfEmpty(this.ModelType?.Name));
@@ -782,18 +781,18 @@ namespace XiaoFeng.Model
                 this.DataBaseName = key;
                 if (isGlobal)
                 {
-                   /* var SessionID = UserSession.Id;
-                    if (SessionID.IsNotNullOrEmpty())
-                    {
-                        var value = Cache.CacheHelper.Get(SessionID);
-                        if (value != null)
-                        {
-                            var val = value as SubDataBaseTable;
-                            val.Key = key;
-                            val.Num = num;
-                            Cache.CacheHelper.Set(SessionID, val);
-                        }
-                    }*/
+                    /* var SessionID = UserSession.Id;
+                     if (SessionID.IsNotNullOrEmpty())
+                     {
+                         var value = Cache.CacheHelper.Get(SessionID);
+                         if (value != null)
+                         {
+                             var val = value as SubDataBaseTable;
+                             val.Key = key;
+                             val.Num = num;
+                             Cache.CacheHelper.Set(SessionID, val);
+                         }
+                     }*/
                 }
             }
             if (this.DataBaseName.IsNullOrEmpty()) this.DataBaseName = this.TableAttr.ConnName;

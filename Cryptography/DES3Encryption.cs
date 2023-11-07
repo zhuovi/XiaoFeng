@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-
-/****************************************************
+﻿/****************************************************
  *  Copyright © www.fayelf.com All Rights Reserved. *
  *  Author : jacky                                  *
  *  QQ : 7092734                                    *
@@ -30,7 +22,7 @@ namespace XiaoFeng.Cryptography
         /// <summary>
         /// 无参构造器
         /// </summary>
-        public DES3Encryption():base(SymmetricAlgorithmType.DES3)
+        public DES3Encryption() : base(SymmetricAlgorithmType.DES3)
         {
         }
         #endregion
@@ -40,7 +32,7 @@ namespace XiaoFeng.Cryptography
         #endregion
 
         #region 方法
-        
+
         #endregion
     }
 }

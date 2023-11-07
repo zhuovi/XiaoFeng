@@ -2,11 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using XiaoFeng;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
@@ -190,7 +187,7 @@ namespace XiaoFeng.Json
         {
             get
             {
-                if(this.Type == JsonType.Array)
+                if (this.Type == JsonType.Array)
                 {
                     var val = this.ToArray();
                     if (val.Length > index)
@@ -480,7 +477,7 @@ namespace XiaoFeng.Json
         /// <param name="a">第一个对象</param>
         /// <param name="b">第二个对象</param>
         /// <returns></returns>
-        public static bool operator !=(JsonValue a,JsonValue b)
+        public static bool operator !=(JsonValue a, JsonValue b)
         {
             return !(a == b);
         }
@@ -878,7 +875,7 @@ namespace XiaoFeng.Json
             }
             else if (this.Type == JsonType.Bool || this.Type == JsonType.Float || this.Type == JsonType.Guid || this.Type == JsonType.Number || this.Type == JsonType.String)
                 return this.value.GetValue(type);
-            else if(this.Type == JsonType.DateTime)
+            else if (this.Type == JsonType.DateTime)
             {
                 return this.value.ToCast<DateTime>().ToString(this.SerializerSetting.DateTimeFormat);
             }
@@ -973,9 +970,9 @@ namespace XiaoFeng.Json
         /// <typeparam name="TKey">Key</typeparam>
         /// <typeparam name="TValue">Value</typeparam>
         /// <returns></returns>
-        public Dictionary<TKey,TValue> ToDictionary<TKey, TValue>()
+        public Dictionary<TKey, TValue> ToDictionary<TKey, TValue>()
         {
-            if (typeof(TKey) == typeof(string)) return this.ToDictionary<TValue>() as Dictionary<TKey,TValue>;
+            if (typeof(TKey) == typeof(string)) return this.ToDictionary<TValue>() as Dictionary<TKey, TValue>;
             Dictionary<TKey, TValue> data = new Dictionary<TKey, TValue>();
             this.ToDictionary()?.Each(a =>
             {
@@ -1330,11 +1327,11 @@ namespace XiaoFeng.Json
         public DataTable ParseDataTable(JsonValue jsonValue, Type type, object target)
         {
             var data = new DataTable();
-            if(jsonValue.Type == JsonType.Object)
+            if (jsonValue.Type == JsonType.Object)
             {
                 jsonValue = new JsonValue(new List<JsonValue> { jsonValue });
             }
-            if(jsonValue.Type == JsonType.Array)
+            if (jsonValue.Type == JsonType.Array)
             {
                 var list = jsonValue.ToArray();
                 if (list.Length == 0) return null;
@@ -1439,10 +1436,6 @@ namespace XiaoFeng.Json
                         var _f = list.ContainsKey(name);
                         JsonConverterAttribute jsonConverter = m.GetCustomAttribute<JsonConverterAttribute>(false);
                         if (_f) val = list[name];
-                        if(val?.ToStringX() == "aaaabbbda:bbbddd")
-                        {
-                            var aa = "";
-                        }
                         if (jsonConverter != null)
                         {
                             if (jsonConverter.ConverterType == typeof(StringObjectConverter))
@@ -1501,7 +1494,7 @@ namespace XiaoFeng.Json
                     if (!data.ContainsKey("key") || !data.ContainsKey("value")) return;
                     var key = data["key"].ToString();
                     JsonValue val = data["value"];
-                    list.Add(key, val);                   
+                    list.Add(key, val);
                 });
                 return null;
             }

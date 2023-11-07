@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 /****************************************************************
@@ -57,7 +56,7 @@ namespace XiaoFeng.Cryptography
             var low = (byte)(crc & 0x00FF);
             return BitConverter.ToInt64(new byte[] { high, low }, 0);
         }
-        
+
         #endregion
     }
 }

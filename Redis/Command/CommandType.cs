@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using XiaoFeng.Json;
 
 /****************************************************************
 *  Copyright © (2021) www.fayelf.com All Rights Reserved.       *
@@ -26,7 +21,7 @@ namespace XiaoFeng.Redis
     /// $第N个参数字节长度 CR LF
     /// 第N个参数数据 CR LF
     /// </summary>
-    public class CommandType : IEquatable<CommandType>, IComparable,IComparable<CommandType>, IFormattable
+    public class CommandType : IEquatable<CommandType>, IComparable, IComparable<CommandType>, IFormattable
     {
         #region 构造器
         /// <summary>
@@ -861,7 +856,7 @@ namespace XiaoFeng.Redis
         public int CompareTo(object obj)
         {
             if (obj == null) return 1;
-            if (obj is CommandType ct && this.Name == ct.Name && this.Format == ct.Format && this.Commands== ct.Commands) return 0;
+            if (obj is CommandType ct && this.Name == ct.Name && this.Format == ct.Format && this.Commands == ct.Commands) return 0;
             return -1;
         }
         /// <summary>

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using XiaoFeng.Config;
@@ -58,7 +56,7 @@ namespace XiaoFeng.Threading
         ///<inheritdoc/>
         public Task AddWorkItem(Action<object> action, object state, CancellationToken cancel, TaskCreationOptions creationOptions = TaskCreationOptions.None)
         {
-           return base.AddWorkItem(c => new Task(action, state, cancel == CancellationToken.None ? c : CancellationTokenSource.CreateLinkedTokenSource(c, cancel).Token, creationOptions));
+            return base.AddWorkItem(c => new Task(action, state, cancel == CancellationToken.None ? c : CancellationTokenSource.CreateLinkedTokenSource(c, cancel).Token, creationOptions));
         }
         ///<inheritdoc/>
         public override Task ExecuteAsync(Func<CancellationToken, Task> workItem, CancellationToken cancellationToken)

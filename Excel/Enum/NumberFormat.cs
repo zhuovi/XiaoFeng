@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
+﻿using System.ComponentModel;
 
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
@@ -49,7 +46,7 @@ namespace XiaoFeng.Excel
         /// 时间
         /// </summary>
         [Description("时间")]
-        Time=165,
+        Time = 165,
         /// <summary>
         /// 百分比
         /// </summary>
@@ -64,12 +61,12 @@ namespace XiaoFeng.Excel
         /// 科学计数
         /// </summary>
         [Description("科学计数")]
-        Scientific=11,
+        Scientific = 11,
         /// <summary>
         /// 文本
         /// </summary>
         [Description("文本")]
-        Text=49,
+        Text = 49,
         /// <summary>
         /// 特殊
         /// </summary>

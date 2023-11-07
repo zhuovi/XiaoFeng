@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using XiaoFeng.Event;
@@ -89,7 +88,7 @@ namespace XiaoFeng.FTP
         /// 委托事件 发送消息
         /// </summary>
         public event MessageEventHandler OnSendByte;
-        
+
         #endregion
 
         #region 方法
@@ -677,7 +676,7 @@ namespace XiaoFeng.FTP
             if (!(response.StatusCode == FtpStatusCode.DataAlreadyOpen || response.StatusCode == FtpStatusCode.OpeningData))
             {
                 string msg = response.Message;
-                if(msg.Contains("Permission denied"))
+                if (msg.Contains("Permission denied"))
                 {
                     msg += "(请检查是否没有权限或文件已上传)";
                 }
@@ -693,7 +692,7 @@ namespace XiaoFeng.FTP
             {
                 socketData.Send(buffer, iBytes, 0);
                 allbyte += iBytes;
-                this.SendByte(allbyte.ToString()); 
+                this.SendByte(allbyte.ToString());
             }
             input.Close();
 

@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using XiaoFeng.Config;
 using XiaoFeng.IO;
 /****************************************************************
 *  Copyright © (2021) www.fayelf.com All Rights Reserved.       *
@@ -20,7 +15,7 @@ namespace XiaoFeng.Cache
     /// <summary>
     /// 文件缓存
     /// </summary>
-    public class FileCache :BaseCache, IMemoryCacheX
+    public class FileCache : BaseCache, IMemoryCacheX
     {
         #region 构造器
         /// <summary>
@@ -123,13 +118,13 @@ namespace XiaoFeng.Cache
         {
             if (key.IsNullOrEmpty() || value == null || expiresIn.TotalMilliseconds <= 1000) return false;
             //var val = @"/**Cache->CreateTime:{0}*Cache->ExpireTime:{1}*Cache->ObjectType:{2}*Cache->Path:{3}*/{4}".format(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"), DateTime.Now.AddMilliseconds(expiresIn.TotalMilliseconds).ToString("yyyy-MM-dd HH:mm:ss.fff"), value.GetType().AssemblyQualifiedName, "", this.GetValue(value));
-                var val = new CacheModel
-                {
-                    ExpireTime = DateTime.Now.AddMilliseconds(expiresIn.TotalMilliseconds),
-                    Value = value,
-                    ExpiresIn = expiresIn.TotalMilliseconds,
-                    IsSliding = isSliding
-                };
+            var val = new CacheModel
+            {
+                ExpireTime = DateTime.Now.AddMilliseconds(expiresIn.TotalMilliseconds),
+                Value = value,
+                ExpiresIn = expiresIn.TotalMilliseconds,
+                IsSliding = isSliding
+            };
             return FileHelper.WriteText(this.GetKey(key), val.ToString());
         }
         ///<inheritdoc/>
@@ -137,11 +132,11 @@ namespace XiaoFeng.Cache
         {
             if (key.IsNullOrEmpty() || value.IsNullOrEmpty() || path.IsNullOrEmpty()) return false;
             //var val = @"/**Cache->CreateTime:{0}*Cache->ExpireTime:{1}*Cache->ObjectType:{2}*Cache->Path:{3}*/{4}".format(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"), "", value.GetType().AssemblyQualifiedName, path.GetBasePath(), this.GetValue(value));
-                var val = new CacheModel
-                {
-                    Value = value,
-                    Path = path
-                };
+            var val = new CacheModel
+            {
+                Value = value,
+                Path = path
+            };
             return FileHelper.WriteText(this.GetKey(key), val.ToString());
         }
         ///<inheritdoc/>

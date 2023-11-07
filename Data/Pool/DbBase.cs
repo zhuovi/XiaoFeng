@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data;
 using System.Data.Common;
-using XiaoFeng.Data.SQL;
+using System.Text;
+using System.Threading.Tasks;
 using XiaoFeng.Collections;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
@@ -648,7 +646,7 @@ namespace XiaoFeng.Data.Pool
         /// <returns>返回一个DataTable</returns>
         public DataTable ExecuteDataTable(string commandText, CommandType commandType, DbParameter[] parameter)
         {
-            return this.Pool.Execute((db,factory) =>
+            return this.Pool.Execute((db, factory) =>
             {
                 DataTable Dt = new DataTable
                 {
@@ -667,43 +665,43 @@ namespace XiaoFeng.Data.Pool
                     sda.Fill(Dt);
 #else
 
-                if (factory.CanCreateDataAdapter)
-                {
-                    var sda = factory.CreateDataAdapter();
-                    sda.SelectCommand = Cmd;
-                    sda.Fill(Dt);
-                }
-                else
-                {
-                    var sdr = Cmd.ExecuteReader(CommandBehavior.CloseConnection);
-                    sdr.GetColumnSchema().Each(c =>
+                    if (factory.CanCreateDataAdapter)
                     {
-                        var dc = new DataColumn(c.ColumnName, c.DataType);
-                        if (c.IsAutoIncrement.HasValue && c.IsAutoIncrement.Value)
-                        {
-                            dc.AutoIncrementStep = 1;
-                            dc.AutoIncrement = true;
-                            dc.AutoIncrementSeed = 1;
-                        }
-                        if (c.IsUnique.HasValue)
-                            dc.Unique = c.IsUnique.Value;
-                        if (c.AllowDBNull.HasValue)
-                            dc.AllowDBNull = c.AllowDBNull.Value;
-
-                        Dt.Columns.Add(dc);
-                    });
-                    while (sdr.Read())
-                    {
-                        var dr = Dt.NewRow();
-                        for (var i = 0; i < sdr.FieldCount; i++)
-                        {
-                            dr[i] = sdr[i].GetValue(Dt.Columns[i].DataType);
-                        }
-                        Dt.Rows.Add(dr);
+                        var sda = factory.CreateDataAdapter();
+                        sda.SelectCommand = Cmd;
+                        sda.Fill(Dt);
                     }
-                    sdr.Close();
-                    sdr = null;
-                }
+                    else
+                    {
+                        var sdr = Cmd.ExecuteReader(CommandBehavior.CloseConnection);
+                        sdr.GetColumnSchema().Each(c =>
+                        {
+                            var dc = new DataColumn(c.ColumnName, c.DataType);
+                            if (c.IsAutoIncrement.HasValue && c.IsAutoIncrement.Value)
+                            {
+                                dc.AutoIncrementStep = 1;
+                                dc.AutoIncrement = true;
+                                dc.AutoIncrementSeed = 1;
+                            }
+                            if (c.IsUnique.HasValue)
+                                dc.Unique = c.IsUnique.Value;
+                            if (c.AllowDBNull.HasValue)
+                                dc.AllowDBNull = c.AllowDBNull.Value;
+
+                            Dt.Columns.Add(dc);
+                        });
+                        while (sdr.Read())
+                        {
+                            var dr = Dt.NewRow();
+                            for (var i = 0; i < sdr.FieldCount; i++)
+                            {
+                                dr[i] = sdr[i].GetValue(Dt.Columns[i].DataType);
+                            }
+                            Dt.Rows.Add(dr);
+                        }
+                        sdr.Close();
+                        sdr = null;
+                    }
 #endif     
                     Cmd.Parameters.Clear();
                 }
@@ -781,7 +779,7 @@ namespace XiaoFeng.Data.Pool
         /// <returns>返回一个DataSet</returns>
         public DataSet ExecuteDataSet(string commandText, CommandType commandType, DbParameter[] parameter)
         {
-            return this.Pool.Execute((db,factory) =>
+            return this.Pool.Execute((db, factory) =>
             {
                 DataSet Ds = new DataSet
                 {

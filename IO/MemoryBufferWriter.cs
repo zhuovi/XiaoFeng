@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 /****************************************************************
 *  Copyright © (2023) www.eelf.cn All Rights Reserved.          *
@@ -17,7 +16,7 @@ namespace XiaoFeng.IO
     /// <summary>
     /// 内存流写入器
     /// </summary>
-    public class MemoryBufferWriter:MemoryBufferBase, IMemoryBufferWriter
+    public class MemoryBufferWriter : MemoryBufferBase, IMemoryBufferWriter
     {
         #region 构造器
         /// <summary>

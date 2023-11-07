@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Security;
 using System.Net.Sockets;
+using System.Runtime.ExceptionServices;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
-using System.Net;
-using System.Threading.Tasks;
-using System.Runtime.ExceptionServices;
 using System.Threading;
-using System.Net.Security;
-using System.IO;
+using System.Threading.Tasks;
 using XiaoFeng.IO;
-using System.Linq;
-using System.Net.NetworkInformation;
 using XiaoFeng.Threading;
-using System.Security.Cryptography;
 
 /****************************************************************
 *  Copyright © (2023) www.fayelf.com All Rights Reserved.       *
@@ -366,7 +363,7 @@ namespace XiaoFeng.Net
         {
             if (host.IsNullOrEmpty()) host = "127.0.0.1";
             if (port <= 0) port = 1006;
-            this.EndPoint = new IPEndPoint(Dns.GetHostAddresses(host).First(a=>a.AddressFamily == AddressFamily.InterNetwork), port);
+            this.EndPoint = new IPEndPoint(Dns.GetHostAddresses(host).First(a => a.AddressFamily == AddressFamily.InterNetwork), port);
             return await this.CompleteConnectAsync(async () =>
             {
                 try

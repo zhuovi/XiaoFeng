@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
 
 /****************************************************************
@@ -147,20 +143,20 @@ namespace XiaoFeng.Collections
                     var stm = s as NetworkStream;
                     //while (true)
                     //{
-                        if (stream.DataAvailable)
+                    if (stream.DataAvailable)
+                    {
+                        var bs = new MemoryStream();
+                        var bytes = new byte[MemorySize];
+                        var count = stream.Read(bytes, 0, bytes.Length);
+                        while (count > 0)
                         {
-                            var bs = new MemoryStream();
-                            var bytes = new byte[MemorySize];
-                            var count = stream.Read(bytes, 0, bytes.Length);
-                            while (count > 0)
-                            {
-                                bs.Write(bytes, 0, count);
-                                Array.Clear(bytes, 0, count);
-                                count = stream.DataAvailable ? stream.Read(bytes, 0, bytes.Length) : 0;
-                            }
-                            callback.Invoke(bs.ToArray());
-                            //break;
+                            bs.Write(bytes, 0, count);
+                            Array.Clear(bytes, 0, count);
+                            count = stream.DataAvailable ? stream.Read(bytes, 0, bytes.Length) : 0;
                         }
+                        callback.Invoke(bs.ToArray());
+                        //break;
+                    }
                     //}
                 }, stream).Start();
             }

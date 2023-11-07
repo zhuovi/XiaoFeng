@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-/****************************************************************
+﻿/****************************************************************
 *  Copyright © (2023) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
 *  QQ : 7092734                                                 *
@@ -78,7 +74,7 @@ namespace XiaoFeng.Net
         /// <summary>
         /// 响应包
         /// </summary>
-        Response =1
+        Response = 1
     }
     /// <summary>
     /// 数据格式类型

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using XiaoFeng.Threading;
+﻿using XiaoFeng.Threading;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -37,7 +32,7 @@ namespace XiaoFeng.Collections
         /// <summary>
         /// 空闲多长时间关闭资源 单位为秒 0为不清除
         /// </summary>
-       int IdleTime { get; set; }
+        int IdleTime { get; set; }
         /// <summary>
         /// 多长时间检查一次 单位为秒 0为不定时检查
         /// </summary>

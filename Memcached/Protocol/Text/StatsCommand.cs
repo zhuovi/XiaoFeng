@@ -32,7 +32,7 @@ namespace XiaoFeng.Memcached.Protocol.Text
         /// <param name="timeout">延时时间</param>
         /// <param name="itemValue">指定需要查看的items的值</param>
         /// <param name="itemCount">指定需要查看多少个key</param>
-        public StatsCommand(ISocketClient socket, CommandType commandType, uint timeout,int itemValue,int itemCount)
+        public StatsCommand(ISocketClient socket, CommandType commandType, uint timeout, int itemValue, int itemCount)
         {
             this.SocketClient = socket;
             this.CommandType = commandType;
@@ -116,11 +116,11 @@ namespace XiaoFeng.Memcached.Protocol.Text
                 dict.Add("Version", line.RemovePattern(@"^version\s+"));
                 return;
             }
-            if(commandType== CommandType.StatsKeys)
+            if (commandType == CommandType.StatsKeys)
             {
-                while(line.StartsWith("ITEM", StringComparison.OrdinalIgnoreCase) && !line.EqualsIgnoreCase(ReturnResult.END.GetEnumName()))
+                while (line.StartsWith("ITEM", StringComparison.OrdinalIgnoreCase) && !line.EqualsIgnoreCase(ReturnResult.END.GetEnumName()))
                 {
-                    var args = line.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+                    var args = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                     if (args.Length == 6)
                     {
                         var length = args[2].Trim('[');

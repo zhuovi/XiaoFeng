@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -59,6 +55,6 @@ namespace XiaoFeng
         /// </summary>
         /// <param name="target">目标引用对象</param>
         /// <returns></returns>
-        public static implicit operator WeakReference<T>(T target)=> new WeakReference<T>(target);
+        public static implicit operator WeakReference<T>(T target) => new WeakReference<T>(target);
     }
 }

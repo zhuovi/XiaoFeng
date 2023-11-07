@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 /****************************************************************
 *  Copyright © (2015) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -47,7 +43,7 @@ namespace XiaoFeng.Data
         /// </summary>
         private DbTransaction _Transaction = null;
         ///<inheritdoc/>
-        public DbTransaction Transaction { get { return this.IsOpen ? this._Transaction : null; } set { this._Transaction = value; this.IsOpen = true;this.Connection = value.Connection;this.Scope = null; } }
+        public DbTransaction Transaction { get { return this.IsOpen ? this._Transaction : null; } set { this._Transaction = value; this.IsOpen = true; this.Connection = value.Connection; this.Scope = null; } }
         /// <summary>
         /// 事务
         /// </summary>

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Linq;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -19,7 +18,7 @@ namespace XiaoFeng
     /// 参数操作类 第一种内核 第二种 ParamHelper
     /// Version : 1.0.1
     /// </summary>
-    public class QueryHelper:IDisposable
+    public class QueryHelper : IDisposable
     {
         #region 构造器
         /// <summary>
@@ -288,7 +287,7 @@ namespace XiaoFeng
     /// 参数操作类 第二种内核  第一种 QueryHelper
     /// Version : 1.0.1
     /// </summary>
-    public class ParamHelper:IDisposable
+    public class ParamHelper : IDisposable
     {
         #region 构造器
         /// <summary>
@@ -457,7 +456,7 @@ namespace XiaoFeng
                 if (url.Length > 1)
                 {
                     this.path = url[0];
-                    this.setData(url[1].IsNullOrEmpty() ? "" : ("&" + url[1]));               
+                    this.setData(url[1].IsNullOrEmpty() ? "" : ("&" + url[1]));
                 }
             }
             else

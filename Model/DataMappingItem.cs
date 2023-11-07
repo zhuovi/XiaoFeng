@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-/****************************************************************
+﻿/****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
 *  QQ : 7092734                                                 *
@@ -17,7 +13,7 @@ namespace XiaoFeng.Model
     /// <summary>
     /// 数据库映射项
     /// </summary>
-    public class DataMappingItem : Disposable,IDataMappingItem
+    public class DataMappingItem : Disposable, IDataMappingItem
     {
         #region 构造器
         /// <summary>

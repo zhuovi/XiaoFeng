@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -128,7 +126,7 @@ namespace XiaoFeng.Net
         /// <returns></returns>
         public byte[] GetBytes()
         {
-            byte[] buffer = new byte[2]{0,0};
+            byte[] buffer = new byte[2] { 0, 0 };
 
             if (_fin) buffer[0] ^= 0x80;
             if (_rsv1) buffer[0] ^= 0x40;

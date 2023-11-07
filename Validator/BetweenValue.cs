@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-/****************************************************************
+﻿/****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
 *  QQ : 7092734                                                 *
@@ -27,7 +22,7 @@ namespace XiaoFeng.Validator
         /// <param name="MaxValue">最大值</param>
         public BetweenValue(double MinValue, double MaxValue)
         {
-            this.MaxValue = MaxValue;this.MinValue = MinValue;
+            this.MaxValue = MaxValue; this.MinValue = MinValue;
         }
         /// <summary>
         /// 最大值

@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data;
-using System.Reflection;
 using System.Data.Common;
+using System.Linq;
+using System.Reflection;
+using System.Text;
 using XiaoFeng.Model;
-using XiaoFeng.Excel;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -521,7 +519,7 @@ ON {Table.Name}({(from a in index.Keys select a.RemovePattern(@",[a-z]*$").Repla
             if (view == null && table == null) return false;
             if (table != null && table.ModelType != ModelType.View) return false;
             if (view == null) return false;
-                if (viewName.IsNotNullOrEmpty()) view.Name = viewName;
+            if (viewName.IsNotNullOrEmpty()) view.Name = viewName;
             if (view.Definition.IsNullOrEmpty()) return false;
             else
             {
@@ -535,4 +533,4 @@ ON {Table.Name}({(from a in index.Keys select a.RemovePattern(@",[a-z]*$").Repla
 
         #endregion
     }
-} 
+}

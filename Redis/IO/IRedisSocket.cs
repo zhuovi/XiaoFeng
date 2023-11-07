@@ -17,7 +17,7 @@ namespace XiaoFeng.Redis.IO
     /// <summary>
     /// IRedisSocket
     /// </summary>
-    public interface IRedisSocket: IDisposable
+    public interface IRedisSocket : IDisposable
     {
         /// <summary>
         /// 是否是SSL

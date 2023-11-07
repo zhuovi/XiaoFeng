@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Threading;
-using System.Linq.Expressions;
+using System.Threading.Tasks;
 /****************************************************************
 *  Copyright © (2022-2023) www.fayelf.com All Rights Reserved.  *
 *  Author : jacky                                               *
@@ -107,9 +104,9 @@ namespace XiaoFeng.Redis
         {
             lock (StatusLock)
             {
-                if (this.ListenStatus) 
+                if (this.ListenStatus)
                     return;
-                else 
+                else
                     this.ListenStatus = true;
             }
             Task.Factory.StartNew(() =>

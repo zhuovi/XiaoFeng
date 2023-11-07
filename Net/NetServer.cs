@@ -1,17 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Net;
-using System.Net.Sockets;
-using System.Threading;
 using System.Collections;
 using System.Collections.Concurrent;
-using System.Diagnostics;
-using XiaoFeng.Config;
-using System.Security.Cryptography.X509Certificates;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using XiaoFeng.Config;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -111,30 +110,30 @@ namespace XiaoFeng.Net
         /// 协议类型
         /// </summary>
         public ProtocolType ProtocolType { get; set; } = ProtocolType.IP;
-		/// <summary>
-		/// 获取或设置 System.Boolean 值，该值指定流 System.Net.Sockets.Socket 是否正在使用 Nagle 算法。使用 Nagle 算法，则为 false；否则为 true。 默认值为 false。
-		/// </summary>
-		public Boolean NoDelay { get; set; } = false;
-		/// <summary>
-		/// 获取或设置一个值，该值指定之后同步 Overload:System.Net.Sockets.Socket.Receive 调用将超时的时间长度。默认值为 0，指示超时期限无限大。 指定 -1 还会指示超时期限无限大。
-		/// </summary>
-		public int ReceiveTimeout { get; set; } = 0;
-		/// <summary>
-		/// 获取或设置一个值，该值指定之后同步 Overload:System.Net.Sockets.Socket.Send 调用将超时的时间长度。超时值（以毫秒为单位）。 如果将该属性设置为 1 到 499 之间的值，该值将被更改为 500。 默认值为 0，指示超时期限无限大。 指定 -1 还会指示超时期限无限大。
-		/// </summary>
-		public int SendTimeout { get; set; } = 0;
-		/// <summary>
-		/// 获取或设置一个值，它指定 System.Net.Sockets.Socket 接收缓冲区的大小。System.Int32，它包含接收缓冲区的大小（以字节为单位）。 默认值为 8192。
-		/// </summary>
-		public int ReceiveBufferSize { get; set; } = 8192;
-		/// <summary>
-		/// 获取或设置一个值，该值指定 System.Net.Sockets.Socket 发送缓冲区的大小。System.Int32，它包含发送缓冲区的大小（以字节为单位）。 默认值为 8192。
-		/// </summary>
-		public int SendBufferSize { get; set; } = 8192;
-		/// <summary>
-		/// 连接请求数
-		/// </summary>
-		public int ListenCount { get; set; } = int.MaxValue;
+        /// <summary>
+        /// 获取或设置 System.Boolean 值，该值指定流 System.Net.Sockets.Socket 是否正在使用 Nagle 算法。使用 Nagle 算法，则为 false；否则为 true。 默认值为 false。
+        /// </summary>
+        public Boolean NoDelay { get; set; } = false;
+        /// <summary>
+        /// 获取或设置一个值，该值指定之后同步 Overload:System.Net.Sockets.Socket.Receive 调用将超时的时间长度。默认值为 0，指示超时期限无限大。 指定 -1 还会指示超时期限无限大。
+        /// </summary>
+        public int ReceiveTimeout { get; set; } = 0;
+        /// <summary>
+        /// 获取或设置一个值，该值指定之后同步 Overload:System.Net.Sockets.Socket.Send 调用将超时的时间长度。超时值（以毫秒为单位）。 如果将该属性设置为 1 到 499 之间的值，该值将被更改为 500。 默认值为 0，指示超时期限无限大。 指定 -1 还会指示超时期限无限大。
+        /// </summary>
+        public int SendTimeout { get; set; } = 0;
+        /// <summary>
+        /// 获取或设置一个值，它指定 System.Net.Sockets.Socket 接收缓冲区的大小。System.Int32，它包含接收缓冲区的大小（以字节为单位）。 默认值为 8192。
+        /// </summary>
+        public int ReceiveBufferSize { get; set; } = 8192;
+        /// <summary>
+        /// 获取或设置一个值，该值指定 System.Net.Sockets.Socket 发送缓冲区的大小。System.Int32，它包含发送缓冲区的大小（以字节为单位）。 默认值为 8192。
+        /// </summary>
+        public int SendBufferSize { get; set; } = 8192;
+        /// <summary>
+        /// 连接请求数
+        /// </summary>
+        public int ListenCount { get; set; } = int.MaxValue;
         /// <summary>
         /// 取消通知
         /// </summary>
@@ -273,8 +272,8 @@ namespace XiaoFeng.Net
             try
             {
                 this.CancelToken = new CancellationTokenSource();
-				/*定义一个套接字用于监听客户端发来的消息,包含三个参数（IP4寻址协议，流式连接，Tcp协议）*/
-				ClientSocket = new Socket(this.AddressFamily, this.SocketType, this.ProtocolType)
+                /*定义一个套接字用于监听客户端发来的消息,包含三个参数（IP4寻址协议，流式连接，Tcp协议）*/
+                ClientSocket = new Socket(this.AddressFamily, this.SocketType, this.ProtocolType)
                 {
                     NoDelay = this.NoDelay,
                     ReceiveTimeout = this.ReceiveTimeout,
@@ -355,7 +354,7 @@ namespace XiaoFeng.Net
                                 WriteTimeout = this.SendTimeout,
                                 //SetSocketType = this.UpdateQueue
                             };
-                            session.OnNewConnection += (o,e)=>
+                            session.OnNewConnection += (o, e) =>
                             {
                                 this.AddQueue((TSession)o);
                                 //OnNewConnection?.Invoke(o, EventArgs.Empty);
@@ -389,14 +388,15 @@ namespace XiaoFeng.Net
                             session.OnSessionError += this.OnClientError;
                             /*增加SSL*/
                             //session.Start();
-                            /**/session.ConnectionSocket.BeginReceive(
-                                session.ReceivedDataBuffer,
-                                0,
-                                session.ReceivedDataBuffer.Length,
-                                SocketFlags.None, 
-                                new AsyncCallback(session.ManageHandshake),
-                                session.ConnectionSocket.Available
-                            );
+                            /**/
+                            session.ConnectionSocket.BeginReceive(
+                            session.ReceivedDataBuffer,
+                            0,
+                            session.ReceivedDataBuffer.Length,
+                            SocketFlags.None,
+                            new AsyncCallback(session.ManageHandshake),
+                            session.ConnectionSocket.Available
+                        );
                             this.AddQueue(session);
                         }
                     }
@@ -649,18 +649,18 @@ namespace XiaoFeng.Net
                 {
                     this.ConnectionSocketList.TryRemove(session.EndPoint, out IServerSession _);
                 }
-				if (session.IsConnected())
-					session.Close();
-				else
-					OnDisconnected?.Invoke(session, EventArgs.Empty);
-			}
+                if (session.IsConnected())
+                    session.Close();
+                else
+                    OnDisconnected?.Invoke(session, EventArgs.Empty);
+            }
             catch (SocketException sex)
             {
                 LogHelper.Error(sex);
             }
             finally
             {
-                
+
             }
         }
         /// <summary>
@@ -676,25 +676,25 @@ namespace XiaoFeng.Net
                 {
                     if (this.ConnectionSocketList != null && this.ConnectionSocketList.Count > 0)
                     {
-                        if(this.ConnectionSocketList.TryRemove(endPoint, out IServerSession session))
+                        if (this.ConnectionSocketList.TryRemove(endPoint, out IServerSession session))
                         {
                             if (session.IsConnected())
                             {
                                 session.Close();
                                 return;
                             }
-						}
+                        }
                     }
                 }
-				OnDisconnected?.Invoke(new ServerSession { EndPoint = endPoint }, EventArgs.Empty);
-			}
+                OnDisconnected?.Invoke(new ServerSession { EndPoint = endPoint }, EventArgs.Empty);
+            }
             catch (SocketException sex)
             {
                 LogHelper.Error(sex);
             }
             finally
             {
-                
+
             }
         }
         /// <summary>
@@ -933,8 +933,8 @@ namespace XiaoFeng.Net
         public void Close(Func<IServerSession, bool> func)
         {
             var session = this.GetQueue(func);
-			//this.RemoveQueue(session);
-			session?.Close();
+            //this.RemoveQueue(session);
+            session?.Close();
         }
         /// <summary>
         /// 关闭客户端连接
@@ -1011,7 +1011,7 @@ namespace XiaoFeng.Net
                 GC.SuppressFinalize(this);
             }
             AlreadyDisposed = false;
-			this.SocketState = SocketState.Stop;
+            this.SocketState = SocketState.Stop;
         }
         #endregion
 
@@ -1030,6 +1030,6 @@ namespace XiaoFeng.Net
             return false;
         }
         #endregion
-        
+
     }
 }

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using XiaoFeng.Cache;
+﻿using System.ComponentModel;
 using XiaoFeng.Json;
 using XiaoFeng.Log;
 /****************************************************************
@@ -106,16 +99,17 @@ namespace XiaoFeng.Config
         /// 任务队列执行任务超时时间 单位为秒
         /// </summary>
         [Description("任务队列执行任务超时时间")]
-        public int TaskWaitTimeout {
+        public int TaskWaitTimeout
+        {
             get
             {
                 if (this._TaskWaitTimeout == 0)
                     this._TaskWaitTimeout = 300;
-                return this._TaskWaitTimeout ;
+                return this._TaskWaitTimeout;
             }
             set
             {
-                this._TaskWaitTimeout  = value;
+                this._TaskWaitTimeout = value;
             }
         }
         /// <summary>

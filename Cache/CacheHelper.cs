@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
-using XiaoFeng;
 using XiaoFeng.Config;
-using XiaoFeng.OS;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -38,7 +31,7 @@ namespace XiaoFeng.Cache
         static CacheHelper()
         {
             //Cache = Platform.IsWebForm ? Cache = new MemoryCacheHelper() : new MemoryCacheManage();
-            
+
         }
         #endregion
 
@@ -288,7 +281,7 @@ namespace XiaoFeng.Cache
         /// </summary>
         /// <param name="key">键</param>
         /// <returns></returns>
-        public virtual T Get<T>(string key) where T:class
+        public virtual T Get<T>(string key) where T : class
         {
             return (T)this.Get(key);
         }

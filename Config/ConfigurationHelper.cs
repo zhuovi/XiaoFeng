@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using XiaoFeng.IO;
-
-/****************************************************
+﻿/****************************************************
  *  Copyright © www.fayelf.com All Rights Reserved  *
  *  Author : jacky                                  *
  *  QQ : 7092734                                    *

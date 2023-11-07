@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Reflection;
+using System.Text;
 using XiaoFeng.Model;
 /****************************************************************
 *  Copyright © (2021) www.fayelf.com All Rights Reserved.       *
@@ -225,7 +224,7 @@ select 1;
             string Fields = "", Indexs = "", PrimaryKey = "";
             Table.Name = (Table.Name == null || Table.Name.IsNullOrEmpty()) ? modelType.Name : Table.Name;
             DataType dType = new DataType(this.ProviderType);
-            modelType.GetProperties(BindingFlags.Public | BindingFlags.IgnoreCase| BindingFlags.Instance).Each(p =>
+            modelType.GetProperties(BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance).Each(p =>
             {
                 if (p.GetCustomAttribute<FieldIgnoreAttribute>() != null) return;
                 if (",ConnectionString,ConnectionTimeOut,CommandTimeOut,ProviderType,IsTransaction,ErrorMessage,tableName,QueryableX,".IndexOf("," + p.Name + ",") == -1)
@@ -387,7 +386,7 @@ select 1;
                 }
                 if (index.Keys == null) index.Keys = new List<string>();
                 var key = a["COLUMN_NAME"].ToString();
-                index.Keys.Add(key + "," + a["DESCEND"] +"," + a["INDEX_TYPE"].ToString());
+                index.Keys.Add(key + "," + a["DESCEND"] + "," + a["INDEX_TYPE"].ToString());
                 list.Add(index);
             });
             return list;

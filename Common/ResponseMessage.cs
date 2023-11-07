@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Xml.Serialization;
-using XiaoFeng;
-using XiaoFeng.Json;
-using System.Data;
+using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Text;
-using System.ComponentModel;
+using System.Xml.Serialization;
+using XiaoFeng.Json;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -43,7 +38,7 @@ namespace XiaoFeng
         /// <param name="data">数据</param>
         public ResponseMessage(ResponseState state, string message = "", T data = default(T))
         {
-            this.Status = state; this.Data = data; this.Message = message; 
+            this.Status = state; this.Data = data; this.Message = message;
         }
         /// <summary>
         /// 设置信息

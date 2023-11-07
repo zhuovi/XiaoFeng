@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 /****************************************************
  *  Copyright © www.fayelf.com All Rights Reserved. *
@@ -54,7 +50,7 @@ namespace XiaoFeng.Cryptography
         /// <param name="data">数据</param>
         /// <param name="slatKey">16和32</param>
         /// <returns></returns>
-        public string Encrypts(byte[] data,string slatKey = "32")
+        public string Encrypts(byte[] data, string slatKey = "32")
         {
             var _data = this.Encode(data, null, null);
             return (slatKey.IsNullOrEmpty() || slatKey == "32") ? BitConverter.ToString(_data, 0, 16).Replace("-", "") : BitConverter.ToString(_data, 4, 8);

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using XiaoFeng.Excel.Model;
+﻿using XiaoFeng.Excel.Model;
 
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
@@ -35,7 +32,7 @@ namespace XiaoFeng.Excel
         /// <param name="format">数值格式</param>
         public Cell(string value, NumberFormat format = NumberFormat.General)
         {
-            Value = new CellValue(value,format);
+            Value = new CellValue(value, format);
             Format = format;
         }
 

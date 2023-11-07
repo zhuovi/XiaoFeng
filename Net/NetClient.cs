@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Authentication;
@@ -23,8 +22,8 @@ namespace XiaoFeng.Net
     /// <summary>
     /// 网络客户端
     /// </summary>
-    [Obsolete("当前类库已过期,请使用SocketClient.",false)]
-    public class NetClient<TSession> : INetClient where TSession : IClientSession,new()
+    [Obsolete("当前类库已过期,请使用SocketClient.", false)]
+    public class NetClient<TSession> : INetClient where TSession : IClientSession, new()
     {
         #region 构造器
         /// <summary>
@@ -54,7 +53,7 @@ namespace XiaoFeng.Net
                 }
                 this.Session = new TSession
                 {
-                    EndPoint = new IPEndPoint(_ip,port),
+                    EndPoint = new IPEndPoint(_ip, port),
                     Path = path,
                     WsType = ws.ToEnum<WebSocketType>(),
                     Host = ip,
@@ -155,10 +154,10 @@ namespace XiaoFeng.Net
         /// 连接数据
         /// </summary>
         public TSession Session { get; set; }
-		/// <summary>
-		/// 获取或设置 System.Boolean 值，该值指定流 System.Net.Sockets.Socket 是否正在使用 Nagle 算法。使用 Nagle 算法，则为 false；否则为 true。 默认值为 false。
-		/// </summary>
-		public Boolean NoDelay { get; set; } = false;
+        /// <summary>
+        /// 获取或设置 System.Boolean 值，该值指定流 System.Net.Sockets.Socket 是否正在使用 Nagle 算法。使用 Nagle 算法，则为 false；否则为 true。 默认值为 false。
+        /// </summary>
+        public Boolean NoDelay { get; set; } = false;
         /// <summary>
         /// 获取或设置一个值，该值指定之后同步 Overload:System.Net.Sockets.Socket.Receive 调用将超时的时间长度。默认值为 0，指示超时期限无限大。 指定 -1 还会指示超时期限无限大。
         /// </summary>
@@ -167,14 +166,14 @@ namespace XiaoFeng.Net
         /// 获取或设置一个值，该值指定之后同步 Overload:System.Net.Sockets.Socket.Send 调用将超时的时间长度。超时值（以毫秒为单位）。 如果将该属性设置为 1 到 499 之间的值，该值将被更改为 500。 默认值为 0，指示超时期限无限大。 指定 -1 还会指示超时期限无限大。
         /// </summary>
         public int SendTimeout { get; set; } = 0;
-		/// <summary>
-		/// 获取或设置一个值，它指定 System.Net.Sockets.Socket 接收缓冲区的大小。System.Int32，它包含接收缓冲区的大小（以字节为单位）。 默认值为 8192。
-		/// </summary>
-		public int ReceiveBufferSize { get; set; } = 8192;
-		/// <summary>
-		/// 获取或设置一个值，该值指定 System.Net.Sockets.Socket 发送缓冲区的大小。System.Int32，它包含发送缓冲区的大小（以字节为单位）。 默认值为 8192。
-		/// </summary>
-		public int SendBufferSize { get; set; } = 8192;
+        /// <summary>
+        /// 获取或设置一个值，它指定 System.Net.Sockets.Socket 接收缓冲区的大小。System.Int32，它包含接收缓冲区的大小（以字节为单位）。 默认值为 8192。
+        /// </summary>
+        public int ReceiveBufferSize { get; set; } = 8192;
+        /// <summary>
+        /// 获取或设置一个值，该值指定 System.Net.Sockets.Socket 发送缓冲区的大小。System.Int32，它包含发送缓冲区的大小（以字节为单位）。 默认值为 8192。
+        /// </summary>
+        public int SendBufferSize { get; set; } = 8192;
         /// <summary>
         /// 协议版本
         /// </summary>
@@ -183,13 +182,13 @@ namespace XiaoFeng.Net
         /// SSL 证书
         /// </summary>
         public X509Certificate Certificate { get; set; }
-		#endregion
+        #endregion
 
-		#region 事件
-		/// <summary>
-		/// 接收消息事件
-		/// </summary>
-		public event MessageEventHandler OnMessage;
+        #region 事件
+        /// <summary>
+        /// 接收消息事件
+        /// </summary>
+        public event MessageEventHandler OnMessage;
         /// <summary>
         /// 接收消息事件
         /// </summary>
@@ -247,7 +246,7 @@ namespace XiaoFeng.Net
                 ReceiveBufferSize = this.ReceiveBufferSize,
                 SendBufferSize = this.SendBufferSize
             };
-			IPEndPoint endPoint = this.Session.EndPoint;
+            IPEndPoint endPoint = this.Session.EndPoint;
             try
             {
                 /*客户端套接字连接到网络节点上,用的是Connect*/
@@ -273,11 +272,11 @@ namespace XiaoFeng.Net
                 OnError?.Invoke(this, ex);
             }
         }
-		/// <summary>
-		/// 运行
-		/// </summary>
-		/// <param name="iPEndPoint">远程host及端口</param>
-		public void Start(IPEndPoint iPEndPoint)
+        /// <summary>
+        /// 运行
+        /// </summary>
+        /// <param name="iPEndPoint">远程host及端口</param>
+        public void Start(IPEndPoint iPEndPoint)
         {
             this.Session.EndPoint = iPEndPoint;
             this.Start();

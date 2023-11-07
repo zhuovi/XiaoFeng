@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Net.Sockets;
 using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,11 +37,11 @@ namespace XiaoFeng.Http
     /// <param name="socket">连接对象</param>
     /// <param name="message">错误消息</param>
     public delegate void ConnectErrorEventHandler(WebSocket socket, string message);
-	/// <summary>
-	/// 断开连接
-	/// </summary>
-	/// <param name="socket">连接对象</param>
-	public delegate void DisconnectErrorEventHandler(WebSocket socket);
+    /// <summary>
+    /// 断开连接
+    /// </summary>
+    /// <param name="socket">连接对象</param>
+    public delegate void DisconnectErrorEventHandler(WebSocket socket);
     /// <summary>
     /// WebSocket客户端
     /// </summary>

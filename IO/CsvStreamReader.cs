@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.Linq;
+using System.Text;
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -91,7 +91,7 @@ namespace XiaoFeng.IO
                 var c = (char)b;
                 if (c == '\r')
                     nextline = true;
-                else if(c == '\n' && nextline)
+                else if (c == '\n' && nextline)
                 {
                     /*一行结束*/
                     if (!ClosureQuotes)

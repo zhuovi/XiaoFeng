@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -365,7 +362,7 @@ namespace XiaoFeng.Data.SQL
         /// <param name="field">对象</param>
         /// <param name="num">重复次数</param>
         /// <returns></returns>         
-        public static string ReplicateSQL(this string field, int num)=> string.Empty;
+        public static string ReplicateSQL(this string field, int num) => string.Empty;
         #endregion
 
         #region 扩展SQL Reverse
@@ -544,11 +541,11 @@ namespace XiaoFeng.Data.SQL
         {
             switch (dbProvider)
             {
-                case DbProviderType.Dameng: 
+                case DbProviderType.Dameng:
                     return _.ReplacePattern(@"@((Sub_(\d+_)?)?ParamName\d+)", "?");
-                case DbProviderType.Oracle: 
+                case DbProviderType.Oracle:
                     return _.ReplacePattern(@"@((Sub_(\d+_)?)?ParamName\d+)", ":$1");
-                default: 
+                default:
                     return _;
             }
         }

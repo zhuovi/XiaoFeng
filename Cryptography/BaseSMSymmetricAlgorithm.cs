@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
-using System.Text;
-using XiaoFeng.Cryptography;
 
 /****************************************************************
 *  Copyright © (2023) www.fayelf.com All Rights Reserved.       *
@@ -20,7 +17,7 @@ namespace XiaoFeng.Cryptography
     /// <summary>
     /// 基础类
     /// </summary>
-    public class BaseSMSymmetricAlgorithm: BaseCrypto
+    public class BaseSMSymmetricAlgorithm : BaseCrypto
     {
         #region 构造器
         /// <summary>

@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 using XiaoFeng.IO;
 /****************************************************
  *  Copyright © www.fayelf.com All Rights Reserved. *
@@ -429,7 +423,7 @@ namespace XiaoFeng.Cryptography
                 service.FromXmlString(privateKey);
             else
                 service.ImportParameters(FromPEM(privateKey));
-            
+
             return service.SignData(data, HashAlgorithm.Create(hashAlgorithmName.Name));
         }
         /// <summary>

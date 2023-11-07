@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using XiaoFeng.IO;
 
 /****************************************************************
@@ -103,12 +102,12 @@ namespace XiaoFeng.Cache
         /// <param name="isSliding">是否滑动过期（如果在过期时间内有操作，则以当前时间点延长过期时间）</param>
         public bool Set(string key, object value, string path, TimeSpan expiresIn, bool isSliding = false)
         {
-            if (!FileHelper.Exists(path,FileAttribute.File)) return false;
+            if (!FileHelper.Exists(path, FileAttribute.File)) return false;
             if (value.IsNullOrEmpty())
             {
                 value = FileHelper.OpenText(path);
             }
-           return Cache.TryAdd(key, value, expiresIn, isSliding ? expiresIn : TimeSpan.Zero, path);
+            return Cache.TryAdd(key, value, expiresIn, isSliding ? expiresIn : TimeSpan.Zero, path);
         }
         /// <summary>
         /// 设置缓存

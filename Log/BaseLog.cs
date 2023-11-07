@@ -1,15 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using XiaoFeng.Data;
-using XiaoFeng.Config;
-using System.Threading;
 using System.Diagnostics;
-using System.IO;
-using XiaoFeng.IO;
-using System.Collections.Concurrent;
+using XiaoFeng.Config;
+using XiaoFeng.Data;
 /****************************************************************
  *  Copyright © (2021) www.fayelf.com All Rights Reserved.      *
  *  Author : jacky                                              *
@@ -25,7 +17,7 @@ namespace XiaoFeng.Log
     /// <summary>
     /// 日志基础类
     /// </summary>
-    public abstract class BaseLog : Disposable,ILog
+    public abstract class BaseLog : Disposable, ILog
     {
         #region 构造器
         /// <summary>
@@ -37,7 +29,7 @@ namespace XiaoFeng.Log
 
             this.LogPath = this.Config.Path.IfEmpty("Log");
             this.StorageType = this.Config.StorageType;
-            this.ConnectionConfig =new ConnectionConfig(this.Config.ConnectionStringKey);
+            this.ConnectionConfig = new ConnectionConfig(this.Config.ConnectionStringKey);
             this.MessageType = this.Config.MessageType;
             this.LogLevel = this.Config.LogLevel;
             this.ConsoleFlags = this.Config.ConsoleFlags;
@@ -45,7 +37,7 @@ namespace XiaoFeng.Log
             /*初始化数据*/
             //var setting = Setting.Current;
             //if (setting.MaxWorkerThreads > 10)
-                //ThreadPool.SetMaxThreads(setting.MaxWorkerThreads, setting.MaxWorkerThreads);
+            //ThreadPool.SetMaxThreads(setting.MaxWorkerThreads, setting.MaxWorkerThreads);
             //ThreadPool.SetMinThreads(1, 1);
         }
         #endregion

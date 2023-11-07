@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -22,7 +19,7 @@ namespace XiaoFeng.IO
         /// <summary>
         /// 未知
         /// </summary>
-        [Description("未知")] 
+        [Description("未知")]
         UNKNOW = 0,
         /// <summary>
         /// 家目录

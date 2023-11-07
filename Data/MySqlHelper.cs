@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
 using System.Data.Common;
+using System.Linq;
+using System.Reflection;
+using System.Text;
 using XiaoFeng.Model;
 
 /****************************************************************
@@ -26,7 +25,7 @@ namespace XiaoFeng.Data
     /// Create Time : 2018/06/29 09:11:53
     /// Update Time : 2018/06/29 09:11:53
     /// </summary>
-    public class MySqlHelper:DataHelper,IDbHelper
+    public class MySqlHelper : DataHelper, IDbHelper
     {
         #region 构造器
         /// <summary>
@@ -359,7 +358,7 @@ select 1;
         /// <typeparam name="T">类型</typeparam>
         /// <param name="tableName">表名</param>
         /// <returns></returns>
-        public virtual Boolean CreateTable<T>(string tableName = "")=> CreateTable(typeof(T), tableName);
+        public virtual Boolean CreateTable<T>(string tableName = "") => CreateTable(typeof(T), tableName);
         #endregion
 
         #region 创建视图

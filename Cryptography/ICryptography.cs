@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 /****************************************************
  *  Copyright © www.fayelf.com All Rights Reserved  *
@@ -20,69 +16,69 @@ namespace XiaoFeng.Cryptography
     /// </summary>
     public interface ICryptography
     {
-		/// <summary>
-		/// 加密方法
-		/// </summary>
-		/// <param name="data">明文</param>
-		/// <param name="slatKey">密钥</param>
-		/// <param name="vectorKey">偏移量</param>
-		/// <param name="outputMode">输出模式</param>
-		/// <returns>加密后的字符串</returns>
-		String Encrypt(String data, String slatKey = "", String vectorKey = "", OutputMode outputMode = OutputMode.Base64);
-		/// <summary>
-		/// 加密方法
-		/// </summary>
-		/// <param name="data">明文</param>
-		/// <param name="slatKey">密钥</param>
-		/// <param name="outputMode">输出模式</param>
-		/// <returns></returns>
-		String Encrypt(String data, String slatKey, OutputMode outputMode);
-		/// <summary>
-		/// 加密方法
-		/// </summary>
-		/// <param name="data">明文</param>
-		/// <param name="outputMode">输出模式</param>
-		/// <returns></returns>
-		String Encrypt(String data, OutputMode outputMode);
-		/// <summary>
-		/// 解密方法
-		/// </summary>
-		/// <param name="data">密文</param>
-		/// <param name="slatKey">密钥</param>
-		/// <param name="vectorKey">偏移量</param>
-		/// <param name="outputMode">输入模式</param>
-		/// <returns>解密后的字符串</returns>
-		String Decrypt(String data, String slatKey = "", String vectorKey = "", OutputMode outputMode = OutputMode.Base64);
-		/// <summary>
-		/// 解密方法
-		/// </summary>
-		/// <param name="data">密文</param>
-		/// <param name="slatKey">密钥</param>
-		/// <param name="outputMode">输入模式</param>
-		/// <returns>解密后的字符串</returns>
-		String Decrypt(String data, String slatKey, OutputMode outputMode);
-		/// <summary>
-		/// 解密方法
-		/// </summary>
-		/// <param name="data">密文</param>
-		/// <param name="outputMode">输入模式</param>
-		/// <returns>解密后的字符串</returns>
-		String Decrypt(String data, OutputMode outputMode);
-		/// <summary>
-		/// 加密方法
-		/// </summary>
-		/// <param name="data">明文字节</param>
-		/// <param name="slatKey">密钥</param>
-		/// <param name="vectorKey">偏移量</param>
-		/// <returns>加密后的字节</returns>
-		byte[] Encrypt(byte[] data, String slatKey = "", String vectorKey = "");
-		/// <summary>
-		/// 解密方法
-		/// </summary>
-		/// <param name="data">密文字节</param>
-		/// <param name="slatKey">密钥</param>
-		/// <param name="vectorKey">偏移量</param>
-		/// <returns>解密后的字节</returns>
-		byte[] Decrypt(byte[] data, String slatKey = "", String vectorKey = "");
-	}
+        /// <summary>
+        /// 加密方法
+        /// </summary>
+        /// <param name="data">明文</param>
+        /// <param name="slatKey">密钥</param>
+        /// <param name="vectorKey">偏移量</param>
+        /// <param name="outputMode">输出模式</param>
+        /// <returns>加密后的字符串</returns>
+        String Encrypt(String data, String slatKey = "", String vectorKey = "", OutputMode outputMode = OutputMode.Base64);
+        /// <summary>
+        /// 加密方法
+        /// </summary>
+        /// <param name="data">明文</param>
+        /// <param name="slatKey">密钥</param>
+        /// <param name="outputMode">输出模式</param>
+        /// <returns></returns>
+        String Encrypt(String data, String slatKey, OutputMode outputMode);
+        /// <summary>
+        /// 加密方法
+        /// </summary>
+        /// <param name="data">明文</param>
+        /// <param name="outputMode">输出模式</param>
+        /// <returns></returns>
+        String Encrypt(String data, OutputMode outputMode);
+        /// <summary>
+        /// 解密方法
+        /// </summary>
+        /// <param name="data">密文</param>
+        /// <param name="slatKey">密钥</param>
+        /// <param name="vectorKey">偏移量</param>
+        /// <param name="outputMode">输入模式</param>
+        /// <returns>解密后的字符串</returns>
+        String Decrypt(String data, String slatKey = "", String vectorKey = "", OutputMode outputMode = OutputMode.Base64);
+        /// <summary>
+        /// 解密方法
+        /// </summary>
+        /// <param name="data">密文</param>
+        /// <param name="slatKey">密钥</param>
+        /// <param name="outputMode">输入模式</param>
+        /// <returns>解密后的字符串</returns>
+        String Decrypt(String data, String slatKey, OutputMode outputMode);
+        /// <summary>
+        /// 解密方法
+        /// </summary>
+        /// <param name="data">密文</param>
+        /// <param name="outputMode">输入模式</param>
+        /// <returns>解密后的字符串</returns>
+        String Decrypt(String data, OutputMode outputMode);
+        /// <summary>
+        /// 加密方法
+        /// </summary>
+        /// <param name="data">明文字节</param>
+        /// <param name="slatKey">密钥</param>
+        /// <param name="vectorKey">偏移量</param>
+        /// <returns>加密后的字节</returns>
+        byte[] Encrypt(byte[] data, String slatKey = "", String vectorKey = "");
+        /// <summary>
+        /// 解密方法
+        /// </summary>
+        /// <param name="data">密文字节</param>
+        /// <param name="slatKey">密钥</param>
+        /// <param name="vectorKey">偏移量</param>
+        /// <returns>解密后的字节</returns>
+        byte[] Decrypt(byte[] data, String slatKey = "", String vectorKey = "");
+    }
 }

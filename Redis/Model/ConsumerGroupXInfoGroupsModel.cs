@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-/****************************************************************
+﻿/****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
 *  QQ : 7092734                                                 *
@@ -45,7 +41,7 @@ namespace XiaoFeng.Redis
         /// <summary>
         /// 最后一个条目的 ID 交付组的消费者
         /// </summary>
-        public string LastDeliveredID{get;set;}
+        public string LastDeliveredID { get; set; }
         /// <summary>
         /// 传递给组消费者的最后一个条目的逻辑“读取计数器”
         /// </summary>

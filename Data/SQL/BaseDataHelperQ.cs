@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using XiaoFeng.Cache;
-using XiaoFeng.Data.SQL;
-using XiaoFeng.IO;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -121,7 +114,7 @@ namespace XiaoFeng.Data.SQL
                             else if(exists({0}))
                             begin
                             {1}
-                            end".format(this.DataSql.ElseIf[0],  this.DataSql.ElseIfThen[0].Join(";"));
+                            end".format(this.DataSql.ElseIf[0], this.DataSql.ElseIfThen[0].Join(";"));
                         }
                     }
                     if (this.DataSql.Else.Count > 0)
@@ -174,7 +167,7 @@ namespace XiaoFeng.Data.SQL
             System.Diagnostics.Stopwatch s = new System.Diagnostics.Stopwatch();
             s.Start();
             T model = default(T);
-            if (this.DataSql.Config.CacheType!= CacheType.No)
+            if (this.DataSql.Config.CacheType != CacheType.No)
             {
                 this.DataSql.CacheState = CacheState.Yes;
                 this.DataSql.CacheTimeOut = this.DataSql.Config.CacheTimeOut;
@@ -215,7 +208,7 @@ namespace XiaoFeng.Data.SQL
             if (SQL.IsNullOrEmpty()) return new List<T>();
             System.Diagnostics.Stopwatch s = new System.Diagnostics.Stopwatch();
             s.Start();
-            if (this.DataSql.Config.CacheType!= CacheType.No)
+            if (this.DataSql.Config.CacheType != CacheType.No)
             {
                 this.DataSql.CacheState = CacheState.Yes;
                 this.DataSql.CacheTimeOut = this.DataSql.Config.CacheTimeOut;
@@ -262,7 +255,7 @@ namespace XiaoFeng.Data.SQL
         public virtual object GetCacheData()
         {
             if (this.CacheKey.IsNullOrEmpty()) this.CreateCacheKey();
-            object data = CacheFactory.Create(this.DataSql.Config.CacheType).Get(this.CacheKey); 
+            object data = CacheFactory.Create(this.DataSql.Config.CacheType).Get(this.CacheKey);
             /*
             if (this.DataSql.Config.CacheType == CacheType.Memory)
                 data = Cache.CacheHelper.Get(this.CacheKey);

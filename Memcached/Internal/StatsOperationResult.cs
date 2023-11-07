@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net;
-using System.Text;
 
 /****************************************************************
 *  Copyright © (2023) www.eelf.cn All Rights Reserved.          *
@@ -18,7 +16,7 @@ namespace XiaoFeng.Memcached.Internal
     /// <summary>
     /// Stat操作结果
     /// </summary>
-    public class StatsOperationResult : OperationResult<Dictionary<IPEndPoint, Dictionary<string,string>>>
+    public class StatsOperationResult : OperationResult<Dictionary<IPEndPoint, Dictionary<string, string>>>
     {
         #region 构造器
         /// <summary>

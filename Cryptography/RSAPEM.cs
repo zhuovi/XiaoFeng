@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Security.Cryptography;
-using XiaoFeng.IO;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -67,7 +65,7 @@ namespace XiaoFeng.Cryptography
         /// 转PEM
         /// </summary>
         /// <param name="pKCSType">PKCS类型</param>
-        public void ToPEM(PKCSType pKCSType =  PKCSType.PKCS1)
+        public void ToPEM(PKCSType pKCSType = PKCSType.PKCS1)
         {
             var ms = new MemoryStream();
             //写入一个长度字节码

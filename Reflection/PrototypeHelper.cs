@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -73,12 +70,12 @@ namespace XiaoFeng
             var _list = new List<MemberInfo>();
             list.Each(m =>
               {
-                /*如果是 索引器 则跳过*/
+                  /*如果是 索引器 则跳过*/
                   if (m is PropertyInfo _p && _p.GetIndexParameters().Length > 0) return true;
-                /*如果是 被重写的属性 则跳过*/
+                  /*如果是 被重写的属性 则跳过*/
                   if (keys.Contains(m.Name) && m.DeclaringType != type) return true;
 
-                /*如果有忽略属性 则跳过*/
+                  /*如果有忽略属性 则跳过*/
                   if (m.IsDefined(typeof(FieldIgnoreAttribute), false)) return true;
 
                   string name = m.Name;

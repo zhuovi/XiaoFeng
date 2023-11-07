@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -46,9 +42,9 @@ namespace XiaoFeng.Data
     }
 
     #region 字段数据
-        /// <summary>
-        /// 字段数据
-        /// </summary>
+    /// <summary>
+    /// 字段数据
+    /// </summary>
     public class DataField
     {
         #region 构造器

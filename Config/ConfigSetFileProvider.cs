@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Collections.Concurrent;
 using XiaoFeng.IO;
 /****************************************************************
@@ -24,7 +22,7 @@ namespace XiaoFeng.Config
         /// <summary>
         /// 配置文件目录
         /// </summary>
-        public static ConcurrentDictionary<string,Item> ConfigFiles { get; set; }
+        public static ConcurrentDictionary<string, Item> ConfigFiles { get; set; }
         /// <summary>
         /// 目录监控器
         /// </summary>

@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
-using XiaoFeng.Data.SQL;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -52,7 +46,7 @@ namespace XiaoFeng.Expressions
             SubSQL += ExpressionTypeCast(type);
             /*再处理右边*/
             string tmpStr = ExpressionRouter(right);
-            
+
             if (tmpStr == "null")
             {
                 if (SubSQL.Trim().EndsWith("="))

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -38,7 +35,7 @@ namespace XiaoFeng.Redis
         /// 字符串
         /// </summary>
         [Description("字符串")]
-        String  =1,
+        String = 1,
         /// <summary>
         /// 哈希
         /// </summary>

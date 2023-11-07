@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Collections;
-using System.Threading;
 using System.Globalization;
+using System.Text;
+using System.Threading;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -113,7 +112,7 @@ namespace XiaoFeng
             }
             byte[] array;
             string returnstr = "";
-            int chrasc,i1,i2;
+            int chrasc, i1, i2;
             bool b = false, d = false;
             char[] nowchar = chs.ToCharArray();
             CultureInfo ci = Thread.CurrentThread.CurrentCulture;
@@ -153,7 +152,7 @@ namespace XiaoFeng
                     b = false;
                 }
             }
-            return returnstr.Replace("\r\r\r", separator); 
+            return returnstr.Replace("\r\r\r", separator);
         }
 
         /// <summary>

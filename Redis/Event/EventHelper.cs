@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace XiaoFeng.Redis
+﻿namespace XiaoFeng.Redis
 {
     #region 委托
     /// <summary>
@@ -30,7 +26,7 @@ namespace XiaoFeng.Redis
     /// </summary>
     /// <param name="channel">频道</param>
     /// <param name="message">错误消息</param>
-    public delegate void OnErrorEventHandler(string channel,string message);
+    public delegate void OnErrorEventHandler(string channel, string message);
     /// <summary>
     /// 退出订阅监听
     /// </summary>

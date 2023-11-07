@@ -2,9 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using XiaoFeng;
-using XiaoFeng.Json;
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -366,9 +364,9 @@ namespace XiaoFeng.Redis
         /// </summary>
         /// <typeparam name="T">类型</typeparam>
         /// <returns></returns>
-        public Dictionary<string,T> ToDictionary<T>()
+        public Dictionary<string, T> ToDictionary<T>()
         {
-            return this.ToDictionary<string,T>();
+            return this.ToDictionary<string, T>();
         }
         /// <summary>
         /// 转换为布尔值
@@ -423,7 +421,7 @@ namespace XiaoFeng.Redis
         public List<T> ToList<T>()
         {
             if (this.RedisType != RedisType.Array) return null;
-             return (from a in this.ToList() select a.Value.ToCast<T>()).ToList();
+            return (from a in this.ToList() select a.Value.ToCast<T>()).ToList();
         }
         /// <summary>
         /// 获取值

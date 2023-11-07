@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using XiaoFeng.Data.SQL;
-using XiaoFeng.Json;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -223,7 +219,7 @@ namespace XiaoFeng.Model
         /// <param name="whereString">条件</param>
         /// <returns></returns>
         List<object> ToObjectList(string whereString);
-        
+
         #endregion
 
         #region 查找主键

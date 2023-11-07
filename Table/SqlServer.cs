@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using XiaoFeng.Data;
-using XiaoFeng.Data.SQL;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -109,11 +106,11 @@ END;
                 if (columnAttr.DataType.IsNullOrEmpty()) columnAttr.DataType = dbType[p.PropertyType];
                 if (columnAttr.Description.IsNullOrEmpty()) columnAttr.Description = p.Name;
                 Fields += this.GetField(columnAttr);
-                if (columnAttr.IsIndex) Indexs.Add( columnAttr.Name);
+                if (columnAttr.IsIndex) Indexs.Add(columnAttr.Name);
                 if (columnAttr.PrimaryKey)
                 {
                     //PrimaryKey = $"[{columnAttr.Name}] ASC,";
-                    if(!Indexs.Contains(columnAttr.Name)) Indexs.Add(columnAttr.Name);
+                    if (!Indexs.Contains(columnAttr.Name)) Indexs.Add(columnAttr.Name);
                 }
                 if (columnAttr.IsUnique) Unique += columnAttr.Name + ",";
                 Description += @"
@@ -124,7 +121,7 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'{0}' , @level0
             if (Unique.IsNotNullOrEmpty()) Fields += "CONSTRAINT [UN_{0}] UNIQUE ({1}),{2}".format(table.Name, Unique, Environment.NewLine);
             //if (PrimaryKey.IsNullOrEmpty()) PrimaryKey = "ID";
             //if (PrimaryKey.IsNotNullOrEmpty()) Fields += @"CONSTRAINT [PK_{0}] PRIMARY KEY CLUSTERED({1})
-//WITH(PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON[PRIMARY]".format(table.Name, PrimaryKey);
+            //WITH(PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON[PRIMARY]".format(table.Name, PrimaryKey);
             SqlFormat = SqlFormat.format(table.Name, Fields, Indexs.Join(","), Description);
             if (table.ConnName.IsMatch(@"(^ZW:|;)"))
             {

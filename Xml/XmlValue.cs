@@ -3,9 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
 using System.Xml.Serialization;
 
 /****************************************************************
@@ -169,7 +166,7 @@ namespace XiaoFeng.Xml
             {
                 Name = name,
                 ElementType = XmlType.Array,
-                ParentElement = this, 
+                ParentElement = this,
                 Depth = this.Depth + 1,
                 ChildNodes = this.ChildNodes.Where(a => a.Name.EqualsIgnoreCase(name) && a.ElementType == XmlType.Element).ToList()
             };

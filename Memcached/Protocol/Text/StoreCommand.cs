@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using XiaoFeng.Memcached.Internal;
 using XiaoFeng.Net;
-using System.Linq;
 
 /****************************************************************
 *  Copyright © (2023) www.eelf.cn All Rights Reserved.          *
@@ -22,7 +20,7 @@ namespace XiaoFeng.Memcached.Protocol.Text
     /// <summary>
     /// StoreCommand 类说明
     /// </summary>
-    public class StoreCommand:BaseCommand
+    public class StoreCommand : BaseCommand
     {
         #region 构造器
         /// <summary>
@@ -32,7 +30,7 @@ namespace XiaoFeng.Memcached.Protocol.Text
         /// <param name="config">配置</param>
         /// <param name="commandType">命令</param>
         /// <param name="values">值</param>
-        public StoreCommand(ISocketClient socket,MemcachedConfig config, CommandType commandType, object[] values)
+        public StoreCommand(ISocketClient socket, MemcachedConfig config, CommandType commandType, object[] values)
         {
             this.SocketClient = socket;
             this.CommandType = commandType;

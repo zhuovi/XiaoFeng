@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 /****************************************************
  *  Copyright © www.fayelf.com All Rights Reserved. *
@@ -45,9 +42,9 @@ namespace XiaoFeng.Cryptography
         {
             if (data == null) return Array.Empty<byte>();
             var AES = new AESEncryption();
-            if(type== CryptographyType.Encrypt)
+            if (type == CryptographyType.Encrypt)
             {
-               var _data = RandomHelper.GetRandomString(5, RandomType.Letter | RandomType.Number) + AES.Encrypt(this.GetString(data) , this.GetString(slatKey)) + RandomHelper.GetRandomString(5, RandomType.Letter | RandomType.Number);
+                var _data = RandomHelper.GetRandomString(5, RandomType.Letter | RandomType.Number) + AES.Encrypt(this.GetString(data), this.GetString(slatKey)) + RandomHelper.GetRandomString(5, RandomType.Letter | RandomType.Number);
                 for (var i = 0; i < 9; i++)
                     _data = _Encrypt(_data);
                 return this.GetBytes(_data);
@@ -57,7 +54,7 @@ namespace XiaoFeng.Cryptography
                 var _data = this.GetString(data);
                 for (var i = 0; i < 9; i++)
                     _data = _Decrypt(_data);
-                _data = AES.Decrypt(_data.RemovePattern(@"[a-z0-9]{5}$").RemovePattern(@"^[a-z0-9]{5}"),this.GetString(slatKey));
+                _data = AES.Decrypt(_data.RemovePattern(@"[a-z0-9]{5}$").RemovePattern(@"^[a-z0-9]{5}"), this.GetString(slatKey));
                 return this.GetBytes(_data);
             }
         }

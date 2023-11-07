@@ -71,7 +71,7 @@ namespace XiaoFeng.Resource
                         Assembly ass = Assembly.Load(bts);
                         resource.Type = ResourceType.Dll;
                         resource.Data = ass;
-                       r = resource.Name = ass.FullName;
+                        r = resource.Name = ass.FullName;
                     }
                     else if (r.IsMatch(@"\.(txt|json|xml|config|log|cs|html|htm|jsp|php|cshtml|ashx|aspx|css|js|asax)$"))
                     {
@@ -136,7 +136,7 @@ namespace XiaoFeng.Resource
             return data;
         }
         #endregion
-        
+
         #endregion
     }
     #endregion

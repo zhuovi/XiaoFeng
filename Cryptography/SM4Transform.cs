@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Security.Cryptography;
-using System.Text;
 
 /****************************************************************
 *  Copyright © (2023) www.fayelf.com All Rights Reserved.       *
@@ -18,7 +16,7 @@ namespace XiaoFeng.Cryptography
     /// <summary>
     /// SM4加密转换器
     /// </summary>
-    public class SM4Transform: ICryptoTransform
+    public class SM4Transform : ICryptoTransform
     {
         #region 构造器
         /// <summary>

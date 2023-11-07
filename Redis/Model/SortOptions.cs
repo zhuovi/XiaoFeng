@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 /****************************************************************
 *  Copyright © (2021) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -57,7 +53,7 @@ namespace XiaoFeng.Redis
                 list.Add("BY");
                 list.Add(OutKey);
             }
-            if(this.GetKeys !=null && this.GetKeys.Count > 0)
+            if (this.GetKeys != null && this.GetKeys.Count > 0)
             {
                 this.GetKeys.Each(k =>
                 {
@@ -81,5 +77,5 @@ namespace XiaoFeng.Redis
             }
             return list.ToArray();
         }
-    }   
+    }
 }

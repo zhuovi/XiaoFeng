@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
@@ -84,7 +82,7 @@ namespace XiaoFeng.Redis
             /// <summary>
             /// 数据
             /// </summary>
-            public Dictionary<string,string> Value { get; set; }
+            public Dictionary<string, string> Value { get; set; }
         }
     }
 }

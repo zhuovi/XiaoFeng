@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -110,7 +107,7 @@ namespace XiaoFeng.Threading
         /// 定时器类型
         /// </summary>
         TimerType TimerType { get; set; }
-         /// <summary>
+        /// <summary>
         /// 间隔 单位毫秒
         /// </summary>
         long Period { get; set; }

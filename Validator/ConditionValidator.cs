@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Text.RegularExpressions;
-using XiaoFeng;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -28,7 +24,7 @@ namespace XiaoFeng.Validator
         /// <summary>
         /// 无参构造器
         /// </summary>
-        public ConditionValidator() {  }
+        public ConditionValidator() { }
         /// <summary>
         /// 设置参数
         /// </summary>
@@ -37,7 +33,7 @@ namespace XiaoFeng.Validator
         /// <param name="format">规则</param>
         public ConditionValidator(string name, object value, ValidateFormat format = null) : this()
         {
-            this.Name = name; this.Value = value; 
+            this.Name = name; this.Value = value;
             if (format == null) return;
             this.ValidateFormat(format);
         }

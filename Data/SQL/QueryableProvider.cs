@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Reflection;
-using System.Threading.Tasks;
-using XiaoFeng.Data;
-using System.Data.Common;
+using System.Text;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -451,10 +449,10 @@ namespace XiaoFeng.Data.SQL
                 string _ = string.Empty;
                 //var s = XiaoFeng.Threading.StopWatch.GetTime(() =>
                 //{
-                    foreach (var o in val as IEnumerable)
-                    {
-                        _ += "{0},".format(this.GetParamName(o));
-                    }
+                foreach (var o in val as IEnumerable)
+                {
+                    _ += "{0},".format(this.GetParamName(o));
+                }
                 //});
                 //LogHelper.Info($"运行时长:{s}");
                 return _.TrimEnd(',');
@@ -579,7 +577,7 @@ namespace XiaoFeng.Data.SQL
         /// 获取所有的参数集
         /// </summary>
         /// <returns></returns>
-        public virtual Dictionary<string,object> GetParameters()
+        public virtual Dictionary<string, object> GetParameters()
         {
             return this.DataSQL.Parameters;
         }
@@ -647,7 +645,7 @@ namespace XiaoFeng.Data.SQL
                     {
                         args.Add(ExpressionRouter(a));
                     });
-                    
+
                     if (MethodName.IsMatch(@"^(IndexOf|StartsWith|EndsWith|Substring|Replace|Sum|Contains|ToLower|ToUpper|Trim|TrimStart|TrimEnd|Length)$"))
                     {
                         var o = ExpressionRouter(mce.Object);
@@ -829,7 +827,7 @@ namespace XiaoFeng.Data.SQL
                     var _ = SqlFun.format(args.ToArray());
                     return _;
                 }
-                else if (mce.Type.Name ==  typeof(IQueryableX<>).Name)
+                else if (mce.Type.Name == typeof(IQueryableX<>).Name)
                 {
                     //var val = this.Eval(mce) as IQueryableX;
                     return GetIQueryableXSQL(this.Eval(mce) as IQueryableX);

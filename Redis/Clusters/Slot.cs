@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-/****************************************************************
+﻿/****************************************************************
 *  Copyright © (2023) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
 *  QQ : 7092734                                                 *
@@ -31,7 +27,7 @@ namespace XiaoFeng.Redis.Clusters
                 to = from;
                 from = ft;
             }
-            this.From = from; 
+            this.From = from;
             this.To = to;
         }
         #endregion
@@ -40,7 +36,7 @@ namespace XiaoFeng.Redis.Clusters
         /// <summary>
         /// 开始
         /// </summary>
-        public long From { get;}
+        public long From { get; }
         /// <summary>
         /// 结束
         /// </summary>

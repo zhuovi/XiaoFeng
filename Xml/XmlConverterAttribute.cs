@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -19,7 +15,7 @@ namespace XiaoFeng.Xml
     /// Json属性类
     /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Interface | AttributeTargets.Parameter, AllowMultiple = false)]
-    public sealed class XmlConverterAttribute:Attribute
+    public sealed class XmlConverterAttribute : Attribute
     {
         #region 构造器
         /// <summary>
@@ -35,7 +31,7 @@ namespace XiaoFeng.Xml
         /// </summary>
         /// <param name="converterType">转换类型</param>
         /// <param name="converterParameters">属性</param>
-        public XmlConverterAttribute(Type converterType,params object[] converterParameters)
+        public XmlConverterAttribute(Type converterType, params object[] converterParameters)
         {
             this.ConverterType = converterType;
             this.ConverterParameters = converterParameters;

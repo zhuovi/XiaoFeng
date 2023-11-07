@@ -204,7 +204,7 @@ namespace XiaoFeng.Memcached.Protocol.Binary
 
             return writer.ToArray();
         }
-        
+
         #endregion
     }
 }

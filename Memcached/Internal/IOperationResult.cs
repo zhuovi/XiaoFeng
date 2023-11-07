@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-/****************************************************************
+﻿/****************************************************************
 *  Copyright © (2023) www.eelf.cn All Rights Reserved.          *
 *  Author : jacky                                               *
 *  QQ : 7092734                                                 *
@@ -17,7 +13,7 @@ namespace XiaoFeng.Memcached.Internal
     /// <summary>
     /// 操作结果接口
     /// </summary>
-    public interface IOperationResult<T>: IOperationResult
+    public interface IOperationResult<T> : IOperationResult
     {
         #region 属性
         /// <summary>
@@ -27,7 +23,7 @@ namespace XiaoFeng.Memcached.Internal
         #endregion
 
         #region 方法
-        
+
         #endregion
     }
     /// <summary>

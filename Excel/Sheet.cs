@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
-using System.Text;
-using System.Xml.Linq;
-using XiaoFeng.Excel.Model;
-using System.Xml.XPath;
 using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
+using XiaoFeng.Excel.Model;
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -40,9 +39,9 @@ namespace XiaoFeng.Excel
         /// <param name="hidden">是否隐藏</param>
         public Sheet(string name, string id, Boolean hidden)
         {
-            this.Name=name;
+            this.Name = name;
             this.Id = id;
-            this.Hidden=hidden;
+            this.Hidden = hidden;
         }
         #endregion
 
@@ -139,7 +138,7 @@ namespace XiaoFeng.Excel
 
                 var sheetData = root.GetXElement("sheetData");
                 var BeginEndNode = root.GetXElement("dimension");
-                if(BeginEndNode!=null && BeginEndNode.HasAttributes)
+                if (BeginEndNode != null && BeginEndNode.HasAttributes)
                 {
                     var BeginEndValue = BeginEndNode.GetXAttribute<string>("ref");
                     if (BeginEndValue.IsNotNullOrEmpty())
@@ -160,13 +159,13 @@ namespace XiaoFeng.Excel
                 XmlNamespaceManager nsmgr = new XmlNamespaceManager(new NameTable());
                 nsmgr.AddNamespace("ns", root.GetDefaultNamespace().NamespaceName);
                 var ActiveCellNode = root.XPathSelectElement("ns:sheetViews/ns:sheetView[@workbookViewId='0']/ns:selection", nsmgr);
-                if(ActiveCellNode != null)
+                if (ActiveCellNode != null)
                 {
                     var v = ActiveCellNode.GetXAttribute<string>("activeCell");
                     if (v.IsNotNullOrEmpty()) this.ActiveCell = new CellLocation(v);
                 }
                 var rows = sheetData.GetXElements("row");
-                if (rows!=null)
+                if (rows != null)
                 {
                     rows.Each(r =>
                     {
@@ -180,7 +179,7 @@ namespace XiaoFeng.Excel
                         }
                         var row = new Row(r.GetXAttribute<int>("r"), r.GetXAttribute<double>("ht"), minIndex, maxIndex, r.GetXAttribute<int>("hidden") > 0);
                         var cells = r.GetXElements("c");
-                        if (cells!=null)
+                        if (cells != null)
                         {
                             cells.Each(c =>
                             {
@@ -235,12 +234,12 @@ namespace XiaoFeng.Excel
                 {
                     this.PageMargins = new PageMargin()
                     {
-                         Top = margin.GetXAttribute<double>("top"),
-                         Left = margin.GetXAttribute<double>("left"),
-                         Bottom = margin.GetXAttribute<double>("bottom"),
-                         Right = margin.GetXAttribute<double>("right"),
-                         Header = margin.GetXAttribute<double>("header"),
-                         Footer = margin.GetXAttribute<double>("footer"),
+                        Top = margin.GetXAttribute<double>("top"),
+                        Left = margin.GetXAttribute<double>("left"),
+                        Bottom = margin.GetXAttribute<double>("bottom"),
+                        Right = margin.GetXAttribute<double>("right"),
+                        Header = margin.GetXAttribute<double>("header"),
+                        Footer = margin.GetXAttribute<double>("footer"),
                     };
                 }
 
@@ -268,7 +267,7 @@ namespace XiaoFeng.Excel
             if (cols == null) return list;
             cols.GetXElements("col").Each(e =>
             {
-                var hide = e.GetXAttribute<int>("hidden")>0;
+                var hide = e.GetXAttribute<int>("hidden") > 0;
                 if (!hide) return;
                 var min = e.GetXAttribute<int>("min");
                 var max = e.GetXAttribute<int>("max");
@@ -281,13 +280,13 @@ namespace XiaoFeng.Excel
         /// </summary>
         /// <param name="rowIndex">行索引</param>
         /// <returns></returns>
-        public Row Row(int rowIndex) => this.CurrentRows.SingleOrDefault(r => r.Index == rowIndex && (this.Workbook.Option.IncludeHiddenRow||r.Hidden == false));
+        public Row Row(int rowIndex) => this.CurrentRows.SingleOrDefault(r => r.Index == rowIndex && (this.Workbook.Option.IncludeHiddenRow || r.Hidden == false));
         /// <summary>
         /// 列
         /// </summary>
         /// <param name="columnIndex">列索引</param>
         /// <returns></returns>
-        public Column Column(int columnIndex) => this.CurrentColumns.SingleOrDefault(c => c.Index == columnIndex && (this.Workbook.Option.IncludeHiddenColumn||c.Hidden == false));
+        public Column Column(int columnIndex) => this.CurrentColumns.SingleOrDefault(c => c.Index == columnIndex && (this.Workbook.Option.IncludeHiddenColumn || c.Hidden == false));
         /// <summary>
         /// 获取单元格
         /// </summary>
@@ -297,7 +296,7 @@ namespace XiaoFeng.Excel
         {
             if (name.IsNotMatch(@"^[a-z]+\d+$")) return null;
             var values = name.GetMatchs(@"^(?<a>[a-z]+)(?<b>\d+)$");
-            if(values == null ||!values.ContainsKey("a") || !values.ContainsKey("b")) return null;
+            if (values == null || !values.ContainsKey("a") || !values.ContainsKey("b")) return null;
             return Cell(values["b"].ToCast<int>(), Common.GetColumnIndex(values["a"]));
         }
         /// <summary>
@@ -309,7 +308,7 @@ namespace XiaoFeng.Excel
         public Cell Cell(int rowIndex, int columnIndex)
         {
             var cells = this.CurrentRows.SelectMany(r => r.Cells);
-            var cell = (from c in cells where c.Row.Index == rowIndex && c.Row.Hidden == false && c.Column.Index == columnIndex && (this.Workbook.Option.IncludeHiddenColumn||c.Column.Hidden == false) select c).SingleOrDefault();
+            var cell = (from c in cells where c.Row.Index == rowIndex && c.Row.Hidden == false && c.Column.Index == columnIndex && (this.Workbook.Option.IncludeHiddenColumn || c.Column.Hidden == false) select c).SingleOrDefault();
             return cell;
         }
         /// <summary>
@@ -342,7 +341,7 @@ namespace XiaoFeng.Excel
             get
             {
                 if (this.CurrentColumns == null || this.CurrentColumns.Count == 0) return null;
-                return this.Workbook.Option.IncludeHiddenColumn?this.CurrentColumns.OrderBy(c => c.Index): this.CurrentColumns.Where(c => c.Hidden == false).OrderBy(c => c.Index);
+                return this.Workbook.Option.IncludeHiddenColumn ? this.CurrentColumns.OrderBy(c => c.Index) : this.CurrentColumns.Where(c => c.Hidden == false).OrderBy(c => c.Index);
             }
         }
 

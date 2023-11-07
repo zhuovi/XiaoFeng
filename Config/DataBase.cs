@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using XiaoFeng.Cache;
 using XiaoFeng.Data;
 using XiaoFeng.IO;
-using XiaoFeng.Cache;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *

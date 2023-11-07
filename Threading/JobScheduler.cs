@@ -1,12 +1,11 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Threading;
 using System.Security;
-using System.Collections.Concurrent;
+using System.Threading;
+using System.Threading.Tasks;
 using XiaoFeng.Config;
-using XiaoFeng.Data.SQL;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *

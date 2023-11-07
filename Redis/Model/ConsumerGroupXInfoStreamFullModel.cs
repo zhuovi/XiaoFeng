@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
@@ -80,7 +78,7 @@ namespace XiaoFeng.Redis
             /// <summary>
             /// 数据
             /// </summary>
-            public Dictionary<string,string> Value { get; set; }
+            public Dictionary<string, string> Value { get; set; }
         }
         /// <summary>
         /// 全组
@@ -126,7 +124,7 @@ namespace XiaoFeng.Redis
             /// <summary>
             /// 消费者名称
             /// </summary>
-            public  string Name { get; set; }
+            public string Name { get; set; }
             /// <summary>
             /// 自上次将此消息传递给此使用者以来经过的毫秒数
             /// </summary>
