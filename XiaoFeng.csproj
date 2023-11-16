@@ -24,7 +24,7 @@
 		<PackageProjectUrl>https://www.eelf.cn</PackageProjectUrl>
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>增加设置分库可设置ConnectionConfig对象方法;</PackageReleaseNotes>
+		<PackageReleaseNotes>增加设置分库可设置ConnectionConfig对象方法;修复实体生成XML时无根节点bug;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>

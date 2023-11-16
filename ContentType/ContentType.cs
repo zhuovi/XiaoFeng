@@ -23,13 +23,13 @@ namespace XiaoFeng
         /// </summary>
         static ContentTypes()
         {
-            var list = ContentTypeMapping.Current.Mimes;
+            var list = ContentTypeMapping.Current.List;
             if (list != null && list.Count > 0)
             {
                 Data.Clear();
                 list.Each(a =>
                 {
-                    Data.Add(a.Ext, a.Value);
+                    Data.Add(a.Ext.Trim('.'), a.Mime);
                 });
             }
         }

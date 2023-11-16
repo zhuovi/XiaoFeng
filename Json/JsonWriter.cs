@@ -341,7 +341,7 @@ namespace XiaoFeng.Json
                 {
                     if (jsonConverter.ConverterType == typeof(StringEnumConverter) || jsonConverter.ConverterType == typeof(StringObjectConverter))
                     {
-                        value = value.ToString();
+                        value = value == null ? string.Empty : value.ToString();
                     }
                     else if (jsonConverter.ConverterType == typeof(DescriptionConverter))
                     {

@@ -87,10 +87,17 @@ namespace XiaoFeng.Xml
         {
             var type = this.ObjectType;
             var rootName = this.SerializerSetting.DefaultRootName;
-            if (type != null && type.IsDefined(typeof(XmlRootAttribute), false))
+            if (type != null)
             {
-                var root = type.GetCustomAttribute<XmlRootAttribute>();
-                rootName = root.ElementName.IfEmpty(type.Name);
+                if (type.IsDefined(typeof(XmlRootAttribute), false))
+                {
+                    var root = type.GetCustomAttribute<XmlRootAttribute>();
+                    rootName = root.ElementName.IfEmpty(type.Name);
+                }
+                else
+                {
+                    rootName = type.IsGenericType ? "Root" : type.Name;
+                }
             }
             using (var ms = new MemoryStream())
             {

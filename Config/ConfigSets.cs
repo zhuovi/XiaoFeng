@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Xml.Serialization;
 using XiaoFeng.Cache;
 using XiaoFeng.IO;
 /****************************************************************
@@ -22,12 +23,14 @@ namespace XiaoFeng.Config
     /// <summary>
     /// 配置基类
     /// </summary>
-    public class ConfigSets<TConfig> : ConfigSet<TConfig> where TConfig : ConfigSet<TConfig>, new()
+    public class ConfigSets<TConfig> : ConfigSet<TConfig>, IConfigSets<TConfig> where TConfig : ConfigSets<TConfig>, new()
     {
         /// <summary>
         /// 无参构造器
         /// </summary>
-        public ConfigSets() : base() { }
+        public ConfigSets() : base()
+        {
+        }
         /// <summary>
         /// 设置路径
         /// </summary>
@@ -37,8 +40,7 @@ namespace XiaoFeng.Config
         /// 列表数据
         /// </summary>
         [Description("列表数据属性")]
-        [Json.JsonIgnore]
-        [System.Xml.Serialization.XmlIgnore]
+        [XmlArrayItem(nameof(TConfig))]
         public List<TConfig> List { get; set; }
         /// <summary>
         /// 获取配置
@@ -79,6 +81,7 @@ namespace XiaoFeng.Config
                 {
                     var Config = new TConfig();
                     typeof(TConfig).GetProperty("List", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase).SetValue(Config, val as List<TConfig>);
+
                     return Config;
                 }
             }
@@ -119,9 +122,10 @@ namespace XiaoFeng.Config
             var dirPath = attr.FileName.GetDirectoryName();
             if (!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
             string val = "";
+            if (this.List == null) return false;
             if (attr.Format == ConfigFormat.Json)
             {
-                val = this.List.ToJson(new Json.JsonSerializerSetting
+                val = this.ToJson(new Json.JsonSerializerSetting
                 {
                     Indented = indented,
                     IsComment = comment
@@ -129,7 +133,7 @@ namespace XiaoFeng.Config
             }
             else if (attr.Format == ConfigFormat.Xml)
             {
-                val = this.List.EntityToXml();
+                val = this.EntityToXml();
             }
             else if (attr.Format == ConfigFormat.Ini)
             {

@@ -55,6 +55,7 @@ namespace XiaoFeng.Data.SQL
             this.SpliceSQLTime = 0;
             this.LinqToSQLTime = 0;
             this.CacheState = CacheState.Null;
+            this.TableSplitConfig = TableSplitConfig.Current;
         }
         #endregion
 
@@ -89,6 +90,10 @@ namespace XiaoFeng.Data.SQL
         /// </summary>
         public ITableSplit TableSplit { get; set; }
         /// <summary>
+        /// 配置
+        /// </summary>
+        private TableSplitConfig TableSplitConfig { get; set; }
+        /// <summary>
         /// 表名
         /// </summary>
         private string _TableName;
@@ -106,7 +111,7 @@ namespace XiaoFeng.Data.SQL
                         this._TableName = this.ModelType.Name;
                     else
                         this._TableName = Table.Name ?? this.ModelType.Name;
-                    var tables = TableSplitConfig.Current.List;
+                    var tables = this.TableSplitConfig.List;
                     if (tables.Any())
                     {
                         var table = tables.FirstOrDefault(a => a.Name.EqualsIgnoreCase(this._TableName));
@@ -123,7 +128,7 @@ namespace XiaoFeng.Data.SQL
                 var val = value;
                 if (val.IndexOf(" ") == -1)
                 {
-                    var tables = TableSplitConfig.Current.List;
+                    var tables = this.TableSplitConfig.List;
                     if (tables.Any())
                     {
                         var table = tables.FirstOrDefault(a => a.Name.EqualsIgnoreCase(val));

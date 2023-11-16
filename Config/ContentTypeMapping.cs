@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Xml;
 using System.Xml.Serialization;
 using XiaoFeng.Xml;
@@ -18,29 +19,21 @@ namespace XiaoFeng.Config
     /// </summary>
     [ConfigFile("Config/ContentTypeMapping.xml", 0, "FAYELF-CONFIG-CONTENTTYPE-MAPPING", ConfigFormat.Xml)]
     [XmlRoot("Root")]
-    public class ContentTypeMapping : ConfigSet<ContentTypeMapping>
-    {
-        /// <summary>
-        /// 内容类型
-        /// </summary>
-        [XmlArrayItem("Mime")]
-        public List<Mime> Mimes { get; set; }
-    }
-    /// <summary>
-    /// 内容类型
-    /// </summary>
-    public class Mime
+    public class ContentTypeMapping : ConfigSets<ContentTypeMapping>
     {
         /// <summary>
         /// 后缀名
         /// </summary>
-        [XmlAttribute("Ext")]
+        [XmlCData]
+        [XmlElement("Ext")]
+        [Description("后缀名")]
         public string Ext { get; set; }
         /// <summary>
-        /// 内容
+        /// Mime类型
         /// </summary>
         [XmlCData]
-        [XmlText]
-        public string Value { get; set; }
+        [XmlElement("Mime")]
+        [Description("Mime类型")]
+        public string Mime { get; set; }
     }
 }
