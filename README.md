@@ -31,44 +31,53 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 4.3.5
+$ dotnet add package XiaoFeng --version 4.3.6
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 4.3.5
+PM> Install-Package XiaoFeng -Version 4.3.6
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="4.3.5" />
+<PackageReference Include="XiaoFeng" Version="4.3.6" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 4.3.5
+> paket add XiaoFeng --version 4.3.6
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 4.3.5"
+> #r "nuget: XiaoFeng, 4.3.6"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=4.3.5
+#addin nuget:?package=XiaoFeng&version=4.3.6
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=4.3.5
+#tool nuget:?package=XiaoFeng&version=4.3.6
 ```
 
 # 更新日志
+
+## 2023-11-17   v 4.3.6
+
+1.增加设置分库可设置ConnectionConfig对象方法;
+
+2.修复实体生成XML时无根节点bug;
+
+3.优化HttpHelper中获取Cookies;
+
 
 ## 2023-10-27   v 4.3.5
 
