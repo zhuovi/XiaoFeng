@@ -288,6 +288,10 @@ namespace XiaoFeng.Http
                         HttpContent = new FormUrlEncodedContent(this.Data);
                         if (this.ContentType.IsNullOrEmpty())
                             this.ContentType = "application/x-www-form-urlencoded";
+                        else if (this.ContentType.IndexOf("application/json", StringComparison.OrdinalIgnoreCase) > -1)
+                        {
+                            HttpContent = new StringContent(this.Data.ToJson(), this.Encoding);
+                        }
                     }
                     else if (this.BodyData.IsNotNullOrEmpty())
                     {
@@ -410,6 +414,11 @@ namespace XiaoFeng.Http
             this.Request.Headers.Connection.Clear();
             this.Request.Headers.Connection.ParseAdd(this.KeepAlive ? "Keep-Alive" : "close");
             /*设置Header参数*/
+            if (this.Authorization.IsNotNullOrEmpty())
+            {
+                if (this.Headers == null) this.Headers = new Dictionary<string, string>();
+                this.Headers.Add("Authorization", this.Authorization);
+            }
             if (this.Headers != null && this.Headers.Any())
                 this.Headers.Each(kv =>
                 {
@@ -522,6 +531,7 @@ namespace XiaoFeng.Http
             if (this.IPEndPoint != null) this.RequestHttp.ServicePoint.BindIPEndPointDelegate = new BindIPEndPoint(BindIPEndPointCallback);
             /*设置Header参数*/
             if (this.Headers == null) this.Headers = new Dictionary<string, string>();
+            if (this.Authorization.IsNotNullOrEmpty()) this.Headers.Add("Authorization", this.Authorization);
             this.Headers.Each(k => this.RequestHttp.Headers.Add(k.Key, k.Value));
             /*设置HTTP代理*/
             if (this.WebProxy != null)
@@ -579,6 +589,7 @@ namespace XiaoFeng.Http
                 this.RequestHttp.ContentLength = RequestData.Length;
                 this.RequestHttp.GetRequestStream().Write(RequestData, 0, RequestData.Length);
             }
+
 
             try
             {
@@ -700,8 +711,14 @@ namespace XiaoFeng.Http
                         if (this.Method == "POST")
                         {
                             if (this.ContentType.IsNullOrEmpty())
+                            {
                                 this.ContentType = "application/x-www-form-urlencoded";
-                            RequestData = this.Data.ToQuery().GetBytes(this.Encoding);
+                                RequestData = this.Data.ToQuery().GetBytes(this.Encoding);
+                            }
+                            else if (this.ContentType.IndexOf("application/json", StringComparison.OrdinalIgnoreCase) > -1)
+                            {
+                                RequestData = this.Data.ToJson().GetBytes(this.Encoding);
+                            }
                         }
                     }
                     else if (this.BodyData.IsNotNullOrEmpty())
@@ -712,7 +729,10 @@ namespace XiaoFeng.Http
                         RequestData = this.BodyData.GetBytes(this.Encoding);
                     }
                     if (this.ContentType.IsNotNullOrEmpty())
-                        this.RequestHttp.ContentType = this.ContentType;
+                    {
+                        if (this.RequestHttp != null)
+                            this.RequestHttp.ContentType = this.ContentType;
+                    }
                 }
                 else
                 {
@@ -847,12 +867,42 @@ namespace XiaoFeng.Http
         /// <summary>
         /// 添加Cookie
         /// </summary>
+        /// <param name="name">名称</param>
+        /// <param name="value">值</param>
+        /// <param name="timeSpan">过期间隔</param>
+        /// <returns>请求对象</returns>
+        public IHttpRequest AddCookie(string name, string value, TimeSpan? timeSpan)
+        {
+            var cookie = new Cookie(name, value);
+            if (timeSpan != null) cookie.Expires = DateTime.Now.AddMilliseconds(timeSpan.Value.TotalMilliseconds);
+            return this.AddCookie(cookie);
+        }
+        /// <summary>
+        /// 添加Cookie
+        /// </summary>
+        /// <param name="name">名称</param>
+        /// <param name="value">值</param>
+        /// <param name="path">路径</param>
+        /// <param name="domain">域名</param>
+        /// <returns></returns>
+        public IHttpRequest AddCookie(string name, string value, string path, string domain) => this.AddCookie(new Cookie(name, value, path, domain));
+        /// <summary>
+        /// 添加Cookie
+        /// </summary>
+        /// <param name="name">名称</param>
+        /// <param name="value">值</param>
+        /// <param name="path">路径</param>
+        /// <returns></returns>
+        public IHttpRequest AddCookie(string name, string value, string path) => this.AddCookie(new Cookie(name, value, path));
+        /// <summary>
+        /// 添加Cookie
+        /// </summary>
         /// <param name="cookie">cookie</param>
         /// <returns>请求对象</returns>
         public IHttpRequest AddCookie(Cookie cookie)
         {
             if (cookie.Domain.IsNullOrEmpty() && this.Address.IsNotNullOrEmpty())
-                cookie.Domain = new Uri(this.Address).Host.RemovePattern(@":\d+$");
+                cookie.Domain = new Uri(this.Address).Host;
             if (this.CookieContainer == null) this.CookieContainer = new CookieContainer();
             this.CookieContainer.Add(cookie);
             return this;

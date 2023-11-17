@@ -147,6 +147,10 @@ namespace XiaoFeng.Http
             {
                 headers.Set(HttpRequestHeader.IfModifiedSince, this.Request.IfModifiedSince.GetValueOrDefault().ToString("r"));
             }
+            if (this.Request.Authorization.IsNotNullOrEmpty())
+            {
+                headers.Set(HttpRequestHeader.Authorization, this.Request.Authorization);
+            }
             if (this.Request.Headers != null && this.Request.Headers.Count > 0)
             {
                 this.Request.Headers.Each(h => headers.Set(h.Key, h.Value));
@@ -229,11 +233,12 @@ namespace XiaoFeng.Http
             if (requestUri.Scheme.ToUpper() == "HTTPS") this.Client.HostName = requestUri.Host;
             await this.Client.SendAsync(bytes).ConfigureAwait(false);
             await this.Client.SendAsync(RequestBody).ConfigureAwait(false);
-            var resonseBytes = await this.Client.ReceviceMessageAsync();
-
-            var buffers = new MemoryStream(resonseBytes);
+            var responseBytes = await this.Client.ReceviceMessageAsync();
+            this.Response.ResponseUri = this.RequestUri;
+            var buffers = new MemoryStream(responseBytes);
             //发送头
             var Headers = this.GetResponseHeaders(buffers);
+
             if (Headers.TryGetValue("Location", out var location))
             {
                 if (this.Request.AllowAutoRedirect)
@@ -259,6 +264,7 @@ namespace XiaoFeng.Http
                 var BlockLine = new MemoryStream();
                 var Body = false;
                 var BodyStream = new MemoryStream();
+                buffers.Position -= 2;
                 while (buffers.CanRead && buffers.Position < buffers.Length)
                 {
                     var c = buffers.ReadByte();

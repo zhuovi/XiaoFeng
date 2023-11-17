@@ -55,5 +55,9 @@ namespace XiaoFeng.Http
         /// 运行总毫秒数
         /// </summary>
         long RunTime { get; }
+        /// <summary>
+        /// 认证信息
+        /// </summary>
+        string Authorization { get; set; }
     }
 }

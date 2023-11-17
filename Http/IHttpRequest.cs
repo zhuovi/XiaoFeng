@@ -184,6 +184,31 @@ namespace XiaoFeng.Http
         /// <summary>
         /// 添加Cookie
         /// </summary>
+        /// <param name="name">名称</param>
+        /// <param name="value">值</param>
+        /// <param name="path">路径</param>
+        /// <param name="domain">域名</param>
+        /// <returns></returns>
+        IHttpRequest AddCookie(string name, string value, string path, string domain);
+        /// <summary>
+        /// 添加Cookie
+        /// </summary>
+        /// <param name="name">名称</param>
+        /// <param name="value">值</param>
+        /// <param name="path">路径</param>
+        /// <returns></returns>
+        IHttpRequest AddCookie(string name, string value, string path);
+        /// <summary>
+        /// 添加Cookie
+        /// </summary>
+        /// <param name="name">名称</param>
+        /// <param name="value">值</param>
+        /// <param name="timeSpan">过期间隔</param>
+        /// <returns>请求对象</returns>
+        IHttpRequest AddCookie(string name, string value, TimeSpan? timeSpan);
+        /// <summary>
+        /// 添加Cookie
+        /// </summary>
         /// <param name="cookie">cookie</param>
         /// <returns>请求对象</returns>
         IHttpRequest AddCookie(Cookie cookie);

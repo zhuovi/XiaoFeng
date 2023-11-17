@@ -67,6 +67,10 @@ namespace XiaoFeng.Http
         /// 运行总毫秒数
         /// </summary>
         public long RunTime => (long)(EndTime - BeginTime).TotalMilliseconds;
+        /// <summary>
+        /// 认证信息
+        /// </summary>
+        public string Authorization { get; set; }
         #endregion
 
         #region 方法

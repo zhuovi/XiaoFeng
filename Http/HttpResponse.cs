@@ -130,6 +130,7 @@ namespace XiaoFeng.Http
             this.Response.Headers.Each(h =>
               {
                   this.Headers.Add(h.Key, h.Value.FirstOrDefault());
+                  if (h.Key.EqualsIgnoreCase("Authorization")) this.Authorization = h.Value.ToString();
               });
             //获取最后访问的URl
             this.ResponseUri = this.Response.Headers.Location;
@@ -149,43 +150,51 @@ namespace XiaoFeng.Http
             {
                 Cookies.Each(c =>
                 {
-                    var cookie = new Cookie
-                    {
-                        HttpOnly = c.ToLower().EndsWith("httponly"),
-                        Domain = this.Response.RequestMessage.RequestUri.Host
-                    };
+                    var uri = new Uri(this.Request.Address);
+                    Cookie cookie = null;
                     //lang=zh-CN; path=/; secure; samesite=lax; httponly
                     var _c = c.RemovePattern(@"\s+(httponly|samesite=lax|secure)(;|$)");
                     var cs = _c.GetMatches(@"(^|\s+)(?<name>[^=]+)=(?<value>[^;]*)(;|$)");
-                    var dict = new Dictionary<string, string>();
                     cs.Each(a =>
                     {
-                        dict.Add(a["name"], a["value"]);
+                        var name = a["name"];
+                        var value = a["value"];
+                        if (name.IsNullOrEmpty()) return;
+                        switch (name.ToLower())
+                        {
+                            case "domain":
+                                cookie.Domain = value;
+                                break;
+                            case "path":
+                                cookie.Path = value;
+                                break;
+                            case "expires":
+                                if (DateTime.TryParse(value, out var d))
+                                    cookie.Expires = d;
+                                break;
+                            case "max-age":
+                                break;
+                            case "secure":
+                                cookie.Secure = true;
+                                break;
+                            case "httponlay":
+                                cookie.HttpOnly = true;
+                                break;
+                            default:
+                                if (cookie != null)
+                                    this.CookieContainer.Add(cookie);
+                                cookie = new Cookie
+                                {
+                                    HttpOnly = c.ToLower().EndsWith("httponly"),
+                                    Domain = uri.Host
+                                };
+                                cookie.Name = name;
+                                cookie.Value = value;
+                                break;
+                        }
                     });
-                    if (dict.ContainsKey("domain"))
-                    {
-                        cookie.Domain = dict["domain"];
-                        dict.Remove("domain");
-                    }
-                    if (dict.ContainsKey("path"))
-                    {
-                        cookie.Path = dict["path"];
-                        dict.Remove("path");
-                    }
-                    if (dict.ContainsKey("expires"))
-                    {
-                        //cookie.Expires = DateTime.Parse(dict["expires"]);
-                        dict.Remove("expires");
-                    }
-                    if (dict.ContainsKey("max-age"))
-                    {
-                        dict.Remove("max-age");
-                    }
-                    dict.Each(a =>
-                    {
-                        cookie.Name = a.Key; cookie.Value = a.Value;
-                    });
-                    this.CookieContainer.Add(cookie);
+                    if (cookie != null)
+                        this.CookieContainer.Add(cookie);
                 });
             }
             /*读取数据*/
@@ -206,6 +215,8 @@ namespace XiaoFeng.Http
             this.ResponseHttp.Headers.AllKeys.Each(k =>
             {
                 this.Headers.Add(k, this.ResponseHttp.Headers[k]);
+                if (k.EqualsIgnoreCase("Authorization"))
+                    this.Authorization = this.ResponseHttp.Headers[k];
             });
             //获取最后访问的URl
             var location = this.ResponseHttp.Headers.Get(HttpRequestHeader.ContentLocation.ToString());
@@ -274,44 +285,50 @@ namespace XiaoFeng.Http
             if (this.Headers.TryGetValue("Set-Cookie", out var Cookies))
             {
                 var uri = new Uri(this.Request.Address);
-                var cookie = new Cookie
-                {
-                    HttpOnly = Cookies.ToLower().EndsWith("httponly"),
-                    Domain = uri.Host
-                };
+                Cookie cookie = null;
                 //lang=zh-CN; path=/; secure; samesite=lax; httponly
                 var _c = Cookies.RemovePattern(@"\s+(httponly|samesite=lax|secure)(;|$)");
                 var cs = _c.GetMatches(@"(^|\s+)(?<name>[^=]+)=(?<value>[^;]*)(;|$)");
-                var dict = new Dictionary<string, string>();
                 cs.Each(a =>
                 {
-                    dict.Add(a["name"], a["value"]);
+                    var name = a["name"];
+                    var value = a["value"];
+                    if (name.IsNullOrEmpty()) return;
+                    switch (name.ToLower())
+                    {
+                        case "domain":
+                            cookie.Domain = value;
+                            break;
+                        case "path":
+                            cookie.Path = value;
+                            break;
+                        case "expires":
+                            if (DateTime.TryParse(value, out var d))
+                                cookie.Expires = d;
+                            break;
+                        case "max-age":
+                            break;
+                        case "secure":
+                            cookie.Secure = true;
+                            break;
+                        case "httponlay":
+                            cookie.HttpOnly = true;
+                            break;
+                        default:
+                            if (cookie != null)
+                                this.CookieContainer.Add(cookie);
+                            cookie = new Cookie
+                            {
+                                HttpOnly = Cookies.ToLower().EndsWith("httponly"),
+                                Domain = uri.Host
+                            };
+                            cookie.Name = name;
+                            cookie.Value = value;
+                            break;
+                    }
                 });
-                if (dict.ContainsKey("domain"))
-                {
-                    cookie.Domain = dict["domain"];
-                    dict.Remove("domain");
-                }
-                if (dict.ContainsKey("path"))
-                {
-                    cookie.Path = dict["path"];
-                    dict.Remove("path");
-                }
-                if (dict.ContainsKey("expires"))
-                {
-                    //cookie.Expires = DateTime.Parse(dict["expires"]);
-                    dict.Remove("expires");
-                }
-                if (dict.ContainsKey("max-age"))
-                {
-                    dict.Remove("max-age");
-                }
-                dict.Each(a =>
-                {
-                    cookie.Name = a.Key; cookie.Value = a.Value;
-                });
-                this.CookieContainer.Add(cookie);
-
+                if (cookie != null)
+                    this.CookieContainer.Add(cookie);
             }
             /*读取数据*/
             this.Data = await this.GetBytesAsync().ConfigureAwait(false);
@@ -351,10 +368,10 @@ namespace XiaoFeng.Http
                             /*开始读取流并设置编码方式*/
                             using (var zip = new GZipStream(stream, CompressionMode.Decompress))
                             {
-                                var bytes = new byte[zip.Length];
-                                await zip.ReadAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
-                                await _stream.WriteAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
-                                //await zip.CopyToAsync(_stream).ConfigureAwait(false);
+                                //var bytes = new byte[stream.Length];
+                                //var length = await zip.ReadAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
+                                //await _stream.WriteAsync(bytes, 0, length).ConfigureAwait(false);
+                                await zip.CopyToAsync(_stream).ConfigureAwait(false);
                             }
                         }
                         else if (ContentEncoding.Equals("deflate", StringComparison.InvariantCultureIgnoreCase))
@@ -450,7 +467,7 @@ namespace XiaoFeng.Http
         {
             if (key.IsNullOrEmpty()) return null;
             if (this.ResponseUri.IsNullOrEmpty()) return null;
-            var cookies = this.CookieContainer.GetCookies(this.ResponseUri);
+            var cookies = this.CookieContainer.GetCookies(this.ResponseUri.Multivariate(new Uri(this.Request.Address)));
             return cookies[key];
         }
         /// <summary>
