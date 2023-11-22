@@ -98,6 +98,43 @@ namespace XiaoFeng.IO
             });
         }
         /// <summary>
+        /// 写数据
+        /// </summary>
+        /// <param name="list">数据列表</param>
+        public void Write(string[][] list)
+        {
+            if (list == null) return;
+            list.Each(line =>
+            {
+                var vals = new List<string>();
+                line.Each(a =>
+                {
+                    if (a.StartsWith("\"") || a.IndexOf(",") > -1 || a.IndexOf("\r\n") > -1)
+                        a = "\"" + a.Replace("\"", "\"\"") + "\"";
+                    vals.Add(a);
+                });
+                var bytes = vals.Join(",").GetBytes(this.Encoding);
+                this.BaseStream.Write(bytes, 0, bytes.Length);
+                this.BaseStream.WriteByte((byte)'\r');
+                this.BaseStream.WriteByte((byte)'\n');
+                this.BaseStream.Flush();
+            });
+        }
+        /// <summary>
+        /// 写一行数据
+        /// </summary>
+        /// <param name="line">行数据</param>
+        /// <remarks>行数据中 <paramref name="line"/> 每列用 <see langword=","/> 隔开</remarks>
+        public void Write(string line)
+        {
+            line = line.Trim(new char[] { '\r', '\n' });
+            var bytes = line.GetBytes();
+            this.BaseStream.Write(bytes, 0, bytes.Length);
+            this.BaseStream.WriteByte((byte)'\r');
+            this.BaseStream.WriteByte((byte)'\n');
+            this.BaseStream.Flush();
+        }
+        /// <summary>
         /// 关闭流
         /// </summary>
         public void Close()

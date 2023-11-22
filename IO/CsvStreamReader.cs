@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
@@ -170,6 +172,49 @@ namespace XiaoFeng.IO
                 list.Add(line);
             }
             return list;
+        }
+        /// <summary>
+        /// 读取一行数据
+        /// </summary>
+        /// <returns></returns>
+        public DataRow ReadRow()
+        {
+            var dt = new DataTable("csv");
+            var dr = dt.NewRow();
+            var line = this.ReadLine();
+            var index = 0;
+            line.Each(a =>
+            {
+                dt.Columns.Add($"csv--column-{index}");
+                dr[index] = a;
+                index++;
+            });
+            return dr;
+        }
+        /// <summary>
+        /// 读取数据到DataTable
+        /// </summary>
+        /// <param name="tableName">表名</param>
+        /// <returns></returns>
+        public DataTable ReadTable(string tableName = "csv")
+        {
+            var dt = new DataTable(tableName);
+            while (!this.EndOfStream)
+            {
+                var line = this.ReadLine();
+                for(var i = dt.Columns.Count; i < line.Count; i++)
+                {
+                    dt.Columns.Add($"csv-column-{i}");
+                }
+                var dr = dt.NewRow();
+                var index = 0;
+                line.Each(a =>
+                {
+                    dr[index++] = a;
+                });
+                dt.Rows.Add(dr);
+            }
+            return dt;
         }
         /// <summary>
         /// 关闭

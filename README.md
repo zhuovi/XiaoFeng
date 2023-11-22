@@ -68,279 +68,6 @@ Cake
 #tool nuget:?package=XiaoFeng&version=4.3.6
 ```
 
-# 更新日志
-
-## 2023-11-17   v 4.3.6
-
-1.增加设置分库可设置ConnectionConfig对象方法;
-
-2.修复实体生成XML时无根节点bug;
-
-3.优化HttpHelper中获取Cookies;
-
-
-## 2023-10-27   v 4.3.5
-
-1.增加内存流的读写类MemoryBufferWriter,MemoryBufferReader;
-
-2.优化生成模型时字段名称有保留关键词时增加@;
-
-3.优化QueryableX中mysql date_format参数;
-
-4.优化生成模型时表名或视图名不区分大小适配;
-
-5.去除Xml序列化时默认根目录
-
-## 2023-10-18   v 4.3.4
-
-恢复上一版本中对(Redis中publish时返回结果状态不对的bug)的错误回滚
-
-## 2023-10-14   v 4.3.3
-
-1.修复Redis中消息队列Key与Value写反的bug;
-
-2.修复Redis中publish时返回结果状态不对的bug;
-
-## 2023-10-14   v 4.3.2
-
-1.增加Memcached查找所有key方法 StatsKeysAsync();
-
-2.修复SocketClient连接DNS时的bug;
-
-3.修复SocketClient在网络延迟大时,websocket判断不成功的问题;
-
-4.修复SocketClient发送MessageType.Binary数据时的bug;
-
-5.新增NetUri网络地址类;
-
-6.新增Enum判断是否有指定特性方法IsDefined;
-
-7.修改WebSocketClient连接偶尔出现的bug;
-
-## 2023-10-08   v 4.3.1
-
-1.增加Memcached查找所有key方法 StatsKeysAsync();
-
-2.修复SocketClient连接DNS时的bug;
-
-## 2023-09-26   v 4.3.0
-
-### XiaoFeng.Socket 网络库
-
-1.优化SocketClient连接方法;
-
-### XiaoFeng.PrototypeHelper 扩展方法
-
-1.增加扩展方法Object.ToStringX();
-
-2.优化扩展方法GetValue中字符串转换对象的匹配;
-
-3.增加创建实例扩展方法，类 结构体 匿名对象实例化;
-
-### XiaoFeng.Threading 线程
-
-1.etting设置Job消息日志最大条数;优化作业调度,把一次性作业,间隔作业独立处理,提高定时调度性能,优化作业记录日志最大记录减少内存开支;
-
-2.任务队列升级到可多线程消费任务;优化调度作业取消事件;
-
-### XiaoFeng.Json Json库
-
-1.优化Json可以把对象转成字符串的属性StringObjectConverter;
-
-### XiaoFeng.Memcached Memcached库
-
-1.Memcached增加二进制协议传输入，重构Memcached类库;
-
-### XiaoFeng.Log 日志库
-
-1.升级日志,增加高并发下日志写的没有输入多时导致内存一直上涨的问题,队列数据超过65535就清空一次队列;
-
-## 2023-09-07   v 4.2.0
-
-### Job 作业
-
-1.增加作业Job设置取消指令方法,启动设置取消指令方法;
-
-2.优化IJob事件;
-
-3.删除作业中已过期DayOrWeek,Time属性;
-
-### XiaoFeng.Socket 网络库
-
-1.优化SocketClient中NetworkDelay最小值及最大值的判断;
-
-2.优化SocketClient中连接host为IP的bug;
-
-3.优化XiaoFeng.Net.WebSocketClient请求头;
-
-4.优化SocketClient发送消息时,网络已断开抛出的异常;
-
-### XiaoFeng.ParameterCollection 参数集
-
-1.ParameterCollection中增加ToJson方法;
-
-### XiaoFeng.Http 网络库
-
-1.增加HttpHelper中HttpRequest类中直接可以调用DownFileAsync;
-
-2.优化XiaoFeng.Http.WebSocketClient接收消息;
-
-### XiaoFeng.PrototypeHelper 扩展方法
-
-1.优化For扩展方法;
-
-2.增加字符强度枚举,优化字符强度方法GetStringStrength;
-
-### 正则表达式
-
-1.优化正则表达式网址,Ftp正则增加汉字识别;
-
-2.增加判断字符串格式正则配置文件;
-
-
-## 2023-08-30   v 4.1.4
-
-1.优化网络延时时服务端接收websocket客户端时偶尔拒绝连接的bug
-
-2.SocketServer,SocketClient增加NetworkDelay网络延时属性;
-
-3.优化SocketServer中的AcceptTcpClient方法;
-
-## 2023-08-29   v 4.1.3
-
-1.优化SocketClient,在websocket客户端未解包的Bug;
-
-2.优化SocketClient第一次连接只调用OnMessage事件未调用OnMessageByte事件的Bug;
-
-## 2023-08-29   v 4.1.2
-
-1.优化Redis,Memcached连接;
-
-2.其它bug;
-
-## 2023-08-28   v 4.1.1
-
-1.设置NetServer,NetClient过期,用SocketServer,SocketClient替代;
-
-2.优化Redis有时为无限等待bug;
-
-3.SocketClient连接方法增加返回类型
-
-## 2023-08-24   v 4.1.0
-
-1.SocketClient增加LastMessageTime最后通讯时间,ConnectedTime连接时间;
-
-2.优化识别客户端是WebSocket还是Socket;
-
-## 2023-08-22   v 4.0.3
-
-1.修复postman在ssl下,一直发送消息服务端不能收到的问题;
-
-## 2023-08-22   v 4.0.2
-
-1.ParameterCollection类增加GetBytes方法,增加多种构造器可以设置是否URL编码及字符串编码;
-
-2.增加扩展RSAEncryption算法SignHash,VerifyHash;
-
-3.修复Json,Xml中类型为可空枚举时,应该序列化成key则序列化成value的bug;
-
-4.优化Redis关闭;
-
-5.优化WebSocketServer握手偶尔失败问题;服务端认证问题;
-
-
-## 2023-08-14   v 4.0.1
-
-1.修复网络库添加订阅功能;
-
-2.SocketClient增加Connect(),ConnectAsync()方法;
-
-3.SocketClient增加自动ping功能,SocketServer增加自动pong功能;
-
-4.SocketClient增加ReceviceMessageAsync(byte[] bytes,int offset,int count),自定义接收指定长度的数据;
-
-5.SocketClient增加ReceviceByteAsync(),可接收一个字节数据;
-
-6.XiaoFeng设置中增加调度日志输出等级设置,默认是Warn;
-
-7.增加WebSocketClient中属性WebSocketRequest为客户端请求信息;
-
-8.WebSocketClient增加启动传参数据WebSocketRequestOptions;
-
-9.HttpHelper中HttpSocket获取Https优化;
-
-10.SocketClient优化连接失败;
-
-11.增加ParameterCollection类专一来处理参数排序拼接;
-
-12.修改JobScheduler输出日志等级;
-
-13.优化Socket网络库注释;
-
-14.修复SocketServer每次收到消息都发送一次新连接回调的bug;
-
-15.增加将枚举转换换成字符串大小写表示形式;
-
-
-## 2023-08-03   v 4.0.0
-
-1.删除过渡命名空间XiaoFeng.Model.Core;
-
-2.优化通过模型生成数据表;
-
-3.新增索引属性TableIndexAttribute;
-
-4.新增模型索引属性;
-
-5.新增获取模型索引属性;
-
-6.新增查找数据库表是否存在;
-
-7.修复获取枚举GetDescription时无当前枚举时报错;
-
-8.增加调度作业Ijob中参数可通过方法分步设置;
-
-9.设置作业任务接口IJobWorker;
-
-10.增加FayFile的GetBytes,GetText()方法;
-
-11.ConfigSet增加泛路径设置,一个配置模型匹配多个配置文件;
-
-12.修改FileHelper中DeleteFile参数为params可以同时删除多个文件操作;
-
-13.增加HttpHelper的SetMethod,SetBodyData方法,优化没有证书时的ssl请求;
-
-14.更新线程池清除过期时间长度为10分钟;
-
-15.修复在NETSTANDARD 2.0下没有Split(char )方法;
-
-16.修复mysql中date_format格式;
-
-17.修复HttpRequest中ClentCertificates改为ClientCertificates;
-
-18.WebClientHelper帮助类移除,它已被HttpHelper替代;
-
-19.增加Socket库,SocketServer,WebSocketServer,SocketClient,WebSocketClient当前类库支持SSL;
-
-
-## 2023-05-16   v 3.5.2 
-
-1.优化DataHelperX;
-
-2.优化ToCast Byte转SByte;
-
-3.优化ResponseMessage为空的字段不显示;
-
-4.修复判断身份证号正则,JSON正则bug;
-
-5.增加ToJson是否忽略定义节点;
-
-6.增加ToJson长整型大于9007199254740992时是否序列化成字符串节点;
-
-7.修复JSON序列化长整型大于9007199254740992时前端显示0的问题;
-
----
-
 
 # XiaoFeng 类库包含库
 | 命名空间 | 所属类库 | 开源状态 | 说明 | 包含功能 |
@@ -368,6 +95,8 @@ Cake
 | XiaoFeng.Onvif | XiaoFeng.Onvif | :white_check_mark: | 视频监控库Onvif协议 | XiaoFeng.Onvif 基于.NET平台使用C#封装Onvif常用接口、设备、媒体、云台等功能， 拒绝WCF服务引用动态代理生成wsdl类文件 ， 使用原生XML扩展标记语言封装参数，所有的数据流向都可控。 |
 | FayElf.Plugins.WeChat | FayElf.Plugins.WeChat | :white_check_mark: | 微信公众号，小程序类库 | 微信公众号，小程序类库。 |
 | XiaoFeng.Mqtt | XiaoFeng.Mqtt | :white_check_mark: | MQTT协议 | XiaoFeng.Mqtt中间件,支持.NET框架、.NET内核和.NET标准库,一种非常方便操作的客户端工具。实现了MQTT客户端，MQTT服务端,同时支持TCP，WebSocket连接。支持协议版本3.0.0,3.1.0,5.0.0。 |
+| XiaoFeng.Mvc.AdminWinDesk | XiaoFeng.Mvc.AdminWinDesk | :white_check_mark: | XiaoFeng.Mvc后台皮肤 | 模仿windows桌面后台皮肤 |
+| FayElf.Cube.Blog | FayElf.Cube.Blog | :white_check_mark: | XiaoFeng.Mvc开发的技术博客 | 使用低代码开发框架（XiaoFeng.Mvc）+Windows后台皮肤(XiaoFeng.Mvc.AdminWinDesk)，开发的一个博客平台。 |
 
 
 
@@ -375,13 +104,14 @@ Cake
 
 ## 万能的类型转换扩展方法 ToCast<T>()
 
-当前方法可转换任何值类型包括 对象类型,数组类型.
+当前方法可转换任何值类型包括 对象类型,数组类型。
+
 在转换方法前，首选会验证当前值，类型和要转换的类型是否相同，接着就是验证，它是否符合目标类型的格式，如果不符合会转换成目标类型的默认值，也可以设置默认值。
 
-数据类型相互转换如：
-字符串转整型，字符串转日期，字符串转UUID
+数据类型相互转换如：字符串转整型，字符串转日期，字符串转UUID
 
 ### 用法示例：
+
 ```csharp
 using XiaoFeng;
 
@@ -521,11 +251,14 @@ if("7092734".IsMatch(@"^\d{5-11}$"))
 else
     Console.WriteLine("非QQ号码格式.");
 ```
-输出结果为：是QQ号码格式.
+输出结果为：是QQ号码格式。
+
 因为 字符串 "7092734"确实是QQ号码。
 
 IsNotMatch 当前方法其实就是 !IsMatch,用法和IsMatch用法一样。
+
 Match 当前扩展方法返回的是Match,使用指定的匹配选项在输入字符串中搜索指定的正则表达式的第一个匹配项。
+
 Matches 当前扩展方法返回的是使用指定的匹配选项在指定的输入字符串中搜索指定的正则表达式的所有匹配项。
 
 这三个方法是最原始最底层的方法，其它扩展都基于当前三个方法中的一个或两个来实现的。
@@ -611,7 +344,7 @@ XiaoFeng类库自动创建一个XiaoFeng.json配置文件 它的类库源码如�
         /// <summary>
         /// 设置配置文件名
         /// </summary>
-        /// <param name="fileName"></param>
+        /// <param name="fileName">文件路径</param>
         public Setting(string fileName) : base(fileName) { }
         #endregion
 
@@ -706,6 +439,157 @@ var debug = set.Debug;
 set.Debug = false;
 //保存当前配置 通过当前 Save 方法 可把 内容更新至配置文件中去
 set.Save();
+```
+
+# XiaoFeng.IO 文件类
+
+## FileHelper 文件操作类
+操作文件，目录扩展方法
+
+## 基本使用方法
+
+```csharp
+//假设当前项目目录在 E://Work/WebSite 目录下
+//获取当前项目的绝对根路径
+var a = "".GetBasePath();
+//a 最后的值就是 E://Work/WebSite
+//获取当前文件的绝对路径,当前文件 Config/a.json是在项目根目录下
+var b = "Config/a.json".GetBasePath();
+// b 最后的值就是 E://Work/WebSite/Config/a.json
+//获取当前项目所在磁盘的根目录路径
+var c = "/Config/a.json".GetBasePath();
+//c 最后值就是 E://Config/a.json
+
+//文件或目录是否存在
+FileHelper.Exists("Config/a.json");
+FileHelper.Exists("Config");
+//当前目录是否存在
+FileHelper.Exists("Config",FileAttribute.Directory);
+//创建文件或目录
+FileHelper.Create("Config/a.json");
+FileHelper.Create("Config");
+FileHelper.Create("Config/a.json",FileAttribute.File);
+FileHelper.CreateDirectory("Config");
+FileHelper.Create("Config/a.json","文件内容",Encoding.UTF8);
+//删除文件或目录
+FileHelper.Delete("Config/a.json");
+FileHelper.DeleteFile("Config/a.json","Config/b.json");
+FileHelper.Delete("Config");
+FileHelper.DeleteDirectory("Config","UploadFiles");
+//删除当前目录，如果当前目录为空继续往上判断是否为空，如果为空则继续删除，一直删除到目录为Config为止
+FileHelper.DeleteDirectoryEmpty("Config/ab/c/d","Config")
+//读取文件内容
+FileHelper.OpenText("Config/a.json",Encoding.UTF8);
+FileHelper.OpenBytes("Config/a.json");
+
+//读取文件头类型
+FileHelper.OpenReadMime("Config/a.json");
+//写文件内容
+FileHelper.WriteText("Config/a.json","要写的文件内容",Encoding.UTF8);
+FileHelper.WriteBytes("Config/a.json","要写的文件内容".GetBytes());
+
+//附加文件内容
+FileHelper.AppendText("Config/a.json","附加的内容",Encoding.UTF8);
+FileHelper.AppendBytes("Config/a.json","附加的内容".GetBytes());
+//重命名文件或目录
+//把文件名为a.json重命名为b.json
+FileHelper.Rename("Config/a.json","Config/b.json");
+//移动文件
+FileHelper.MoveFile("Config/a.json","Configa/b.json");
+//移动目录下所有文件及目录
+FileHelper.MoveDirectory("Config","Configa");
+//复制文件
+FileHelper.CopyFile("Config/a.json","Config/b.json");
+//复制目录
+FileHelper.CopyDirectory("Config","Configa");
+//计算文件夹大小
+FileHelper.GetFolderSize("Config");
+//字节转相应单位
+FileHelper.ConvertByte(1024000);
+//项目根目录
+FileHelper.GetCurrentDirectory();
+//获取文件编码
+FileHelper.GetEncoding(FileHelper.OpenBytes("Config/a.json"));
+//文件后缀名
+FileHelper.GetExtension("Config/a.json");
+//文件名和后缀名
+FileHelper.GetFileName("Config/a.json");
+//转成文件信息
+FileInfo  fileInfo = "Config/a.json".ToFileInfo();
+//设置当前项目目录
+FileHelper.SetCurrentDirectory("wwwroot");
+//合并目录
+FileHelper.Combine("Config","a.json");
+```
+
+## XiaoFeng.IO.CSVStreamWriter,XiaoFeng.IO.CSVStreamReader
+
+CSV文件读写器
+
+### XiaoFeng.IO.CSVStreamWriter 写入器
+
+```csharp
+var writer = new XiaoFeng.IO.CSVStreamWriter("Config/a.csv");
+writer.Write("a,b,c");
+writer.Write(new string[][]{new string[]{"a","b","c"},new string[]{"d","e","f"}});
+writer.Close()
+```
+
+### XiaoFeng.IO.CSVStreamReader 读取器
+
+```csharp
+var reader = new XiaoFeng.IO.CSVStreamReader("Config/a.csv");
+//读取一行数据
+var line = reader.ReadLine();
+//读取所有数据 字符串
+var all = reader.ReadToEnd();
+//读取所有数据 数组
+var alla = reader.ReadLines();
+//读取数据到DataRow
+var dr = reader.ReadRow();
+//读取数据到DataTable
+var dt = reader.ReadTable();
+```
+
+## XiaoFeng.IO.MemoryBufferReader,XiaoFeng.IO.MemoryBufferWriter
+
+内存写入器，读取器
+
+增强了内存流的读写器
+
+# XiaoFeng.Cryptography 算法
+
+#### 1. XiaoFeng.Cryptography.AESEncryption  AES 算法
+
+#### 2. XiaoFeng.Cryptography.DESEncryption   DES 算法
+
+#### 3. XiaoFeng.Cryptography.DES3Encryption   DES3 算法
+
+#### 4. XiaoFeng.Cryptography.RC4Encryption   RC4 算法
+
+#### 5. XiaoFeng.Cryptography.SM4Encryption   SM4 算法
+
+#### 6. XiaoFeng.Cryptography.SimpleHashEncryption   SimpleHash 算法
+
+#### 7. XiaoFeng.Cryptography.SHAEncryption   SHA 算法
+
+#### 8. XiaoFeng.Cryptography.HMACEncryption   HMAC 算法
+
+#### 9. XiaoFeng.Cryptography.RSAEncryption   RSA 算法
+
+#### 10. XiaoFeng.Cryptography.ELFEncryption   ELF 算法
+
+加密算法方法名为 Encrypt
+
+解密算法方法名为 Decrypt
+
+## 快捷扩展方法
+
+```csharp
+var a = "a".MD5(32);
+var b = "b".AESEncrypt("a");
+var c = "c".DES3Encrypt("a");
+var d = c.AESDecrypt("aaaa");
 ```
 
 # XiaoFeng.Cache 缓存类
@@ -1062,6 +946,13 @@ else
     /*请求失败*/
 }
 
+//第二种用法
+var result = await new HttpRequest{
+    Method = HttpMethod.Get,
+    Address = "http://www.eelf.cn"
+}.GetResponseAsync();
+//第三种用法
+var result = await new HttpRequest("http://www.eelf.cn").SetMethod(HttpMethod.Get).GetResponseAsync();
 ```
 
 * POST 表单请求
@@ -1071,7 +962,7 @@ var result = await XiaoFeng.Http.HttpHelper.GetHtmlAsync(new XiaoFeng.Http.HttpR
 {
     Method = HttpMethod.Post,
     Address = "http://www.fayelf.com",
-    Data=new Dictionary<string, string>
+    Data = new Dictionary<string, string>
     {
         {"account","jacky" },
         {"password","123456" }
@@ -1098,9 +989,9 @@ else
 var result = await XiaoFeng.Http.HttpHelper.GetHtmlAsync(new XiaoFeng.Http.HttpRequest
 {
     Method = HttpMethod.Post,
-    ContentType="application/json",
+    ContentType = "application/json",
     Address = "http://www.fayelf.com",
-    BodyData=@"{""account"":""jacky"",""password"":""123456""}"
+    BodyData = @"{""account"":""jacky"",""password"":""123456""}"
 });
 if (result.StatusCode == System.Net.HttpStatusCode.OK)
 {
@@ -1968,3 +1859,277 @@ client.UnSubscribe("取消订阅频道");
 * QQ : 7092734
 * Email : jacky@eelf.cn
 
+---
+
+# 更新日志
+
+## 2023-11-17   v 4.3.6
+
+1.增加设置分库可设置ConnectionConfig对象方法;
+
+2.修复实体生成XML时无根节点bug;
+
+3.优化HttpHelper中获取Cookies;
+
+
+## 2023-10-27   v 4.3.5
+
+1.增加内存流的读写类MemoryBufferWriter,MemoryBufferReader;
+
+2.优化生成模型时字段名称有保留关键词时增加@;
+
+3.优化QueryableX中mysql date_format参数;
+
+4.优化生成模型时表名或视图名不区分大小适配;
+
+5.去除Xml序列化时默认根目录
+
+## 2023-10-18   v 4.3.4
+
+恢复上一版本中对(Redis中publish时返回结果状态不对的bug)的错误回滚
+
+## 2023-10-14   v 4.3.3
+
+1.修复Redis中消息队列Key与Value写反的bug;
+
+2.修复Redis中publish时返回结果状态不对的bug;
+
+## 2023-10-14   v 4.3.2
+
+1.增加Memcached查找所有key方法 StatsKeysAsync();
+
+2.修复SocketClient连接DNS时的bug;
+
+3.修复SocketClient在网络延迟大时,websocket判断不成功的问题;
+
+4.修复SocketClient发送MessageType.Binary数据时的bug;
+
+5.新增NetUri网络地址类;
+
+6.新增Enum判断是否有指定特性方法IsDefined;
+
+7.修改WebSocketClient连接偶尔出现的bug;
+
+## 2023-10-08   v 4.3.1
+
+1.增加Memcached查找所有key方法 StatsKeysAsync();
+
+2.修复SocketClient连接DNS时的bug;
+
+## 2023-09-26   v 4.3.0
+
+### XiaoFeng.Socket 网络库
+
+1.优化SocketClient连接方法;
+
+### XiaoFeng.PrototypeHelper 扩展方法
+
+1.增加扩展方法Object.ToStringX();
+
+2.优化扩展方法GetValue中字符串转换对象的匹配;
+
+3.增加创建实例扩展方法，类 结构体 匿名对象实例化;
+
+### XiaoFeng.Threading 线程
+
+1.etting设置Job消息日志最大条数;优化作业调度,把一次性作业,间隔作业独立处理,提高定时调度性能,优化作业记录日志最大记录减少内存开支;
+
+2.任务队列升级到可多线程消费任务;优化调度作业取消事件;
+
+### XiaoFeng.Json Json库
+
+1.优化Json可以把对象转成字符串的属性StringObjectConverter;
+
+### XiaoFeng.Memcached Memcached库
+
+1.Memcached增加二进制协议传输入，重构Memcached类库;
+
+### XiaoFeng.Log 日志库
+
+1.升级日志,增加高并发下日志写的没有输入多时导致内存一直上涨的问题,队列数据超过65535就清空一次队列;
+
+## 2023-09-07   v 4.2.0
+
+### Job 作业
+
+1.增加作业Job设置取消指令方法,启动设置取消指令方法;
+
+2.优化IJob事件;
+
+3.删除作业中已过期DayOrWeek,Time属性;
+
+### XiaoFeng.Socket 网络库
+
+1.优化SocketClient中NetworkDelay最小值及最大值的判断;
+
+2.优化SocketClient中连接host为IP的bug;
+
+3.优化XiaoFeng.Net.WebSocketClient请求头;
+
+4.优化SocketClient发送消息时,网络已断开抛出的异常;
+
+### XiaoFeng.ParameterCollection 参数集
+
+1.ParameterCollection中增加ToJson方法;
+
+### XiaoFeng.Http 网络库
+
+1.增加HttpHelper中HttpRequest类中直接可以调用DownFileAsync;
+
+2.优化XiaoFeng.Http.WebSocketClient接收消息;
+
+### XiaoFeng.PrototypeHelper 扩展方法
+
+1.优化For扩展方法;
+
+2.增加字符强度枚举,优化字符强度方法GetStringStrength;
+
+### 正则表达式
+
+1.优化正则表达式网址,Ftp正则增加汉字识别;
+
+2.增加判断字符串格式正则配置文件;
+
+
+## 2023-08-30   v 4.1.4
+
+1.优化网络延时时服务端接收websocket客户端时偶尔拒绝连接的bug
+
+2.SocketServer,SocketClient增加NetworkDelay网络延时属性;
+
+3.优化SocketServer中的AcceptTcpClient方法;
+
+## 2023-08-29   v 4.1.3
+
+1.优化SocketClient,在websocket客户端未解包的Bug;
+
+2.优化SocketClient第一次连接只调用OnMessage事件未调用OnMessageByte事件的Bug;
+
+## 2023-08-29   v 4.1.2
+
+1.优化Redis,Memcached连接;
+
+2.其它bug;
+
+## 2023-08-28   v 4.1.1
+
+1.设置NetServer,NetClient过期,用SocketServer,SocketClient替代;
+
+2.优化Redis有时为无限等待bug;
+
+3.SocketClient连接方法增加返回类型
+
+## 2023-08-24   v 4.1.0
+
+1.SocketClient增加LastMessageTime最后通讯时间,ConnectedTime连接时间;
+
+2.优化识别客户端是WebSocket还是Socket;
+
+## 2023-08-22   v 4.0.3
+
+1.修复postman在ssl下,一直发送消息服务端不能收到的问题;
+
+## 2023-08-22   v 4.0.2
+
+1.ParameterCollection类增加GetBytes方法,增加多种构造器可以设置是否URL编码及字符串编码;
+
+2.增加扩展RSAEncryption算法SignHash,VerifyHash;
+
+3.修复Json,Xml中类型为可空枚举时,应该序列化成key则序列化成value的bug;
+
+4.优化Redis关闭;
+
+5.优化WebSocketServer握手偶尔失败问题;服务端认证问题;
+
+
+## 2023-08-14   v 4.0.1
+
+1.修复网络库添加订阅功能;
+
+2.SocketClient增加Connect(),ConnectAsync()方法;
+
+3.SocketClient增加自动ping功能,SocketServer增加自动pong功能;
+
+4.SocketClient增加ReceviceMessageAsync(byte[] bytes,int offset,int count),自定义接收指定长度的数据;
+
+5.SocketClient增加ReceviceByteAsync(),可接收一个字节数据;
+
+6.XiaoFeng设置中增加调度日志输出等级设置,默认是Warn;
+
+7.增加WebSocketClient中属性WebSocketRequest为客户端请求信息;
+
+8.WebSocketClient增加启动传参数据WebSocketRequestOptions;
+
+9.HttpHelper中HttpSocket获取Https优化;
+
+10.SocketClient优化连接失败;
+
+11.增加ParameterCollection类专一来处理参数排序拼接;
+
+12.修改JobScheduler输出日志等级;
+
+13.优化Socket网络库注释;
+
+14.修复SocketServer每次收到消息都发送一次新连接回调的bug;
+
+15.增加将枚举转换换成字符串大小写表示形式;
+
+
+## 2023-08-03   v 4.0.0
+
+1.删除过渡命名空间XiaoFeng.Model.Core;
+
+2.优化通过模型生成数据表;
+
+3.新增索引属性TableIndexAttribute;
+
+4.新增模型索引属性;
+
+5.新增获取模型索引属性;
+
+6.新增查找数据库表是否存在;
+
+7.修复获取枚举GetDescription时无当前枚举时报错;
+
+8.增加调度作业Ijob中参数可通过方法分步设置;
+
+9.设置作业任务接口IJobWorker;
+
+10.增加FayFile的GetBytes,GetText()方法;
+
+11.ConfigSet增加泛路径设置,一个配置模型匹配多个配置文件;
+
+12.修改FileHelper中DeleteFile参数为params可以同时删除多个文件操作;
+
+13.增加HttpHelper的SetMethod,SetBodyData方法,优化没有证书时的ssl请求;
+
+14.更新线程池清除过期时间长度为10分钟;
+
+15.修复在NETSTANDARD 2.0下没有Split(char )方法;
+
+16.修复mysql中date_format格式;
+
+17.修复HttpRequest中ClentCertificates改为ClientCertificates;
+
+18.WebClientHelper帮助类移除,它已被HttpHelper替代;
+
+19.增加Socket库,SocketServer,WebSocketServer,SocketClient,WebSocketClient当前类库支持SSL;
+
+
+## 2023-05-16   v 3.5.2 
+
+1.优化DataHelperX;
+
+2.优化ToCast Byte转SByte;
+
+3.优化ResponseMessage为空的字段不显示;
+
+4.修复判断身份证号正则,JSON正则bug;
+
+5.增加ToJson是否忽略定义节点;
+
+6.增加ToJson长整型大于9007199254740992时是否序列化成字符串节点;
+
+7.修复JSON序列化长整型大于9007199254740992时前端显示0的问题;
+
+---
