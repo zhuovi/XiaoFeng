@@ -30,8 +30,10 @@ namespace XiaoFeng.Redis
         /// <returns></returns>
         public object[] ToArgments()
         {
-            var list = new List<object>();
-            list.Add(this.KeyAndWeights.Count);
+            var list = new List<object>
+            {
+                this.KeyAndWeights.Count
+            };
             this.KeyAndWeights.Keys.Each(k => list.Add(k));
             list.Add("WEIGHTS");
             this.KeyAndWeights.Values.Each(v => list.Add(v));

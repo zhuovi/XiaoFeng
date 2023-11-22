@@ -114,7 +114,7 @@ namespace XiaoFeng
                 string name = m.Name;
                 keys.Add(name);
                 _list.Add(m);
-                if (action != null) action.Invoke(m);
+                action?.Invoke(m);
             });
             keys.Clear();
             return _list;

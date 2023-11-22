@@ -71,10 +71,10 @@ namespace XiaoFeng.Threading
         /// 执行任务列表
         /// </summary>
         public List<Task> TaskList { get; set; } = new List<Task>();
-        /// <summary>
+        /*/// <summary>
         /// 消费运行状态
         /// </summary>
-        private Boolean ConsumeState { get; set; } = false;
+        private Boolean ConsumeState { get; set; } = false;*/
         /// <summary>
         /// 取消信号
         /// </summary>
@@ -82,7 +82,7 @@ namespace XiaoFeng.Threading
         /// <summary>
         /// 线程同步信号
         /// </summary>
-        private SemaphoreSlim Slim = new SemaphoreSlim(1, 3);
+        private readonly SemaphoreSlim Slim = new SemaphoreSlim(1, 3);
         /// <summary>
         /// XiaoFeng 配置
         /// </summary>

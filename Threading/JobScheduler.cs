@@ -339,7 +339,11 @@ namespace XiaoFeng.Threading
                         this.Log($"-- 下一次检测作业时间为:{now.AddMilliseconds(this.Period):yyyy-MM-dd HH:mm:ss.ffff} --");
                     });
                     //this.Log($"等待间隔:{this.Period}");
-                    if (this.Manual == null) this.Manual = new ManualResetEventSlim(false);
+                    if (this.Manual == null)
+                    {
+                        this.Manual = new ManualResetEventSlim(false);
+                    }
+
                     Manual.Reset();
                     Manual.Wait(TimeSpan.FromMilliseconds(this.Period < 0 ? 10 : this.Period));
                 }
@@ -824,7 +828,7 @@ namespace XiaoFeng.Threading
         #endregion
 
         #region 获取离当前值最接近的索引
-        /// <summary>
+        /*/// <summary>
         /// 获取离当前值最接近的索引
         /// </summary>
         /// <param name="arr">数组</param>
@@ -847,7 +851,7 @@ namespace XiaoFeng.Threading
                 }
             }
             return Index == -1 ? 0 : Index;
-        }
+        }*/
         #endregion
 
         #region 获取最大值

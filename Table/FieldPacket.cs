@@ -52,7 +52,10 @@ namespace XiaoFeng.Table
         /// 数据
         /// </summary>
         private StringBuilder Data { get; set; } = new StringBuilder();
-        private Dictionary<DbProviderType, string> CreateTableTemplates = new Dictionary<DbProviderType, string> {
+        /*/// <summary>
+        /// 创建表模板
+        /// </summary>
+        private readonly Dictionary<DbProviderType, string> CreateTableTemplates = new Dictionary<DbProviderType, string> {
             { DbProviderType.SqlServer, @"
 IF NOT EXISTS (SELECT * FROM SYSOBJECTS WHERE ID = OBJECT_ID(N'[dbo].[{0}]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
 BEGIN 
@@ -70,7 +73,7 @@ END
             { DbProviderType.MySql, @"" },
             { DbProviderType.SQLite, @"" },
             { DbProviderType.Oracle, @"" },
-        };
+        };*/
         #endregion
 
         #region 方法

@@ -182,9 +182,12 @@ namespace XiaoFeng.Redis
         public async Task<Dictionary<string, Dictionary<string, string>>> GetMessageListAsync(string key, int? start = null, int? end = null, int? count = null, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return await Task.FromResult(default(Dictionary<string, Dictionary<string, string>>));
-            var list = new List<object> { key };
-            list.Add(start.HasValue ? Math.Abs(start.Value).ToString() : "-");
-            list.Add(end.HasValue ? Math.Abs(end.Value).ToString() : "-");
+            var list = new List<object>
+            {
+                key,
+                start.HasValue ? Math.Abs(start.Value).ToString() : "-",
+                end.HasValue ? Math.Abs(end.Value).ToString() : "-"
+            };
             if (count.HasValue)
             {
                 list.Add("COUNT");
@@ -232,9 +235,12 @@ namespace XiaoFeng.Redis
         public async Task<Dictionary<string, Dictionary<string, string>>> GetReverseMessageListAsync(string key, int? start = null, int? end = null, int? count = null, int? dbNum = null)
         {
             if (key.IsNullOrEmpty()) return await Task.FromResult(default(Dictionary<string, Dictionary<string, string>>));
-            var list = new List<object> { key };
-            list.Add(start.HasValue ? Math.Abs(start.Value).ToString() : "-");
-            list.Add(end.HasValue ? Math.Abs(end.Value).ToString() : "-");
+            var list = new List<object>
+            {
+                key,
+                start.HasValue ? Math.Abs(start.Value).ToString() : "-",
+                end.HasValue ? Math.Abs(end.Value).ToString() : "-"
+            };
             if (count.HasValue)
             {
                 list.Add("COUNT");

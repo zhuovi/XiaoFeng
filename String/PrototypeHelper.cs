@@ -131,8 +131,10 @@ namespace XiaoFeng
                             Current = new Pair(c);
                         else
                         {
-                            var cp = new Pair(c);
-                            cp.ParentPair = Current;
+                            var cp = new Pair(c)
+                            {
+                                ParentPair = Current
+                            };
                             if (Current.ChildPair == null)
                                 Current.ChildPair = new List<Pair> { cp };
                             else

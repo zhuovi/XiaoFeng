@@ -150,7 +150,7 @@ namespace XiaoFeng.Redis
         /// <summary>
         /// 锁
         /// </summary>
-        private static object RedisLock = new object();
+        private static readonly object RedisLock = new object();
         #endregion
 
         #region 方法
@@ -239,7 +239,7 @@ namespace XiaoFeng.Redis
             catch (Exception ex)
             {
                 LogHelper.Error(ex);
-                return default(T);
+                return default;
             }
             finally
             {
@@ -281,7 +281,7 @@ namespace XiaoFeng.Redis
             catch (Exception ex)
             {
                 LogHelper.Error(ex);
-                return default(T);
+                return default;
             }
             finally
             {

@@ -107,7 +107,7 @@ namespace XiaoFeng.Cache
         {
             if (this.TryGetValue(key, out object entity))
                 return entity.ToCast<T>();
-            return default(T);
+            return default;
         }
         /// <summary>
         /// 获取缓存
@@ -325,8 +325,7 @@ namespace XiaoFeng.Cache
         private async Task StopAsync()
         {
             this.IsRunTime = false;
-            if (this.Timer != null)
-                this.Timer.Stop();
+            this.Timer?.Stop();
             await Task.CompletedTask;
         }
         #endregion

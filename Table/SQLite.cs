@@ -97,8 +97,7 @@ PRAGMA foreign_keys = on;
             type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase).Each(p =>
             {
                 if (p.GetCustomAttribute<FieldIgnoreAttribute>() != null) return;
-                var columnAttr = p.GetColumnAttribute();
-                if (columnAttr == null) columnAttr = new ColumnAttribute();
+                var columnAttr = p.GetColumnAttribute() ?? new ColumnAttribute();
                 if (columnAttr.Name.IsNullOrEmpty()) columnAttr.Name = p.Name;
                 if (columnAttr.DataType.IsNullOrEmpty()) columnAttr.DataType = dbType[p.PropertyType];
                 if (columnAttr.Description.IsNullOrEmpty()) columnAttr.Description = p.Name;

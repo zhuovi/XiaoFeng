@@ -48,7 +48,7 @@ namespace XiaoFeng
         public static implicit operator T(WeakReference<T> obj)
         {
             if (obj != null && obj.Target != null) return obj.Target;
-            return default(T);
+            return default;
         }
         /// <summary>
         /// 类型转换

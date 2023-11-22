@@ -145,7 +145,7 @@ namespace XiaoFeng.Table
             else
             {
                 DefaultValue = "DEFAULT ({0})";
-                string defaultValue;
+                string defaultValue = string.Empty;
                 if (column.DefaultValue.IsNullOrEmpty() || column.DefaultValue.ToString().ToUpper() == "NULL")
                     defaultValue = "NULL";
                 else if (column.DefaultValue.ToString().IsNumberic())
@@ -158,7 +158,7 @@ namespace XiaoFeng.Table
                     defaultValue = "''";
                 //else
                 //defaultValue = GetDefaultValue(column.DefaultValue.ToString().Trim('\''), providerType);
-                //DefaultValue = DefaultValue.format(defaultValue);
+                DefaultValue = DefaultValue.format(defaultValue);
             }
             return FieldFormat.format(column.Name, dbType, tLength, NotNull, DefaultValue);
         }

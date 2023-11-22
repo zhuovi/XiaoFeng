@@ -30,11 +30,11 @@ namespace XiaoFeng.Resource
         /// <summary>
         /// 所有的资源
         /// </summary>
-        static Dictionary<string, Resource> Data = new Dictionary<string, Resource>();
+        static readonly Dictionary<string, Resource> Data = new Dictionary<string, Resource>();
         /// <summary>
         /// 已加载过的dll资源
         /// </summary>
-        static List<string> LoadData = new List<string>();
+        static readonly List<string> LoadData = new List<string>();
         #endregion
 
         #region 方法

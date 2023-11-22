@@ -161,7 +161,7 @@ namespace XiaoFeng
         /// <param name="attributeName">属性名称</param>
         /// <param name="defaultValue">默认值</param>
         /// <returns>属性值</returns>
-        public static T GetXAttribute<T>(this XElement xElement, string attributeName, T defaultValue = default(T))
+        public static T GetXAttribute<T>(this XElement xElement, string attributeName, T defaultValue = default)
         {
             var attr = xElement.GetXAttribute(attributeName);
             return attr == null ? defaultValue : attr.Value.ToCast<T>();

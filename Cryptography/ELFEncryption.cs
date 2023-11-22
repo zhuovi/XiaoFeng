@@ -91,9 +91,7 @@ namespace XiaoFeng.Cryptography
             {
                 if (i < len - 1)
                 {
-                    var c = arr[i];
-                    arr[i] = arr[i + 1];
-                    arr[i + 1] = c;
+                    (arr[i + 1], arr[i]) = (arr[i], arr[i + 1]);
                 }
             }
             var _arr = arr.Reverse().ToArray();
@@ -101,9 +99,7 @@ namespace XiaoFeng.Cryptography
             {
                 if (i < len - 2)
                 {
-                    var c = _arr[i];
-                    _arr[i] = _arr[i + 2];
-                    _arr[i + 2] = c;
+                    (_arr[i + 2], _arr[i]) = (_arr[i], _arr[i + 2]);
                 }
             }
             var __arr = _arr.Reverse().ToArray();
@@ -111,9 +107,7 @@ namespace XiaoFeng.Cryptography
             {
                 if (i < len - 6)
                 {
-                    var c = __arr[i];
-                    __arr[i] = __arr[i + 6];
-                    __arr[i + 6] = c;
+                    (__arr[i + 6], __arr[i]) = (__arr[i], __arr[i + 6]);
                 }
             }
             return new string(__arr.Reverse().ToArray());
@@ -132,9 +126,7 @@ namespace XiaoFeng.Cryptography
             {
                 if (i < len - 6)
                 {
-                    var c = _data[i];
-                    _data[i] = _data[i + 6];
-                    _data[i + 6] = c;
+                    (_data[i + 6], _data[i]) = (_data[i], _data[i + 6]);
                 }
             }
             var __arr = _data.Reverse().ToArray();
@@ -142,9 +134,7 @@ namespace XiaoFeng.Cryptography
             {
                 if (i < len - 2)
                 {
-                    var c = __arr[i];
-                    __arr[i] = __arr[i + 2];
-                    __arr[i + 2] = c;
+                    (__arr[i + 2], __arr[i]) = (__arr[i], __arr[i + 2]);
                 }
             }
             var _arr = __arr.Reverse().ToArray();
@@ -152,9 +142,7 @@ namespace XiaoFeng.Cryptography
             {
                 if (i < len - 1)
                 {
-                    var c = _arr[i];
-                    _arr[i] = _arr[i + 1];
-                    _arr[i + 1] = c;
+                    (_arr[i + 1], _arr[i]) = (_arr[i], _arr[i + 1]);
                 }
             }
             var arr = new string(_arr.Reverse().ToArray());

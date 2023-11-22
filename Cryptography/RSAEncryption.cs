@@ -35,14 +35,14 @@ namespace XiaoFeng.Cryptography
         #endregion
 
         #region 属性
-        /// <summary>
+        /*/// <summary>
         /// oid
         /// </summary>
         private readonly byte[] SeqOID = new byte[] { 0x30, 0x0D, 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x01, 0x05, 0x00 };
         /// <summary>
         /// 版本
         /// </summary>
-        private readonly byte[] Ver = new byte[] { 0x02, 0x01, 0x00 };
+        private readonly byte[] Ver = new byte[] { 0x02, 0x01, 0x00 };*/
         #endregion
 
         #region 方法
@@ -285,9 +285,9 @@ namespace XiaoFeng.Cryptography
             var parameters = new RSAParameters();
             var key = privateKey.GetBytes();
             byte[] MODULUS, E, D, P, Q, DP, DQ, IQ;
-            byte bt = 0;
-            ushort twobytes = 0;
-            int elems = 0;
+            byte bt;
+            ushort twobytes;
+            int elems;
 
             //设置流以解码asn.1个编码的RSA私钥
             //使用BinaryReader包装内存流，便于阅读
@@ -365,10 +365,10 @@ namespace XiaoFeng.Cryptography
         /// <returns></returns>
         private int GetIntegerSize(BinaryReader binaryReader)
         {
-            byte bt = 0;
-            byte lowbyte = 0x00;
-            byte highbyte = 0x00;
-            int count = 0;
+            byte bt;
+            byte lowbyte;
+            byte highbyte;
+            int count;
 
             bt = binaryReader.ReadByte();
 

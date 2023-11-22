@@ -38,7 +38,7 @@ namespace XiaoFeng.Redis
         /// <returns></returns>
         public RedisReader Client(string key, params object[] values)
         {
-            if (key.IsNullOrEmpty()) return default(RedisReader);
+            if (key.IsNullOrEmpty()) return default;
             return this.Execute(CommandType.CLIENT, null, result => result, new object[] { key }.Concat(values).ToArray());
         }
         /// <summary>
@@ -49,7 +49,7 @@ namespace XiaoFeng.Redis
         /// <returns></returns>
         public async Task<RedisReader> ClientAsync(string key, params object[] values)
         {
-            if (key.IsNullOrEmpty()) return default(RedisReader);
+            if (key.IsNullOrEmpty()) return default;
             return await this.ExecuteAsync(CommandType.CLIENT, null, async result => await Task.FromResult(result), new object[] { key }.Concat(values).ToArray());
         }
         /// <summary>
@@ -214,7 +214,7 @@ namespace XiaoFeng.Redis
         /// <returns></returns>
         public RedisReader Config(string key, params object[] values)
         {
-            if (key.IsNullOrEmpty()) return default(RedisReader);
+            if (key.IsNullOrEmpty()) return default;
             return this.Execute(CommandType.CONFIG, null, result => result, new object[] { key }.Concat(values).ToArray());
         }
         /// <summary>
@@ -225,7 +225,7 @@ namespace XiaoFeng.Redis
         /// <returns></returns>
         public async Task<RedisReader> ConfigAsync(string key, params object[] values)
         {
-            if (key.IsNullOrEmpty()) return default(RedisReader);
+            if (key.IsNullOrEmpty()) return default;
             return await this.ExecuteAsync(CommandType.CONFIG, null, async result => await Task.FromResult(result), new object[] { key }.Concat(values).ToArray());
         }
         /// <summary>

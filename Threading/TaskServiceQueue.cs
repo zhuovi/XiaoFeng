@@ -143,12 +143,7 @@ namespace XiaoFeng.Threading
         /// </summary>
         private ISetting Setting
         {
-            get
-            {
-                if (_Setting == null)
-                    _Setting = XiaoFeng.Config.Setting.Current;
-                return _Setting;
-            }
+            get => _Setting ?? (_Setting = XiaoFeng.Config.Setting.Current);
             set => _Setting = value;
         }
         #endregion
@@ -219,7 +214,7 @@ namespace XiaoFeng.Threading
             else
             {
                 Manual.Reset();
-                return default(T);
+                return default;
             }
         }
         /// <summary>

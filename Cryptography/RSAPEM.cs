@@ -69,7 +69,7 @@ namespace XiaoFeng.Cryptography
         {
             var ms = new MemoryStream();
             //写入一个长度字节码
-            Action<int> writeLenByte = (len) =>
+            void writeLenByte(int len)
             {
                 if (len < 0x80)
                 {
@@ -86,9 +86,9 @@ namespace XiaoFeng.Cryptography
                     ms.WriteByte((byte)(len >> 8 & 0xff));
                     ms.WriteByte((byte)(len & 0xff));
                 }
-            };
+            }
             //写入一块数据
-            Action<byte[]> writeBlock = (byts) =>
+            void writeBlock(byte[] byts)
             {
                 var addZero = (byts[0] >> 4) >= 0x8;
                 ms.WriteByte(0x02);
@@ -100,9 +100,9 @@ namespace XiaoFeng.Cryptography
                     ms.WriteByte(0x00);
                 }
                 ms.Write(byts, 0, byts.Length);
-            };
+            }
             //根据后续内容长度写入长度数据
-            Func<int, byte[], byte[]> writeLen = (index, byts) =>
+            byte[] writeLen(int index, byte[] byts)
             {
                 var len = byts.Length - index;
 
@@ -112,12 +112,12 @@ namespace XiaoFeng.Cryptography
                 ms.Write(byts, index, len);
 
                 return ms.ToArray();
-            };
-            Action<MemoryStream, byte[]> writeAll = (stream, byts) =>
+            }
+            void writeAll(MemoryStream stream, byte[] byts)
             {
                 stream.Write(byts, 0, byts.Length);
-            };
-            Func<string, int, string> TextBreak = (text, line) =>
+            }
+            string TextBreak(string text, int line)
             {
                 var idx = 0;
                 var len = text.Length;
@@ -139,7 +139,7 @@ namespace XiaoFeng.Cryptography
                     idx += line;
                 }
                 return str.ToString();
-            };
+            }
             /****生成公钥****/
 
             //写入总字节数，不含本段长度，额外需要24字节的头，后续计算好填入

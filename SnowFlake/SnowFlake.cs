@@ -34,43 +34,43 @@ namespace XiaoFeng
         /// <summary>
         /// 唯一时间随机量
         /// </summary>
-        private static long Twepoch = 687888001020L;
+        private static readonly long Twepoch = 687888001020L;
         /// <summary>
         /// 机器码字节数
         /// </summary>
-        private static long MachineIdBits = 5L;
+        private static readonly long MachineIdBits = 5L;
         /// <summary>
         /// 数据字节数
         /// </summary>
-        private static long DatacenterIdBits = 5L;
+        private static readonly long DatacenterIdBits = 5L;
         /// <summary>
         /// 最大机器ID
         /// </summary>
-        public static long MaxMachineID = -1L ^ -1L << (int)MachineIdBits;
+        public static readonly long MaxMachineID = -1L ^ -1L << (int)MachineIdBits;
         /// <summary>
         /// 最大数据ID
         /// </summary>
-        private static long MaxDatacenterID = -1L ^ (-1L << (int)DatacenterIdBits);
+        private static readonly long MaxDatacenterID = -1L ^ (-1L << (int)DatacenterIdBits);
         /// <summary>
         /// 计数器字节数，12个字节用来保存计数码
         /// </summary>
-        private static long SequenceBits = 12L;
+        private static readonly long SequenceBits = 12L;
         /// <summary>
         /// 机器码数据左移位数，就是后面计数器占用的位数
         /// </summary>
-        private static long MachineIdShift = SequenceBits;
+        private static readonly long MachineIdShift = SequenceBits;
         /// <summary>
         /// 数据中心ID
         /// </summary>
-        private static long DatacenterIdShift = SequenceBits + MachineIdBits;
+        private static readonly long DatacenterIdShift = SequenceBits + MachineIdBits;
         /// <summary>
         /// 时间戳左移动位数就是机器码+计数器总字节数+数据字节数
         /// </summary>
-        private static long TimestampLeftShift = SequenceBits + MachineIdBits + DatacenterIdBits;
+        private static readonly long TimestampLeftShift = SequenceBits + MachineIdBits + DatacenterIdBits;
         /// <summary>
         /// 一微秒内可以产生计数，如果达到该值则等到下一微妙在进行生成
         /// </summary>
-        public static long SequenceMask = -1L ^ -1L << (int)SequenceBits;
+        public static readonly long SequenceMask = -1L ^ -1L << (int)SequenceBits;
         /// <summary>
         /// 最后时间戳
         /// </summary>
@@ -78,7 +78,7 @@ namespace XiaoFeng
         /// <summary>
         /// 加锁对象
         /// </summary>
-        private static object SyncRoot = new object();
+        private static readonly object SyncRoot = new object();
         /// <summary>
         /// 静态方法
         /// </summary>
@@ -91,9 +91,7 @@ namespace XiaoFeng
         {
             get
             {
-                if (Snowflake == null)
-                    Snowflake = new SnowFlake();
-                return Snowflake;
+                return Snowflake ?? (Snowflake = new SnowFlake());
             }
         }
         #endregion

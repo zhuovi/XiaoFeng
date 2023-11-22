@@ -315,8 +315,7 @@ namespace XiaoFeng.Xml
                 list = xmlValue.ParentElement.ChildNodes.Where(a => a.Name.EqualsIgnoreCase(xmlValue.Name)).ToList();
             }
             var length = list.Count;
-            var elmType = type?.GetElementXType();
-            if (elmType == null) elmType = typeof(object);
+            var elmType = (type?.GetElementXType()) ?? typeof(object);
             var arr = Array.CreateInstance(elmType, length);
             list.For(0, length, i =>
              {
@@ -346,8 +345,7 @@ namespace XiaoFeng.Xml
             {
                 lists = xmlValue.ParentElement.ChildNodes.Where(a => a.Name.EqualsIgnoreCase(xmlValue.Name)).ToList();
             }
-            var elmType = type.GetGenericArguments().FirstOrDefault();
-            if (elmType == null) elmType = typeof(object);
+            var elmType = type.GetGenericArguments().FirstOrDefault() ?? typeof(object);
             // 处理一下type是IList<>的情况
             if (type.IsInterface) type = typeof(List<>).MakeGenericType(elmType);
             // 创建列表

@@ -24,7 +24,7 @@ namespace XiaoFeng
         /// <SUMMARY>
         /// 包含字符 ASC 码的整形数组。
         /// </SUMMARY>
-        private static int[] pinyinValues = new int[]
+        private static readonly int[] pinyinValues = new int[]
         {
             -20319, -20317, -20304, -20295, -20292, -20283, -20265, -20257, -20242, -20230, -20051, -20036, -20032, -20026,
             -20002, -19990, -19986, -19982, -19976, -19805, -19784, -19775, -19774, -19763, -19756, -19751, -19746, -19741,
@@ -60,7 +60,7 @@ namespace XiaoFeng
         /// <SUMMARY>
         /// 包含汉字拼音的字符串数组。
         /// </SUMMARY>
-        private static string[] PinyinNames = new string[]
+        private static readonly string[] PinyinNames = new string[]
         {
             "a", "ai", "an", "ang", "ao", "ba", "bai", "ban", "bang", "bao", "bei", "ben", "beng", "bi", "bian", "biao", "bie",
             "bin", "bing", "bo", "bu", "ca", "cai", "can", "cang", "cao", "ce", "ceng", "cha", "chai", "chan", "chang", "chao",
@@ -311,20 +311,13 @@ namespace XiaoFeng
         /// </summary>
         public static Hashtable CHSPhraseSpecial
         {
-            get
-            {
-                if (_PhraseSpecial == null)
-                {
-                    _PhraseSpecial = new Hashtable
+            get => _PhraseSpecial ?? (_PhraseSpecial = new Hashtable
                     {
                         { "重庆", "Chong Qing" },
                         { "深圳", "Shen Zhen" },
                         { "银行", "Yin Hang" }
-                    };
-                }
-                return _PhraseSpecial;
-            }
-            set { _PhraseSpecial = value; }
+                    });
+            set => _PhraseSpecial = value;
         }
         #endregion
     }

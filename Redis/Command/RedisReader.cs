@@ -57,10 +57,10 @@ namespace XiaoFeng.Redis
         /// 锁
         /// </summary>
         public object StreamLock { get; set; } = new object();
-        /// <summary>
+        /*/// <summary>
         /// 换行
         /// </summary>
-        private const string EOF = "\r\n";
+        private const string EOF = "\r\n";*/
         /// <summary>
         /// 命令类型
         /// </summary>
@@ -932,7 +932,7 @@ namespace XiaoFeng.Redis
         /// <returns>单条数据</returns>
         public byte[] ReadBulkBytes()
         {
-            var size = this.ReadInt().ToInt();
+            this.ReadInt();
             var vals = this.ReadLineBytes();
             return vals;
         }
