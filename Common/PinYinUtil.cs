@@ -230,7 +230,7 @@ namespace XiaoFeng
             if (chsStr.CompareTo("咗") < 0) return "Z";
             return "0";
         }
-#endregion
+        #endregion
 
         #region 公有属性
         /// <summary>
@@ -256,6 +256,6 @@ namespace XiaoFeng
 #endif
             set => _PhraseSpecial = value;
         }
-#endregion
+        #endregion
     }
 }

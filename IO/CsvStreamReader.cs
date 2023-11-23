@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
@@ -202,7 +201,7 @@ namespace XiaoFeng.IO
             while (!this.EndOfStream)
             {
                 var line = this.ReadLine();
-                for(var i = dt.Columns.Count; i < line.Count; i++)
+                for (var i = dt.Columns.Count; i < line.Count; i++)
                 {
                     dt.Columns.Add($"csv-column-{i}");
                 }

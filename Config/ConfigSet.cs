@@ -123,7 +123,7 @@ namespace XiaoFeng.Config
                 this[GetGenericKey(attr.FileName)] = value;
             return this.Get(true);
         }
-#endregion
+        #endregion
 
         #region 读取内容
         /// <summary>
@@ -211,7 +211,7 @@ namespace XiaoFeng.Config
             }
             return this as TConfig;
         }
-#endregion
+        #endregion
 
         #region 保存数据
         /// <summary>
@@ -414,6 +414,6 @@ namespace XiaoFeng.Config
         }
         #endregion
 
-#endregion
+        #endregion
     }
 }

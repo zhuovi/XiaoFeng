@@ -151,7 +151,7 @@ namespace XiaoFeng.Threading
 #endif
             set => _Setting = value;
         }
-#endregion
+        #endregion
 
         #region 方法
         /// <summary>

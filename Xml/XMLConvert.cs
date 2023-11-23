@@ -268,8 +268,8 @@ namespace XiaoFeng
             XmlSerializer xmldes = new XmlSerializer(type);
             return xmldes.Deserialize(stream);
         }
-#endregion
+        #endregion
 
-#endregion
+        #endregion
     }
 }

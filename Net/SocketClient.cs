@@ -504,7 +504,7 @@ namespace XiaoFeng.Net
             }
             return result;
         }
-#endregion
+        #endregion
 
         #region 启动
         ///<inheritdoc/>
@@ -611,7 +611,7 @@ namespace XiaoFeng.Net
             new NetworkStream(this.Client, true);
             return this.NetStream;
         }
-#endregion
+        #endregion
 
         #region 初如化
         /// <summary>
@@ -745,7 +745,7 @@ namespace XiaoFeng.Net
             }
             return stream;
         }
-#endregion
+        #endregion
 
         #region 接收数据
         ///<inheritdoc/>
@@ -1071,7 +1071,7 @@ namespace XiaoFeng.Net
             } while (!this.CancelToken.IsCancellationRequested && this.Connected);
             this.Stop();
         }
-#endregion
+        #endregion
 
         #region 发送数据
         ///<inheritdoc/>
@@ -1230,7 +1230,7 @@ namespace XiaoFeng.Net
             }
             return await Task.FromResult(buffers.Length).ConfigureAwait(false);
         }
-#endregion
+        #endregion
 
         #region 事件回调
         ///<inheritdoc/>
@@ -1265,7 +1265,7 @@ namespace XiaoFeng.Net
             this.Authentication = authentication;
             this.Certificate = certificate;
         }
-#endregion
+        #endregion
 
         #region 处理定义数据
         ///<inheritdoc/>
@@ -1386,7 +1386,7 @@ namespace XiaoFeng.Net
         public virtual void ClearData() => this.TagsData?.Clear();
         ///<inheritdoc/>
         public virtual Boolean ContainsData(string key) => key.IsNotNullOrEmpty() && this.TagsData != null && this.TagsData.Count != 0 && this.TagsData.ContainsKey(key);
-#endregion
+        #endregion
 
         #region 运行ping作业
         /// <summary>
@@ -1464,6 +1464,6 @@ namespace XiaoFeng.Net
         }
         #endregion
 
-#endregion
+        #endregion
     }
 }

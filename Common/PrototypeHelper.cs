@@ -1163,7 +1163,7 @@ namespace XiaoFeng
 #endif
             return queryHelper.querys;
         }
-#endregion
+        #endregion
 
         #region 替换移除模式
         /// <summary>
@@ -2184,7 +2184,7 @@ namespace XiaoFeng
         /// <param name="encoding">编码 默认是UTF8</param>
         /// <returns>一个字节数组，包含对指定的字节序列进行解码的结果。</returns>
         public static char[] GetChars(this byte[] _, Encoding encoding = null) => _.IsNullOrEmpty() ? Array.Empty<char>() : (encoding ?? _.GetEncoding()).GetChars(_);
-#endregion
+        #endregion
 
         #region 获取字符串字节长度
         /// <summary>

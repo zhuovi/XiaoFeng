@@ -167,7 +167,7 @@ namespace XiaoFeng.Collections
         /// 参数值是否Url编码
         /// </summary>
         public bool IsEncode { get; set; }
-#endregion
+        #endregion
 
         #region 方法
 
@@ -363,7 +363,7 @@ namespace XiaoFeng.Collections
             this._OrderedEnumerable = list.OrderByDescending(func);
             return this;
         }
-#endregion
+        #endregion
 
         #region 转成字典
         /// <summary>
@@ -507,6 +507,6 @@ namespace XiaoFeng.Collections
         }
         #endregion
 
-#endregion
+        #endregion
     }
 }

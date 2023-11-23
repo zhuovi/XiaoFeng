@@ -132,6 +132,6 @@ namespace XiaoFeng.Cryptography
         }
         ///<inheritdoc/>
         public override byte[] Encode(byte[] data, byte[] slatKey, byte[] vector, CryptographyType type = CryptographyType.Encrypt, CipherMode cipherMode = CipherMode.ECB, PaddingMode paddingMode = PaddingMode.PKCS7) => this.Encode(data, slatKey, vector, AlgorithmType, type, cipherMode, paddingMode);
-#endregion
+        #endregion
     }
 }

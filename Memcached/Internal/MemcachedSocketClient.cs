@@ -2,7 +2,6 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
-using XiaoFeng.Memcached.Protocol.Binary;
 using XiaoFeng.Net;
 
 /****************************************************************
@@ -84,33 +83,33 @@ namespace XiaoFeng.Memcached.Internal
         {
             if (username.IsNullOrEmpty() || password.IsNullOrEmpty()) return await Task.FromResult(this.IsAuthenticated = true);
             return await Task.FromResult(this.IsAuthenticated = true);
-           /* if (this.Config.Protocol == MemcachedProtocol.Binary)
-            {
-                var request = new RequestPacket(this.Socket, this.Config, "")
-                {
-                    Opcode = Protocol.CommandType.SASLAuth,
-                    Key = "PLAIN".GetBytes(this.Config.Encoding),
-                    Value = $"\0{username}\0{password}".GetBytes(this.Config.Encoding)
-                };
-                var response = await request.GetResponseAsync().ConfigureAwait(false);
-                if (response.Status == ResponseStatus.Success)
-                {
-                    request.Opcode = Protocol.CommandType.SASLStep;
-                    request.Value = response.Value;
-                    response = await request.GetResponseAsync().ConfigureAwait(false);
-                    return this.IsAuthenticated = response.Status == ResponseStatus.Success;
-                }
-                return false;
-            }
-            else
-            {
-                var uname = $"{username} {password}";
-                var line = $"set {uname.GetByteCount()}\r\n";
-                await this.Socket.SendAsync(line).ConfigureAwait(false);
-                await this.Socket.SendAsync($"{uname}\r\n").ConfigureAwait(false);
-                var result = await this.Socket.ReceviceMessageAsync().ConfigureAwait(false);
-                return this.IsAuthenticated = result.GetString().StartsWith("STORED");
-            }*/
+            /* if (this.Config.Protocol == MemcachedProtocol.Binary)
+             {
+                 var request = new RequestPacket(this.Socket, this.Config, "")
+                 {
+                     Opcode = Protocol.CommandType.SASLAuth,
+                     Key = "PLAIN".GetBytes(this.Config.Encoding),
+                     Value = $"\0{username}\0{password}".GetBytes(this.Config.Encoding)
+                 };
+                 var response = await request.GetResponseAsync().ConfigureAwait(false);
+                 if (response.Status == ResponseStatus.Success)
+                 {
+                     request.Opcode = Protocol.CommandType.SASLStep;
+                     request.Value = response.Value;
+                     response = await request.GetResponseAsync().ConfigureAwait(false);
+                     return this.IsAuthenticated = response.Status == ResponseStatus.Success;
+                 }
+                 return false;
+             }
+             else
+             {
+                 var uname = $"{username} {password}";
+                 var line = $"set {uname.GetByteCount()}\r\n";
+                 await this.Socket.SendAsync(line).ConfigureAwait(false);
+                 await this.Socket.SendAsync($"{uname}\r\n").ConfigureAwait(false);
+                 var result = await this.Socket.ReceviceMessageAsync().ConfigureAwait(false);
+                 return this.IsAuthenticated = result.GetString().StartsWith("STORED");
+             }*/
         }
         /// <summary>
         /// 认证

@@ -336,7 +336,7 @@ select 1;
         /// <param name="tableName">表名</param>
         /// <returns></returns>
         public virtual Boolean CreateTable<T>(string tableName = "") => CreateTable(typeof(T), tableName);
-#endregion
+        #endregion
 
         #region 创建视图
         /// <summary>
@@ -415,7 +415,7 @@ select 1;
             });
             return list;
         }
-#endregion
+        #endregion
 
         #region 是否存在表或视图
         /// <summary>
@@ -441,7 +441,7 @@ select 1;
         }
         #endregion
 
-#endregion
+        #endregion
     }
     /// <summary>
     /// 表索引模型

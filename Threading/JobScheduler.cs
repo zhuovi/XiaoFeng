@@ -218,7 +218,7 @@ namespace XiaoFeng.Threading
             foreach (var j in jobs)
                 await this.Add(j);
         }
-#endregion
+        #endregion
 
         #region 移除作业
         /// <summary>
@@ -423,7 +423,7 @@ namespace XiaoFeng.Threading
                 }, cancel.Token);
             }
         }
-#endregion
+        #endregion
 
         #region 执行作业
         /// <summary>
@@ -931,6 +931,6 @@ namespace XiaoFeng.Threading
         }
         #endregion
 
-#endregion
+        #endregion
     }
 }

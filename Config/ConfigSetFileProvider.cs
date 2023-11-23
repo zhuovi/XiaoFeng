@@ -73,7 +73,7 @@ namespace XiaoFeng.Config
                 }).ConfigureAwait(false);
             });
         }
-#endregion
+        #endregion
 
         #region 子类
         /// <summary>

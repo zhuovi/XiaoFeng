@@ -729,6 +729,6 @@ namespace XiaoFeng.Xml
         {
             return this.CompareTo(obj) == 0;
         }
-#endregion
+        #endregion
     }
 }
