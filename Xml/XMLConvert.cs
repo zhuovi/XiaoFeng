@@ -204,11 +204,19 @@ namespace XiaoFeng
         /// <returns></returns>
         public static T DeserializeObject<T>(string xml, string encode = "UTF-8")
         {
-            if (xml.IsNullOrEmpty()) return default(T);
+            if (xml.IsNullOrEmpty()) return default;
             Encoding _Encode = encode.IsNullOrEmpty() ? Encoding.Default : Encoding.GetEncoding(encode);
+#if NETSTANDARD2_0
             using (var mem = new MemoryStream(_Encode.GetBytes(xml)))
+#else
+            using var mem = new MemoryStream(_Encode.GetBytes(xml));
+#endif
             {
+#if NETSTANDARD2_0
                 using (var reader = XmlReader.Create(mem))
+#else
+                using var reader = XmlReader.Create(mem);
+#endif
                 {
                     try
                     {
@@ -218,7 +226,7 @@ namespace XiaoFeng
                     catch (XmlException ex)
                     {
                         LogHelper.WriteLog(ex);
-                        return default(T);
+                        return default;
                     }
                 }
             }
@@ -233,7 +241,11 @@ namespace XiaoFeng
         {
             try
             {
-                using (StringReader sr = new StringReader(xml))
+#if NETSTANDARD2_0
+                using (var sr = new StringReader(xml))
+#else
+                using StringReader sr = new StringReader(xml);
+#endif
                 {
                     XmlSerializer xmldes = new XmlSerializer(type);
                     return xmldes.Deserialize(sr);
@@ -256,8 +268,8 @@ namespace XiaoFeng
             XmlSerializer xmldes = new XmlSerializer(type);
             return xmldes.Deserialize(stream);
         }
-        #endregion
+#endregion
 
-        #endregion
+#endregion
     }
 }

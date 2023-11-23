@@ -99,7 +99,7 @@ namespace XiaoFeng.Data
         /// <returns></returns>
         public virtual List<DataColumns> GetColumns(string tableName)
         {
-            if (tableName == "") return default(List<DataColumns>);
+            if (tableName == "") return default;
             var list = this.ExecuteDataTable(@"SELECT 
 A.COLUMN_ID AS SortID,A.COLUMN_NAME AS Name,
 0 AS IsIdentity,
@@ -220,7 +220,12 @@ CREATE TABLE `{0}` (
 select 1;
 ";
             TableAttribute Table = modelType.GetTableAttribute();
-            Table = Table ?? new TableAttribute();
+#if NETSTANDARD2_0
+            Table = Table ?? 
+#else
+            Table ??=
+#endif
+            new TableAttribute();
             string Fields = "", Indexs = "", PrimaryKey = "";
             Table.Name = (Table.Name == null || Table.Name.IsNullOrEmpty()) ? modelType.Name : Table.Name;
             DataType dType = new DataType(this.ProviderType);
@@ -230,7 +235,12 @@ select 1;
                 if (",ConnectionString,ConnectionTimeOut,CommandTimeOut,ProviderType,IsTransaction,ErrorMessage,tableName,QueryableX,".IndexOf("," + p.Name + ",") == -1)
                 {
                     ColumnAttribute Column = p.GetColumnAttribute(false);
-                    Column = Column ?? new ColumnAttribute { AutoIncrement = false, IsIndex = false, IsNullable = true, IsUnique = false, PrimaryKey = false, Length = 0, DefaultValue = "" };
+#if NETSTANDARD2_0
+                    Column = Column ??
+#else
+                    Column ??=
+#endif
+                    new ColumnAttribute { AutoIncrement = false, IsIndex = false, IsNullable = true, IsUnique = false, PrimaryKey = false, Length = 0, DefaultValue = "" };
                     Column.Name = (Column.Name == null || Column.Name.IsNullOrEmpty()) ? p.Name : Column.Name;
                     Column.DataType = Column.DataType.IsNullOrEmpty() ? dType[p.PropertyType] : Column.DataType;
 
@@ -304,10 +314,19 @@ select 1;
             {
                 tableIndexs.Each(index =>
                 {
-                    SbrIndexs.AppendLine($@",INDEX {index.TableIndexType.ToString().ToUpper()} {index.Name} ({(from a in index.Keys select a.Substring(a.IndexOf(","))).Join(",")}) USING BTREE");
+                    var list = index.Keys.Select(a =>
+                    {
+                        return a
+#if NETSTANDARD2_0
+.Substring(a.IndexOf(","))
+#else
+                        [a.IndexOf(",")..]
+#endif
+                        ;
+                    });
+                    SbrIndexs.AppendLine($@",INDEX {index.TableIndexType.ToString().ToUpper()} {index.Name} ({list.Join(",")}) USING BTREE");
                 });
             }
-
             return base.ExecuteScalar(SQLString.format(Table.Name, Fields.TrimEnd(','), PrimaryKey, SbrIndexs.ToString(), Table.Description.IsNullOrEmpty() ? Table.Name : Table.Description)).ToString().ToInt16() == 1;
         }
         /// <summary>
@@ -317,7 +336,7 @@ select 1;
         /// <param name="tableName">表名</param>
         /// <returns></returns>
         public virtual Boolean CreateTable<T>(string tableName = "") => CreateTable(typeof(T), tableName);
-        #endregion
+#endregion
 
         #region 创建视图
         /// <summary>
@@ -384,14 +403,19 @@ select 1;
                     var UNIQUE = a["UNIQUENESS"].ToCast<int>();
                     index.TableIndexType = UNIQUE == 0 ? TableIndexType.Unique : TableIndexType.NonClustered;
                 }
-                if (index.Keys == null) index.Keys = new List<string>();
+#if NETSTANDARD2_0
+                if (index.Keys == null) index.Keys =
+#else
+                index.Keys ??=
+#endif
+                new List<string>();
                 var key = a["COLUMN_NAME"].ToString();
                 index.Keys.Add(key + "," + a["DESCEND"] + "," + a["INDEX_TYPE"].ToString());
                 list.Add(index);
             });
             return list;
         }
-        #endregion
+#endregion
 
         #region 是否存在表或视图
         /// <summary>
@@ -417,7 +441,7 @@ select 1;
         }
         #endregion
 
-        #endregion
+#endregion
     }
     /// <summary>
     /// 表索引模型

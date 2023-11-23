@@ -139,7 +139,7 @@ namespace XiaoFeng
         {
             var list = new List<T>();
             if (_ == null || _.Rows.Count == 0) return list;
-            T model = default(T);
+            T model = default;
             Type t = typeof(T);
             ValueTypes valueTypes = t.GetValueType();
             _.Rows.Each<DataRow>(dr =>
@@ -320,11 +320,11 @@ namespace XiaoFeng
         /// <returns></returns>
         public static T ToEntity<T>(this DataTable _)
         {
-            if (_ == null || _.Rows.Count == 0) return default(T);
+            if (_ == null || _.Rows.Count == 0) return default;
             DataTable table = _.Clone();
             table.ImportRow(_.Rows[0]);
             var list = table.ToList<T>();
-            if (list == null || list.Count == 0) return default(T);
+            if (list == null || list.Count == 0) return default;
             return list[0];
         }
         /// <summary>
@@ -335,11 +335,11 @@ namespace XiaoFeng
         /// <returns></returns>
         public static T ToEntity<T>(this DataRow _)
         {
-            if (_ == null) return default(T);
+            if (_ == null) return default;
             DataTable table = _.Table.Clone();
             table.ImportRow(_);
             var list = table.ToList<T>();
-            if (list == null || list.Count == 0) return default(T);
+            if (list == null || list.Count == 0) return default;
             return list[0];
         }
         #endregion
@@ -471,7 +471,7 @@ namespace XiaoFeng
         /// <returns></returns>
         public static T ToEnum<T>(this object o, Boolean ignoreCase = true)
         {
-            if (!typeof(T).IsEnum || o.IsNullOrEmpty()) return default(T);
+            if (!typeof(T).IsEnum || o.IsNullOrEmpty()) return default;
             return (T)o.ToEnum(typeof(T), ignoreCase);
         }
         /// <summary>
@@ -876,7 +876,7 @@ namespace XiaoFeng
         /// <param name="_">对象</param>
         /// <param name="value">值</param>
         /// <returns></returns>
-        public static Boolean ContainsValue<TKey, TValue>(this IDictionary<TKey, TValue> _, TValue value = default(TValue)) => _.Values.Contains(value);
+        public static Boolean ContainsValue<TKey, TValue>(this IDictionary<TKey, TValue> _, TValue value = default) => _.Values.Contains(value);
         /// <summary>
         /// 获取Dictionary值 Value
         /// </summary>
@@ -886,7 +886,7 @@ namespace XiaoFeng
         /// <param name="key">Key 值</param>
         /// <param name="defaultValue">默认值</param>
         /// <returns></returns>
-        public static TValue Value<TKey, TValue>(this IDictionary<TKey, TValue> _, TKey key, TValue defaultValue = default(TValue)) => _.TryGetValue(key, out var val) ? val : defaultValue;
+        public static TValue Value<TKey, TValue>(this IDictionary<TKey, TValue> _, TKey key, TValue defaultValue = default) => _.TryGetValue(key, out var val) ? val : defaultValue;
         /// <summary>
         /// 获取Dictionary值 Key
         /// </summary>
@@ -896,7 +896,7 @@ namespace XiaoFeng
         /// <param name="value">Value</param>
         /// <param name="defaultValue">默认值</param>
         /// <returns></returns>
-        public static TKey GetKey<TKey, TValue>(this IDictionary<TKey, TValue> _, TValue value, TKey defaultValue = default(TKey)) => _.ContainsValue(value) ? _.FindByValue(value).Key : defaultValue;
+        public static TKey GetKey<TKey, TValue>(this IDictionary<TKey, TValue> _, TValue value, TKey defaultValue = default) => _.ContainsValue(value) ? _.FindByValue(value).Key : defaultValue;
         /// <summary>
         /// 获取Dictionary值 Key
         /// </summary>
@@ -1141,10 +1141,12 @@ namespace XiaoFeng
         public static SortedDictionary<string, string> GetQuerys(this string _)
         {
             if (_.IsNullOrEmpty()) return new SortedDictionary<string, string>();
-            using (QueryHelper queryHelper = new QueryHelper(_))
-            {
-                return queryHelper.data;
-            }
+#if NETSTANDARD2_0
+            using (var queryHelper = new QueryHelper(_))
+#else
+            using var queryHelper = new QueryHelper(_);
+#endif
+            return queryHelper.data;
         }
         /// <summary>
         /// 获取参数键值对
@@ -1154,12 +1156,14 @@ namespace XiaoFeng
         public static SortedDictionary<string, string> GetParams(this string _)
         {
             if (_.IsNullOrEmpty()) return new SortedDictionary<string, string>();
-            using (ParamHelper queryHelper = new ParamHelper(_))
-            {
-                return queryHelper.querys;
-            }
+#if NETSTANDARD2_0
+            using (var queryHelper = new ParamHelper(_))
+#else
+            using var queryHelper = new ParamHelper(_);
+#endif
+            return queryHelper.querys;
         }
-        #endregion
+#endregion
 
         #region 替换移除模式
         /// <summary>
@@ -1424,7 +1428,7 @@ namespace XiaoFeng
         /// <param name="_">字符串</param>
         /// <param name="defaultValue">默认值</param>
         /// <returns></returns>
-        public static short ToInt16(this string _, short defaultValue = default(short))
+        public static short ToInt16(this string _, short defaultValue = default)
         {
             if (_.IsNullOrWhiteSpace()) return defaultValue;
             try
@@ -1442,7 +1446,7 @@ namespace XiaoFeng
         /// <param name="_">字符串</param>
         /// <param name="defaultValue">默认值</param>
         /// <returns></returns>
-        public static ushort ToUInt16(this string _, ushort defaultValue = default(ushort))
+        public static ushort ToUInt16(this string _, ushort defaultValue = default)
         {
             if (_.IsNullOrWhiteSpace()) return defaultValue;
             try
@@ -1463,7 +1467,7 @@ namespace XiaoFeng
         /// <param name="_">字符串</param>
         /// <param name="defaultValue">默认值</param>
         /// <returns></returns>
-        public static int ToInt32(this string _, int defaultValue = default(int))
+        public static int ToInt32(this string _, int defaultValue = default)
         {
             if (_.IsNullOrWhiteSpace()) return defaultValue;
             try
@@ -1481,7 +1485,7 @@ namespace XiaoFeng
         /// <param name="_">字符串</param>
         /// <param name="defaultValue">默认值</param>
         /// <returns></returns>
-        public static uint ToUInt32(this string _, uint defaultValue = default(uint))
+        public static uint ToUInt32(this string _, uint defaultValue = default)
         {
             if (_.IsNullOrWhiteSpace()) return defaultValue;
             try
@@ -1502,7 +1506,7 @@ namespace XiaoFeng
         /// <param name="_">字符串</param>
         /// <param name="defaultValue">默认值</param>
         /// <returns></returns>
-        public static long ToInt64(this string _, long defaultValue = default(long))
+        public static long ToInt64(this string _, long defaultValue = default)
         {
             if (_.IsNullOrWhiteSpace()) return defaultValue;
             try
@@ -1520,7 +1524,7 @@ namespace XiaoFeng
         /// <param name="_">字符串</param>
         /// <param name="defaultValue">默认值</param>
         /// <returns></returns>
-        public static ulong ToUInt64(this string _, ulong defaultValue = default(ulong))
+        public static ulong ToUInt64(this string _, ulong defaultValue = default)
         {
             if (_.IsNullOrWhiteSpace()) return defaultValue;
             try
@@ -1541,7 +1545,7 @@ namespace XiaoFeng
         /// <param name="_">字符串</param>
         /// <param name="defaultValue">默认值</param>
         /// <returns></returns>
-        public static double ToDouble(this string _, double defaultValue = default(double))
+        public static double ToDouble(this string _, double defaultValue = default)
         {
             if (_.IsNullOrWhiteSpace()) return defaultValue;
             try
@@ -1561,7 +1565,7 @@ namespace XiaoFeng
         /// <param name="_">字符串</param>
         /// <param name="defaultValue">默认值</param>
         /// <returns></returns>
-        public static decimal ToDecimal(this string _, decimal defaultValue = default(decimal))
+        public static decimal ToDecimal(this string _, decimal defaultValue = default)
         {
             if (_.IsNullOrWhiteSpace()) return defaultValue;
             try
@@ -1581,7 +1585,7 @@ namespace XiaoFeng
         /// <param name="_">字符串</param>
         /// <param name="defaultValue">默认值</param>
         /// <returns></returns>
-        public static float ToFloat(this string _, float defaultValue = default(float))
+        public static float ToFloat(this string _, float defaultValue = default)
         {
             if (_.IsNullOrWhiteSpace()) return defaultValue;
             try
@@ -1601,7 +1605,7 @@ namespace XiaoFeng
         /// <param name="_">字符串</param>
         /// <param name="defaultValue">默认值</param>
         /// <returns></returns>
-        public static long ToLong(this string _, long defaultValue = default(long))
+        public static long ToLong(this string _, long defaultValue = default)
         {
             if (_.IsNullOrWhiteSpace()) return defaultValue;
             try
@@ -1621,7 +1625,7 @@ namespace XiaoFeng
         /// <param name="_">字符串</param>
         /// <param name="defaultValue">默认值</param>
         /// <returns></returns>
-        public static byte ToByte(this string _, byte defaultValue = default(byte))
+        public static byte ToByte(this string _, byte defaultValue = default)
         {
             if (_.IsNullOrWhiteSpace()) return defaultValue;
             try
@@ -1641,7 +1645,7 @@ namespace XiaoFeng
         /// <param name="_">字符串</param>
         /// <param name="defaultValue">默认值</param>
         /// <returns></returns>
-        public static sbyte ToSByte(this string _, sbyte defaultValue = default(sbyte))
+        public static sbyte ToSByte(this string _, sbyte defaultValue = default)
         {
             if (_.IsNullOrWhiteSpace()) return defaultValue;
             try
@@ -1661,7 +1665,7 @@ namespace XiaoFeng
         /// <param name="_">字符串</param>
         /// <param name="defaultValue">默认值</param>
         /// <returns></returns>
-        public static Guid ToGuid(this string _, Guid defaultValue = default(Guid))
+        public static Guid ToGuid(this string _, Guid defaultValue = default)
         {
             if (_.IsNullOrWhiteSpace()) return defaultValue;
             _ = _.Trim();
@@ -1694,7 +1698,7 @@ namespace XiaoFeng
         /// <param name="_">字符串</param>
         /// <param name="defaultValue">默认值</param>
         /// <returns></returns>
-        public static DateTime ToDateTime(this string _, DateTime defaultValue = default(DateTime))
+        public static DateTime ToDateTime(this string _, DateTime defaultValue = default)
         {
             if (_.IsNullOrWhiteSpace()) return defaultValue;
             try
@@ -1715,7 +1719,7 @@ namespace XiaoFeng
         /// <param name="_">原对象</param>
         /// <param name="defaultValue">默认值</param>
         /// <returns></returns>
-        public static T ToCast<T>(this object _, T defaultValue = default(T))
+        public static T ToCast<T>(this object _, T defaultValue = default)
         {
             var val = _.GetValue(typeof(T));
             return val.IsNullOrEmpty() ? defaultValue : (T)val;
@@ -2166,7 +2170,11 @@ namespace XiaoFeng
         public static int GetChars(this byte[] _, int byteIndex, int length, char[] chars, int charIndex, Encoding encoding = null)
         {
             if (_.IsNullOrEmpty()) return 0;
+#if NETSTANDARD2_0
             if (chars == null) chars = new char[_.Length];
+#else
+            chars ??= new char[_.Length];
+#endif
             return (encoding ?? _.GetEncoding()).GetChars(_, byteIndex, length, chars, charIndex);
         }
         /// <summary>
@@ -2176,7 +2184,7 @@ namespace XiaoFeng
         /// <param name="encoding">编码 默认是UTF8</param>
         /// <returns>一个字节数组，包含对指定的字节序列进行解码的结果。</returns>
         public static char[] GetChars(this byte[] _, Encoding encoding = null) => _.IsNullOrEmpty() ? Array.Empty<char>() : (encoding ?? _.GetEncoding()).GetChars(_);
-        #endregion
+#endregion
 
         #region 获取字符串字节长度
         /// <summary>
@@ -2363,7 +2371,7 @@ namespace XiaoFeng
         /// <returns></returns>
         public static T Copy<T>(this T _) where T : new()
         {
-            if (_ == null) return default(T);
+            if (_ == null) return default;
             var t = _.GetType();
             var o = Activator.CreateInstance<T>();
             PropertyInfo[] pd = t.GetProperties();
@@ -2387,7 +2395,7 @@ namespace XiaoFeng
         /// <param name="target">目标对象</param>
         public static void CopyTo<TSource, TTarget>(this TSource source, TTarget target)
         {
-            if (source == null) { target = default(TTarget); return; }
+            if (source == null) { target = default; return; }
             var sourceType = source.GetType();
             var targetType = target.GetType();
             sourceType.GetMembers().Each(m =>
@@ -2603,13 +2611,22 @@ namespace XiaoFeng
                 if (p < 0) return null;
                 p += after.Length;
             }
-            if (before.IsNullOrEmpty()) return str.Substring(p);
+            if (before.IsNullOrEmpty()) return str
+#if NETSTANDARD2_0
+            .Substring(p)
+#else
+            [p..]
+#endif
+            ;
             var f = str.IndexOf(before, p >= 0 ? p : startIndex);
             if (f < 0) return null;
-            if (p >= 0 && f - p > 0)
-                return str.Substring(p, f - p);
-            else
-                return str.Substring(0, f);
+            return (p >= 0 && f - p > 0) ?
+#if NETSTANDARD2_0
+             str.Substring(p, f - p) : str.Substring(0, f)
+#else
+             str[p..f] : str[..f]
+#endif
+             ;
         }
         #endregion
 
@@ -2682,7 +2699,7 @@ namespace XiaoFeng
         {
             foreach (var o in new T[] { _ }.Concat(vs))
                 if (o.IsNotNullOrEmpty()) return o;
-            return default(T);
+            return default;
         }
         /// <summary>
         /// 多元符表达式
@@ -2691,7 +2708,7 @@ namespace XiaoFeng
         /// <param name="_">数组</param>
         /// <param name="defaultValue">默认值</param>
         /// <returns></returns>
-        public static T Multivariate<T>(this IEnumerable<T> _, T defaultValue = default(T))
+        public static T Multivariate<T>(this IEnumerable<T> _, T defaultValue = default)
         {
             var er = _.GetEnumerator();
             while (er.MoveNext())
@@ -2708,7 +2725,7 @@ namespace XiaoFeng
         /// <param name="_">数组</param>
         /// <param name="defaultValue">默认值</param>
         /// <returns></returns>
-        public static T Multivariate<T>(this T[] _, T defaultValue = default(T))
+        public static T Multivariate<T>(this T[] _, T defaultValue = default)
         {
             for (int i = 0; i < _.Length; i++)
                 if (_[i].IsNotNullOrEmpty()) return _[i];
@@ -2843,7 +2860,7 @@ namespace XiaoFeng
                 case ValueTypes.Value:
                 case ValueTypes.IEnumerable:
                 case ValueTypes.Enum:
-                    return _ = default(T);
+                    return _ = default;
                 case ValueTypes.Class:
                 case ValueTypes.Struct:
                     return _ = Activator.CreateInstance<T>();

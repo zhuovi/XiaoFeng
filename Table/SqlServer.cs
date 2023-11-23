@@ -93,15 +93,14 @@ END;
             table = base.GetTableAttribute(type, tableName, connName, connIndex);
             var dbType = new DataType(DbProviderType.SqlServer);
             var Fields = "";
-            var PrimaryKey = "";
+            //var PrimaryKey = "";
             var Indexs = new List<string>();
             var Description = "";
             var Unique = "";
             type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase).Each(p =>
             {
                 if (p.GetCustomAttribute<FieldIgnoreAttribute>() != null) return;
-                var columnAttr = p.GetColumnAttribute();
-                if (columnAttr == null) columnAttr = new ColumnAttribute();
+                var columnAttr = p.GetColumnAttribute() ?? new ColumnAttribute();
                 if (columnAttr.Name.IsNullOrEmpty()) columnAttr.Name = p.Name;
                 if (columnAttr.DataType.IsNullOrEmpty()) columnAttr.DataType = dbType[p.PropertyType];
                 if (columnAttr.Description.IsNullOrEmpty()) columnAttr.Description = p.Name;

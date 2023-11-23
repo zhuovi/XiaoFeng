@@ -38,7 +38,12 @@ namespace XiaoFeng.Config
         /// <param name="callback">回调</param>
         public static void Add(string key, string path, Action<WatcherChangeType, string, string> callback = null)
         {
-            if (ConfigFiles == null) ConfigFiles = new ConcurrentDictionary<string, Item>(StringComparer.OrdinalIgnoreCase);
+#if NETSTANDARD2_0
+            if (ConfigFiles == null) ConfigFiles = 
+#else
+            ConfigFiles ??=
+#endif
+            new ConcurrentDictionary<string, Item>(StringComparer.OrdinalIgnoreCase);
             var item = new Item
             {
                 Key = key,
@@ -51,7 +56,12 @@ namespace XiaoFeng.Config
                 ConfigFiles.TryAdd(path, item);
             XiaoFeng.Threading.Synchronized.Run(() =>
             {
-                if (FileProvider == null) FileProvider = new FileProvider(key);
+#if NETSTANDARD2_0
+                if (FileProvider == null) FileProvider = 
+#else
+                FileProvider ??=
+#endif
+                new FileProvider(key);
                 if (!FileProvider.IsRun) FileProvider.Watch(FileHelper.Combine(FileHelper.GetCurrentDirectory(), "Config"), "", (t, p, k) =>
                 {
                     if (ConfigFiles.TryGetValue(p, out var _item))
@@ -63,7 +73,7 @@ namespace XiaoFeng.Config
                 }).ConfigureAwait(false);
             });
         }
-        #endregion
+#endregion
 
         #region 子类
         /// <summary>

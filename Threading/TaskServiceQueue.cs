@@ -143,10 +143,15 @@ namespace XiaoFeng.Threading
         /// </summary>
         private ISetting Setting
         {
-            get => _Setting ?? (_Setting = XiaoFeng.Config.Setting.Current);
+            get =>
+#if NETSTANDARD2_0
+            _Setting ?? (_Setting = XiaoFeng.Config.Setting.Current);
+#else
+            _Setting ??= XiaoFeng.Config.Setting.Current;
+#endif
             set => _Setting = value;
         }
-        #endregion
+#endregion
 
         #region 方法
         /// <summary>

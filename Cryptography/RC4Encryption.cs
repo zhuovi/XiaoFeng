@@ -50,9 +50,7 @@ namespace XiaoFeng.Cryptography
             {
                 i = (i + 1) % mBox.Length;
                 j = (j + mBox[i]) % mBox.Length;
-                Byte temp = mBox[i];
-                mBox[i] = mBox[j];
-                mBox[j] = temp;
+                (mBox[j], mBox[i]) = (mBox[i], mBox[j]);
                 Byte a = data[offset];
                 Byte b = mBox[(mBox[i] + mBox[j]) % mBox.Length];
                 output[offset] = (Byte)((Int32)a ^ (Int32)b);
@@ -85,9 +83,7 @@ namespace XiaoFeng.Cryptography
             for (Int64 i = 0; i < kLen; i++)
             {
                 j = (j + mBox[i] + pass[i % pass.Length]) % kLen;
-                Byte temp = mBox[i];
-                mBox[i] = mBox[j];
-                mBox[j] = temp;
+                (mBox[j], mBox[i]) = (mBox[i], mBox[j]);
             }
             return mBox;
         }

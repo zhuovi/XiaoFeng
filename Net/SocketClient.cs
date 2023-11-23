@@ -64,7 +64,7 @@ namespace XiaoFeng.Net
                     break;
                 }
             }*/
-            this.EndPoint = new IPEndPoint(address[address.Length - 1], port);
+            this.EndPoint = new IPEndPoint(address.Last(), port);
             InitializeClientSocket();
         }
         /// <summary>
@@ -269,10 +269,13 @@ namespace XiaoFeng.Net
         ///<inheritdoc/>
         public virtual SocketError Connect(IPEndPoint remoteEP)
         {
-            if (remoteEP == null)
-            {
-                remoteEP = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1006);
-            }
+#if NETSTANDARD2_0
+            if (remoteEP == null) remoteEP =
+#else
+            remoteEP ??=
+#endif
+            new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1006);
+
             this.EndPoint = remoteEP;
             return this.CompleteConnect(() =>
             {
@@ -329,7 +332,12 @@ namespace XiaoFeng.Net
         ///<inheritdoc/>
         public virtual async Task<SocketError> ConnectAsync(IPAddress address, int port)
         {
-            if (address == null) address = IPAddress.Parse("127.0.0.1");
+#if NETSTANDARD2_0
+            if (address == null) address =
+#else
+            address ??=
+#endif
+            IPAddress.Parse("127.0.0.1");
             if (port <= 0) port = 1006;
             this.EndPoint = new IPEndPoint(address, port);
             return await this.CompleteConnectAsync(async () =>
@@ -421,10 +429,12 @@ namespace XiaoFeng.Net
         ///<inheritdoc/>
         public virtual async Task<SocketError> ConnectAsync(IPEndPoint remoteEP)
         {
-            if (remoteEP == null)
-            {
-                remoteEP = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1006);
-            }
+#if NETSTANDARD2_0
+            if (remoteEP == null) remoteEP =
+#else
+            remoteEP ??=
+#endif
+            new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1006);
             this.EndPoint = remoteEP;
             return await this.CompleteConnectAsync(async () =>
             {
@@ -494,7 +504,7 @@ namespace XiaoFeng.Net
             }
             return result;
         }
-        #endregion
+#endregion
 
         #region 启动
         ///<inheritdoc/>
@@ -593,13 +603,15 @@ namespace XiaoFeng.Net
                 this.OnClientError?.Invoke(this, this.EndPoint, new SocketException((int)SocketError.NotConnected));
                 return null;
             }
-            if (this.NetStream == null)
-            {
-                this.NetStream = new NetworkStream(this.Client, true);
-            }
+#if NETSTANDARD2_0
+            if (this.NetStream == null) this.NetStream =
+#else
+            this.NetStream ??=
+#endif
+            new NetworkStream(this.Client, true);
             return this.NetStream;
         }
-        #endregion
+#endregion
 
         #region 初如化
         /// <summary>
@@ -690,7 +702,12 @@ namespace XiaoFeng.Net
                         }
                         else
                         {
-                            if (this.ClientCertificates == null) this.ClientCertificates = new X509CertificateCollection();
+#if NETSTANDARD2_0
+                            if (this.ClientCertificates == null) this.ClientCertificates =
+#else
+                            this.ClientCertificates ??=
+#endif
+                            new X509CertificateCollection();
                             sslStream.AuthenticateAsClient(this.HostName, this.ClientCertificates, this.SslProtocols, false);
                         }
                     }
@@ -728,7 +745,7 @@ namespace XiaoFeng.Net
             }
             return stream;
         }
-        #endregion
+#endregion
 
         #region 接收数据
         ///<inheritdoc/>
@@ -1023,8 +1040,13 @@ namespace XiaoFeng.Net
                     var index = msg.IndexOf(":");
                     if (index > -1)
                     {
+#if NETSTANDARD2_0
                         var type = msg.Substring(0, index);
                         var data = msg.Substring(index + 1);
+#else
+                        var type = msg[..index];
+                        var data = msg[(index + 1)..];
+#endif
                         switch (type.ToUpper())
                         {
                             case "ADD":
@@ -1049,7 +1071,7 @@ namespace XiaoFeng.Net
             } while (!this.CancelToken.IsCancellationRequested && this.Connected);
             this.Stop();
         }
-        #endregion
+#endregion
 
         #region 发送数据
         ///<inheritdoc/>
@@ -1135,8 +1157,12 @@ namespace XiaoFeng.Net
             if (stream == null) return -1;
             if (this.ConnectionType == ConnectionType.WebSocket)
             {
+#if NETSTANDARD2_0
                 using (var packet = new WebSocketPacket(this))
-                    buffers = packet.Packet(buffers, opCode);
+#else
+                using var packet = new WebSocketPacket(this);
+#endif
+                buffers = packet.Packet(buffers, opCode);
             }
             else
             {
@@ -1180,8 +1206,12 @@ namespace XiaoFeng.Net
             if (stream == null) return -1;
             if (this.ConnectionType == ConnectionType.WebSocket)
             {
+#if NETSTANDARD2_0
                 using (var packet = new WebSocketPacket(this))
-                    buffers = packet.Packet(buffers, opCode);
+#else
+                using var packet = new WebSocketPacket(this);
+#endif
+                buffers = packet.Packet(buffers, opCode);
             }
             else
                 if (buffers == null || buffers.Length == 0)
@@ -1200,7 +1230,7 @@ namespace XiaoFeng.Net
             }
             return await Task.FromResult(buffers.Length).ConfigureAwait(false);
         }
-        #endregion
+#endregion
 
         #region 事件回调
         ///<inheritdoc/>
@@ -1226,17 +1256,27 @@ namespace XiaoFeng.Net
             this.SocketState = SocketState.Runing;
             this.EndPoint = socket.RemoteEndPoint as IPEndPoint;
             this._IsServer = true;
-            if (authentication == null) authentication = c => true;
+#if NETSTANDARD2_0
+            if (authentication == null) authentication =
+#else
+            authentication ??=
+#endif
+            c => true;
             this.Authentication = authentication;
             this.Certificate = certificate;
         }
-        #endregion
+#endregion
 
         #region 处理定义数据
         ///<inheritdoc/>
         public virtual void AddChannel(params string[] channel)
         {
-            if (this.TagsData == null) this.TagsData = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+#if NETSTANDARD2_0
+            if (this.TagsData == null) this.TagsData =
+#else
+            this.TagsData ??=
+#endif
+            new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
             var list = new List<string>();
             if (!this.TagsData.ContainsKey(CHANNEL_KEY))
             {
@@ -1323,7 +1363,12 @@ namespace XiaoFeng.Net
         public virtual void AddData(string key, object value)
         {
             if (key.IsNullOrEmpty() || key.EqualsIgnoreCase(CHANNEL_KEY)) return;
-            if (this.TagsData == null) this.TagsData = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+#if NETSTANDARD2_0
+            if (this.TagsData == null) this.TagsData =
+#else
+            this.TagsData ??=
+#endif
+            new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
             lock (this.TagsData)
             {
                 if (this.ContainsData(key))
@@ -1341,7 +1386,7 @@ namespace XiaoFeng.Net
         public virtual void ClearData() => this.TagsData?.Clear();
         ///<inheritdoc/>
         public virtual Boolean ContainsData(string key) => key.IsNotNullOrEmpty() && this.TagsData != null && this.TagsData.Count != 0 && this.TagsData.ContainsKey(key);
-        #endregion
+#endregion
 
         #region 运行ping作业
         /// <summary>
@@ -1390,7 +1435,7 @@ namespace XiaoFeng.Net
                         this.Client.Shutdown(SocketShutdown.Both);
                         this.Client.Close(3);
                     }
-                    catch (Exception _) { }
+                    catch { }
                 }
                 this.Client.Dispose();
                 this.Client = null;
@@ -1419,6 +1464,6 @@ namespace XiaoFeng.Net
         }
         #endregion
 
-        #endregion
+#endregion
     }
 }

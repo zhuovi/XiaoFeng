@@ -177,7 +177,12 @@ namespace XiaoFeng.Xml
         /// <param name="value">子节点</param>
         public void Append(XmlValue value)
         {
-            if (this.ChildNodes == null) this.ChildNodes = new List<XmlValue>();
+#if NETSTANDARD2_0
+            if (this.ChildNodes == null) this.ChildNodes =
+#else
+            this.ChildNodes ??=
+#endif
+            new List<XmlValue>();
             this.ChildNodes.Add(value);
         }
         /// <summary>
@@ -227,8 +232,12 @@ namespace XiaoFeng.Xml
         {
             if (xmlValue == null) return null;
             if (type == typeof(object) || type == typeof(XmlValue)) return xmlValue;
-            if (target == null)
-                target = Activator.CreateInstance(type);
+#if NETSTANDARD2_0
+            if (target == null)target =
+#else
+            target ??=
+#endif
+            Activator.CreateInstance(type);
             type.GetPropertiesAndFields(m =>
             {
                 var PropertyType = m.MemberType == MemberTypes.Property ? (m as PropertyInfo).PropertyType : (m as FieldInfo).FieldType;
@@ -307,6 +316,7 @@ namespace XiaoFeng.Xml
         public Array ParseArray(XmlValue xmlValue, Type type, object target)
         {
             if (xmlValue == null) return null;
+            if (target == null) { }
             var list = new List<XmlValue>();
             if (xmlValue.HasChildNodes)
                 list = xmlValue.ChildNodes;
@@ -656,21 +666,14 @@ namespace XiaoFeng.Xml
         /// <summary>
         /// 转时间
         /// </summary>
-        /// <param name="provider">驱动</param>
         /// <returns></returns>
-        public Guid ToGuid(IFormatProvider provider = null)
-        {
-            return this.Value.ToCast<Guid>();
-        }
+        public Guid ToGuid() => this.Value.ToCast<Guid>();
         /// <summary>
         /// 转字符串
         /// </summary>
         /// <param name="provider">驱动</param>
         /// <returns></returns>
-        public string ToString(IFormatProvider provider = null)
-        {
-            return this.Value.ToCast<String>();
-        }
+        public string ToString(IFormatProvider provider = null) => this.Value.ToString();
         /// <summary>
         /// 转类型
         /// </summary>
@@ -726,6 +729,6 @@ namespace XiaoFeng.Xml
         {
             return this.CompareTo(obj) == 0;
         }
-        #endregion
+#endregion
     }
 }

@@ -59,7 +59,11 @@ namespace XiaoFeng.Cryptography
         public byte[] Encode(byte[] data, byte[] slatKey, byte[] vector, SMType algorithmType = SMType.FOUR, CryptographyType type = CryptographyType.Encrypt, CipherMode cipherMode = CipherMode.ECB, PaddingMode paddingMode = PaddingMode.PKCS7)
         {
             if (data == null) return null;
+#if NETSTANDARD2_0
             using (var encryptor = Activator.CreateInstance(Type.GetType(algorithmType.GetDescription() + "Cipher")) as SymmetricAlgorithm)
+#else
+            using var encryptor = Activator.CreateInstance(Type.GetType(algorithmType.GetDescription() + "Cipher")) as SymmetricAlgorithm;
+#endif
             {
                 encryptor.Mode = cipherMode;
                 encryptor.Padding = paddingMode;
@@ -67,10 +71,17 @@ namespace XiaoFeng.Cryptography
                 encryptor.IV = vector;
                 if (type == CryptographyType.Encrypt)
                 {
+#if NETSTANDARD2_0
                     using (var memory = new MemoryStream())
+#else
+                    using var memory = new MemoryStream();
+#endif
                     {
+#if NETSTANDARD2_0
                         using (var encoder = new CryptoStream(memory, encryptor.CreateEncryptor(new byte[encryptor.Key.Length].Write(slatKey), new byte[encryptor.IV.Length].Write(vector)), CryptoStreamMode.Write))
-                        //using (var encoder = new CryptoStream(memory, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
+#else
+                        using var encoder = new CryptoStream(memory, encryptor.CreateEncryptor(new byte[encryptor.Key.Length].Write(slatKey), new byte[encryptor.IV.Length].Write(vector)), CryptoStreamMode.Write);
+#endif
                         {
                             encoder.Write(data, 0, data.Length);
                             encoder.FlushFinalBlock();
@@ -80,13 +91,25 @@ namespace XiaoFeng.Cryptography
                 }
                 else
                 {
+#if NETSTANDARD2_0
                     using (var memory = new MemoryStream(data))
+#else
+                    using var memory = new MemoryStream(data);
+#endif
                     {
                         try
                         {
+#if NETSTANDARD2_0
                             using (var encoder = new CryptoStream(memory, encryptor.CreateDecryptor(new byte[encryptor.Key.Length].Write(slatKey), new byte[encryptor.IV.Length].Write(vector)), CryptoStreamMode.Read))
+#else
+                            using var encoder = new CryptoStream(memory, encryptor.CreateDecryptor(new byte[encryptor.Key.Length].Write(slatKey), new byte[encryptor.IV.Length].Write(vector)), CryptoStreamMode.Read);
+#endif
                             {
+#if NETSTANDARD2_0
                                 using (var destMemory = new MemoryStream())
+#else
+                                using var destMemory = new MemoryStream();
+#endif
                                 {
                                     byte[] Buffer = new byte[1024];
                                     int readBytes = 0;
@@ -109,6 +132,6 @@ namespace XiaoFeng.Cryptography
         }
         ///<inheritdoc/>
         public override byte[] Encode(byte[] data, byte[] slatKey, byte[] vector, CryptographyType type = CryptographyType.Encrypt, CipherMode cipherMode = CipherMode.ECB, PaddingMode paddingMode = PaddingMode.PKCS7) => this.Encode(data, slatKey, vector, AlgorithmType, type, cipherMode, paddingMode);
-        #endregion
+#endregion
     }
 }

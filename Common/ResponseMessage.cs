@@ -29,14 +29,14 @@ namespace XiaoFeng
         /// <summary>
         /// 无参构造器
         /// </summary>
-        public ResponseMessage() : this(ResponseState.success, "", default(T)) { }
+        public ResponseMessage() : this(ResponseState.success, "", default) { }
         /// <summary>
         /// 设置信息
         /// </summary>
         /// <param name="state">状态</param>
         /// <param name="message">信息</param>
         /// <param name="data">数据</param>
-        public ResponseMessage(ResponseState state, string message = "", T data = default(T))
+        public ResponseMessage(ResponseState state, string message = "", T data = default)
         {
             this.Status = state; this.Data = data; this.Message = message;
         }

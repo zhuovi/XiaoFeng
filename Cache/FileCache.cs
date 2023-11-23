@@ -103,7 +103,7 @@ namespace XiaoFeng.Cache
         ///<inheritdoc/>
         public T Get<T>(string key) where T : class
         {
-            if (key.IsNullOrEmpty()) return default(T);
+            if (key.IsNullOrEmpty()) return default;
             var val = this.Get(key);
             return (T)val;
         }

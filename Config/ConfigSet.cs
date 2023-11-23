@@ -87,7 +87,12 @@ namespace XiaoFeng.Config
         /// <returns></returns>
         public virtual TConfig GetEntity(Func<TConfig, Boolean> func)
         {
-            if (func == null) func = a => true;
+#if NETSTANDARD2_0
+            if (func == null) func = 
+#else
+            func ??=
+#endif
+            a => true;
             return this.GetEntities(func)?.FirstOrDefault();
         }
         /// <summary>
@@ -97,7 +102,12 @@ namespace XiaoFeng.Config
         /// <returns></returns>
         public virtual IEnumerable<TConfig> GetEntities(Func<TConfig, Boolean> func)
         {
-            if (func == null) func = a => true;
+#if NETSTANDARD2_0
+            if (func == null) func = 
+#else
+            func ??=
+#endif
+            a => true;
             return new List<TConfig>() { this as TConfig }.Where(func);
         }
         /// <summary>
@@ -108,12 +118,12 @@ namespace XiaoFeng.Config
         public virtual TConfig GetEntity(object value)
         {
             var attr = this.ConfigFileAttribute;
-            if (attr == null) return default(TConfig);
+            if (attr == null) return default;
             if (IsGenericPath(attr.FileName))
                 this[GetGenericKey(attr.FileName)] = value;
             return this.Get(true);
         }
-        #endregion
+#endregion
 
         #region 读取内容
         /// <summary>
@@ -191,12 +201,17 @@ namespace XiaoFeng.Config
                 {
 
                 }
-                if (this.ConfigFileAttribute == null) this.ConfigFileAttribute = attr;
+#if NETSTANDARD2_0
+                if (this.ConfigFileAttribute == null) this.ConfigFileAttribute = 
+#else
+                this.ConfigFileAttribute ??=
+#endif
+                attr;
                 if (Reload) cache.Set(cacheKey, this as TConfig, configPath);
             }
             return this as TConfig;
         }
-        #endregion
+#endregion
 
         #region 保存数据
         /// <summary>
@@ -399,6 +414,6 @@ namespace XiaoFeng.Config
         }
         #endregion
 
-        #endregion
+#endregion
     }
 }

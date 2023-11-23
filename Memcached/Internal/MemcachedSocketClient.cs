@@ -84,7 +84,7 @@ namespace XiaoFeng.Memcached.Internal
         {
             if (username.IsNullOrEmpty() || password.IsNullOrEmpty()) return await Task.FromResult(this.IsAuthenticated = true);
             return await Task.FromResult(this.IsAuthenticated = true);
-            if (this.Config.Protocol == MemcachedProtocol.Binary)
+           /* if (this.Config.Protocol == MemcachedProtocol.Binary)
             {
                 var request = new RequestPacket(this.Socket, this.Config, "")
                 {
@@ -110,7 +110,7 @@ namespace XiaoFeng.Memcached.Internal
                 await this.Socket.SendAsync($"{uname}\r\n").ConfigureAwait(false);
                 var result = await this.Socket.ReceviceMessageAsync().ConfigureAwait(false);
                 return this.IsAuthenticated = result.GetString().StartsWith("STORED");
-            }
+            }*/
         }
         /// <summary>
         /// 认证

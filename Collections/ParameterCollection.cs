@@ -136,12 +136,12 @@ namespace XiaoFeng.Collections
         /// </summary>
         private IEnumerable<KeyValuePair<string, string>> OrderedEnumerable
         {
-            get
-            {
-                if (this._OrderedEnumerable == null)
-                    this._OrderedEnumerable = this.GetList();
-                return this._OrderedEnumerable;
-            }
+            get => this._OrderedEnumerable
+#if NETSTANDARD2_0
+                 ?? (this._OrderedEnumerable = this.GetList());
+#else
+                 ??= this.GetList();
+#endif
         }
         /// <summary>
         /// 获取包含在 <see cref="ParameterCollection"/> 实例中的键/值对的数目
@@ -167,7 +167,7 @@ namespace XiaoFeng.Collections
         /// 参数值是否Url编码
         /// </summary>
         public bool IsEncode { get; set; }
-        #endregion
+#endregion
 
         #region 方法
 
@@ -338,7 +338,11 @@ namespace XiaoFeng.Collections
         {
             var list = this.GetList();
             if (list == null) return this;
+#if NETSTANDARD2_0
             if (func == null) func = a => a.Key;
+#else
+            func ??= a => a.Key;
+#endif
             this._OrderedEnumerable = list.OrderBy(func);
             return this;
         }
@@ -351,11 +355,15 @@ namespace XiaoFeng.Collections
         {
             var list = this.GetList();
             if (list == null) return this;
+#if NETSTANDARD2_0
             if (func == null) func = a => a.Key;
+#else
+            func ??= a => a.Key;
+#endif
             this._OrderedEnumerable = list.OrderByDescending(func);
             return this;
         }
-        #endregion
+#endregion
 
         #region 转成字典
         /// <summary>
@@ -499,6 +507,6 @@ namespace XiaoFeng.Collections
         }
         #endregion
 
-        #endregion
+#endregion
     }
 }

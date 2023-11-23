@@ -196,114 +196,41 @@ namespace XiaoFeng
         {
             if (chsStr.CompareTo("吖") < 0)
             {
-                string s = chsStr.Substring(0, 1).ToUpper();
-                if (char.IsNumber(s, 0))
-                {
-                    return "0";
-                }
-                else
-                {
-                    return s;
-                }
+                string s = chsStr
+#if NETSTANDARD2_0
+                .Substring(0, 1)
+#else
+                [..1]
+#endif
+                .ToUpper();
+                return char.IsNumber(s, 0) ? "0" : s;
             }
-            else if (chsStr.CompareTo("八") < 0)
-            {
-                return "A";
-            }
-            else if (chsStr.CompareTo("嚓") < 0)
-            {
-                return "B";
-            }
-            else if (chsStr.CompareTo("咑") < 0)
-            {
-                return "C";
-            }
-            else if (chsStr.CompareTo("妸") < 0)
-            {
-                return "D";
-            }
-            else if (chsStr.CompareTo("发") < 0)
-            {
-                return "E";
-            }
-            else if (chsStr.CompareTo("旮") < 0)
-            {
-                return "F";
-            }
-            else if (chsStr.CompareTo("铪") < 0)
-            {
-                return "G";
-            }
-            else if (chsStr.CompareTo("讥") < 0)
-            {
-                return "H";
-            }
-            else if (chsStr.CompareTo("咔") < 0)
-            {
-                return "J";
-            }
-            else if (chsStr.CompareTo("垃") < 0)
-            {
-                return "K";
-            }
-            else if (chsStr.CompareTo("嘸") < 0)
-            {
-                return "L";
-            }
-            else if (chsStr.CompareTo("拏") < 0)
-            {
-                return "M";
-            }
-            else if (chsStr.CompareTo("噢") < 0)
-            {
-                return "N";
-            }
-            else if (chsStr.CompareTo("妑") < 0)
-            {
-                return "O";
-            }
-            else if (chsStr.CompareTo("七") < 0)
-            {
-                return "P";
-            }
-            else if (chsStr.CompareTo("亽") < 0)
-            {
-                return "Q";
-            }
-            else if (chsStr.CompareTo("仨") < 0)
-            {
-                return "R";
-            }
-            else if (chsStr.CompareTo("他") < 0)
-            {
-                return "S";
-            }
-            else if (chsStr.CompareTo("哇") < 0)
-            {
-                return "T";
-            }
-            else if (chsStr.CompareTo("夕") < 0)
-            {
-                return "W";
-            }
-            else if (chsStr.CompareTo("丫") < 0)
-            {
-                return "X";
-            }
-            else if (chsStr.CompareTo("帀") < 0)
-            {
-                return "Y";
-            }
-            else if (chsStr.CompareTo("咗") < 0)
-            {
-                return "Z";
-            }
-            else
-            {
-                return "0";
-            }
+            if (chsStr.CompareTo("八") < 0) return "A";
+            if (chsStr.CompareTo("嚓") < 0) return "B";
+            if (chsStr.CompareTo("咑") < 0) return "C";
+            if (chsStr.CompareTo("妸") < 0) return "D";
+            if (chsStr.CompareTo("发") < 0) return "E";
+            if (chsStr.CompareTo("旮") < 0) return "F";
+            if (chsStr.CompareTo("铪") < 0) return "G";
+            if (chsStr.CompareTo("讥") < 0) return "H";
+            if (chsStr.CompareTo("咔") < 0) return "J";
+            if (chsStr.CompareTo("垃") < 0) return "K";
+            if (chsStr.CompareTo("嘸") < 0) return "L";
+            if (chsStr.CompareTo("拏") < 0) return "M";
+            if (chsStr.CompareTo("噢") < 0) return "N";
+            if (chsStr.CompareTo("妑") < 0) return "O";
+            if (chsStr.CompareTo("七") < 0) return "P";
+            if (chsStr.CompareTo("亽") < 0) return "Q";
+            if (chsStr.CompareTo("仨") < 0) return "R";
+            if (chsStr.CompareTo("他") < 0) return "S";
+            if (chsStr.CompareTo("哇") < 0) return "T";
+            if (chsStr.CompareTo("夕") < 0) return "W";
+            if (chsStr.CompareTo("丫") < 0) return "X";
+            if (chsStr.CompareTo("帀") < 0) return "Y";
+            if (chsStr.CompareTo("咗") < 0) return "Z";
+            return "0";
         }
-        #endregion
+#endregion
 
         #region 公有属性
         /// <summary>
@@ -311,14 +238,24 @@ namespace XiaoFeng
         /// </summary>
         public static Hashtable CHSPhraseSpecial
         {
-            get => _PhraseSpecial ?? (_PhraseSpecial = new Hashtable
+            get => _PhraseSpecial
+#if NETSTANDARD2_0
+                 ?? (_PhraseSpecial = new Hashtable
                     {
                         { "重庆", "Chong Qing" },
                         { "深圳", "Shen Zhen" },
                         { "银行", "Yin Hang" }
                     });
+#else
+                ??= new Hashtable
+                    {
+                        { "重庆", "Chong Qing" },
+                        { "深圳", "Shen Zhen" },
+                        { "银行", "Yin Hang" }
+                    };
+#endif
             set => _PhraseSpecial = value;
         }
-        #endregion
+#endregion
     }
 }

@@ -84,7 +84,7 @@ namespace XiaoFeng
         public static object GetCustomAttributeValue<T>(this Type t, Func<T, object> func, string name = "", bool inherit = true) where T : Attribute
         {
             object val = new object();
-            T tc = default(T);
+            T tc = default;
             if (t == null) return tc;
             if (name.IsNullOrEmpty())
             {
@@ -110,7 +110,7 @@ namespace XiaoFeng
         [Obsolete("被系统替换")]
         public static T GetCustomAttributeBAK<T>(this Type t, bool inherit = true) where T : Attribute
         {
-            T tc = default(T);
+            T tc = default;
             if (t == null) return tc;
             object _t = t.GetCustomAttributes(typeof(T), inherit).FirstOrDefault();
             return (_t ?? tc) as T;
@@ -137,7 +137,7 @@ namespace XiaoFeng
         /// <returns></returns>
         public static T GetCustomAttributeX<T>(this MemberInfo m) where T : Attribute
         {
-            T tc = default(T);
+            T tc = default;
             if (m == null) return tc;
             object _t = m.GetCustomAttributes(typeof(T), true).FirstOrDefault();
             return (_t ?? tc) as T;

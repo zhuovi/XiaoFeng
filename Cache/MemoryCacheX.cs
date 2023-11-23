@@ -150,7 +150,7 @@ namespace XiaoFeng.Cache
         public T Get<T>(string key) where T : class
         {
             if (key == null)
-                return default(T);
+                return default;
             return Cache.Get<T>(key);
         }
 

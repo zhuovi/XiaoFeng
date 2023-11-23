@@ -142,7 +142,12 @@ namespace XiaoFeng.Threading
             /*检查作业定时执行时间*/
             if ((TimerType.Hour | TimerType.Day | TimerType.Week | TimerType.Month | TimerType.Year).HasFlag(job.TimerType))
             {
-                if (job.Times == null) job.Times = new List<Times>();
+#if NETSTANDARD2_0
+                if (job.Times == null) job.Times =
+#else
+                job.Times ??=
+#endif
+                new List<Times>();
                 if (job.TimerType == TimerType.Hour)
                 {
                     if (job.Times.Count == 0) job.Times.Add(new Times(0, 0, 0));
@@ -213,7 +218,7 @@ namespace XiaoFeng.Threading
             foreach (var j in jobs)
                 await this.Add(j);
         }
-        #endregion
+#endregion
 
         #region 移除作业
         /// <summary>
@@ -339,11 +344,12 @@ namespace XiaoFeng.Threading
                         this.Log($"-- 下一次检测作业时间为:{now.AddMilliseconds(this.Period):yyyy-MM-dd HH:mm:ss.ffff} --");
                     });
                     //this.Log($"等待间隔:{this.Period}");
-                    if (this.Manual == null)
-                    {
-                        this.Manual = new ManualResetEventSlim(false);
-                    }
-
+#if NETSTANDARD2_0
+                    if (this.Manual == null)this.Manual =
+#else
+                    this.Manual ??=
+#endif
+                    new ManualResetEventSlim(false);
                     Manual.Reset();
                     Manual.Wait(TimeSpan.FromMilliseconds(this.Period < 0 ? 10 : this.Period));
                 }
@@ -417,7 +423,7 @@ namespace XiaoFeng.Threading
                 }, cancel.Token);
             }
         }
-        #endregion
+#endregion
 
         #region 执行作业
         /// <summary>
@@ -925,6 +931,6 @@ namespace XiaoFeng.Threading
         }
         #endregion
 
-        #endregion
+#endregion
     }
 }

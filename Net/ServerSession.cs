@@ -119,11 +119,11 @@ namespace XiaoFeng.Net
         /// <summary>
         /// 第一个字节
         /// </summary>
-        private byte[] FirstByte;
+        private readonly byte[] FirstByte;
         /// <summary>
         /// 最后字节
         /// </summary>
-        private byte[] LastByte;
+        private readonly byte[] LastByte;
         /// <summary>
         /// 服务key1
         /// </summary>
@@ -162,7 +162,9 @@ namespace XiaoFeng.Net
         /// <summary>
         /// 连接委托
         /// </summary>
+#pragma warning disable CS0067 // 从不使用事件“ServerSession.OnNewConnection”
         public virtual event NewConnectionEventHandler OnNewConnection;
+#pragma warning restore CS0067 // 从不使用事件“ServerSession.OnNewConnection”
         /// <summary>
         /// 消息委托
         /// </summary>
@@ -535,8 +537,7 @@ namespace XiaoFeng.Net
             /*发送握手信息*/
             lock (ConnectionSocket)
             {
-                if (ConnectionSocket != null)
-                    ConnectionSocket.BeginSend(
+                ConnectionSocket?.BeginSend(
                         serverHandshakeResponse,
                         0,
                         HandshakeText.Length + 16,
@@ -693,10 +694,11 @@ namespace XiaoFeng.Net
                 {
                     return this.Certificate;
                 }, EncryptionPolicy.RequireEncryption);
-                this.SslStream = new SslStream(netStream, true);
-                this.SslStream.ReadTimeout = netStream.ReadTimeout;
-
-                this.SslStream.WriteTimeout = netStream.WriteTimeout;
+                this.SslStream = new SslStream(netStream, true)
+                {
+                    ReadTimeout = netStream.ReadTimeout,
+                    WriteTimeout = netStream.WriteTimeout
+                };
                 this.SslStream.AuthenticateAsServer(this.Certificate, false, this.SslProtocols, true);
                 //this.SslStream.AuthenticateAsServer(this.Certificate);
                 this.ReceiveMessage(this.SslStream, true);
@@ -822,7 +824,7 @@ namespace XiaoFeng.Net
             }
             string messageReceived = string.Empty;
             var buffer = new MemoryStream();
-            int readsize = 0;
+            int readsize;
             do
             {
                 readsize = stream.Read(this.ReceivedDataBuffer, 0, this.ReceivedDataBuffer.Length);
