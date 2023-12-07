@@ -31,41 +31,41 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 4.3.6
+$ dotnet add package XiaoFeng --version 4.4.0
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 4.3.6
+PM> Install-Package XiaoFeng -Version 4.4.0
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="4.3.6" />
+<PackageReference Include="XiaoFeng" Version="4.4.0" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 4.3.6
+> paket add XiaoFeng --version 4.4.0
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 4.3.6"
+> #r "nuget: XiaoFeng, 4.4.0"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=4.3.6
+#addin nuget:?package=XiaoFeng&version=4.4.0
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=4.3.6
+#tool nuget:?package=XiaoFeng&version=4.4.0
 ```
 
 
@@ -1862,6 +1862,20 @@ client.UnSubscribe("取消订阅频道");
 ---
 
 # 更新日志
+
+## 2023-12-07   v 4.4.0
+
+1.增加CSVStreamWriter写入器方法 Write(stirng[][])和Write(string line);
+
+2.增加CSVStreamReader读取器方法 ReadRow(),ReadTable();
+
+3.更新语法;
+
+4.更新为空的消息写法;
+
+5.优化HttpMethod类;
+
+6.增加日志配置输出到文件标识及输出到数据库标识;
 
 ## 2023-11-17   v 4.3.6
 
