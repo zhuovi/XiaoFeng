@@ -175,6 +175,7 @@ namespace XiaoFeng.Log
         /// <param name="loggerConfig">日志配置</param>
         public void ConsoleOutput(LoggerConfig loggerConfig)
         {
+            if (!loggerConfig.ConsoleFlags.HasFlag(this.LogType)) return;
             lock (IOLock)
             {
                 if (this.CustomMessage.IsNotNullOrEmpty())

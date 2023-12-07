@@ -24,7 +24,7 @@
 		<PackageProjectUrl>https://www.eelf.cn</PackageProjectUrl>
 		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>增加CSVStreamWriter写入器方法 Write(stirng[][])和Wite(string line);增加CSVStreamReader读取器方法 ReadRow(),ReadTable();更新语法;更新为空的消息写法;</PackageReleaseNotes>
+		<PackageReleaseNotes>增加CSVStreamWriter写入器方法 Write(stirng[][])和Write(string line);增加CSVStreamReader读取器方法 ReadRow(),ReadTable();更新语法;更新为空的消息写法;优化HttpMethod类;增加日志配置输出到文件标识及输出到数据库标识;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>

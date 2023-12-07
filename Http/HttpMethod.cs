@@ -23,7 +23,7 @@ namespace XiaoFeng.Http
         /// <param name="method"></param>
         public HttpMethod(string method)
         {
-            this.Method = method;
+            this.Method = method.ToLower().ToUpperFirst();
         }
         #endregion
 

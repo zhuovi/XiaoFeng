@@ -55,9 +55,12 @@ namespace XiaoFeng.Log
             {
                 t.ConsoleOutput(this.LoggerConfig);
             }
-            if (this.LoggerConfig.OpenLog && (this.LoggerConfig.StorageType.HasFlag(StorageType.File) || this.LoggerConfig.StorageType.HasFlag(StorageType.Database)))
+            if (!this.LoggerConfig.OpenLog) return Task.CompletedTask;
+
+            if ((this.LoggerConfig.StorageType.HasFlag(StorageType.File) && this.LoggerConfig.FileFlags.HasFlag(t.LogType)) || (this.LoggerConfig.StorageType.HasFlag(StorageType.Database) && this.LoggerConfig.DataBaseFlags.HasFlag(t.LogType)))
                 return base.AddWorkItem(t);
-            else return Task.CompletedTask;
+
+            return Task.CompletedTask;
         }
         ///<inheritdoc/>
         public override async Task ExecuteAsync(LogData workItem, CancellationToken cancellationToken)
