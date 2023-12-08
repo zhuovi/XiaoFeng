@@ -945,7 +945,8 @@ namespace XiaoFeng.Json
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:删除未使用的参数", Justification = "<挂起>")]
         public T ToCast<T>(IFormatProvider provider = null)
         {
-            return (T)this.GetValue(typeof(T));
+            var v = this.GetValue(typeof(T));
+            return v == null ? default(T) : (T)v;
         }
         /// <summary>
         /// 转换成字典
