@@ -160,12 +160,12 @@ namespace XiaoFeng.Config
             {
                 this.Data = new Dictionary<string, ConnectionConfig[]>
                 {
-                    {"www.zhuovi.com",new ConnectionConfig[]
+                    {"www.eelf.cn",new ConnectionConfig[]
                         {
                             new ConnectionConfig
                             {
                                 ProviderType = DbProviderType.SqlServer,
-                                ConnectionString = ""
+                                ConnectionString = "server=.;database=test;uid=sa;pwd=123;"
                             }
                         }
                     }
