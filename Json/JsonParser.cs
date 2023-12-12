@@ -498,6 +498,8 @@ namespace XiaoFeng.Json
                     case '.':
                     case 'e':
                     case 'E':
+                        if (data.Index >= data.JsonString.Length)
+                            break;
                         continue;
                 }
                 break;
