@@ -51,13 +51,13 @@ namespace XiaoFeng.Log
         public override Task AddWorkItem(LogData t)
         {
             if ((int)t.LogType < (int)this.LoggerConfig.LogLevel) return Task.CompletedTask;
-            if (this.LoggerConfig.StorageType.HasFlag(StorageType.Console))
+            if (this.LoggerConfig.StorageType.HasFlag(StorageType.Console) || this.LoggerConfig.StorageType == 0)
             {
                 t.ConsoleOutput(this.LoggerConfig);
             }
             if (!this.LoggerConfig.OpenLog) return Task.CompletedTask;
 
-            if ((this.LoggerConfig.StorageType.HasFlag(StorageType.File) && this.LoggerConfig.FileFlags.HasFlag(t.LogType)) || (this.LoggerConfig.StorageType.HasFlag(StorageType.Database) && this.LoggerConfig.DataBaseFlags.HasFlag(t.LogType)))
+            if ((this.LoggerConfig.StorageType.HasFlag(StorageType.File) && (this.LoggerConfig.FileFlags.HasFlag(t.LogType) || this.LoggerConfig.FileFlags == 0)) || (this.LoggerConfig.StorageType.HasFlag(StorageType.Database) && (this.LoggerConfig.DataBaseFlags.HasFlag(t.LogType) || this.LoggerConfig.DataBaseFlags == 0)))
                 return base.AddWorkItem(t);
 
             return Task.CompletedTask;

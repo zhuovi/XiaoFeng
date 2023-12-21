@@ -148,6 +148,11 @@ namespace XiaoFeng
         /// <param name="Message">信息</param>
         public static void Task(string Message) => WriteLog(LogType.Task, Message);
         /// <summary>
+        /// 跟踪日志
+        /// </summary>
+        /// <param name="Message">信息</param>
+        public static void Trace(string Message) => WriteLog(LogType.Trace, Message);
+        /// <summary>
         /// 记录日志
         /// </summary>
         /// <param name="Message">信息</param>

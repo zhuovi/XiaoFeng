@@ -1,5 +1,6 @@
 ﻿using System;
 using XiaoFeng.IO;
+using XiaoFeng.Redis;
 /****************************************************************
 *  Copyright © (2021) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -23,8 +24,6 @@ namespace XiaoFeng.Cache
         /// </summary>
         public RedisCache() : base()
         {
-            this.Redis = new Redis.RedisClient(this.Config.ConnectionStringKey);
-
             /*Task.Factory.StartNew(async () =>
             {
                 while (true)
@@ -45,29 +44,42 @@ namespace XiaoFeng.Cache
         #endregion
 
         #region 属性
-        /// <summary>
-        /// Redis
-        /// </summary>
-        public Redis.RedisClient Redis { get; set; }
         #endregion
 
         #region 方法
+        /// <summary>
+        /// 执行
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="func">函数</param>
+        /// <returns></returns>
+        private T GetRedis<T>(Func<RedisClient,T> func)
+        {
+            var redis = new Redis.RedisClient(this.Config.ConnectionStringKey);
+            var t = func(redis);
+            redis.Close();
+            return t;
+        }
+        
         ///<inheritdoc/>
         public void Clear()
         {
-            this.Redis.DelKey(this.Config.CacheKey);
+            GetRedis(a =>
+            {
+               return a.DelKey(this.Config.CacheKey);
+            });
         }
         /// <inheritdoc/>
         public bool Contains(string key)
         {
             if (key.IsNullOrEmpty()) return false;
-            return this.Redis.ExistsHash(this.Config.CacheKey, key);
+            return GetRedis(a => a.ExistsHash(this.Config.CacheKey, key));
         }
         ///<inheritdoc/>
         public object Get(string key)
         {
             if (key.IsNullOrEmpty()) return null;
-            string content = this.Redis.GetHash(this.Config.CacheKey, key);
+            string content = GetRedis(a => a.GetHash(this.Config.CacheKey, key));
             /*var Tags = content.GetMatch(@"\/\*[\s\S]+\*\/");
             if (Tags.IsNullOrEmpty()) return null;
             var dict = Tags.GetMatchs($@"^\/\*{FileHelper.NewLine}\*Cache->CreateTime:(?<CreateTime>[^\r\n]*){FileHelper.NewLine}\*Cache->ExpireTime:(?<ExpireTime>[^\r\n]*){FileHelper.NewLine}\*Cache->ObjectType:(?<ObjectType>[^\r\n]*){FileHelper.NewLine}\*Cache->Path:(?<Path>[^\r\n]*){FileHelper.NewLine}\*\/");
@@ -97,7 +109,7 @@ namespace XiaoFeng.Cache
                     if (model.IsSliding && model.ExpiresIn.HasValue && model.ExpiresIn > 0)
                     {
                         model.ExpireTime = DateTime.Now.AddMilliseconds(model.ExpiresIn.Value);
-                        this.Redis.SetHash(this.Config.CacheKey, key, model.ToString());
+                        GetRedis(a => a.SetHash(this.Config.CacheKey, key, model.ToString()));
                     }
                 }
             }
@@ -120,7 +132,7 @@ namespace XiaoFeng.Cache
         public void Remove(string key)
         {
             if (key.IsNullOrEmpty()) return;
-            this.Redis.DelHash(this.Config.CacheKey, key);
+            GetRedis(a => a.DelHash(this.Config.CacheKey, key));
         }
         ///<inheritdoc/>
         public bool Set(string key, object value, TimeSpan expiresIn, bool isSliding = false)
@@ -135,7 +147,7 @@ namespace XiaoFeng.Cache
                 ExpiresIn = expiresIn.TotalMilliseconds,
                 IsSliding = isSliding
             };
-            return this.Redis.SetHash(this.Config.CacheKey, key, val.ToString());
+            return GetRedis(a => a.SetHash(this.Config.CacheKey, key, val.ToString()));
         }
         ///<inheritdoc/>
         public bool Set(string key, object value, string path)
@@ -147,7 +159,7 @@ namespace XiaoFeng.Cache
                 Value = value,
                 Path = path
             };
-            return this.Redis.SetHash(this.Config.CacheKey, key, val.ToString());
+            return GetRedis(a => a.SetHash(this.Config.CacheKey, key, val.ToString()));
         }
         ///<inheritdoc/>
         public bool Set(string key, object value, TimeSpan expiresSliding, TimeSpan expiressAbsoulte)
@@ -170,7 +182,7 @@ namespace XiaoFeng.Cache
             {
                 Value = value
             };
-            return this.Redis.SetHash(this.Config.CacheKey, key, val.ToString());
+            return GetRedis(a => a.SetHash(this.Config.CacheKey, key, val.ToString()));
         }
         #endregion
     }

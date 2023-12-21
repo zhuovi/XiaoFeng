@@ -92,7 +92,7 @@ namespace XiaoFeng.Log
             }
             if (this.Writer != null && this.Writer.BaseStream.CanWrite)
             {
-                if (!this.LoggerConfig.FileFlags.HasFlag(logData.LogType)) return;
+                if (!this.LoggerConfig.FileFlags.HasFlag(logData.LogType) && this.LoggerConfig.FileFlags != 0) return;
                 lock (IOLock)
                 {
                     this.Writer.WriteAsync(logData.ToString(LoggerConfig)).ConfigureAwait(false).GetAwaiter().GetResult();
@@ -100,7 +100,7 @@ namespace XiaoFeng.Log
             }
             if (this.DataHelper != null)
             {
-                if (!this.LoggerConfig.DataBaseFlags.HasFlag(logData.LogType)) return;
+                if (!this.LoggerConfig.DataBaseFlags.HasFlag(logData.LogType) && this.LoggerConfig.DataBaseFlags != 0) return;
                 lock (IOLock)
                 {
                     this.DataHelper.ExecuteNonQuery(logData.ToSqlString(LoggerConfig));

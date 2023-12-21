@@ -280,7 +280,7 @@ namespace XiaoFeng.Collections
                     }
                 });
             }
-            LogHelper.Debug($"空闲数:{this.FreeItems.Count} 个资源,繁忙数:{this.BusyItems.Count} 个资源.");
+            LogHelper.Trace($"空闲数:{this.FreeItems.Count} 个资源,繁忙数:{this.BusyItems.Count} 个资源.");
             if (this.FreeItems.IsEmpty && this.BusyItems.IsEmpty) job?.Stop();
         }
         #endregion
