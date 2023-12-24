@@ -787,9 +787,9 @@ namespace XiaoFeng.Net
         ///<inheritdoc/>
         public virtual async Task<byte[]> ReceviceMessageAsync(byte[] bytes, int offset = -1, int count = -1)
         {
-            if (bytes == null || bytes.Length == 0 || bytes.Length <= offset || bytes.Length <= count + offset) return Array.Empty<byte>();
             if (offset < 0) offset = 0;
             if (count <= 0) count = bytes.Length - offset;
+            if (bytes == null || bytes.Length == 0 || bytes.Length <= offset || bytes.Length <= count + offset) return Array.Empty<byte>();
             var stream = this.GetSslStream();
             if (stream == null) return Array.Empty<byte>();
             try

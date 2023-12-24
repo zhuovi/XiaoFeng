@@ -2884,19 +2884,19 @@ namespace XiaoFeng
         /// 赋值数组
         /// </summary>
         /// <param name="data">目标</param>
-        /// <param name="destStart">目标起始位置</param>
+        /// <param name="destOffset">目标起始位置</param>
         /// <param name="source">源</param>
-        /// <param name="sourceStart">源开始</param>
+        /// <param name="sourceOffset">源开始</param>
         /// <param name="length">长度</param>
         /// <returns></returns>
-        public static byte[] Write(this byte[] data, int destStart, byte[] source, int sourceStart = 0, int length = -1)
+        public static byte[] Write(this byte[] data, int destOffset, byte[] source, int sourceOffset = 0, int length = -1)
         {
-            if (length == -1) length = source.Length - sourceStart;
-            if (data.IsNullOrEmpty()) data = new byte[destStart + length];
+            if (length == -1) length = source.Length - sourceOffset;
+            if (data.IsNullOrEmpty()) data = new byte[destOffset + length];
             if (source.IsNullOrEmpty()) return data;
-            if (source.Length <= sourceStart + length) length = source.Length - sourceStart;
-            if (data.Length <= destStart + length) length = data.Length - destStart;
-            Array.Copy(source, sourceStart, data, destStart, length);
+            if (source.Length <= sourceOffset + length) length = source.Length - sourceOffset;
+            if (data.Length <= destOffset + length) length = data.Length - destOffset;
+            Array.Copy(source, sourceOffset, data, destOffset, length);
             return data;
         }
         /// <summary>

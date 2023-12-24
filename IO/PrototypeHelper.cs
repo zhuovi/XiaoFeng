@@ -201,5 +201,131 @@ namespace XiaoFeng.IO
         /// <param name="paths">由路径的各部分构成的数组。</param>
         /// <returns>已组合的路径。</returns>
         public static string Combine(this IEnumerable<string> paths) => FileHelper.Combine(paths);
+        /// <summary>
+        /// 复制字节数组
+        /// </summary>
+        /// <param name="_">源字节数组</param>
+        /// <param name="offset">偏移量</param>
+        /// <param name="length">复制字节长度,-1表示剩余所有数据长度</param>
+        /// <returns>复制的字节数组</returns>
+        public static byte[] ReadBytes(this byte[] _, int offset, int length = -1)
+        {
+            if (_ == null || _.Length == 0 || _.Length <= offset || length == 0) return Array.Empty<byte>();
+            if (offset <= 0) offset = 0;
+            if (length <= -1 || _.Length < offset + length) length = _.Length - offset;
+            var array = new byte[length];
+            Array.Copy(_, offset, array, 0, length);
+            return array;
+        }
+        /// <summary>
+        /// 向目标字节数组写入数据
+        /// </summary>
+        /// <param name="dest">目标字节数组</param>
+        /// <param name="destOffset">目标字节数组偏移量</param>
+        /// <param name="source">源字节数组</param>
+        /// <param name="sourceOffset">源字节数组偏移量</param>
+        /// <param name="length">字节长度</param>
+        /// <returns>实际写入目标字节数组数量</returns>
+        public static int WriteBytes(this byte[] dest, int destOffset, byte[] source, int sourceOffset = 0, int length = -1)
+        {
+            if (source == null || source.Length == 0 || length == 0) return 0;
+            if (destOffset < 0) destOffset = 0;
+            if (sourceOffset < 0) sourceOffset = 0;
+            if (length <= -1 || dest.Length < destOffset + length) length = dest.Length - destOffset;
+            Array.Copy(source, sourceOffset, dest, destOffset, length);
+            return length;
+        }
+        /// <summary>
+        /// 从字节数组指定位置读取一个无符号的16位整数
+        /// </summary>
+        /// <param name="_">字节数组</param>
+        /// <param name="offset">偏移量</param>
+        /// <param name="isLittleEndian">是否小端字节序</param>
+        /// <returns>无符号的16位整数</returns>
+        public static UInt16 ToUInt16(this byte[] _, int offset = 0, Boolean isLittleEndian = true)
+        {
+            if (_ == null || _.Length < 2) return 0;
+            if (offset < 0) offset = 0;
+            if (offset >= _.Length) return 0;
+            var array = new byte[2].Write(0, _, offset, 2);
+            if (isLittleEndian)
+                return BitConverter.ToUInt16(_, 0);
+            return (ushort)((array[0] << 8) | array[1]);
+        }
+        /// <summary>
+        /// 从字节数组指定位置读取一个无符号的32位整数
+        /// </summary>
+        /// <param name="_">字节数组</param>
+        /// <param name="offset">偏移量</param>
+        /// <param name="isLittleEndian">是否小端字节序</param>
+        /// <returns>无符号的32位整数</returns>
+        public static uint ToUInt32(this byte[] _, int offset = 0, Boolean isLittleEndian = true)
+        {
+            var byteLength = 4;
+            if (_ == null || _.Length < byteLength) return 0;
+            if (offset < 0) offset = 0;
+            if (offset >= _.Length) return 0;
+            var array = new byte[byteLength].Write(0, _, offset, byteLength);
+            if (isLittleEndian)
+                return BitConverter.ToUInt32(_, 0);
+            return (UInt32)((array[0] << 24) | array[1] << 16 | array[2] << 8 | array[3]);
+        }
+        /// <summary>
+        /// 从字节数组指定位置读取一个无符号的64位整数
+        /// </summary>
+        /// <param name="_">字节数组</param>
+        /// <param name="offset">偏移量</param>
+        /// <param name="isLittleEndian">是否小端字节序</param>
+        /// <returns>无符号的64位整数</returns>
+        public static UInt64 ToUInt64(this byte[] _, int offset = 0, Boolean isLittleEndian = true)
+        {
+            var byteLength = 8;
+            if (_ == null || _.Length < byteLength) return 0;
+            if (offset < 0) offset = 0;
+            if (offset >= _.Length) return 0;
+            var array = new byte[byteLength].Write(0, _, offset, byteLength);
+            if (isLittleEndian)
+                return BitConverter.ToUInt64(_, 0);
+            var num = ((array[0] << 24) | array[1] << 16 | array[2] << 8 | array[3]);
+            return (UInt64)((array[4] << 24) | array[5] << 16 | array[6] << 8 | array[7]) | (UInt64)(num << 32);
+        }
+        /// <summary>
+        /// 整数转字节数组
+        /// </summary>
+        /// <param name="value">值</param>
+        /// <param name="isLittleEndian">是否小端字节序</param>
+        /// <returns></returns>
+        public static byte[] GetBytes(this UInt16 value, Boolean isLittleEndian = true) => ((UInt64)value).GetBytes(2, isLittleEndian);
+        /// <summary>
+        /// 整数转字节数组
+        /// </summary>
+        /// <param name="value">值</param>
+        /// <param name="isLittleEndian">是否小端字节序</param>
+        /// <returns></returns>
+        public static byte[] GetBytes(this UInt32 value, Boolean isLittleEndian = true) => ((UInt64)value).GetBytes(4, isLittleEndian);
+        /// <summary>
+        /// 整数转字节数组
+        /// </summary>
+        /// <param name="value">值</param>
+        /// <param name="isLittleEndian">是否小端字节序</param>
+        /// <returns></returns>
+        public static byte[] GetBytes(this UInt64 value, Boolean isLittleEndian = true) => value.GetBytes(8, isLittleEndian);
+        /// <summary>
+        /// 整数转字节数组
+        /// </summary>
+        /// <param name="value">值</param>
+        /// <param name="length">字节数组长度</param>
+        /// <param name="isLittleEndian">是否小端字节序</param>
+        /// <returns></returns>
+        public static byte[] GetBytes(this UInt64 value, int length = 8, Boolean isLittleEndian = true)
+        {
+            var bytes = new byte[length];
+            for (var i = bytes.Length - 1; i >= 0; i--)
+            {
+                bytes[bytes.Length - 1 - i] = i == 0 ? (byte)(value & 0xFF) : (byte)(value >> (i * 8));
+            }
+            if (isLittleEndian) Array.Reverse(bytes);
+            return bytes;
+        }
     }
 }
