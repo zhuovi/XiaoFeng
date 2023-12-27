@@ -27,6 +27,10 @@ namespace XiaoFeng.IO
         /// </summary>
         protected MemoryStream BufferData { get; set; }
         /// <summary>
+        /// 基础流
+        /// </summary>
+        public Stream BaseStream => this.BufferData;
+        /// <summary>
         /// 读取位置
         /// </summary>
         public long Position
@@ -129,5 +133,6 @@ namespace XiaoFeng.IO
         }
         #endregion
         #endregion
+
     }
 }

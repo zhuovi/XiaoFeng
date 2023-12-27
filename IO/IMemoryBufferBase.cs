@@ -82,5 +82,9 @@ namespace XiaoFeng.IO
         /// <param name="length">字节数组长度</param>
         /// <returns></returns>
         byte[] ValueToBytes(long val, int length);
+        /// <summary>
+        /// 基础流
+        /// </summary>
+        Stream BaseStream { get; }
     }
 }
