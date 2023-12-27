@@ -61,6 +61,11 @@ namespace XiaoFeng.IO
         /// <returns></returns>
         byte[] ReadBytes();
         /// <summary>
+        /// 读取一行数据
+        /// </summary>
+        /// <returns></returns>
+        byte[] ReadLine();
+        /// <summary>
         /// 读取2个字节整型数字
         /// </summary>
         /// <returns></returns>

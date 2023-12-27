@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 
 /****************************************************************
 *  Copyright © (2023) www.eelf.cn All Rights Reserved.          *
@@ -164,6 +166,49 @@ namespace XiaoFeng.IO
         public void WriteBuffer(IMemoryBufferWriter writer)
         {
             this.WriteBuffer(writer.ToArray());
+        }
+        #endregion
+
+        #region 读取一行数据
+        /// <summary>
+        /// 读取一行数据
+        /// </summary>
+        /// <returns></returns>
+        public byte[] ReadLine()
+        {
+            var IsR = false;
+            var ms = new MemoryStream();
+            while (!this.EndOfStream)
+            {
+                var c = this.ReadByte();
+                if (c == 13)
+                {
+                    IsR = true;
+                }
+                else if (c == 10)
+                {
+                    if (IsR)
+                    {
+                        IsR = false;
+                        break;
+                    }
+                    else
+                    {
+                        ms.WriteByte((byte)c);
+                        IsR = false;
+                    }
+                }
+                else
+                {
+                    if (IsR)
+                    {
+                        ms.WriteByte(13);
+                        IsR = false;
+                    }
+                    ms.WriteByte((byte)c);
+                }
+            }
+            return ms.ToArray();
         }
         #endregion
 
