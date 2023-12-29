@@ -253,6 +253,13 @@ namespace XiaoFeng.IO
             return (ushort)((array[0] << 8) | array[1]);
         }
         /// <summary>
+        /// 从字节数组指定位置读取一个无符号的16位整数
+        /// </summary>
+        /// <param name="_">字节数组</param>
+        /// <param name="isLittleEndian">是否小端字节序</param>
+        /// <returns>无符号的16位整数</returns>
+        public static UInt16 ToUInt16(this byte[] _, Boolean isLittleEndian) => _.ToUInt16(0, isLittleEndian);
+        /// <summary>
         /// 从字节数组指定位置读取一个无符号的32位整数
         /// </summary>
         /// <param name="_">字节数组</param>
@@ -270,6 +277,13 @@ namespace XiaoFeng.IO
                 return BitConverter.ToUInt32(_, 0);
             return (UInt32)((array[0] << 24) | array[1] << 16 | array[2] << 8 | array[3]);
         }
+        /// <summary>
+        /// 从字节数组指定位置读取一个无符号的32位整数
+        /// </summary>
+        /// <param name="_">字节数组</param>
+        /// <param name="isLittleEndian">是否小端字节序</param>
+        /// <returns>无符号的32位整数</returns>
+        public static uint ToUInt32(this byte[] _, Boolean isLittleEndian) => _.ToUInt32(0, isLittleEndian);
         /// <summary>
         /// 从字节数组指定位置读取一个无符号的64位整数
         /// </summary>
@@ -289,6 +303,13 @@ namespace XiaoFeng.IO
             var num = ((array[0] << 24) | array[1] << 16 | array[2] << 8 | array[3]);
             return (UInt64)((array[4] << 24) | array[5] << 16 | array[6] << 8 | array[7]) | (UInt64)(num << 32);
         }
+        /// <summary>
+        /// 从字节数组指定位置读取一个无符号的64位整数
+        /// </summary>
+        /// <param name="_">字节数组</param>
+        /// <param name="isLittleEndian">是否小端字节序</param>
+        /// <returns>无符号的64位整数</returns>
+        public static UInt64 ToUInt64(this byte[] _, Boolean isLittleEndian) => _.ToUInt64(0, isLittleEndian);
         /// <summary>
         /// 整数转字节数组
         /// </summary>

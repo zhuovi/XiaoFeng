@@ -414,6 +414,17 @@ namespace XiaoFeng.Config
         }
         #endregion
 
+        #region 重写当前对象的字符串
+        /// <summary>
+        /// 重写当前对象的字符串
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return this.ToJson();
+        }
+        #endregion
+
         #endregion
     }
 }

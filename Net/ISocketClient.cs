@@ -300,8 +300,14 @@ namespace XiaoFeng.Net
         /// <param name="bytes">数组</param>
         /// <param name="offset">开始位置</param>
         /// <param name="count">长度</param>
-        /// <returns>接收到的数据</returns>
-        Task<byte[]> ReceviceMessageAsync(byte[] bytes, int offset = -1, int count = -1);
+        /// <returns>接收到的数据长度</returns>
+        Task<int> ReceviceMessageAsync(byte[] bytes, int offset = -1, int count = -1);
+        /// <summary>
+        /// 接收指定长度的数据
+        /// </summary>
+        /// <param name="count">长度</param>
+        /// <returns></returns>
+        Task<byte[]> ReceviceMessageAsync(int count);
         /// <summary>
         /// 接收一条数据
         /// </summary>
@@ -312,6 +318,14 @@ namespace XiaoFeng.Net
         /// </summary>
         /// <returns>Task</returns>
         Task ReceviceDataAsync();
+        #endregion
+
+        #region 清空管道数据
+        /// <summary>
+        /// 清空管道数据
+        /// </summary>
+        /// <returns>管道现有的数据</returns>
+        Task<byte[]> ClearPipeDataAsync();
         #endregion
 
         #region 获取网络流

@@ -31,41 +31,41 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 4.4.0
+$ dotnet add package XiaoFeng --version 4.5.0
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 4.4.0
+PM> Install-Package XiaoFeng -Version 4.5.0
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="4.4.0" />
+<PackageReference Include="XiaoFeng" Version="4.5.0" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 4.4.0
+> paket add XiaoFeng --version 4.5.0
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 4.4.0"
+> #r "nuget: XiaoFeng, 4.5.0"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=4.4.0
+#addin nuget:?package=XiaoFeng&version=4.5.0
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=4.4.0
+#tool nuget:?package=XiaoFeng&version=4.5.0
 ```
 
 
@@ -95,9 +95,9 @@ Cake
 | XiaoFeng.Onvif | XiaoFeng.Onvif | :white_check_mark: | 视频监控库Onvif协议 | XiaoFeng.Onvif 基于.NET平台使用C#封装Onvif常用接口、设备、媒体、云台等功能， 拒绝WCF服务引用动态代理生成wsdl类文件 ， 使用原生XML扩展标记语言封装参数，所有的数据流向都可控。 |
 | FayElf.Plugins.WeChat | FayElf.Plugins.WeChat | :white_check_mark: | 微信公众号，小程序类库 | 微信公众号，小程序类库。 |
 | XiaoFeng.Mqtt | XiaoFeng.Mqtt | :white_check_mark: | MQTT协议 | XiaoFeng.Mqtt中间件,支持.NET框架、.NET内核和.NET标准库,一种非常方便操作的客户端工具。实现了MQTT客户端，MQTT服务端,同时支持TCP，WebSocket连接。支持协议版本3.0.0,3.1.0,5.0.0。 |
+| XiaoFeng.Modbus | XiaoFeng.Modbus | :white_check_mark: | MODBUS协议 | MODBUS协议,支持RTU、ASCII、TCP三种方式进行通信，自动离线保存服务端数据 |
 | XiaoFeng.Mvc.AdminWinDesk | XiaoFeng.Mvc.AdminWinDesk | :white_check_mark: | XiaoFeng.Mvc后台皮肤 | 模仿windows桌面后台皮肤 |
 | FayElf.Cube.Blog | FayElf.Cube.Blog | :white_check_mark: | XiaoFeng.Mvc开发的技术博客 | 使用低代码开发框架（XiaoFeng.Mvc）+Windows后台皮肤(XiaoFeng.Mvc.AdminWinDesk)，开发的一个博客平台。 |
-
 
 
 # XiaoFeng 扩展方法
@@ -1862,6 +1862,28 @@ client.UnSubscribe("取消订阅频道");
 ---
 
 # 更新日志
+
+## 2023-12-29   v 4.5.0
+
+1.优化Json解析器;
+
+2.优化日志配置;
+
+3.MemoryBufferReader增加读取一行数据函数ReadLine;
+
+4.MemoryBufferBase增加BaseStream基础流;
+
+5.增加IO读写流方法;修改网络库中ReceiveMessageAsync中的bug;
+
+6.增加SocketClient中清空管道现有的数据方法 ClearPipeDataAsync;
+
+7.优化JSON反序列化的效率;
+
+8.ConfigSet增加重写当前对象的字符串;
+
+9.增加ushort 转字节方法 GetBytes;
+
+10.增加byte转 ushort方法 ToUInt16,ToUInt32,ToUInt64;
 
 ## 2023-12-07   v 4.4.0
 

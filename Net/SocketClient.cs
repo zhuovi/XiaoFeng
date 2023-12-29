@@ -613,9 +613,9 @@ namespace XiaoFeng.Net
         }
         #endregion
 
-        #region 初如化
+        #region 初始化
         /// <summary>
-        /// 初如化
+        /// 初始化
         /// </summary>
         private void InitializeClientSocket()
         {
@@ -785,18 +785,58 @@ namespace XiaoFeng.Net
             }
         }
         ///<inheritdoc/>
-        public virtual async Task<byte[]> ReceviceMessageAsync(byte[] bytes, int offset = -1, int count = -1)
+        public virtual async Task<int> ReceviceMessageAsync(byte[] bytes, int offset = -1, int count = -1)
         {
             if (offset < 0) offset = 0;
             if (count <= 0) count = bytes.Length - offset;
-            if (bytes == null || bytes.Length == 0 || bytes.Length <= offset || bytes.Length <= count + offset) return Array.Empty<byte>();
+            if (bytes == null || bytes.Length == 0 || bytes.Length < offset || bytes.Length < count + offset) return -1;
+            var stream = this.GetSslStream();
+            if (stream == null) return -1;
+            try
+            {
+                var dataBuffer = new byte[count];
+                var readsize = await stream.ReadAsync(dataBuffer, 0, count, this.CancelToken.Token).ConfigureAwait(false);
+                Array.Copy(dataBuffer, 0, bytes, offset, readsize);
+                this.LastMessageTime = DateTime.Now;
+                return readsize;
+            }
+            catch (SocketException ex)
+            {
+                this.OnClientError?.Invoke(this, this.EndPoint, ex);
+                return -1;
+            }
+            catch (IOException ex)
+            {
+                if (ex.InnerException is SocketException err)
+                {
+                    this.OnClientError?.Invoke(this, this.EndPoint, err);
+                    this.OnStop?.Invoke(this, EventArgs.Empty);
+                }
+                else
+                    this.OnClientError?.Invoke(this, this.EndPoint, ex);
+                return -1;
+            }
+            catch (Exception ex)
+            {
+                if (ex.InnerException is SocketException err)
+                    this.OnClientError?.Invoke(this, this.EndPoint, err);
+                else
+                    this.OnClientError?.Invoke(this, this.EndPoint, ex);
+                return -1;
+            }
+        }
+        ///<inheritdoc/>
+        public virtual async Task<byte[]> ReceviceMessageAsync(int count)
+        {
+            if (count == 0) return Array.Empty<byte>();
             var stream = this.GetSslStream();
             if (stream == null) return Array.Empty<byte>();
             try
             {
                 var dataBuffer = new byte[count];
                 var readsize = await stream.ReadAsync(dataBuffer, 0, count, this.CancelToken.Token).ConfigureAwait(false);
-                Array.Copy(dataBuffer, 0, bytes, offset, readsize);
+                this.LastMessageTime = DateTime.Now;
+                return await Task.FromResult(dataBuffer.ReadBytes(0, readsize));
             }
             catch (SocketException ex)
             {
@@ -822,8 +862,6 @@ namespace XiaoFeng.Net
                     this.OnClientError?.Invoke(this, this.EndPoint, ex);
                 return Array.Empty<byte>();
             }
-            this.LastMessageTime = DateTime.Now;
-            return bytes;
         }
         /// <inheritdoc/>
         public virtual async Task<byte[]> ReceviceMessageAsync()
@@ -873,6 +911,18 @@ namespace XiaoFeng.Net
         }
         #endregion
 
+        #region 清空通道数据
+        ///<inheritdoc/>
+        public async Task<byte[]> ClearPipeDataAsync()
+        {
+            var stream = this.GetStream();
+            if (stream != null && stream.DataAvailable)
+            {
+                return await this.ReceviceMessageAsync().ConfigureAwait(false);
+            }
+            return await Task.FromResult(Array.Empty<byte>());
+        }
+        #endregion
         #region 检测客户端连接类型
         /// <summary>
         /// 检测客户端连接类型
