@@ -1422,7 +1422,7 @@ namespace XiaoFeng.Json
             else if (types == ValueTypes.Class || types == ValueTypes.Struct)
             {
                 if (list == null || list.Count == 0 /*|| list.FirstOrDefault().Value.Type == JsonType.Null || list.FirstOrDefault().Value.value == null*/) return null;
-                type.GetPropertiesAndFields().Each(m =>
+                type.GetMembers( BindingFlags.Public| BindingFlags.Instance| BindingFlags.IgnoreCase).Each(m =>
                 {
                     if (m is FieldInfo || m is PropertyInfo)
                     {
