@@ -83,19 +83,19 @@ namespace XiaoFeng.Config
         /// </summary>
         [Description("输出控制台标识")]
         [JsonConverter(typeof(StringEnumConverter))]
-        public LogType ConsoleFlags { get; set; } = LogType.Info | LogType.Debug | LogType.Error | LogType.Trace | LogType.Task | LogType.Warn;
+        public LogType ConsoleFlags { get; set; } = LogType.Info | LogType.Debug | LogType.Error | LogType.Trace | LogType.Task | LogType.Warn| LogType.SQL;
         /// <summary>
         /// 输出文件标识
         /// </summary>
         [Description("输出文件标识")]
         [JsonConverter(typeof(StringEnumConverter))]
-        public LogType FileFlags { get; set; } = LogType.Info | LogType.Debug | LogType.Error | LogType.Trace | LogType.Task | LogType.Warn;
+        public LogType FileFlags { get; set; } = LogType.Info | LogType.Debug | LogType.Error | LogType.Trace | LogType.Task | LogType.Warn | LogType.SQL;
         /// <summary>
         /// 输出数据库标识
         /// </summary>
         [Description("输出数据库标识")]
         [JsonConverter(typeof(StringEnumConverter))]
-        public LogType DataBaseFlags { get; set; } = LogType.Info | LogType.Debug | LogType.Error | LogType.Trace | LogType.Task | LogType.Warn;
+        public LogType DataBaseFlags { get; set; } = LogType.Info | LogType.Debug | LogType.Error | LogType.Trace | LogType.Task | LogType.Warn | LogType.SQL;
         /// <summary>
         /// 存储类型
         /// </summary>
