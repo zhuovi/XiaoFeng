@@ -589,8 +589,8 @@ namespace XiaoFeng.Net
             if (this.Active)
             {
                 this._Active = false;
-                this.Dispose(true);
             }
+            this.Dispose(true);
         }
         #endregion
 

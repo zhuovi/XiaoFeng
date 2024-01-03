@@ -9,7 +9,7 @@
 		<Copyright>CopyRight @ 2008-2024 魔法精灵(www.eelf.cn) QQ:7092734 Email:jacky@eelf.cn</Copyright>
 		<Company>魔法精灵</Company>
 		<VersionPrefix>4.5</VersionPrefix>
-		<VersionSuffix>0</VersionSuffix>
+		<VersionSuffix>1</VersionSuffix>
 		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
 		<FileVersion>$(Version)</FileVersion>
 		<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
@@ -29,7 +29,7 @@
 		<AssemblyOriginatorKeyFile>XiaoFeng.snk</AssemblyOriginatorKeyFile>
 		<PackageIcon>x.png</PackageIcon>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>优化Json解析器;优化日志配置;MemoryBufferReader增加读取一行数据函数ReadLine;MemoryBufferBase增加BaseStream基础流;增加IO读写流方法;修改网络库中ReceiveMessageAsync中的bug;增加SocketClient中清空管道现有的数据方法 ClearPipeDataAsync;优化JSON反序列化的效率;ConfigSet增加重写当前对象的字符串;增加ushort 转字节方法 GetBytes;增加byte转 ushort方法 ToUInt16,ToUInt32,ToUInt64;</PackageReleaseNotes>
+		<PackageReleaseNotes>优化网络事件;优化日志默认所有日志等级都输出;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>
