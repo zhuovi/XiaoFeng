@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using XiaoFeng.IO;
+using XiaoFeng.Net;
 /****************************************************************
 *  Copyright © (2021) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -100,9 +101,26 @@ namespace XiaoFeng.Http
         /// </summary>
         public HttpCompletionOption CompletionOption { get; set; } = HttpCompletionOption.ResponseContentRead;
         /// <summary>
+        /// Host的标头信息
+        /// </summary>
+        private string _Host = string.Empty;
+        /// <summary>
         /// 设置Host的标头信息
         /// </summary>
-        public string Host { get; set; }
+        public string Host
+        {
+            get
+            {
+                if (_Host.IsNullOrEmpty())
+                {
+                    if (this.Address.IsNullOrEmpty()|| !this.Address.IsSite()) return string.Empty;
+                    var uri = new Uri(this.Address);
+                    return uri.Authority;
+                }
+                return this._Host;
+            }
+            set => _Host = value;
+        }
         /// <summary>
         /// 获取或设置与此响应关联的 Cookie
         /// </summary>
@@ -356,7 +374,6 @@ namespace XiaoFeng.Http
             this.ClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, error) => true;
 
             if (this.Host.IsNotNullOrWhiteSpace()) this.Request.Headers.Host = this.Host;
-            else this.Request.Headers.Host = this.Request.RequestUri.Host;
             if (this.IfModifiedSince != null) this.Request.Headers.IfModifiedSince = this.IfModifiedSince.Value;
 
             /*Accept*/
