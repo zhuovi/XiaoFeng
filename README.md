@@ -31,41 +31,41 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 4.5.0
+$ dotnet add package XiaoFeng --version 4.5.1
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 4.5.0
+PM> Install-Package XiaoFeng -Version 4.5.1
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="4.5.0" />
+<PackageReference Include="XiaoFeng" Version="4.5.1" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 4.5.0
+> paket add XiaoFeng --version 4.5.1
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 4.5.0"
+> #r "nuget: XiaoFeng, 4.5.1"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=4.5.0
+#addin nuget:?package=XiaoFeng&version=4.5.1
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=4.5.0
+#tool nuget:?package=XiaoFeng&version=4.5.1
 ```
 
 
@@ -1862,6 +1862,14 @@ client.UnSubscribe("取消订阅频道");
 ---
 
 # 更新日志
+
+## 2024-01-24   v 4.5.1
+
+1.优化网络事件;
+
+2.优化日志默认所有日志等级都输出;
+
+3.优化HttpHelper默认从Address中获取Host设置给Host;
 
 ## 2023-12-29   v 4.5.0
 
