@@ -82,6 +82,7 @@ namespace XiaoFeng.Xml
                     Depth = -1,
                     ParentElement = null
                 };
+                if (reader == null) return value;
                 //ParseValue(reader, value);
                 var parentElement = value;
                 while (reader.Read())

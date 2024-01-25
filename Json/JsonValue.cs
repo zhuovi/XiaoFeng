@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Reflection;
 using XiaoFeng;
+using XiaoFeng.Validator;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -1439,6 +1440,7 @@ namespace XiaoFeng.Json
                         if (_f) val = list[name];
                         if (jsonConverter != null)
                         {
+                            var _val =val is JsonValue jvala?jvala.ToString():(val??"").ToString();
                             if (jsonConverter.ConverterType == typeof(StringObjectConverter))
                             {
                                 if (val is JsonValue jval)
@@ -1450,6 +1452,76 @@ namespace XiaoFeng.Json
                                     return;
                                 }
                             }
+                            else if (jsonConverter.ConverterType == typeof(DescriptionConverter))
+                            {
+                                if (m is FieldInfo fi)
+                                {
+                                    var t = fi.FieldType;
+                                    t.GetEnumNames().Each(n =>
+                                    {
+                                        if (t.GetField(n).GetDescription().EqualsIgnoreCase(_val))
+                                        {
+                                            fi.SetValue(target, n.GetValue(t));
+                                            return false;
+                                        }
+                                        return true;
+                                    });
+                                }
+                                else if (m is PropertyInfo p)
+                                {
+                                    var t = p.PropertyType;
+                                    t.GetEnumNames().Each(n =>
+                                    {
+                                        if (t.GetField(n).GetDescription().EqualsIgnoreCase(_val))
+                                        {
+                                            p.SetValue(target, n.GetValue(t), null);
+                                            return false;
+                                        }
+                                        return true;
+                                    });
+                                }
+                            }
+                            else if (jsonConverter.ConverterType == typeof(EnumNameConverter))
+                            {
+                                if (m is FieldInfo fi)
+                                {
+                                    var t = fi.FieldType;
+                                    t.GetEnumNames().Each(n =>
+                                    {
+                                        if (t.GetField(n).GetEnumName().EqualsIgnoreCase(_val))
+                                        {
+                                            fi.SetValue(target, n.GetValue(t));
+                                            return false;
+                                        }
+                                        return true;
+                                    });
+                                }
+                                else if (m is PropertyInfo p)
+                                {
+                                    var t = p.PropertyType;
+                                    t.GetEnumNames().Each(n =>
+                                    {
+                                        if (t.GetField(n).GetEnumName().EqualsIgnoreCase(_val))
+                                        {
+                                            p.SetValue(target, n.GetValue(t), null);
+                                            return false;
+                                        }
+                                        return true;
+                                    });
+                                }
+                            }
+                            else if (jsonConverter.ConverterType == typeof(StringEnumConverter))
+                            {
+                                if (m is FieldInfo fi)
+                                {
+                                    fi.SetValue(target, val.GetValue(fi.FieldType));
+                                }
+                                else if (m is PropertyInfo p)
+                                {
+                                    p.SetValue(target, val.GetValue(p.PropertyType), null);
+                                }
+                            }
+                            return;
                         }
                         if (m is FieldInfo f)
                         {

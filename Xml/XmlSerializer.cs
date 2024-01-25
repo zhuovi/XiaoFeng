@@ -77,6 +77,7 @@ namespace XiaoFeng.Xml
             {
                 SerializerSetting = SerializerSetting
             };
+            if (reader == null) return null;
             return reader.Read();
         }
         #endregion

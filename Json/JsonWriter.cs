@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 /****************************************************************
@@ -356,6 +357,19 @@ namespace XiaoFeng.Json
                         else
                             value = m.GetDescription(false);
                     }
+                    else if (jsonConverter.ConverterType == typeof(EnumNameConverter))
+                    {
+                        if (mType.GetValueType() == ValueTypes.Enum)
+                        {
+                            value = mType.GetBaseType().GetField(value.ToString()).GetEnumName(false);
+                        }
+                        else if (mType.IsEnum)
+                        {
+                            value = value.GetType().GetField(value.ToString()).GetEnumName(false);
+                        }
+                        else
+                            value = m.GetEnumName(false);
+                    }
                 }
                 if (value.IsNullOrEmpty())
                 {
@@ -663,24 +677,24 @@ namespace XiaoFeng.Json
                         {
                             sb.Append(ch);
                             sb.Append("\r\n");
-                            sb.Append(' ', indentation * 2);
+                            sb.Append(this.SerializerSetting.IndentChar,indentation * 2);
                         }
                         else if (ch == '[' || ch == '{')
                         {
                             sb.Append(ch);
                             sb.Append("\r\n");
-                            sb.Append(' ', ++indentation * 2);
+                            sb.Append(GetIdentedString(++indentation * 2));
                         }
                         else if (ch == ']' || ch == '}')
                         {
                             sb.Append("\r\n");
-                            sb.Append(' ', --indentation * 2);
+                            sb.Append(GetIdentedString(--indentation * 2));
                             sb.Append(ch);
                         }
                         else if (ch == ':')
                         {
                             sb.Append(ch);
-                            sb.Append(' ', 1);
+                            sb.Append(this.SerializerSetting.IndentChar, 1);
                         }
                         else
                         {
@@ -705,6 +719,19 @@ namespace XiaoFeng.Json
         }
         #endregion
 
+        #region 重复输出缩进符
+        /// <summary>
+        /// 重复输出缩进符
+        /// </summary>
+        /// <param name="count">次数</param>
+        /// <returns></returns>
+        private string GetIdentedString(int count)
+        {
+            if (this.SerializerSetting.IndentString.IsNullOrEmpty())
+                this.SerializerSetting.IndentString = " ";
+            return String.Concat(Enumerable.Repeat(this.SerializerSetting.IndentString, count));
+        }
+        #endregion
         #endregion
     }
 }

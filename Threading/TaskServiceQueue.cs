@@ -281,8 +281,14 @@ namespace XiaoFeng.Threading
                         TaskQueueEmpty?.Invoke(this);
 
                         Manual.Reset();
-                        Manual.Wait(TimeSpan.FromSeconds(Setting.IdleSeconds <= 0 ? 0 : Setting.IdleSeconds), this.CancelTokenSource.Token);
+                        try
+                        {
+                            Manual.Wait(TimeSpan.FromSeconds(Setting.IdleSeconds <= 0 ? 0 : Setting.IdleSeconds), this.CancelTokenSource.Token);
+                        }
+                        catch (Exception ex)
+                        {
 
+                        }
                         if (QueueData.IsEmpty)
                         {
                             Synchronized.Run(() =>

@@ -36,6 +36,14 @@ namespace XiaoFeng.Json
         /// </summary>
         public bool Indented { get; set; } = false;
         /// <summary>
+        /// 缩进字符串 数组对象缩进
+        /// </summary>
+        public string IndentString { get; set; } = " ";
+        /// <summary>
+        /// 缩进字符 值缩进
+        /// </summary>
+        public char IndentChar { get; set; } =  ' ';
+        /// <summary>
         /// 枚举值
         /// </summary>
         public EnumValueType EnumValueType { get; set; } = 0;

@@ -552,6 +552,20 @@ namespace XiaoFeng.Model
         }
         #endregion
 
+        #region 创建表达式
+        /// <summary>
+        /// 创建表达式
+        /// </summary>
+        /// <param name="func">委托</param>
+        /// <returns></returns>
+        public Expression<Func<T,Boolean>> CreateWhere(Func<T,Boolean> func = null)
+        {
+            Expression<Func<T, Boolean>> where = null;
+            if (func != null) where.And(a => func(a));
+            return where;
+        }
+        #endregion
+
         #region 设置数据
         /// <summary>
         /// 设置属性值
