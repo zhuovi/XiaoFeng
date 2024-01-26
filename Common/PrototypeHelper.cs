@@ -3200,5 +3200,29 @@ namespace XiaoFeng
             return null;
         }
         #endregion
+
+        #region 把区分大小写字典转换成不区分大小写字典
+        /// <summary>
+        /// 把区分大小写字典转换成不区分大小写字典
+        /// </summary>
+        /// <typeparam name="TKey">KEY类型</typeparam>
+        /// <typeparam name="TValue">值类型</typeparam>
+        /// <param name="data">字典数据</param>
+        /// <returns></returns>
+        public static IDictionary<string,TValue> IgnoreCase<TValue>(this IDictionary<string,TValue> data)
+        {
+            if (data == null) return null;
+            
+            var _data = new Dictionary<string, TValue>(StringComparer.OrdinalIgnoreCase);
+            if (data.Count == 0) return _data;
+
+            data.Each(a =>
+            {
+                if (!_data.ContainsKey(a.Key))
+                    _data.Add(a.Key, a.Value);
+            });
+            return _data;
+        }
+        #endregion
     }
 }
