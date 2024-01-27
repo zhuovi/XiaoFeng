@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using XiaoFeng;
@@ -344,6 +345,130 @@ namespace XiaoFeng.Json
         {
             var jsonValue = this.AsObjectGet(key);
             return jsonValue != null && jsonValue.IsNull();
+        }
+        #endregion
+
+        #region 查找 key
+        /// <summary>
+        /// 查找key的值
+        /// </summary>
+        /// <param name="key">key</param>
+        /// <param name="val">值</param>
+        /// <returns></returns>
+        public Boolean TryGetValue(string key, out JsonValue val)
+        {
+            val = new JsonValue();
+            if (this.value.IsNullOrEmpty() || this.Type == JsonType.Null) return false;
+            switch (this.Type)
+            {
+                case JsonType.Array:
+                    var arr = this.ToArray();
+                    if (arr == null || arr.Length == 0) return false;
+                    foreach (var a in arr)
+                    {
+                        if (a.TryGetValue(key, out var v))
+                        {
+                            val = v;
+                            return true;
+                        }
+                    }
+                    break;
+                case JsonType.Object:
+                    var dict = this.ToDictionary();
+                    if (dict == null || dict.Count == 0) return false;
+                    if (dict.TryGetValue(key, out var _v))
+                    {
+                        val = _v;
+                        return true;
+                    }
+                    else
+                    {
+                        foreach (var k in dict)
+                        {
+                            if (k.Value.TryGetValue(key, out var v))
+                            {
+                                val = v;
+                                return true;
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    return false;
+            }
+            return false;
+        }
+        /// <summary>
+        /// 按xpath形式获取数据
+        /// </summary>
+        /// <param name="path">路径</param>
+        /// <param name="val">值</param>
+        /// <returns></returns>
+        public Boolean TryGetElementValue(string path, out JsonValue val)
+        {
+            val = new JsonValue();
+            if (path.IsNullOrEmpty() || this.Type == JsonType.Null || this.value.IsNullOrEmpty()) return false;
+            path = path.TrimStart('/');
+            var _path = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+            if (this.Type == JsonType.Object || this.Type == JsonType.Array)
+            {
+                return this.TryGetElementValue(this, _path.ToList(), out val);
+            }
+            return false;
+        }
+        /// <summary>
+        /// 按xpath形式获取数据
+        /// </summary>
+        /// <param name="value">当前值</param>
+        /// <param name="path">路径</param>
+        /// <param name="val">值</param>
+        /// <returns></returns>
+        private Boolean TryGetElementValue(JsonValue value, List<string> path, out JsonValue val)
+        {
+            if (path.Count == 0)
+            {
+                val = value;
+                return true;
+            }
+            val = new JsonValue();
+            var name = path.First();
+            if (value.Type == JsonType.Object)
+            {
+                if (value.ToDictionary().TryGetValue(name, out var v))
+                {
+                    path.RemoveAt(0);
+                    if (path.Count == 0)
+                    {
+                        val = v;
+                        return true;
+                    }
+                    else
+                    {
+                        return this.TryGetElementValue(v, path, out val);
+                    }
+                }
+                return false;
+            }
+            else if (value.Type == JsonType.Array)
+            {
+                var index = name.ToCast(-1);
+                if (index == -1) return false;
+                var array = value.ToArray();
+                if (index >= array.Length) return false;
+                path.RemoveAt(0);
+                var arr = array[index];
+                if (path.Count == 0)
+                {
+                    val = arr;
+                    return true;
+                }
+                else
+                {
+                    return this.TryGetElementValue(arr, path, out val);
+                }
+            }
+            val = new JsonValue();
+            return false;
         }
         #endregion
 
