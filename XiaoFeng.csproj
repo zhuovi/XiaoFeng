@@ -29,7 +29,7 @@
 		<AssemblyOriginatorKeyFile>XiaoFeng.snk</AssemblyOriginatorKeyFile>
 		<PackageIcon>x.png</PackageIcon>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>Json配置增加属性值缩进字符 IndentChar, 数组对象缩进字符串 InddentString配置;增加EnumNameConverter;Entity基础模型类增加创建条件表达式方法 CreateWhere;增加扩展方法字典转不区分大小写方法IgnoreCase;JsonValue增加深度遍历查找集合值TryGetValue方法;JsonValue增加通过路径查找数据值方法 TryGetElementValue;</PackageReleaseNotes>
+		<PackageReleaseNotes>Json配置增加属性值缩进字符 IndentChar, 数组对象缩进字符串 InddentString配置;增加EnumNameConverter;Entity基础模型类增加创建条件表达式方法 CreateWhere;增加扩展方法字典转不区分大小写方法IgnoreCase;JsonValue增加深度遍历查找集合值TryGetValue方法;JsonValue增加通过路径查找数据值方法 TryGetElementValue;JsonValue增加通过路径更新,删除节点 TryUpdateElementValue,TryRemoveElementValue;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>

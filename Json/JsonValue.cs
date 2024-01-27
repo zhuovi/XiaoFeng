@@ -472,6 +472,141 @@ namespace XiaoFeng.Json
         }
         #endregion
 
+        #region 按路径更新数据
+        /// <summary>
+        /// 按xpath形式更新数据
+        /// </summary>
+        /// <param name="path">路径</param>
+        /// <param name="val">值</param>
+        /// <returns></returns>
+        public Boolean TryUpdateElementValue(string path, JsonValue val)
+        {
+            if (path.IsNullOrEmpty()) return false;
+            path = path.TrimStart('/');
+            var _path = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+            if (this.Type == JsonType.Object || this.Type == JsonType.Array)
+            {
+                return this.TryUpdateElementValue(this, _path.ToList(), val);
+            }
+            return false;
+        }
+        /// <summary>
+        /// 按路径更新数据
+        /// </summary>
+        /// <param name="value">数据</param>
+        /// <param name="path">路径</param>
+        /// <param name="val">值</param>
+        /// <returns></returns>
+        private Boolean TryUpdateElementValue(JsonValue value, List<string> path, JsonValue val)
+        {
+            if (path.Count == 0)
+            {
+                value = val;
+                return true;
+            }
+            var name = path.First();
+            if (value.Type == JsonType.Object)
+            {
+                if (value.ToDictionary().TryGetValue(name, out var _))
+                {
+                    path.RemoveAt(0);
+                    if (path.Count == 0)
+                    {
+                        value[name] = val;
+                        return true;
+                    }
+                    else
+                    {
+                        return this.TryUpdateElementValue(value[name], path, val);
+                    }
+                }
+                return false;
+            }
+            else if (value.Type == JsonType.Array)
+            {
+                var index = name.ToCast(-1);
+                if (index == -1) return false;
+                var array = value.ToArray();
+                if (index >= array.Length) return false;
+                path.RemoveAt(0);
+                if (path.Count == 0)
+                {
+                    value[index] = val;
+                    return true;
+                }
+                else
+                {
+                    return this.TryUpdateElementValue(value[index], path, val);
+                }
+            }
+            return false;
+        }
+        #endregion
+
+        #region 按xpath形式移除节点
+        /// <summary>
+        /// 按xpath形式移除节点
+        /// </summary>
+        /// <param name="path">路径</param>
+        /// <returns></returns>
+        public Boolean TryRemoveElementValue(string path)
+        {
+            if (path.IsNullOrEmpty()) return false;
+            path = path.TrimStart('/');
+            var _path = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+            if (this.Type == JsonType.Object || this.Type == JsonType.Array)
+            {
+                return this.TryRemoveElementValue(this, _path.ToList());
+            }
+            return false;
+        }
+        /// <summary>
+        /// 按xpath形式移除节点
+        /// </summary>
+        /// <param name="value">数据</param>
+        /// <param name="path">路径</param>
+        /// <returns></returns>
+        private Boolean TryRemoveElementValue(JsonValue value, List<string> path)
+        {
+            var name = path.First();
+            if (value.Type == JsonType.Object)
+            {
+                if (value.ToDictionary().TryGetValue(name, out var _))
+                {
+                    path.RemoveAt(0);
+                    if (path.Count == 0)
+                    {
+                        ((IDictionary<string, JsonValue>)value.value).Remove(name);
+                        return true;
+                    }
+                    else
+                    {
+                        return this.TryRemoveElementValue(value[name], path);
+                    }
+                }
+                return false;
+            }
+            else if (value.Type == JsonType.Array)
+            {
+                var index = name.ToCast(-1);
+                if (index == -1) return false;
+                var array = value.ToArray();
+                if (index >= array.Length) return false;
+                path.RemoveAt(0);
+                if (path.Count == 0)
+                {
+                    ((List<JsonValue>)value.value).RemoveAt(index);
+                    return true;
+                }
+                else
+                {
+                    return this.TryRemoveElementValue(value[index], path);
+                }
+            }
+            return false;
+        }
+        #endregion
+
         #region 基础类型
         /// <summary>
         /// 使用JsonValue作为JsonArray
