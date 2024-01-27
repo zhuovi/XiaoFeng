@@ -1217,12 +1217,14 @@ namespace XiaoFeng.Json
         {
             if (Type == JsonType.Object)
             {
-                var data = new Dictionary<string, JsonValue>(StringComparer.OrdinalIgnoreCase);
+                //return (IDictionary<string, JsonValue>)this.value;
+                return new Dictionary<string, JsonValue>((IDictionary<string, JsonValue>)this.value, StringComparer.OrdinalIgnoreCase);
+                /*var data = new Dictionary<string, JsonValue>(StringComparer.OrdinalIgnoreCase);
                 (this.value as Dictionary<string, JsonValue>).Each(a =>
                 {
                     data.Add(a.Key, a.Value);
                 });
-                return data;
+                return data;*/
             }
             return null;
         }
