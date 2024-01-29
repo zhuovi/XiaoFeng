@@ -532,6 +532,7 @@ namespace XiaoFeng.Data.SQL
         /// <returns></returns>
         public virtual DbParameter[] GetDbParameters()
         {
+            if (this.DataSQL.Parameters == null || this.DataSQL.Parameters.Count == 0) return Array.Empty<DbParameter>();
             var Params = new DbParameter[this.DataSQL.Parameters.Count];
             var i = 0;
 
