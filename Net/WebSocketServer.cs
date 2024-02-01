@@ -75,6 +75,7 @@ namespace XiaoFeng.Net
             var auth = this.Authentication;
             this.Authentication = c =>
             {
+                if (c.RequestHeader.IsNullOrEmpty()) return false;
                 if (c.RequestHeader.IndexOf("Sec-WebSocket-Key", StringComparison.OrdinalIgnoreCase) > -1)
                 {
                     if (auth == null)

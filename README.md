@@ -31,41 +31,41 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 4.5.1
+$ dotnet add package XiaoFeng --version 5.0.0
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 4.5.1
+PM> Install-Package XiaoFeng -Version 5.0.0
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="4.5.1" />
+<PackageReference Include="XiaoFeng" Version="5.0.0" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 4.5.1
+> paket add XiaoFeng --version 5.0.0
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 4.5.1"
+> #r "nuget: XiaoFeng, 5.0.0"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=4.5.1
+#addin nuget:?package=XiaoFeng&version=5.0.0
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=4.5.1
+#tool nuget:?package=XiaoFeng&version=5.0.0
 ```
 
 
@@ -1862,6 +1862,25 @@ client.UnSubscribe("取消订阅频道");
 ---
 
 # 更新日志
+
+## 2024-02-01   v 5.0.0
+
+1.Json配置增加属性值缩进字符 IndentChar, 数组对象缩进字符串 InddentString配置;
+
+2.增加EnumNameConverter;
+
+3.Entity基础模型类增加创建条件表达式方法 CreateWhere;
+
+4.增加扩展方法字典转不区分大小写方法IgnoreCase;
+
+5.JsonValue增加深度遍历查找集合值TryGetValue方法;
+
+6.JsonValue增加通过路径查找数据值方法 TryGetElementValue;
+
+7.JsonValue增加通过路径更新,删除节点 TryUpdateElementValue,TryRemoveElementValue;
+
+8.优化IQueryableX中无存储参数时的bug;
+
 
 ## 2024-01-24   v 4.5.1
 
