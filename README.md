@@ -1881,6 +1881,8 @@ client.UnSubscribe("取消订阅频道");
 
 8.优化IQueryableX中无存储参数时的bug;
 
+9.优化WebSocketServer判断客户端事件非websocket连接;
+
 
 ## 2024-01-24   v 4.5.1
 
