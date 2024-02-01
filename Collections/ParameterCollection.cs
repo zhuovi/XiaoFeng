@@ -482,7 +482,7 @@ namespace XiaoFeng.Collections
         /// <returns></returns>
         public static bool operator ==(ParameterCollection a, ParameterCollection b)
         {
-            return a.ToString() == b.ToString();
+            return a?.ToString() == b?.ToString();
         }
         /// <summary>
         /// 两类型不相等
