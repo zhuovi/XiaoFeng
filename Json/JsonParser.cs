@@ -221,7 +221,7 @@ namespace XiaoFeng.Json
         /// <param name="data">json数据</param>
         private static JsonValue ParseObject(JsonData data)
         {
-            var jsonObject = new Dictionary<string, JsonValue>(JsonObjectInitCapacity);
+            var jsonObject = new Dictionary<string, JsonValue>(JsonObjectInitCapacity, StringComparer.OrdinalIgnoreCase);
             // 跳过 '{'
             data.Index++;
             do
@@ -278,7 +278,10 @@ namespace XiaoFeng.Json
                 // 跳过 ':'
                 data.Index++;
                 // 设置Json对象Key和Value
-                jsonObject.Add(key, ParseValue(data));
+                if (!jsonObject.ContainsKey(key))
+                    jsonObject.Add(key, ParseValue(data));
+                else
+                    jsonObject[key] = ParseValue(data);
                 SkipWhiteSpace(data);
                 if (data.JsonString[data.Index] == ',')
                 {
