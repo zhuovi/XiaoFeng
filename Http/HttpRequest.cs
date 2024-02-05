@@ -336,9 +336,24 @@ namespace XiaoFeng.Http
                             formData.Add(new StringContent(f.Value), f.Name);
                         else
                         {
-                            var file = new ByteArrayContent(FileHelper.OpenBytes(f.Value));
+                            byte[] fileContent = Array.Empty<byte>();
+                            var fileName = string.Empty;
+                            if (f.Data != null)
+                            {
+                                fileContent = f.Data;
+                            }
+                            else if (f.Value.IsBasePath())
+                            {
+                                fileContent = FileHelper.OpenBytes(f.Value);
+                                fileName = f.Value.GetFileName();
+                            }
+                            else
+                                fileContent = f.Value.GetBytes();
+                            var file = new ByteArrayContent(fileContent);
                             file.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-                            formData.Add(file, f.Name, f.Value.GetFileName());
+                            if(fileName.IsNullOrEmpty())
+                                formData.Add(file, f.Name);
+                            else formData.Add(file,f.Name, fileName);
                         }
                     });
                     HttpContent = formData;
@@ -606,8 +621,6 @@ namespace XiaoFeng.Http
                 this.RequestHttp.ContentLength = RequestData.Length;
                 this.RequestHttp.GetRequestStream().Write(RequestData, 0, RequestData.Length);
             }
-
-
             try
             {
                 Response.Request = this;
@@ -719,7 +732,7 @@ namespace XiaoFeng.Http
         public byte[] GetReuqestBody()
         {
             byte[] RequestData = Array.Empty<byte>();
-            if (",POST,GET,DELETE,PUT,".IndexOf("," + this.Method.Method.ToUpper() + ",", StringComparison.OrdinalIgnoreCase) > -1)
+            if (",POST,DELETE,PUT,".IndexOf("," + this.Method.Method.ToUpper() + ",", StringComparison.OrdinalIgnoreCase) > -1)
             {
                 if (this.FormData == null)
                 {
@@ -763,11 +776,57 @@ namespace XiaoFeng.Http
                     }
                     var boundary = this.GetBoundary();
                     this.ContentType = "multipart/form-data; boundary=" + boundary;
-                    RequestData = this.GetBytes(boundary);
+                    RequestData = this.GetFormDataBytes(boundary);
                 }
                 this.ContentLength = RequestData.Length;
             }
             return RequestData;
+        }
+        #endregion
+
+        #region 获取FormData流
+        /// <summary>
+        /// 获取FormData流
+        /// </summary>
+        /// <param name="boundary">分界线</param>
+        /// <returns>FormData字节数组</returns>
+        private byte[] GetFormDataBytes(string boundary)
+        {
+            using (var ms = new MemoryStream())
+            {
+                this.FormData.Each(f =>
+                {
+                    if (f.FormType == FormType.Text)
+                    {
+                        var bytes = $"--{boundary}\r\nContent-Disposition: form-data; name=\"{f.Name}\"\r\n\r\n{f.Value}\r\n".GetBytes();
+                        ms.Write(bytes, 0, bytes.Length);
+                    }
+                    else if (f.FormType == FormType.File)
+                    {
+                        byte[] fileContent = Array.Empty<byte>();
+                        var fileName = string.Empty;
+                        if (f.Data != null)
+                        {
+                            fileContent = f.Data;
+                        }
+                        else if (f.Value.IsBasePath())
+                        {
+                            fileContent = FileHelper.OpenBytes(f.Value);
+                            fileName = f.Value.GetFileName();
+                        }
+                        else
+                            fileContent = f.Value.GetBytes();
+                        var bytes = $"--{boundary}\r\nContent-Disposition: form-data; name=\"{f.Name}\"; filename=\"{fileName}\"\r\nContent-Type: application/octet-stream\r\n\r\n".GetBytes();
+                        ms.Write(bytes, 0, bytes.Length);
+                        ms.Write(fileContent, 0, fileContent.Length);
+                        bytes = "\r\n".GetBytes();
+                        ms.Write(bytes, 0, bytes.Length);
+                    }
+                });
+                var footData = $"\r\n--{boundary}--\r\n".GetBytes();
+                ms.Write(footData, 0, footData.Length);
+                return ms.ToArray();
+            }
         }
         #endregion
 

@@ -17,11 +17,11 @@ namespace XiaoFeng.Http
     {
         #region 构造器
         /// <summary>
-        /// 无参构造器
+        /// 初始化一个新实例
         /// </summary>
         public FormData() { }
         /// <summary>
-        /// 设置数据
+        /// 初始化一个新实例
         /// </summary>
         /// <param name="name">名称</param>
         /// <param name="value">值</param>
@@ -31,6 +31,17 @@ namespace XiaoFeng.Http
             Name = name;
             Value = value;
             FormType = formType;
+        }
+        /// <summary>
+        /// 初始化一个新实例
+        /// </summary>
+        /// <param name="name">名称</param>
+        /// <param name="data">文件流</param>
+        public FormData(string name, byte[] data)
+        {
+            this.Name = name;
+            this.Data = data;
+            this.FormType = FormType.File;
         }
         #endregion
 
@@ -43,6 +54,10 @@ namespace XiaoFeng.Http
         /// 值
         /// </summary>
         public string Value { get; set; }
+        /// <summary>
+        /// 文件流
+        /// </summary>
+        public byte[] Data { get; set; }
         /// <summary>
         /// 表单类型
         /// </summary>
