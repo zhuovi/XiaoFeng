@@ -111,7 +111,7 @@ namespace XiaoFeng
         public static T GetCustomAttributeBAK<T>(this Type t, bool inherit = true) where T : Attribute
         {
             T tc = default;
-            if (t == null) return tc;
+            if (t == null || !t.IsDefined(typeof(T), inherit)) return tc;
             object _t = t.GetCustomAttributes(typeof(T), inherit).FirstOrDefault();
             return (_t ?? tc) as T;
         }
@@ -125,7 +125,8 @@ namespace XiaoFeng
         /// <returns></returns>
         public static object GetCustomAttributeValue<T>(this MemberInfo m, Func<T, object> func, bool inherit = true) where T : Attribute
         {
-            if (func == null) return null;
+            T tc = default;
+            if (func == null || !m.IsDefined(typeof(T), inherit)) return tc;
             T val = m.GetCustomAttribute<T>(inherit);
             return val == default(T) ? default(T) : func(val);
         }
@@ -138,7 +139,7 @@ namespace XiaoFeng
         public static T GetCustomAttributeX<T>(this MemberInfo m) where T : Attribute
         {
             T tc = default;
-            if (m == null) return tc;
+            if (m == null || !m.IsDefined(typeof(T), true)) return tc;
             object _t = m.GetCustomAttributes(typeof(T), true).FirstOrDefault();
             return (_t ?? tc) as T;
         }
@@ -150,7 +151,8 @@ namespace XiaoFeng
         /// <returns></returns>
         public static string GetDescription(this Type t, bool inherit = true)
         {
-            return t.GetCustomAttributeValue<DescriptionAttribute>(a => a.Description, inherit).ToString();
+            var d = t.GetCustomAttributeValue<DescriptionAttribute>(a => a.Description, inherit);
+            return d == null ? string.Empty : d.ToString();
         }
         /// <summary>
         /// 获取枚举Description
@@ -161,8 +163,7 @@ namespace XiaoFeng
         public static string GetDescription(this Enum _, bool inherit = true)
         {
             var d = _.GetType().GetMember(_.ToString());
-            if (d.Length == 0) return String.Empty;
-            return d[0].GetDescription(inherit);
+            return (d == null || d.Length == 0) ? String.Empty : d[0].GetDescription(inherit);
         }
         /// <summary>
         /// 获取指定属性的DefaultValue
@@ -184,7 +185,8 @@ namespace XiaoFeng
         /// <returns></returns>
         public static string GetDefaultValue(this Type t, bool inherit = true)
         {
-            return t.GetCustomAttributeValue<DefaultValueAttribute>(a => a.Value, inherit).ToString();
+            var d = t.GetCustomAttributeValue<DefaultValueAttribute>(a => a.Value, inherit);
+            return d == null ? string.Empty : d.ToString();
         }
         /// <summary>
         /// 获取枚举DefaultValue
@@ -194,7 +196,8 @@ namespace XiaoFeng
         /// <returns></returns>
         public static string GetDefaultValue(this Enum _, bool inherit = true)
         {
-            return _.GetType().GetMember(_.ToString())[0].GetDefaultValue(inherit);
+            var ms = _.GetType().GetMember(_.ToString());
+            return ms == null || ms.Length == 0 ? string.Empty : ms[0].GetDefaultValue(inherit);
         }
         /// <summary>
         /// 是否包含指定特性
@@ -205,7 +208,8 @@ namespace XiaoFeng
         /// <returns></returns>
         public static bool IsDefined<T>(this Enum _, bool inherit = true) where T : Attribute
         {
-            return _.GetType().GetMember(_.ToString())[0].IsDefined(typeof(T), inherit);
+            var ms = _.GetType().GetMember(_.ToString());
+            return ms != null && ms.Length != 0 && ms[0].IsDefined(typeof(T), inherit);
         }
         /// <summary>
         /// 获取指定属性或事件的描述
@@ -228,7 +232,7 @@ namespace XiaoFeng
         public static string GetEnumName(this MemberInfo m, bool inherit = true)
         {
             object val = m.GetCustomAttributeValue<EnumNameAttribute>(a => a.Name, inherit);
-            return val == null ? "" : val.ToString();
+            return val == null ? string.Empty : val.ToString();
         }
         /// <summary>
         /// 获取指定属性或事件的端口
@@ -249,7 +253,8 @@ namespace XiaoFeng
         /// <returns></returns>
         public static string GetDisplayName(this Type t, bool inherit = true)
         {
-            return t.GetCustomAttributeValue<DisplayNameAttribute>(a => a.DisplayName, inherit).ToString();
+            var d = t.GetCustomAttributeValue<DisplayNameAttribute>(a => a.DisplayName, inherit);
+            return d == null ? string.Empty : d.ToString();
         }
         /// <summary>
         /// 获取指定属性或事件的描述
@@ -259,7 +264,8 @@ namespace XiaoFeng
         /// <returns></returns>
         public static string GetDisplayName(this MemberInfo m, bool inherit = true)
         {
-            return m.GetCustomAttributeValue<DisplayNameAttribute>(a => a.DisplayName, inherit).ToString();
+            var d = m.GetCustomAttributeValue<DisplayNameAttribute>(a => a.DisplayName, inherit);
+            return d == null ? string.Empty : d.ToString();
         }
         /// <summary>
         /// 获取元素类型

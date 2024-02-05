@@ -934,9 +934,7 @@ namespace XiaoFeng
         public static string ToQuery<TKey, TValue>(this IDictionary<TKey, TValue> _)
         {
             if (_ == null || _.Count == 0) return String.Empty;
-            var list = new List<string>();
-            _.Each(KValue => list.Add($"{KValue.Key}={KValue.Value}"));
-            return list.Join("&");
+            return _.Select(a => $"{a.Key}={a.Value.ToStringX().UrlEncode()}").Join("&");
         }
         #endregion
 
@@ -3126,7 +3124,7 @@ namespace XiaoFeng
         public static string ToStringX(this object o)
         {
             if (o.IsNullOrEmpty()) return string.Empty;
-            if (o is string) return o.ToString();
+            if (o is string _o) return _o;
             var baseValueType = o.GetType().GetValueType();
             if (baseValueType == ValueTypes.String || baseValueType == ValueTypes.Value) return o.ToString();
             if (o is JsonValue jsonValue)

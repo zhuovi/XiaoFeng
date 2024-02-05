@@ -313,7 +313,11 @@ namespace XiaoFeng.Net
             }
             else
             {
-                this._EndPoint = new IPEndPoint(Dns.GetHostAddresses(this.Host).LastOrDefault(), this.Port);
+                try
+                {
+                    this._EndPoint = new IPEndPoint(Dns.GetHostAddresses(this.Host).LastOrDefault(), this.Port);
+                }
+                catch { }
             }
         }
         /// <summary>

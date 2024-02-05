@@ -204,10 +204,8 @@ namespace XiaoFeng.Http
             var url = this.Request.Address;
             if (this.Request.Method.ToString().ToUpper() == "GET" && this.Request.Data != null && this.Request.Data.Count > 0)
             {
-                this.Request.Data.Each(k =>
-                {
-                    url += (url.Contains("?") ? "&" : "?") + k.Key + "=" + k.Value.UrlEncode();
-                });
+                url = url.IndexOf("?") == -1 ? "?" : "&";
+                this.Request.Data.ToQuery();
             }
             this.RequestUri = new Uri(url);
             this.Response.Request = this.Request;

@@ -20,7 +20,7 @@ namespace XiaoFeng.Http
     /// <summary>
     /// 响应对象接口
     /// </summary>
-    interface IHttpResponse : IHttpBase
+    public interface IHttpResponse : IHttpBase
     {
         /// <summary>
         /// 响应对象

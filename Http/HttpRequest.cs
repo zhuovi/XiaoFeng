@@ -290,14 +290,14 @@ namespace XiaoFeng.Http
 #endif
             if (this.FormData != null) this.Method = HttpMethod.Post;
             if (this.Method.Method.ToUpper() == "GET" && this.Data.IsNotNullOrEmpty())
-                this.Address += (this.Address.IndexOf("?") == -1 ? "?" : "&") + this.Data;
+                this.Address += (this.Address.IndexOf("?") == -1 ? "?" : "&") + this.Data.ToQuery();
             /*初始化对像，并设置请求的URL地址*/
             this.Request = new HttpRequestMessage
             {
                 RequestUri = new Uri(this.Address)
             };
 
-            if (",POST,GET,DELETE,PUT,".IndexOf("," + this.Method.Method.ToUpper() + ",", StringComparison.OrdinalIgnoreCase) > -1 && this.HttpContent == null)
+            if (",POST,DELETE,PUT,".IndexOf("," + this.Method.Method.ToUpper() + ",", StringComparison.OrdinalIgnoreCase) > -1 && this.HttpContent == null)
             {
                 if (this.FormData == null)
                 {
