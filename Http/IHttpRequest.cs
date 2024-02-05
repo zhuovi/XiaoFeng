@@ -133,6 +133,10 @@ namespace XiaoFeng.Http
         /// </summary>
         string BodyData { get; set; }
         /// <summary>
+        /// Body请求字节数据
+        /// </summary>
+        byte[] BodyBytes { get; set; }
+        /// <summary>
         /// FormData数据
         /// </summary>
         List<FormData> FormData { get; set; }

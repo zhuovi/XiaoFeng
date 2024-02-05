@@ -246,6 +246,10 @@ namespace XiaoFeng.Http
         /// </summary>
         public string BodyData { get; set; }
         /// <summary>
+        /// Body请求字节数据
+        /// </summary>
+        public byte[] BodyBytes { get; set; }
+        /// <summary>
         /// FormData数据
         /// </summary>
         public List<FormData> FormData { get; set; }
@@ -316,6 +320,12 @@ namespace XiaoFeng.Http
                         if (this.ContentType.IsNullOrEmpty())
                             this.ContentType = "application/json";
                         HttpContent = new StringContent(this.BodyData, this.Encoding);
+                    }
+                    else if(this.BodyBytes!=null && this.BodyBytes.Length > 0)
+                    {
+                        if (this.ContentType.IsNullOrEmpty())
+                            this.ContentType = "application/octet-stream";
+                        HttpContent = new ByteArrayContent(this.BodyBytes);
                     }
                     if (this.ContentType.IsNotNullOrEmpty())
                         HttpContent.Headers.ContentType = new MediaTypeHeaderValue(this.ContentType);
@@ -757,6 +767,12 @@ namespace XiaoFeng.Http
                         if (this.ContentType.IsNullOrEmpty())
                             this.ContentType = "application/json";
                         RequestData = this.BodyData.GetBytes(this.Encoding);
+                    }
+                    else if (this.BodyBytes != null && this.BodyBytes.Length > 0)
+                    {
+                        if (this.ContentType.IsNullOrEmpty())
+                            this.ContentType = "application/octet-stream";
+                        RequestData = this.BodyBytes;
                     }
                     if (this.ContentType.IsNotNullOrEmpty())
                     {

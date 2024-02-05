@@ -29,7 +29,7 @@
 		<AssemblyOriginatorKeyFile>XiaoFeng.snk</AssemblyOriginatorKeyFile>
 		<PackageIcon>x.png</PackageIcon>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>优化ParameterCollection为空时的==bug;优化Json反序列化时多个相同KEY时报错的bug;优化自定义扩展属性GetDescription;优化HttpHelper中请求是Get时参数在Data中不提取的bug;优化HttpHelper中formdata请求;</PackageReleaseNotes>
+		<PackageReleaseNotes>优化ParameterCollection为空时的==bug;优化Json反序列化时多个相同KEY时报错的bug;优化自定义扩展属性GetDescription;优化HttpHelper中请求是Get时参数在Data中不提取的bug;优化HttpHelper中formdata请求;HttpRequest增加BodyBytes属性;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>
