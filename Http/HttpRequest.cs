@@ -808,6 +808,7 @@ namespace XiaoFeng.Http
         /// <returns>FormData字节数组</returns>
         private byte[] GetFormDataBytes(string boundary)
         {
+            if (this.FormData == null || this.FormData.Count == 0) return Array.Empty<byte>();
             using (var ms = new MemoryStream())
             {
                 this.FormData.Each(f =>
@@ -860,41 +861,6 @@ namespace XiaoFeng.Http
 #endif
             + DateTime.Now.Ticks.ToString("x");
             return Boundary;
-        }
-        #endregion
-
-        #region 获取字节
-        /// <summary>
-        /// 获取字节
-        /// </summary>
-        /// <param name="boundary">分界线</param>
-        /// <returns></returns>
-        public byte[] GetBytes(string boundary)
-        {
-            if (this.FormData == null || this.FormData.Count == 0) return null;
-            using (MemoryStream ms = new MemoryStream())
-            {
-                this.FormData.Each(item =>
-                {
-                    if (item.FormType == FormType.Text)
-                    {
-                        var _bytes = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}\r\n".format(boundary, item.Name, item.Value).GetBytes();
-                        ms.Write(_bytes, 0, _bytes.Length);
-                    }
-                    else if (item.FormType == FormType.File)
-                    {
-                        var _bytes = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"; filename=\"{2}\"\r\nContent-Type: application/octet-stream\r\n\r\n".format(boundary, item.Name, item.Value.GetFileName()).GetBytes();
-                        ms.Write(_bytes, 0, _bytes.Length);
-                        _bytes = FileHelper.OpenBytes(item.Value);
-                        ms.Write(_bytes, 0, _bytes.Length);
-                        _bytes = "\r\n".GetBytes();
-                        ms.Write(_bytes, 0, _bytes.Length);
-                    }
-                });
-                var footData = ("\r\n--" + boundary + "--\r\n").GetBytes();
-                ms.Write(footData, 0, footData.Length);
-                return ms.ToArray();
-            }
         }
         #endregion
 
