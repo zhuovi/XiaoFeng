@@ -383,7 +383,8 @@ namespace XiaoFeng.Net
             if (this.ContainsBlack(client.EndPoint.Address.ToString()))
             {
                 var msg = "当前客户端IP在黑名单中,禁止连接服务端.";
-                client.Send(msg);
+                if(!(client is WebSocketClient))
+                    client.Send(msg);
                 client.Stop();
                 this.OnAuthentication?.Invoke(client, msg, EventArgs.Empty);
                 await Task.CompletedTask;
