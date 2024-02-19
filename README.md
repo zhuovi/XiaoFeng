@@ -31,41 +31,41 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 5.0.0
+$ dotnet add package XiaoFeng --version 5.0.1
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 5.0.0
+PM> Install-Package XiaoFeng -Version 5.0.1
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="5.0.0" />
+<PackageReference Include="XiaoFeng" Version="5.0.1" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 5.0.0
+> paket add XiaoFeng --version 5.0.1
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 5.0.0"
+> #r "nuget: XiaoFeng, 5.0.1"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=5.0.0
+#addin nuget:?package=XiaoFeng&version=5.0.1
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=5.0.0
+#tool nuget:?package=XiaoFeng&version=5.0.1
 ```
 
 
@@ -1864,6 +1864,22 @@ client.UnSubscribe("取消订阅频道");
 ---
 
 # 更新日志
+
+## 2024-02-19   v 5.0.1
+
+1.优化ParameterCollection为空时的==bug;
+
+2.优化Json反序列化时多个相同KEY时报错的bug;
+
+3.优化自定义扩展属性GetDescription;
+
+4.优化HttpHelper中请求是Get时参数在Data中不提取的bug;
+
+5.优化HttpHelper中formdata请求;
+
+6.HttpRequest增加BodyBytes属性;
+
+7.优化NumberToMoney方法;
 
 ## 2024-02-01   v 5.0.0
 
