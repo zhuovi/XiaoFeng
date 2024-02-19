@@ -48,7 +48,7 @@ namespace XiaoFeng
         /// <summary>
         /// 圆
         /// </summary>
-        private static string IntLast = "圆";
+        private static string IntLast = "元";
         /// <summary>
         /// 金额单位
         /// </summary>
@@ -149,12 +149,12 @@ namespace XiaoFeng
                 for (var i = 0; i < decLength; i++)
                 {
                     var n = DecimalNum[i];
-                    if (n != '0')
-                    {
+                    //if (n != '0')
+                    //{
                         _.Append(UpperChars[n.ToString().ToCast<int>()]);
                         if (upperType == UpperType.Money)
                             _.Append(UpperMoney[i]);
-                    }
+                   // }
                 }
             }
             if (_.Length == 0)
@@ -174,7 +174,7 @@ namespace XiaoFeng
             if (chineseNumber.IsNullOrEmpty()) return "0";
             var _ = 0D;
             //先把圆角分厘去掉
-            chineseNumber = chineseNumber.Replace("圆", "点");
+            chineseNumber = chineseNumber.Replace("圆", "点").Replace("元", "点");
             chineseNumber = chineseNumber.RemovePattern(@"[整零" + UpperMoney.Join() + "@]").TrimEnd('点');
             chineseNumber = chineseNumber.Replace("拾", "十").Replace("佰", "百").Replace("仟", "千");
 
