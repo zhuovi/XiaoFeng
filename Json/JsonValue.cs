@@ -5,6 +5,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Xml.Serialization;
 using XiaoFeng;
 using XiaoFeng.Validator;
 /****************************************************************
@@ -140,6 +141,7 @@ namespace XiaoFeng.Json
         /// <summary>
         /// 序列化格式
         /// </summary>
+        [JsonIgnore,XmlIgnore]
         public JsonSerializerSetting SerializerSetting { get; set; } = new JsonSerializerSetting();
         /// <summary>
         /// Json类型
