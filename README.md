@@ -31,41 +31,41 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 5.0.1
+$ dotnet add package XiaoFeng --version 5.0.2
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 5.0.1
+PM> Install-Package XiaoFeng -Version 5.0.2
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="5.0.1" />
+<PackageReference Include="XiaoFeng" Version="5.0.2" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 5.0.1
+> paket add XiaoFeng --version 5.0.2
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 5.0.1"
+> #r "nuget: XiaoFeng, 5.0.2"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=5.0.1
+#addin nuget:?package=XiaoFeng&version=5.0.2
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=5.0.1
+#tool nuget:?package=XiaoFeng&version=5.0.2
 ```
 
 
@@ -1864,6 +1864,12 @@ client.UnSubscribe("取消订阅频道");
 ---
 
 # 更新日志
+
+## 2024-02-27   v 5.0.2
+
+1.JsonValue中属性JsonSerializerSetting增加注解JsonIgnore,XmlIgnore;
+
+2.优化已知bug;
 
 ## 2024-02-19   v 5.0.1
 
