@@ -322,6 +322,87 @@ var f = "123456789.1235684".ToNumber(true);
 //输出结果为 123,456,789.1235684
 ```
 
+# 异步锁 AsyncLock
+
+异步多线程操作同一个对象时使用的锁
+
+```csharp
+readonly AsyncLock LockObj = new AsyncLock();
+using(await LockObj.EnterAsync()){
+    //操作数据
+}
+```
+
+# 参数集合 ParameterCollection
+
+当前类实现了网址参数的解析转换功能
+
+```csharp
+//实例化
+var p = new ParameterCollection();
+//添加参数
+p.Add("a", "aa");
+p.Set("a", "bb");
+p.SetRange(new Dictionary<string, string>
+{
+    {"a","aa" },
+    {"b","bb" }
+});
+p.AddRange(new Dictionary<string, string>
+{
+    {"c","cc" },
+    {"d","dd" }
+});
+//移除参数
+p.Remove("b");
+//是否包含参数
+p.Contains("c");
+//排序
+var p1 = p.OrderBy(x => x.Key);
+//转换成url
+var str1 = p.ToString();
+//转换成url并编码
+var str2 = p.ToString(true);
+```
+
+# 雪花ID
+
+```csharp
+//生成一个雪花ID
+var id = XiaoFeng.SnowFlake.Instance.GetID();
+```
+
+# 日志操作类 XiaoFeng.LogHelper
+
+写日志文件
+
+```csharp
+//默认日志文件放在项目根目录下的Log文件夹下
+LogHelper.WriteLog("日志信息");
+LogHelper.Info("日志消息");
+LogHelper.Error(new Exception("错误信息"));
+//下边可定义文件日志地址
+var log = new Logger();
+log.LogPath = "E://Work/Log.txt";
+log.Write(new LogData
+{
+     Message="日志信息
+});
+log.Error(new Exception("错误信息"));
+```
+
+# 随机数
+
+```csharp
+//随机生成4位长度的字符包括数字和字母
+RandomHelper.GetRandomString(4, RandomType.Number | RandomType.Letter);
+//随机生成5组长度为4的字符包括数字和字母并且不重复
+RandomHelper.GetRandomStrings(5, 4, RandomType.Number | RandomType.Letter, true);
+//随机生成100至1000以内的整数
+RandomHelper.GetRandomInt(100, 1000);
+//随机生成6们长度的字节组
+RandomHelper.GetRandomBytes(6);
+```
 
 # 配置管理器 XiaoFeng.Config.ConfigSet<>
 
@@ -596,12 +677,73 @@ var d = c.AESDecrypt("aaaa");
 
 # XiaoFeng.Cache 缓存类
 
+## 缓存配置类
 
-# XiaoFeng.Redis
+```csharp
+namespace XiaoFeng.Config
+{
+    /// <summary>
+    /// 缓存配置
+    /// </summary>
+    [ConfigFile("Config/Cache.json", 0, "FAYELF-CONFIG-CACHE", ConfigFormat.Json)]
+    public class CacheConfig : ConfigSet<CacheConfig>
+    {
+        #region 属性
+        /// <summary>
+        /// 缓存Key
+        /// </summary>
+        [Description("缓存Key")]
+        public string CacheKey { get; set; } = "FAYELF_CACHE";
+        /// <summary>
+        /// 缓存类型
+        /// </summary>
+        [Description("缓存类型 不缓存:No,内存:Memory,磁盘:Disk,Redis:Redis,Memcache:Memcache,MongoDB:MongoDB")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public CacheType CacheType { get; set; } = CacheType.Memory;
+        /// <summary>
+        /// 缓存路径
+        /// </summary>
+        [Description("缓存路径")]
+        public string CachePath { get; set; } = "Cache";
+        /// <summary>
+        /// 数据库连接字符串KEY
+        /// </summary>
+        [Description("数据库连接字符串KEY")]
+        public string ConnectionStringKey { get; set; }
+        #endregion
+    }
+}
+```
+生成的json文件为:
+```json
+{
+  "CacheKey"/*缓存Key*/: "FAYELF_CACHE",
+  "CacheType"/*缓存类型 不缓存: No, 内存: Memory, 磁盘: Disk, Redis: Redis, Memcache: Memcache, MongoDB: MongoDB*/: "Memory",
+  "CachePath"/*缓存路径*/: "Cache",
+  "ConnectionStringKey"/*数据库连接字符串KEY*/: null
+}
+```
+默认缓存走的是内存缓存
+
+## 使用
+
+```csharp
+//设置缓存
+CacheHelper.Set("a", "aaa");
+//获取缓存
+var a = CacheHelper.Get("a");
+
+//也可以直接指定缓存
+//直接使用文件缓存也就是磁盘缓存
+var cache = CacheFactory.Create(CacheType.Disk);
+cache.Set("a", "aa");
+var b = cache.Get("a");
+```
+## XiaoFeng.Redis
 
 Redis提供了友好的访问API。Redis中间件,支持.NET框架、.NET内核和.NET标准库,一种非常方便操作的客户端工具。实现了Hash,Key,String,ZSet,Stream,Log,订阅发布,线程池功能。
 
-## 基本使用方法
+### 基本使用方法
 
 Redis连接串 
 
@@ -639,10 +781,9 @@ pool			    连接池中连接数量
 var redis = new XiaoFeng.Redis.RedisClient("redis://7092734@127.0.0.1:6379/0");
 ```
 
-## KEY的基本操作
+### KEY的基本操作
 
 ```csharp
-
 //删除连接串中默认库中 key为 a,b的key
 var r1 = await redis.DelKeyAsync("a", "b");
 //删除1库中key为 a,b的key
@@ -696,7 +837,7 @@ var r25 = await redis.DelAllKeysAsync();
 
 ```
 
-## 字符串类型操作
+### 字符串类型操作
 
 ```csharp
 
@@ -726,7 +867,7 @@ var s7 = await redis.StringIncrementAsync("a");
 var s8 = await redis.StringDecrementAsync("a");
 ```
 
-## Hash操作
+### Hash操作
 
 ```csharp
 
@@ -752,7 +893,7 @@ var h5 = await redis.ExistsHashAsync("a", "b");
 var h6 = await redis.HashIncrementAsync("a", "b", 2);
 ```
 
-## List操作
+### List操作
 
 ```csharp
 
@@ -782,7 +923,7 @@ var l11 = await redis.GetListItemsAsync("a", 2, 5);
 var l12 = await redis.GetListLastItemToOtherListFirstAsync("a", "b");
 ```
 
-## Set操作
+### Set操作
 
 ```csharp
 
@@ -814,7 +955,7 @@ var set12 = await redis.GetSetUnionAsync("a", "b");
 var set13 = await redis.GetSetUnionStoreAsync("a", "c", "b");
 ```
 
-## Sorted set 操作 和Set 操作基本相似
+### Sorted set 操作 和Set 操作基本相似
 
 ```csharp
 
@@ -822,7 +963,7 @@ var set13 = await redis.GetSetUnionStoreAsync("a", "c", "b");
 
 ```
 
-# XiaoFeng.Memcached
+## XiaoFeng.Memcached
 
 XiaoFeng.Memcached提供了友好的访问API。Memcached中间件,支持.NET框架、.NET内核和.NET标准库,一种非常方便操作的客户端工具。实现了Set,Add,Replace,PrePend,Append,Cas,Get,Gets,Gat,Gats,Delete,Touch,Stats,Stats Items,Stats Slabs,Stats Sizes,Flush_All,线程池功能。
 
@@ -863,7 +1004,7 @@ PoolSize			连接池中连接数量
 var memcached = new XiaoFeng.Memcached.MemcachedClient("memcached://memcached:123456@127.0.0.1:11211");
 ```
 
-#使用方法
+### 使用方法
 
 ```csharp
 //实例化
