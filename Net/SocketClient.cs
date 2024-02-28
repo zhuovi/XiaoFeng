@@ -155,6 +155,14 @@ namespace XiaoFeng.Net
         /// 频道KEY
         /// </summary>
         private const string CHANNEL_KEY = "CHANNELS";
+        /// <summary>
+        /// 流异步锁
+        /// </summary>
+        readonly AsyncLock StreamAsyncLock = new AsyncLock();
+        /// <summary>
+        /// 流锁
+        /// </summary>
+        readonly object StreamLock = new object();
         #endregion
 
         #region 事件
@@ -923,6 +931,7 @@ namespace XiaoFeng.Net
             return await Task.FromResult(Array.Empty<byte>());
         }
         #endregion
+
         #region 检测客户端连接类型
         /// <summary>
         /// 检测客户端连接类型
@@ -1203,6 +1212,7 @@ namespace XiaoFeng.Net
                 return -1;
             }
             if ((opCode == OpCode.Text || opCode == OpCode.Binary) && (buffers == null || buffers.Length == 0)) return 0;
+            
             var stream = this.GetSslStream();
             if (stream == null) return -1;
             if (this.ConnectionType == ConnectionType.WebSocket)
@@ -1221,8 +1231,11 @@ namespace XiaoFeng.Net
             }
             try
             {
-                stream.Write(buffers, 0, buffers.Length);
-                stream.Flush();
+                lock (StreamLock)
+                {
+                    stream.Write(buffers, 0, buffers.Length);
+                    stream.Flush();
+                }
                 this.LastMessageTime = DateTime.Now;
             }
             catch (IOException)
@@ -1268,8 +1281,11 @@ namespace XiaoFeng.Net
                 return await Task.FromResult(0).ConfigureAwait(false);
             try
             {
-                await stream.WriteAsync(buffers, 0, buffers.Length, this.CancelToken.Token).ConfigureAwait(false);
-                await stream.FlushAsync(this.CancelToken.Token);
+                using (await StreamAsyncLock.EnterAsync().ConfigureAwait(false))
+                {
+                    await stream.WriteAsync(buffers, 0, buffers.Length, this.CancelToken.Token).ConfigureAwait(false);
+                    await stream.FlushAsync(this.CancelToken.Token);
+                }
                 this.LastMessageTime = DateTime.Now;
             }
             catch (IOException)
@@ -1490,6 +1506,7 @@ namespace XiaoFeng.Net
                 this.Client.Dispose();
                 this.Client = null;
             }
+            this.StreamAsyncLock?.Dispose();
             this.NetStream?.Close();
             this.NetStream?.Dispose();
             this.NetStream = null;

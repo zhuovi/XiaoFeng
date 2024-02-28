@@ -29,7 +29,7 @@
 		<AssemblyOriginatorKeyFile>XiaoFeng.snk</AssemblyOriginatorKeyFile>
 		<PackageIcon>x.png</PackageIcon>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>JsonValue中属性JsonSerializerSetting增加注解JsonIgnore,XmlIgnore;</PackageReleaseNotes>
+		<PackageReleaseNotes>增加异步锁AsyncLock;SocketClient发送消息时增加异步锁,防止消息未发送完时，另一个线程又发送消息;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>
