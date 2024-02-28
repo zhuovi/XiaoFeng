@@ -151,6 +151,10 @@ namespace XiaoFeng.Redis
         /// 锁
         /// </summary>
         private static readonly object RedisLock = new object();
+        /// <summary>
+        /// 流异步锁
+        /// </summary>
+        readonly AsyncLock StreamAsyncLock = new AsyncLock();
         #endregion
 
         #region 方法
@@ -195,6 +199,7 @@ namespace XiaoFeng.Redis
             else
                 this.Redis.Close();
             Mutex = new Mutex(false, "RedisMutex");
+            StreamAsyncLock?.Dispose();
         }
         #endregion
 
@@ -274,9 +279,12 @@ namespace XiaoFeng.Redis
             try
             {
                 //Mutex.WaitOne(TimeSpan.FromMilliseconds(1000));
-                await new CommandPacket(commandType, args).SendCommandAsync(this.Redis.GetStream() as NetworkStream).ConfigureAwait(false);
-                var result = await func.Invoke(new RedisReader(commandType, this.Redis.GetStream() as NetworkStream, args)).ConfigureAwait(false);
-                return result;
+                using (await StreamAsyncLock.EnterAsync().ConfigureAwait(false))
+                {
+                    await new CommandPacket(commandType, args).SendCommandAsync(this.Redis.GetStream() as NetworkStream).ConfigureAwait(false);
+                    var result = await func.Invoke(new RedisReader(commandType, this.Redis.GetStream() as NetworkStream, args)).ConfigureAwait(false);
+                    return result;
+                }
             }
             catch (Exception ex)
             {

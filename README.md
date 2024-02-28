@@ -31,41 +31,41 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 5.0.2
+$ dotnet add package XiaoFeng --version 5.0.3
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 5.0.2
+PM> Install-Package XiaoFeng -Version 5.0.3
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="5.0.2" />
+<PackageReference Include="XiaoFeng" Version="5.0.3" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 5.0.2
+> paket add XiaoFeng --version 5.0.3
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 5.0.2"
+> #r "nuget: XiaoFeng, 5.0.3"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=5.0.2
+#addin nuget:?package=XiaoFeng&version=5.0.3
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=5.0.2
+#tool nuget:?package=XiaoFeng&version=5.0.3
 ```
 
 
@@ -1864,6 +1864,12 @@ client.UnSubscribe("取消订阅频道");
 ---
 
 # 更新日志
+
+## 2024-02-28   v 5.0.3
+
+1.增加异步锁AsyncLock;
+
+2.SocketClient发送消息时增加异步锁,防止消息未发送完时，另一个线程又发送消息;
 
 ## 2024-02-27   v 5.0.2
 
