@@ -66,6 +66,7 @@ namespace XiaoFeng.Model
                 if (index >= configs.Length) index = 0;
                 config = configs[index];
                 this.Config = config;
+                this.Config.AppKey = this.DataBaseName;
                 //改为用的时候再实例化 不同则不实例化 减少开销
                 //this.Data = new DataHelperX<T>(config);
                 //this.DataQ = new DataHelperQ(config);
