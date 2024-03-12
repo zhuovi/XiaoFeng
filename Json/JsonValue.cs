@@ -38,6 +38,8 @@ namespace XiaoFeng.Json
         public JsonValue(JsonType type, object value)
         {
             this.Type = type;
+            if (type == JsonType.String && value == null)
+                value = String.Empty;
             this.value = value;
         }
         /// <summary>

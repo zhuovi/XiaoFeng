@@ -3203,7 +3203,6 @@ namespace XiaoFeng
         /// <summary>
         /// 把区分大小写字典转换成不区分大小写字典
         /// </summary>
-        /// <typeparam name="TKey">KEY类型</typeparam>
         /// <typeparam name="TValue">值类型</typeparam>
         /// <param name="data">字典数据</param>
         /// <returns></returns>

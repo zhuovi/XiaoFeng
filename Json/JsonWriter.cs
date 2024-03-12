@@ -323,6 +323,8 @@ namespace XiaoFeng.Json
                         mType = f.FieldType;
                         value = f.GetValue(obj);
                     }
+                    if (mType == typeof(string) && value == null)
+                        value = String.Empty;
                 }
                 catch (Exception ex)
                 {
