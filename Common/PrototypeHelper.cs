@@ -2404,7 +2404,12 @@ namespace XiaoFeng
                 {
                     var _p = m as PropertyInfo;
                     if (_p.IsIndexer()) return;
-                    val = _p.GetValue(source, null);
+                    if (_p.GetMethod != null)
+                        try
+                        {
+                            val = _p.GetValue(source, null);
+                        }
+                        catch { }
                 }
                 else if (m.MemberType == MemberTypes.Field)
                 {
