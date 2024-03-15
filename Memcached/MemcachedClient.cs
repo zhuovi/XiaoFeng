@@ -258,19 +258,31 @@ namespace XiaoFeng.Memcached
         /// <summary>
         /// 释放
         /// </summary>
-        /// <param name="disposing"></param>
+        public override void Dispose()
+        {
+            this.Dispose(true);
+        }
+        /// <summary>
+        /// 释放
+        /// </summary>
+        /// <param name="disposing">状态</param>
         protected override void Dispose(bool disposing)
         {
-            this.Factory?.TryDispose();
-            base.Dispose(disposing);
+            base.Dispose(disposing, () =>
+            {
+                if (this.Factory != null)
+                {
+                    this.Factory?.Dispose();
+                    this.Factory = null;
+                }
+            });
         }
         /// <summary>
         /// 析构器
         /// </summary>
         ~MemcachedClient()
         {
-            this.Factory?.Dispose();
-            this.Dispose(true);
+            this.Dispose(false);
         }
         #endregion
 

@@ -16,7 +16,7 @@ namespace XiaoFeng.Threading
     /// <summary>
     /// 作业调度中心接口
     /// </summary>
-    public interface IJobScheduler
+    public interface IJobScheduler : IDisposable
     {
         #region 添加作业
         /// <summary>

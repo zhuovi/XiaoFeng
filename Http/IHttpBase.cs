@@ -59,5 +59,9 @@ namespace XiaoFeng.Http
         /// 认证信息
         /// </summary>
         string Authorization { get; set; }
+        /// <summary>
+        /// 释放资源
+        /// </summary>
+        void Dispose();
     }
 }

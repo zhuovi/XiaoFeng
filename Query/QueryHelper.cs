@@ -18,7 +18,7 @@ namespace XiaoFeng
     /// 参数操作类 第一种内核 第二种 ParamHelper
     /// Version : 1.0.1
     /// </summary>
-    public class QueryHelper : IDisposable
+    public class QueryHelper :Disposable, IDisposable
     {
         #region 构造器
         /// <summary>
@@ -265,16 +265,28 @@ namespace XiaoFeng
         /// <summary>
         /// 回收资源
         /// </summary>
-        public void Dispose()
+        public override void Dispose()
         {
-            GC.SuppressFinalize(this);
+            this.Dispose(true);
+        }
+        /// <summary>
+        /// 回收资源
+        /// </summary>
+        /// <param name="disposing">状态</param>
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing, () =>
+            {
+                data.Clear();
+                data = null;
+            });
         }
         /// <summary>
         /// 回收资源
         /// </summary>
         ~QueryHelper()
         {
-            this.Dispose();
+            this.Dispose(false);
         }
         #endregion
 

@@ -18,7 +18,7 @@ namespace XiaoFeng.Http
     /// <summary>
     /// HTTP 基础类
     /// </summary>
-    public class HttpBase : IHttpBase
+    public class HttpBase : Disposable, IHttpBase
     {
         #region 构造器
         /// <summary>

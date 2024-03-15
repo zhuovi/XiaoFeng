@@ -1667,7 +1667,6 @@ namespace XiaoFeng.Data
         public override void Dispose()
         {
             this.Dispose(true);
-            GC.SuppressFinalize(this);
         }
         /// <summary>
         /// 回收资源
@@ -1675,10 +1674,10 @@ namespace XiaoFeng.Data
         /// <param name="disposing">是否释放</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
+            base.Dispose(disposing, () =>
             {
 
-            }
+            });
         }
         /// <summary>
         /// 回收资源

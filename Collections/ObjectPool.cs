@@ -291,10 +291,27 @@ namespace XiaoFeng.Collections
         /// </summary>
         public override void Dispose()
         {
-            this.BusyItems.Clear();
-            base.Dispose();
-            if (Job.Status == JobStatus.Waiting) Job.Stop();
-            Job.TryDispose();
+            this.Dispose(true);
+        }
+        /// <summary>
+        /// 释放资源
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing, () =>
+            {
+                this.BusyItems.Clear();
+                if (Job.Status == JobStatus.Waiting) Job.Stop();
+                Job.TryDispose();
+            });
+        }
+        /// <summary>
+        /// 析构器
+        /// </summary>
+        ~ObjectPool()
+        {
+            this.Dispose(false);
         }
         #endregion
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
+using XiaoFeng.Data.SQL;
 using XiaoFeng.IO;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
@@ -187,18 +188,14 @@ namespace XiaoFeng.Zip
         public void Dispose()
         {
             this.Dispose(true);
-            GC.SuppressFinalize(this);
         }
         /// <summary>
         /// 释放资源
         /// </summary>
         /// <param name="f"></param>
-        protected virtual void Dispose(Boolean f)
+        protected virtual void Dispose(Boolean disposeValue)
         {
-            if (f)
-            {
-                //GC.SuppressFinalize(this);
-            }
+           
         }
         /// <summary>
         /// 析构器

@@ -150,6 +150,10 @@ namespace XiaoFeng.Net
         /// </summary>
         /// <returns>返回Soccket</returns>
         Socket GetSocket();
+        /// <summary>
+        /// 释放资源
+        /// </summary>
+        void Dispose();
         #endregion
     }
 }

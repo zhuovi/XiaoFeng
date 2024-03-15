@@ -372,8 +372,23 @@ namespace XiaoFeng.Threading
         /// </summary>
         public override void Dispose()
         {
-            base.Dispose();
+            this.Dispose(true);
         }
+        /// <summary>
+        /// 释放资源
+        /// </summary>
+        /// <param name="disposing">释放状态</param>
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing, () =>
+            {
+
+            });
+        }
+        /// <summary>
+        /// 析构器
+        /// </summary>
+        ~Job() => this.Dispose(false);
         #endregion
 
         #endregion

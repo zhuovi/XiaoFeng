@@ -229,7 +229,6 @@ namespace XiaoFeng.Net
             if (this.Active)
             {
                 this._Active = false;
-                this.Dispose(true);
             }
             this.OnStop?.Invoke(this, EventArgs.Empty);
         }
@@ -798,27 +797,29 @@ namespace XiaoFeng.Net
         /// <summary>
         /// 释放
         /// </summary>
-        /// <param name="disposing"></param>
+        /// <param name="disposing">状态</param>
         protected override void Dispose(bool disposing)
         {
-            this.CancelToken.Cancel();
-            this.CancelToken = new CancellationTokenSource();
-            this.ClearQueue();
-            if (this.Server.Connected)
+            base.Dispose(disposing, () =>
             {
-                this.Server.Shutdown(SocketShutdown.Both);
-                this.Server.Disconnect(false);
-            }
-            this.Server.Close(3);
-            this.Server.Dispose();
-            this.Server = null;
-            this.SocketState = SocketState.Stop;
-            if (this.Job != null)
-            {
-                this.Job.Stop();
-                this.Job = null;
-            }
-            base.Dispose(disposing);
+                this.CancelToken.Cancel();
+                this.CancelToken = new CancellationTokenSource();
+                this.ClearQueue();
+                if (this.Server.Connected)
+                {
+                    this.Server.Shutdown(SocketShutdown.Both);
+                    this.Server.Disconnect(false);
+                }
+                this.Server.Close(3);
+                this.Server.Dispose();
+                this.Server = null;
+                this.SocketState = SocketState.Stop;
+                if (this.Job != null)
+                {
+                    this.Job.Stop();
+                    this.Job = null;
+                }
+            });
         }
         /// <summary>
         /// 析构器

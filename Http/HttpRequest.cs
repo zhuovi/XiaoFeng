@@ -1399,6 +1399,43 @@ namespace XiaoFeng.Http
         }
         #endregion
 
+        #region 释放资源
+        /// <summary>
+        /// 释放资源
+        /// </summary>
+        public override void Dispose()
+        {
+            this.Dispose(true);
+        }
+        /// <summary>
+        /// 释放资源
+        /// </summary>
+        /// <param name="disposing">释放状态</param>
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing, () =>
+            {
+                if (this.Client != null)
+                {
+                    this.Client.Dispose();
+                    this.Client = null;
+                }
+                if (this.ClientHandler != null)
+                {
+                    this.ClientHandler.Dispose();
+                    this.ClientHandler = null;
+                }
+            });
+        }
+        /// <summary>
+        /// 析构器
+        /// </summary>
+        ~HttpRequest()
+        {
+            this.Dispose(false);
+        }
+        #endregion
+
         #endregion
     }
 }

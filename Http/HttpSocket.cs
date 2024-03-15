@@ -417,7 +417,11 @@ namespace XiaoFeng.Http
         /// </summary>
         public void Close()
         {
-            this.Dispose(true);
+            if (this.Client != null)
+            {
+                if (!this.Client.Connected)
+                    this.Client.Stop();
+            }
         }
         #endregion
 
@@ -435,18 +439,30 @@ namespace XiaoFeng.Http
         /// <param name="disposing">标识</param>
         protected override void Dispose(bool disposing)
         {
-            if (this.Client != null)
+            base.Dispose(disposing, () =>
             {
-                this.Client.Stop();
-            }
-            base.Dispose(disposing);
+                if (this.Client != null)
+                {
+                    this.Client.Stop();
+                }
+                if (this.Request != null)
+                {
+                    this.Request.Dispose();
+                    this.Request = null;
+                }
+                if (this.Response != null)
+                {
+                    this.Response.Dispose();
+                    this.Response = null;
+                }
+            });
         }
         /// <summary>
         /// 析构器
         /// </summary>
         ~HttpSocket()
         {
-            Dispose(true);
+            this.Dispose(false);
         }
         #endregion
 

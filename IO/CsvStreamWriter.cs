@@ -147,16 +147,21 @@ namespace XiaoFeng.IO
         /// <param name="disposing">状态</param>
         protected override void Dispose(bool disposing)
         {
-            this.Writer.Dispose();
-            base.Dispose(disposing);
+            base.Dispose(disposing, () =>
+            {
+                if (this.Writer != null)
+                {
+                    this.Writer.Dispose();
+                    this.Writer = null;
+                }
+            });
         }
         /// <summary>
         /// 析构
         /// </summary>
         ~CsvStreamWriter()
         {
-            this.Dispose(true);
-            GC.Collect();
+            this.Dispose(false);
         }
         #endregion
     }

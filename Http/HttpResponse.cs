@@ -498,6 +498,48 @@ namespace XiaoFeng.Http
         public string GetHeader(HttpRequestHeader header) => this.GetHeader(header.ToString());
         #endregion
 
+        #region 释放资源
+        /// <summary>
+        /// 释放资源
+        /// </summary>
+        public override void Dispose()
+        {
+            this.Dispose(true);
+        }
+        /// <summary>
+        /// 释放资源
+        /// </summary>
+        /// <param name="disposing">释放状态</param>
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing, () =>
+            {
+                if (this.Request != null)
+                {
+                    this.Request.Dispose();
+                    this.Request = null;
+                }
+                if(this.Response != null)
+                {
+                    this.Response.Dispose();
+                    this.Response = null;
+                }
+                if (this.ResponseHttp != null)
+                {
+                    this.ResponseHttp.Dispose();
+                    this.ResponseHttp = null;
+                }
+            });
+        }
+        /// <summary>
+        /// 析构器
+        /// </summary>
+        ~HttpResponse()
+        {
+            this.Dispose(false);
+        }
+        #endregion
+
         #endregion
     }
 }

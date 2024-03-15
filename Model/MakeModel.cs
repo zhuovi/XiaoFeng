@@ -123,7 +123,7 @@ namespace {namespace}
 		/// <summary>
 		/// 析构器
 		/// </summary>
-		~{TableName}() { base.Dispose(true); }
+		~{TableName}() { base.Dispose(false); }
 		#endregion
 	}
     #endregion
@@ -321,7 +321,7 @@ namespace {namespace}
         /// </summary>
         ~MakeModel()
         {
-            base.Dispose(true);
+            base.Dispose(false);
         }
         #endregion
 

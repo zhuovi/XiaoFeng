@@ -223,21 +223,33 @@ namespace XiaoFeng.IO
             this.Reader.Close();
         }
         /// <summary>
+        /// 释放资源
+        /// </summary>
+        public override void Dispose()
+        {
+            this.Dispose(true);
+        }
+        /// <summary>
         /// 释放
         /// </summary>
         /// <param name="disposing">状态</param>
         protected override void Dispose(bool disposing)
         {
-            this.Reader.Dispose();
-            base.Dispose(disposing);
+            base.Dispose(disposing, () =>
+            {
+                if (this.Reader != null)
+                {
+                    this.Reader.Dispose();
+                    this.Reader = null;
+                }
+            });
         }
         /// <summary>
         /// 析构
         /// </summary>
         ~CsvStreamReader()
         {
-            this.Dispose(true);
-            GC.Collect();
+            this.Dispose(false);
         }
         #endregion
     }

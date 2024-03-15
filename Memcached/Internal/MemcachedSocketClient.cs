@@ -204,12 +204,26 @@ namespace XiaoFeng.Memcached.Internal
         /// <summary>
         /// 释放
         /// </summary>
+        public override void Dispose()
+        {
+            this.Dispose(true);
+        }
+        /// <summary>
+        /// 释放
+        /// </summary>
         /// <param name="disposing">状态</param>
         protected override void Dispose(bool disposing)
-        {
-            this.Close();
-            base.Dispose(disposing);
-            GC.Collect();
+        {            
+            base.Dispose(disposing, () =>
+            {
+                this.Close();
+                if (this.Socket != null)
+                {
+                    this.Socket.Dispose();
+                    this.Socket = null;
+                }
+
+            });
         }
         /// <summary>
         /// 析构器

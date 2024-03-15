@@ -457,14 +457,33 @@ namespace XiaoFeng.Redis
         public override void Dispose()
         {
             this.Close();
-            base.Dispose();
+            this.Dispose(true);
+        }
+        /// <summary>
+        /// 释放
+        /// </summary>
+        /// <param name="disposing">释放状态</param>
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing, () =>
+            {
+                if (this.Redis != null)
+                {
+                    this.Redis.Dispose();
+                    this.Redis = null;
+                }
+                if (this.RedisPool != null)
+                {
+                    this.RedisPool.Dispose();
+                }
+            });
         }
         /// <summary>
         /// 析构
         /// </summary>
         ~RedisClient()
         {
-            this.Dispose();
+            this.Dispose(false);
         }
         #endregion
 

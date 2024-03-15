@@ -598,7 +598,6 @@ namespace XiaoFeng.Net
             {
                 this._Active = false;
             }
-            this.Dispose(true);
         }
         #endregion
 
@@ -1490,37 +1489,39 @@ namespace XiaoFeng.Net
         /// <param name="disposing">状态</param>
         protected override void Dispose(bool disposing)
         {
-            if (!this.IsServer)
-                this.CancelToken.Cancel(true);
-            if (this.Client != null)
+            base.Dispose(disposing, () =>
             {
-                if (this.Client.Connected)
+                if (!this.IsServer)
+                    this.CancelToken.Cancel(true);
+                if (this.Client != null)
                 {
-                    try
+                    if (this.Client.Connected)
                     {
-                        this.Client.Shutdown(SocketShutdown.Both);
-                        this.Client.Close(3);
+                        try
+                        {
+                            this.Client.Shutdown(SocketShutdown.Both);
+                            this.Client.Close(3);
+                        }
+                        catch { }
                     }
-                    catch { }
+                    this.Client.Dispose();
+                    this.Client = null;
                 }
-                this.Client.Dispose();
-                this.Client = null;
-            }
-            this.StreamAsyncLock?.Dispose();
-            this.NetStream?.Close();
-            this.NetStream?.Dispose();
-            this.NetStream = null;
-            this.SslStream?.Close();
-            this.SslStream?.Dispose();
-            this.SslStream = null;
-            this._Active = false;
-            this.CancelToken = new CancellationTokenSource();
-            if (this.Job != null)
-            {
-                this.Job.Stop();
-                this.Job = null;
-            }
-            base.Dispose(disposing);
+                this.StreamAsyncLock?.Dispose();
+                this.NetStream?.Close();
+                this.NetStream?.Dispose();
+                this.NetStream = null;
+                this.SslStream?.Close();
+                this.SslStream?.Dispose();
+                this.SslStream = null;
+                this._Active = false;
+                this.CancelToken = new CancellationTokenSource();
+                if (this.Job != null)
+                {
+                    this.Job.Stop();
+                    this.Job = null;
+                }
+            });
         }
         /// <summary>
         /// 析构器
