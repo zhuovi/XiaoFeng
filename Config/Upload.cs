@@ -71,7 +71,7 @@ namespace XiaoFeng.Config
         /// 上传类型配置
         /// </summary>
         [Description("上传类型配置")]
-        public Dictionary<string, UploadData> Data { get; set; } = new Dictionary<string, UploadData>(StringComparer.OrdinalIgnoreCase);
+        public Dictionary<string, UploadData> Data { get; set; } = new Dictionary<string, UploadData>(StringComparer.OrdinalIgnoreCase) { { "Image", new UploadData() { Path = "Image", Ext = "png,jpeg,jpg,bmp,gif,svg" } } };
         /// <summary>
         /// 是否启用图片压缩
         /// </summary>
