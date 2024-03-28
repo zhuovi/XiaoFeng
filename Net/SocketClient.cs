@@ -42,7 +42,7 @@ namespace XiaoFeng.Net
         /// <param name="networkDelay">网络延时 单位为毫秒</param>
         /// <param name="authentication">认证</param>
         /// <param name="certificate">ssl证书</param>
-        public SocketClient(Socket socket, int networkDelay, Func<ISocketClient, bool> authentication = null, X509Certificate certificate = null)
+        internal SocketClient(Socket socket, int networkDelay, Func<ISocketClient, bool> authentication = null, X509Certificate certificate = null)
         {
             this.SetSocket(socket, networkDelay, authentication, certificate);
         }
@@ -54,17 +54,21 @@ namespace XiaoFeng.Net
         public SocketClient(string host, int port)
         {
             if (host.IsNullOrEmpty() || host.EqualsIgnoreCase("localhost")) host = "127.0.0.1";
-            var address = Dns.GetHostAddresses(host);
-            /*
-            foreach (var ip in Dns.GetHostEntry(host).AddressList)
+            if (!ValidatePortNumber(port))
             {
-                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                InitializeClientSocket(); return;
+            }
+            if (IPAddress.TryParse(host, out var address))
+                this.EndPoint = new IPEndPoint(address, port);
+            else
+            {
+                try
                 {
-                    this.EndPoint = new IPEndPoint(ip, port);
-                    break;
+                    var addrs = Dns.GetHostAddresses(host);
+                    this.EndPoint = new IPEndPoint(addrs.First(a => (a.AddressFamily == AddressFamily.InterNetwork && Socket.OSSupportsIPv4) || Socket.OSSupportsIPv6), port);
                 }
-            }*/
-            this.EndPoint = new IPEndPoint(address.Last(), port);
+                catch { }
+            }
             InitializeClientSocket();
         }
         /// <summary>
@@ -194,21 +198,78 @@ namespace XiaoFeng.Net
         public virtual SocketError Connect(string hostname, int port)
         {
             if (hostname.IsNullOrEmpty()) hostname = "127.0.0.1";
-            if (port <= 0) port = 1006;
+            if (!ValidatePortNumber(port)) port = 1006;
             if (this.Active)
-                throw new Exception("Socket已经连接.");
+                return SocketError.AddressAlreadyInUse;
+            
+            if (IPAddress.TryParse(hostname, out var address))
+                return this.Connect(address, port);
 
-            IPAddress[] addresses = Dns.GetHostAddresses(hostname);
+            try
+            {
+                IPAddress[] addresses = Dns.GetHostAddresses(hostname);
+                return this.Connect(addresses, port);
+            }
+            catch
+            {
+                this.OnClientError?.Invoke(this, this.EndPoint, new Exception("网络错误."));
+                return SocketError.NetworkDown;
+            }
+        }
+        ///<inheritdoc/>
+        public virtual SocketError Connect(IPAddress address, int port)
+        {
+            if (address == null) IPAddress.Parse("127.0.0.1");
+            if (!ValidatePortNumber(port)) port = 1006;
+            var remoteEP = new IPEndPoint(address, port);
+            return this.Connect(remoteEP);
+        }
+        ///<inheritdoc/>
+        public virtual SocketError Connect(IPEndPoint remoteEP)
+        {
+#if NETSTANDARD2_0
+            if (remoteEP == null) remoteEP =
+#else
+            remoteEP ??=
+#endif
+            new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1006);
 
-            this.EndPoint = new IPEndPoint(addresses.First(a => a.AddressFamily == AddressFamily.InterNetwork), port);
-
+            this.EndPoint = remoteEP;
+            return this.CompleteConnect(() =>
+            {
+                try
+                {
+                    if (this.ConnectTimeout <= 0)
+                        this.ConnectTimeout = 10_000;
+                    var result = this.Client.BeginConnect(this.EndPoint, null, null);
+                    if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
+                    {
+                        this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
+                        return SocketError.TimedOut;
+                    }
+                    this.Client.EndConnect(result);
+                    return SocketError.Success;
+                }
+                catch (Exception ex)
+                {
+                    this.OnClientError?.Invoke(this, this.EndPoint, ex);
+                    return SocketError.SocketError;
+                }
+            });
+        }
+        ///<inheritdoc/>
+        public virtual SocketError Connect(IPAddress[] ipAddresses, int port)
+        {
+            if (ipAddresses == null || ipAddresses.Length == 0) throw new Exception("服务端地址为空.");
+            if (!ValidatePortNumber(port)) port = 1006;
+            
             return this.CompleteConnect(() =>
             {
                 ExceptionDispatchInfo lastex = null;
 
                 try
                 {
-                    foreach (IPAddress address in addresses)
+                    foreach (IPAddress address in ipAddresses)
                     {
                         this.EndPoint = new IPEndPoint(address, port);
                         InitializeClientSocket();
@@ -216,7 +277,7 @@ namespace XiaoFeng.Net
                         {
                             if (address.AddressFamily == AddressFamily.Unknown)
                             {
-                                return this.Connect(new IPEndPoint(address, port));
+                                return this.Connect(this.EndPoint);
                             }
                             else
                             {
@@ -267,77 +328,6 @@ namespace XiaoFeng.Net
             });
         }
         ///<inheritdoc/>
-        public virtual SocketError Connect(IPAddress address, int port)
-        {
-            if (address == null) IPAddress.Parse("127.0.0.1");
-            if (port <= 0) port = 1006;
-            IPEndPoint remoteEP = new IPEndPoint(address, port);
-            return this.Connect(remoteEP);
-        }
-        ///<inheritdoc/>
-        public virtual SocketError Connect(IPEndPoint remoteEP)
-        {
-#if NETSTANDARD2_0
-            if (remoteEP == null) remoteEP =
-#else
-            remoteEP ??=
-#endif
-            new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1006);
-
-            this.EndPoint = remoteEP;
-            return this.CompleteConnect(() =>
-            {
-                try
-                {
-                    if (this.ConnectTimeout <= 0)
-                        this.ConnectTimeout = 10_000;
-                    var result = this.Client.BeginConnect(this.EndPoint, null, null);
-                    if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
-                    {
-                        this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
-                        return SocketError.TimedOut;
-                    }
-                    this.Client.EndConnect(result);
-                    return SocketError.Success;
-                }
-                catch (Exception ex)
-                {
-                    this.OnClientError?.Invoke(this, this.EndPoint, ex);
-                    return SocketError.SocketError;
-                }
-            });
-        }
-        ///<inheritdoc/>
-        public virtual SocketError Connect(IPAddress[] ipAddresses, int port)
-        {
-            if (ipAddresses == null || ipAddresses.Length == 0) throw new Exception("服务端地址为空.");
-            if (port <= 0) port = 1006;
-            this.EndPoint = new IPEndPoint(ipAddresses.First(a => a.AddressFamily == AddressFamily.InterNetwork), port);
-            return this.CompleteConnect(() =>
-            {
-                try
-                {
-                    if (this.ConnectTimeout <= 0)
-                        this.ConnectTimeout = 10_000;
-
-                    var result = this.Client.BeginConnect(ipAddresses, port, null, null);
-                    if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
-                    {
-                        this.OnClientError?.Invoke(this, this.Client.RemoteEndPoint.ToIPEndPoint(), new Exception());
-                        return SocketError.TimedOut;
-                    }
-                    this.Client.EndConnect(result);
-                    return SocketError.Success;
-                }
-                catch (Exception ex)
-                {
-                    this.Client = null;
-                    this.OnClientError?.Invoke(this, this.EndPoint, ex);
-                    return SocketError.SocketError;
-                }
-            });
-        }
-        ///<inheritdoc/>
         public virtual async Task<SocketError> ConnectAsync(IPAddress address, int port)
         {
 #if NETSTANDARD2_0
@@ -346,31 +336,9 @@ namespace XiaoFeng.Net
             address ??=
 #endif
             IPAddress.Parse("127.0.0.1");
-            if (port <= 0) port = 1006;
-            this.EndPoint = new IPEndPoint(address, port);
-            return await this.CompleteConnectAsync(async () =>
-             {
-                 try
-                 {
-                     if (this.ConnectTimeout <= 0)
-                         this.ConnectTimeout = 10_000;
-
-                     var result = this.Client.BeginConnect(address, port, null, null);
-                     if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
-                     {
-                         this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
-                         return await Task.FromResult(SocketError.TimedOut).ConfigureAwait(false);
-                     }
-                     this.Client.EndConnect(result);
-                     return await Task.FromResult(SocketError.Success).ConfigureAwait(false);
-                 }
-                 catch (Exception ex)
-                 {
-                     this.Client = null;
-                     this.OnClientError?.Invoke(this, this.EndPoint, ex);
-                     return await Task.FromResult(SocketError.SocketError).ConfigureAwait(false); ;
-                 }
-             });
+            if (!ValidatePortNumber(port)) port = 1006;
+            var remoteEP = new IPEndPoint(address, port);
+            return await this.ConnectAsync(remoteEP).ConfigureAwait(false);
         }
         ///<inheritdoc/>
         public virtual async Task<SocketError> ConnectAsync() => await this.ConnectAsync(this.EndPoint).ConfigureAwait(false);
@@ -378,59 +346,90 @@ namespace XiaoFeng.Net
         public virtual async Task<SocketError> ConnectAsync(string host, int port)
         {
             if (host.IsNullOrEmpty()) host = "127.0.0.1";
-            if (port <= 0) port = 1006;
-            this.EndPoint = new IPEndPoint(Dns.GetHostAddresses(host).First(a => a.AddressFamily == AddressFamily.InterNetwork), port);
-            return await this.CompleteConnectAsync(async () =>
-            {
-                try
-                {
-                    if (this.ConnectTimeout <= 0)
-                        this.ConnectTimeout = 10_000;
+            if (!ValidatePortNumber(port)) port = 1006;
+            if (this.Active)
+                return await Task.FromResult(SocketError.AddressAlreadyInUse);
 
-                    var result = this.Client.BeginConnect(host, port, null, null);
-                    if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
-                    {
-                        this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
-                        return await Task.FromResult(SocketError.TimedOut).ConfigureAwait(false);
-                    }
-                    this.Client.EndConnect(result);
-                    return await Task.FromResult(SocketError.Success).ConfigureAwait(false);
-                }
-                catch (Exception ex)
-                {
-                    this.Client = null;
-                    this.OnClientError?.Invoke(this, this.EndPoint, ex);
-                    return await Task.FromResult(SocketError.SocketError).ConfigureAwait(false);
-                }
-            });
+            if (IPAddress.TryParse(host, out var address))
+                return await this.ConnectAsync(address, port);
+
+            try
+            {
+                IPAddress[] addresses = Dns.GetHostAddresses(host);
+                return await this.ConnectAsync(addresses, port);
+            }
+            catch
+            {
+                this.OnClientError?.Invoke(this, this.EndPoint, new Exception("网络错误."));
+                return await Task.FromResult(SocketError.NetworkDown);
+            }
         }
         ///<inheritdoc/>
         public virtual async Task<SocketError> ConnectAsync(IPAddress[] addresses, int port)
         {
             if (addresses == null || addresses.Length == 0) addresses = new IPAddress[] { IPAddress.Parse("127.0.0.1") };
-            if (port <= 0) port = 1006;
-            this.EndPoint = new IPEndPoint(addresses.First(a => a.AddressFamily == AddressFamily.InterNetwork), port);
+            if (!ValidatePortNumber(port)) port = 1006;
             return await this.CompleteConnectAsync(async () =>
             {
+                ExceptionDispatchInfo lastex = null;
+
                 try
                 {
-                    if (this.ConnectTimeout <= 0)
-                        this.ConnectTimeout = 10_000;
-
-                    var result = this.Client.BeginConnect(addresses, port, null, null);
-                    if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
+                    foreach (IPAddress address in addresses)
                     {
-                        this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
-                        return await Task.FromResult(SocketError.TimedOut).ConfigureAwait(false);
+                        this.EndPoint = new IPEndPoint(address, port);
+                        InitializeClientSocket();
+                        try
+                        {
+                            if (address.AddressFamily == AddressFamily.Unknown)
+                            {
+                                return await this.ConnectAsync(this.EndPoint);
+                            }
+                            else
+                            {
+                                if ((address.AddressFamily == AddressFamily.InterNetwork && Socket.OSSupportsIPv4) || Socket.OSSupportsIPv6)
+                                {
+                                    if (address.IsIPv4MappedToIPv6)
+                                    {
+                                        this.Client.DualMode = true;
+                                    }
+                                    try
+                                    {
+                                        if (this.ConnectTimeout <= 0)
+                                            this.ConnectTimeout = 10_000;
+
+                                        var result = this.Client.BeginConnect(address, port, null, null);
+                                        if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
+                                        {
+                                            this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
+                                            return await Task.FromResult(SocketError.TimedOut);
+                                        }
+                                        this.Client.EndConnect(result);
+                                        this._Active = true;
+                                        return await Task.FromResult(SocketError.Success);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        this.Client = null;
+                                        this.OnClientError?.Invoke(this, this.EndPoint, ex);
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                        catch (Exception ex) when (!(ex is OutOfMemoryException))
+                        {
+                            lastex = ExceptionDispatchInfo.Capture(ex);
+                        }
                     }
-                    this.Client.EndConnect(result);
-                    return await Task.FromResult(SocketError.Success).ConfigureAwait(false);
+                    return await Task.FromResult(SocketError.SocketError);
                 }
-                catch (Exception ex)
+                finally
                 {
-                    this.Client = null;
-                    this.OnClientError?.Invoke(this, this.EndPoint, ex);
-                    return await Task.FromResult(SocketError.SocketError).ConfigureAwait(false);
+                    if (!this.Active)
+                    {
+                        lastex?.Throw();
+                    }
                 }
             });
         }

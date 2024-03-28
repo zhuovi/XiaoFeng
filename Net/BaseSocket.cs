@@ -158,6 +158,12 @@ namespace XiaoFeng.Net
         /// </summary>
         /// <returns>返回Soccket</returns>
         public abstract Socket GetSocket();
+        /// <summary>
+        /// 验证端口
+        /// </summary>
+        /// <param name="port">端口</param>
+        /// <returns></returns>
+        internal Boolean ValidatePortNumber(int port) => port >= IPEndPoint.MinPort && port <= IPEndPoint.MaxPort;
         #endregion
     }
 }

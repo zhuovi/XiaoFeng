@@ -79,6 +79,7 @@ namespace XiaoFeng.Net
         /// <param name="port">监听端口</param>
         public SocketServer(IPAddress localaddr, int port)
         {
+            if (!ValidatePortNumber(port)) port = 1006;
             this.EndPoint = new IPEndPoint(localaddr, port);
         }
         #endregion
