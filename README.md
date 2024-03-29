@@ -37,41 +37,41 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 5.0.4
+$ dotnet add package XiaoFeng --version 5.0.5
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 5.0.4
+PM> Install-Package XiaoFeng -Version 5.0.5
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="5.0.4" />
+<PackageReference Include="XiaoFeng" Version="5.0.5" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 5.0.4
+> paket add XiaoFeng --version 5.0.5
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 5.0.4"
+> #r "nuget: XiaoFeng, 5.0.5"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=5.0.4
+#addin nuget:?package=XiaoFeng&version=5.0.5
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=5.0.4
+#tool nuget:?package=XiaoFeng&version=5.0.5
 ```
 
 
@@ -106,6 +106,7 @@ Cake
 | XiaoFeng.KuaiShou | XiaoFeng.KuaiShou | :white_check_mark: | 快手开放平台SDK | 快手开放平台接口 |
 | XiaoFeng.Mvc.AdminWinDesk | XiaoFeng.Mvc.AdminWinDesk | :white_check_mark: | XiaoFeng.Mvc后台皮肤 | 模仿windows桌面后台皮肤 |
 | FayElf.Cube.Blog | FayElf.Cube.Blog | :white_check_mark: | XiaoFeng.Mvc开发的技术博客 | 使用低代码开发框架（XiaoFeng.Mvc）+Windows后台皮肤(XiaoFeng.Mvc.AdminWinDesk)，开发的一个博客平台。 |
+| XiaoFeng.Ofd | XiaoFeng.Ofd | :white_check_mark: | OFD读写库 | OFD 读写处理库，支持文档的生成、文档编辑、文档批注、数字签名、文档合并、文档拆分、文档转换至PDF、文档查询等功能。 |
 
 
 # XiaoFeng 扩展方法
@@ -2011,6 +2012,12 @@ client.UnSubscribe("取消订阅频道");
 ---
 
 # 更新日志
+
+## 2024-03-29   v 5.0.5
+
+1.上传配置文件默认增加Image上传配置节点;
+
+2.优化SocketClient连接;
 
 ## 2024-03-15   v 5.0.4
 
