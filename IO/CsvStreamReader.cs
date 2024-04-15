@@ -54,7 +54,7 @@ namespace XiaoFeng.IO
         /// <summary>
         /// 文件流
         /// </summary>
-        public StreamReader Reader { get; set; }
+        private StreamReader Reader { get; set; }
         /// <summary>
         /// 基础流
         /// </summary>
@@ -184,7 +184,7 @@ namespace XiaoFeng.IO
             var index = 0;
             line.Each(a =>
             {
-                dt.Columns.Add($"csv--column-{index}");
+                dt.Columns.Add($"csv-column-{index}");
                 dr[index] = a;
                 index++;
             });

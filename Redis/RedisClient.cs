@@ -472,10 +472,8 @@ namespace XiaoFeng.Redis
                     this.Redis.Dispose();
                     this.Redis = null;
                 }
-                if (this.RedisPool != null)
-                {
-                    this.RedisPool.Dispose();
-                }
+                this.RedisPool?.Dispose();
+                if (StreamAsyncLock != null) StreamAsyncLock.Dispose();
             });
         }
         /// <summary>

@@ -150,9 +150,9 @@ namespace XiaoFeng.Log
         private static string GetFileHead => @"{0}
                     App Log  v4.5
 {0}
-            Company Name: FayElf(www.eelf.cn)
+            Copyright: FayElf(www.eelf.cn)
             Author      : jacky
-            QQ Code     : 7092734
+            QQ     : 7092734
             Email       : jacky@eelf.cn
             Create Time : {1}
 {0}

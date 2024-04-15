@@ -131,6 +131,16 @@ namespace XiaoFeng.Data
         /// </summary>
         [Description("配置Key")]
         public string AppKey { get; set; }
+        /// <summary>
+        /// 是否格式化字段
+        /// </summary>
+        [Description("是否格式化字段")]
+        public Boolean IsFormatField { get; set; }
+        /// <summary>
+        /// 格式化字段字符串
+        /// </summary>
+        [Description("格式化字段字符串")]
+        public string FormatField { get; set; }
         #endregion
 
         #region 方法

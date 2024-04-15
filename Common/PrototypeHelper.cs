@@ -1139,12 +1139,11 @@ namespace XiaoFeng
         public static SortedDictionary<string, string> GetQuerys(this string _)
         {
             if (_.IsNullOrEmpty()) return new SortedDictionary<string, string>();
-#if NETSTANDARD2_0
+
             using (var queryHelper = new QueryHelper(_))
-#else
-            using var queryHelper = new QueryHelper(_);
-#endif
-            return queryHelper.data;
+            {
+                return queryHelper.data;
+            }
         }
         /// <summary>
         /// 获取参数键值对

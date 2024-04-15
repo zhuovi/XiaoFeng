@@ -4,13 +4,14 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using XiaoFeng.Cache;
+using XiaoFeng.FastSql;
 using XiaoFeng.Json;
 /****************************************************************
-*  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
+*  Copyright © (2017) www.eelf.cn All Rights Reserved.          *
 *  Author : jacky                                               *
 *  QQ : 7092734                                                 *
-*  Email : jacky@fayelf.com                                     *
-*  Site : www.fayelf.com                                        *
+*  Email : jacky@eelf.cn                                        *
+*  Site : www.eelf.cn                                           *
 *  Create Time : 2017-12-18 11:05:38                            *
 *  Version : v 1.0.0                                            *
 *  CLR Version : 4.0.30319.42000                                *
@@ -28,14 +29,6 @@ namespace XiaoFeng.Data.SQL
     #region 单表存储结构
     /// <summary>
     /// DataSQL操作类
-    /// Verstion : 1.0.3
-    /// Author : jacky
-    /// Email : jacky@zhuovi.com
-    /// QQ : 7092734
-    /// Site : www.zhuovi.com
-    /// Create Time : 2017/12/18 11:05:38
-    /// Update Time : 2018/09/04 17:36:26
-    /// Description : 优化GetTop方法
     /// </summary>
     public class DataSQL
     {
@@ -207,9 +200,26 @@ namespace XiaoFeng.Data.SQL
         [JsonConverter(typeof(Json.StringEnumConverter))]
         public SQLType SQLType { get; set; }
         /// <summary>
-        /// 数据库驱动
+        /// FastSql 驱动
         /// </summary>
-        public ConnectionConfig Config { get; set; }
+        public IFastSql FastSql { get; set; }
+        /// <summary>
+        /// 数据库配置
+        /// </summary>
+        private ConnectionConfig _Config;
+        /// <summary>
+        /// 数据库配置
+        /// </summary>
+        public ConnectionConfig Config
+        {
+            get => this._Config; set
+            {
+                this._Config = value;
+                var FastSqlProviderType = Type.GetType($"XiaoFeng.FastSql.Providers.{value.ProviderType}");
+                if (FastSqlProviderType == null) return;
+                this.FastSql = (IFastSql)Activator.CreateInstance(FastSqlProviderType, new object[] { value });
+            }
+        }
         /// <summary>
         /// 执行SQL时长 单位为毫秒
         /// </summary>
@@ -285,7 +295,7 @@ namespace XiaoFeng.Data.SQL
         public virtual void SetOrderBy(string orderString)
         {
             if (orderString.IsNullOrEmpty()) return;
-            orderString = orderString.ReplacePattern(@"\s+order\s+by\s+", "").Trim(',');
+            orderString = orderString.RemovePattern(@"\s+order\s+by\s+").Trim(',');
             if (this.OrderByString.IsNullOrEmpty()) this.OrderByString = "";
             this.OrderByString += "{0}{1}".format(this.OrderByString == "" ? "" : ",", orderString);
         }

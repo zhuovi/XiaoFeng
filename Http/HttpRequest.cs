@@ -11,6 +11,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using XiaoFeng.Collections;
 using XiaoFeng.IO;
 using XiaoFeng.Net;
 /****************************************************************
@@ -130,9 +131,11 @@ namespace XiaoFeng.Http
             {
                 if (value.IsQuery())
                 {
-                    value.GetQuerys().Each(q =>
+                    var param = new ParameterCollection(value);
+                    param.AllKeys.Each(k =>
                     {
-                        this.AddCookie(q.Key, q.Value);
+                        this.AddCookie(k, param[k]);
+
                     });
                 }
             }
