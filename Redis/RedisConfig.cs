@@ -141,9 +141,9 @@ namespace XiaoFeng.Redis
             set => _Port = value;
         }
         /// <summary>
-        /// 帐号
+        /// 账号
         /// </summary>
-        [Description("帐号")]
+        [Description("账号")]
         public string User { get; set; }
         /// <summary>
         /// 密码

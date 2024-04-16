@@ -189,8 +189,7 @@ namespace XiaoFeng.Net
         /// <code>Convert.ToBase64String(Encoding.UTF8.GetBytes("jacky:eelf.cn"))</code>
         /// </para>
         /// <code>
-        /// 则上面的帐号密码输出为以下
-        /// 
+        /// 则上面的账号密码输出为以下
         /// Authorization: Basic amFja3k6ZWVsZi5jbg==
         /// </code>
         /// </remarks>

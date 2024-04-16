@@ -33,7 +33,7 @@ namespace XiaoFeng.Memcached
         /// <remarks>
         /// <para><see langword="格式"/> : [&lt;protocol&gt;]://[[&lt;username&gt;:&lt;password&gt;@]&lt;host&gt;:&lt;port&gt;][?&lt;ConnectionTimeout&gt;=10[&amp;&lt;ReadTimeout&gt;=10][&amp;&lt;WiteTimeout&gt;=10][&amp;&lt;PoolSize&gt;=10]]</para>
         /// <para><term>protocol</term> 协议，固定值为memcached</para>
-        /// <para><term>username</term> 帐号</para>
+        /// <para><term>username</term> 账号</para>
         /// <para><term>password</term> 密码</para>
         /// <para><term>host</term> 服务器地址或DNS</para>
         /// <para><term>port</term> 服务器端口 默认为11211</para>

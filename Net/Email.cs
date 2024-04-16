@@ -103,11 +103,11 @@ namespace XiaoFeng.Net
         /// </summary>
         public string BodyEncoding { get { return _BodyEncoding; } set { _BodyEncoding = value; } }
         /// <summary>
-        /// 用户帐号
+        /// 用户账号
         /// </summary>
         private string _UserName = "";
         /// <summary>
-        /// 用户帐号
+        /// 用户账号
         /// </summary>
         public string UserName { get { return _UserName; } set { _UserName = value; } }
         /// <summary>

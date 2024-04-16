@@ -214,7 +214,7 @@ where A.TABLE_NAME = '{0}' and A.TABLE_SCHEMA = database();".format(tableName)).
 CREATE TABLE `aaa` (
   `ID` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `UserName` varchar(30) DEFAULT NULL COMMENT '用户名称',
-  `UserAccount` varchar(30) NOT NULL DEFAULT '' COMMENT '用户帐号',
+  `UserAccount` varchar(30) NOT NULL DEFAULT '' COMMENT '用户账号',
   `UserPwd` varchar(50) DEFAULT '' COMMENT '用户密码',
   `Sex` varchar(10) DEFAULT '男' COMMENT '性别',
   `Pass` bit(1) DEFAULT b'0' COMMENT '是否显示',

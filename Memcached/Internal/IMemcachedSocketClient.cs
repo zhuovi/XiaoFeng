@@ -39,7 +39,7 @@ namespace XiaoFeng.Memcached.Internal
         /// <summary>
         /// 认证
         /// </summary>
-        /// <param name="username">帐号</param>
+        /// <param name="username">账号</param>
         /// <param name="password">密码</param>
         /// <returns></returns>
         Task<Boolean> AuthenticateAsync(string username, string password);

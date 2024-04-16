@@ -30,9 +30,9 @@ namespace XiaoFeng.FTP
 
         #region 属性
         /// <summary>
-        /// 帐号
+        /// 账号
         /// </summary>
-        [Description("帐号")]
+        [Description("账号")]
         public string UserName { get; set; }
         /// <summary>
         /// 密码
@@ -104,9 +104,9 @@ namespace XiaoFeng.FTP
         [Description("代理端口")]
         public int ProxyPort { get; set; }
         /// <summary>
-        /// 代理帐号
+        /// 代理账号
         /// </summary>
-        [Description("代理帐号")]
+        [Description("代理账号")]
         public string ProxyUserName { get; set; }
         /// <summary>
         /// 代理密码

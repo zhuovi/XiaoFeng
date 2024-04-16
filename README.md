@@ -987,7 +987,7 @@ memcached://memcached:123456@127.0.0.1:11211?ConnectionTimeout=10&ReadTimeout=10
 
 ```
 
-memcached   帐号
+memcached   账号
 
 123456      密码
 

@@ -62,7 +62,7 @@ namespace XiaoFeng.Net
         /// 设置网络地址
         /// </summary>
         /// <param name="netType">网络类型</param>
-        /// <param name="userName">帐号</param>
+        /// <param name="userName">账号</param>
         /// <param name="password">密码</param>
         /// <param name="host">主机</param>
         /// <param name="port">端口号</param>
@@ -71,7 +71,7 @@ namespace XiaoFeng.Net
         /// 设置网络地址
         /// </summary>
         /// <param name="netType">网络类型</param>
-        /// <param name="userName">帐号</param>
+        /// <param name="userName">账号</param>
         /// <param name="password">密码</param>
         /// <param name="host">主机</param>
         /// <param name="port">端口号</param>
@@ -135,11 +135,11 @@ namespace XiaoFeng.Net
             }
         }
         /// <summary>
-        /// 帐号
+        /// 账号
         /// </summary>
         private string _UserName;
         /// <summary>
-        /// 帐号
+        /// 账号
         /// </summary>
         public string UserName
         {
