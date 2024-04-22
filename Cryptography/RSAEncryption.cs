@@ -60,7 +60,7 @@ namespace XiaoFeng.Cryptography
             {
                 var PublicAndPrivateKey = rsa.ToXmlString(true);
                 var PublicKey = rsa.ToXmlString(false);
-                return new Tuple<string, string>(PublicAndPrivateKey, PublicKey);
+                return new Tuple<string, string>(PublicKey, PublicAndPrivateKey);
             }
         }
         /// <summary>
@@ -227,7 +227,7 @@ namespace XiaoFeng.Cryptography
             if (content.IsNullOrEmpty())
                 throw new Exception("数据内容不能为空.");
             content = content.RemovePattern(@"[\r\n]+");
-            if (content.StartsWith("-----BEGIN( RSA)? PUBLIC KEY-----", StringComparison.OrdinalIgnoreCase))
+            if (content.IsMatch(@"-----BEGIN( RSA)? PUBLIC KEY-----"))
             {
                 content = content.RemovePattern(@"-----(BEGIN|END)( RSA)? PUBLIC KEY-----");
                 return FromPEMPublicKey(content);
