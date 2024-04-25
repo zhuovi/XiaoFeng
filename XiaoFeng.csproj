@@ -29,7 +29,7 @@
 		<AssemblyOriginatorKeyFile>XiaoFeng.snk</AssemblyOriginatorKeyFile>
 		<PackageIcon>x.png</PackageIcon>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>修复HttpHelper传Cookie的bug;</PackageReleaseNotes>
+		<PackageReleaseNotes>修复HttpHelper传Cookie的bug;优化Xml序列化增加命名空间及前缀;优化Json序列化中自定义类型的解析;增加自定义类型设置 继承 IValue接口即可实现xml,json序列化;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>

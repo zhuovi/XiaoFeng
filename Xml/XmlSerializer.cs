@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Xml.Serialization;
 /****************************************************************
 *  Copyright © (2021) www.fayelf.com All Rights Reserved.      *
 *  Author : jacky                                              *
@@ -37,8 +38,9 @@ namespace XiaoFeng.Xml
         /// <param name="OmitNamespace">是否忽略命名空间</param>
         /// <param name="OmitComment">是否忽略注释</param>
         /// <param name="Indented">是否格式化</param>
+        /// <param name="namespaces">命名空间</param>
         /// <returns></returns>
-        public static string Serializer(object o, Encoding encoding = null, Boolean OmitXmlDeclaration = false, Boolean OmitEmptyNode = true, Boolean OmitNamespace = true, Boolean OmitComment = false, Boolean Indented = true)
+        public static string Serializer(object o, Encoding encoding = null, Boolean OmitXmlDeclaration = false, Boolean OmitEmptyNode = true, Boolean OmitNamespace = true, Boolean OmitComment = false, Boolean Indented = true, XmlSerializerNamespaces namespaces = null)
         {
             if (o.IsNullOrEmpty()) return string.Empty;
             var writer = new XmlWriterX(o)
@@ -50,7 +52,7 @@ namespace XiaoFeng.Xml
             writer.SerializerSetting.OmitNamespace = OmitNamespace;
             writer.SerializerSetting.OmitComment = OmitComment;
             writer.SerializerSetting.Indented = Indented;
-            writer.Write();
+            writer.Write(namespaces);
             using (var ms = new MemoryStream())
             {
                 writer.WriteTo(ms);

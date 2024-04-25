@@ -62,6 +62,8 @@ namespace XiaoFeng
             if (_ == null) return ValueTypes.Null;
             if (_.IsGenericType && _.GetGenericTypeDefinition() == typeof(Nullable<>))
                 _ = _.GetGenericArguments()[0];
+            if (_.GetInterface("IValue") != null)
+                return ValueTypes.IValue;
             if (_.IsValueType)
             {
                 if (_.IsEnum)
@@ -1783,7 +1785,11 @@ namespace XiaoFeng
             if (o.IsNullOrEmpty()) return null;
             /*判断是否是基础类型值类型*/
             ValueTypes BaseSourceType = sourceType.GetValueType();
-            if ((BaseSourceType == ValueTypes.Struct ||
+            if (BaseSourceType == ValueTypes.IValue)
+                return o.ToString().GetValue(targetType);
+            else if (BaseTargetType == ValueTypes.IValue)
+                return ((IValue)Activator.CreateInstance(targetType)).Parse(o.ToString());
+            else if ((BaseSourceType == ValueTypes.Struct ||
                 BaseSourceType == ValueTypes.Class)
                 && (
                 BaseTargetType == ValueTypes.Struct ||

@@ -108,6 +108,9 @@ namespace XiaoFeng.Xml
                     var element = new XmlValue
                     {
                         Name = reader.Name,
+                        LocalName = reader.LocalName,
+                        NamespaceURI = reader.NamespaceURI,
+                        Prefix = reader.Prefix,
                         ElementType = (XmlType)(int)reader.NodeType,
                         Depth = reader.Depth,
                         ParentElement = parentElement
@@ -123,6 +126,9 @@ namespace XiaoFeng.Xml
                             element.Attributes.Add(new XmlValue
                             {
                                 Name = reader.Name,
+                                LocalName = reader.LocalName,
+                                NamespaceURI = reader.NamespaceURI,
+                                Prefix = reader.Prefix,
                                 Value = DecodeString(reader.Value),
                                 ElementType = (XmlType)(int)XmlNodeType.Attribute,
                                 Depth = reader.Depth,
@@ -143,6 +149,9 @@ namespace XiaoFeng.Xml
                     parentElement.Append(new XmlValue
                     {
                         Name = reader.Name,
+                        LocalName = reader.LocalName,
+                        NamespaceURI = reader.NamespaceURI,
+                        Prefix = reader.Prefix,
                         Value = reader.Value,
                         ElementType = (XmlType)(int)reader.NodeType,
                         Depth = reader.Depth,
@@ -155,6 +164,9 @@ namespace XiaoFeng.Xml
                     parentElement.Append(new XmlValue
                     {
                         Name = reader.Name,
+                        LocalName = reader.LocalName,
+                        NamespaceURI = reader.NamespaceURI,
+                        Prefix = reader.Prefix,
                         Value = reader.Value,
                         ElementType = (XmlType)(int)reader.NodeType,
                         Depth = reader.Depth,
@@ -184,6 +196,9 @@ namespace XiaoFeng.Xml
                     var element = new XmlValue
                     {
                         Name = reader.Name,
+                        LocalName = reader.LocalName,
+                        NamespaceURI = reader.NamespaceURI,
+                        Prefix = reader.Prefix,
                         ElementType = (XmlType)(int)reader.NodeType,
                         Depth = reader.Depth,
                         ParentElement = parentElement
@@ -196,6 +211,9 @@ namespace XiaoFeng.Xml
                             element.Attributes.Add(new XmlValue
                             {
                                 Name = reader.Name,
+                                LocalName = reader.LocalName,
+                                NamespaceURI = reader.NamespaceURI,
+                                Prefix = reader.Prefix,
                                 Value = DecodeString(reader.Value),
                                 ElementType = (XmlType)(int)XmlNodeType.Attribute,
                                 Depth = reader.Depth,
@@ -219,6 +237,9 @@ namespace XiaoFeng.Xml
                     parentElement.Append(new XmlValue
                     {
                         Name = reader.Name,
+                        LocalName = reader.LocalName,
+                        NamespaceURI = reader.NamespaceURI,
+                        Prefix = reader.Prefix,
                         Value = reader.Value,
                         ElementType = (XmlType)(int)reader.NodeType,
                         Depth = reader.Depth,
@@ -231,6 +252,9 @@ namespace XiaoFeng.Xml
                     parentElement.Append(new XmlValue
                     {
                         Name = reader.Name,
+                        LocalName = reader.LocalName,
+                        NamespaceURI = reader.NamespaceURI,
+                        Prefix = reader.Prefix,
                         Value = reader.Value,
                         ElementType = (XmlType)(int)reader.NodeType,
                         Depth = reader.Depth,

@@ -47,8 +47,9 @@ namespace XiaoFeng
         /// <param name="OmitNamespace">是否忽略命名空间</param>
         /// <param name="OmitComment">是否忽略注释</param>
         /// <param name="Indented">是否格式化</param>
+        /// <param name="namespaces">命名空间</param>
         /// <returns></returns>
-        public static string EntityToXml<T>(this T t, Encoding encoding = null, Boolean OmitXmlDeclaration = false, Boolean OmitEmptyNode = true, Boolean OmitNamespace = true, Boolean OmitComment = false, Boolean Indented = true) => XmlSerializer.Serializer(t, encoding, OmitXmlDeclaration, OmitEmptyNode, OmitNamespace, OmitComment, Indented);
+        public static string EntityToXml<T>(this T t, Encoding encoding = null, Boolean OmitXmlDeclaration = false, Boolean OmitEmptyNode = true, Boolean OmitNamespace = true, Boolean OmitComment = false, Boolean Indented = true,System.Xml.Serialization.XmlSerializerNamespaces namespaces=null) => XmlSerializer.Serializer(t, encoding, OmitXmlDeclaration, OmitEmptyNode, OmitNamespace, OmitComment, Indented, namespaces);
         #endregion
 
         #region XML转对象

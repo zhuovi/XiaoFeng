@@ -240,6 +240,11 @@ namespace XiaoFeng.Json
                 WriteJsonValue(jsonValue);
                 return;
             }
+            if(value is IValue ivalue)
+            {
+                WriteString(ivalue.ToString());
+                return;
+            }
 
             //var ot = System.Diagnostics.Stopwatch.StartNew();
             //ot.Start();

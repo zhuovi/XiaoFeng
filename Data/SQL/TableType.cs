@@ -21,137 +21,164 @@ namespace XiaoFeng.Data.SQL
         /// 总表
         /// </summary>
         [Description("总表")]
+        [Prefix("TT")]
         TResult = 0,
         /// <summary>
         /// 第1张表
         /// </summary>
         [Description("第1张表")]
-        T1 = 1,
+        [Prefix("A")] 
+        T1 = 65,
         /// <summary>
         /// 第2张表
         /// </summary>
         [Description("第2张表")]
-        T2 = 2,
+        [Prefix("B")] 
+        T2 = 66,
         /// <summary>
         /// 第3张表
         /// </summary>
         [Description("第3张表")]
-        T3 = 3,
+        [Prefix("C")] 
+        T3 = 67,
         /// <summary>
         /// 第4张表
         /// </summary>
         [Description("第4张表")]
-        T4 = 4,
+        [Prefix("D")] 
+        T4 = 68,
         /// <summary>
         /// 第5张表
         /// </summary>
         [Description("第5张表")]
-        T5 = 5,
+        [Prefix("E")] 
+        T5 = 69,
         /// <summary>
         /// 第6张表
         /// </summary>
         [Description("第6张表")]
-        T6 = 6,
+        [Prefix("F")] 
+        T6 = 70,
         /// <summary>
         /// 第7张表
         /// </summary>
         [Description("第7张表")]
-        T7 = 7,
+        [Prefix("G")] 
+        T7 = 71,
         /// <summary>
         /// 第8张表
         /// </summary>
         [Description("第8张表")]
-        T8 = 8,
+        [Prefix("H")] 
+        T8 = 72,
         /// <summary>
         /// 第9张表
         /// </summary>
         [Description("第9张表")]
-        T9 = 9,
+        [Prefix("I")] 
+        T9 = 73,
         /// <summary>
         /// 第10张表
         /// </summary>
         [Description("第10张表")]
-        T10 = 10,
+        [Prefix("J")] 
+        T10 = 74,
         /// <summary>
         /// 第11张表
         /// </summary>
         [Description("第11张表")]
-        T11 = 11,
+        [Prefix("K")] 
+        T11 = 75,
         /// <summary>
         /// 第12张表
         /// </summary>
         [Description("第12张表")]
-        T12 = 12,
+        [Prefix("L")] 
+        T12 = 76,
         /// <summary>
         /// 第13张表
         /// </summary>
         [Description("第13张表")]
-        T13 = 13,
+        [Prefix("M")] 
+        T13 = 77,
         /// <summary>
         /// 第14张表
         /// </summary>
         [Description("第14张表")]
-        T14 = 14,
+        [Prefix("N")] 
+        T14 = 78,
         /// <summary>
         /// 第15张表
         /// </summary>
         [Description("第15张表")]
-        T15 = 15,
+        [Prefix("O")] 
+        T15 = 79,
         /// <summary>
         /// 第16张表
         /// </summary>
         [Description("第16张表")]
-        T16 = 16,
+        [Prefix("P")] 
+        T16 = 80,
         /// <summary>
         /// 第17张表
         /// </summary>
         [Description("第17张表")]
-        T17 = 17,
+        [Prefix("Q")] 
+        T17 = 81,
         /// <summary>
         /// 第18张表
         /// </summary>
         [Description("第18张表")]
-        T18 = 18,
+        [Prefix("R")] 
+        T18 = 82,
         /// <summary>
         /// 第19张表
         /// </summary>
         [Description("第19张表")]
-        T19 = 19,
+        [Prefix("S")] 
+        T19 = 83,
         /// <summary>
         /// 第20张表
         /// </summary>
         [Description("第20张表")]
-        T20 = 20,
+        [Prefix("T")] 
+        T20 = 84,
         /// <summary>
         /// 第21张表
         /// </summary>
         [Description("第21张表")]
-        T21 = 21,
+        [Prefix("U")] 
+        T21 = 85,
         /// <summary>
         /// 第22张表
         /// </summary>
         [Description("第22张表")]
-        T22 = 22,
+        [Prefix("V")] 
+        T22 = 86,
         /// <summary>
         /// 第23张表
         /// </summary>
         [Description("第23张表")]
-        T23 = 23,
+        [Prefix("W")] 
+        T23 = 87,
         /// <summary>
         /// 第24张表
         /// </summary>
         [Description("第24张表")]
-        T24 = 24,
+        [Prefix("X")] 
+        T24 = 88,
         /// <summary>
         /// 第25张表
         /// </summary>
         [Description("第25张表")]
-        T25 = 25,
+        [Prefix("Y")] 
+        T25 = 89,
         /// <summary>
         /// 第26张表
         /// </summary>
         [Description("第26张表")]
-        T26 = 26
+        [Prefix("Z")] 
+        T26 = 90
     }
     #endregion
 }

@@ -135,7 +135,7 @@ namespace XiaoFeng.Data
         /// 是否格式化字段
         /// </summary>
         [Description("是否格式化字段")]
-        public Boolean IsFormatField { get; set; }
+        public Boolean IsFormatField { get; set; } = true;
         /// <summary>
         /// 格式化字段字符串
         /// </summary>

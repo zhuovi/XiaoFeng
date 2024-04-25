@@ -90,6 +90,22 @@ namespace XiaoFeng.Xml
         /// 是否忽略命名空间
         /// </summary>
         public Boolean OmitNamespace { get; set; } = true;
+        /// <summary>
+        /// 获取或设置一个值，该值指示是否可对特定的 <see cref="System.Xml.XmlWriter"/> 实例使用异步 <see cref="System.Xml.XmlWriter"/> 方法。
+        /// </summary>
+        public bool Async { get; set; }
+        /// <summary>
+        /// 获取或设置一个值，该值指示调用 <see cref="System.Xml.XmlWriter.Close"/> 方法时 <see cref="System.Xml.XmlWriter"/> 是否也应关闭基础流或 <see cref="System.IO.TextWriter"/>。
+        /// </summary>
+        public bool CloseOutput { get; set; } = false;
+        /// <summary>
+        /// 获取或设置缩进时要使用的字符串。 在 <see cref="Indented"/> 属性设置为 true 时使用此设置。
+        /// </summary>
+        public string IndentChars { get; set; } = "  ";
+        /// <summary>
+        /// 获取或设置一个值，该值指示在调用 <see cref="System.Xml.XmlWriter.Close"/> 方法时 <see cref="System.Xml.XmlWriter"/> 是否会向所有未关闭的元素标记添加结束标记。
+        /// </summary>
+        public bool WriteEndDocumentOnClose { get; set; } = true;
         #endregion
     }
 }

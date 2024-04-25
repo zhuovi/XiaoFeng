@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 
 /****************************************************************
@@ -34,9 +36,21 @@ namespace XiaoFeng.Xml
 
         #region 属性
         /// <summary>
-        /// 名称
+        /// 限定名
         /// </summary>
         public string Name { get; set; }
+        /// <summary>
+        /// 本地名称
+        /// </summary>
+        public string LocalName { get; set; }
+        /// <summary>
+        /// 关联的命名空间前缀
+        /// </summary>
+        public string Prefix { get; set; }
+        /// <summary>
+        /// 命名空间 URI
+        /// </summary>
+        public string NamespaceURI { get; set; }
         /// <summary>
         /// 类型
         /// </summary>
@@ -147,7 +161,7 @@ namespace XiaoFeng.Xml
         /// <summary>
         /// 获取节点
         /// </summary>
-        /// <param name="name">名称</param>
+        /// <param name="name">限定名称</param>
         /// <returns></returns>
         public XmlValue GetElement(string name)
         {
@@ -157,7 +171,23 @@ namespace XiaoFeng.Xml
         /// <summary>
         /// 获取节点
         /// </summary>
-        /// <param name="name">名称</param>
+        /// <param name="name">限定名称</param>
+        /// <returns></returns>
+        public XmlValue GetElementByName(string name) => GetElement(name);
+        /// <summary>
+        /// 获取节点
+        /// </summary>
+        /// <param name="localName">本地名称</param>
+        /// <returns></returns>
+        public XmlValue GetElementByLocalName(string localName)
+        {
+            if (!this.HasChildNodes || this.ChildNodes.Count == 0) return null;
+            return this.ChildNodes.Find(a => a.LocalName.EqualsIgnoreCase(localName) && a.ElementType == XmlType.Element);
+        }
+        /// <summary>
+        /// 获取节点
+        /// </summary>
+        /// <param name="name">限定名称</param>
         /// <returns></returns>
         public XmlValue GetElements(string name)
         {
@@ -165,10 +195,35 @@ namespace XiaoFeng.Xml
             return new XmlValue()
             {
                 Name = name,
+                LocalName = name,
                 ElementType = XmlType.Array,
                 ParentElement = this,
                 Depth = this.Depth + 1,
                 ChildNodes = this.ChildNodes.Where(a => a.Name.EqualsIgnoreCase(name) && a.ElementType == XmlType.Element).ToList()
+            };
+        }
+        /// <summary>
+        /// 获取节点
+        /// </summary>
+        /// <param name="name">限定名称</param>
+        /// <returns></returns>
+        public XmlValue GetElementByNames(string name) => this.GetElements(name);
+        /// <summary>
+        /// 获取节点
+        /// </summary>
+        /// <param name="localName">本地名称</param>
+        /// <returns></returns>
+        public XmlValue GetElementByLocalNames(string localName)
+        {
+            if (!this.HasChildNodes || this.ChildNodes.Count == 0 || localName.IsNullOrEmpty()) return null;
+            return new XmlValue()
+            {
+                Name = LocalName.Split(':', StringSplitOptions.RemoveEmptyEntries).Last(),
+                LocalName = localName,
+                ElementType = XmlType.Array,
+                ParentElement = this,
+                Depth = this.Depth + 1,
+                ChildNodes = this.ChildNodes.Where(a => a.LocalName.EqualsIgnoreCase(localName) && a.ElementType == XmlType.Element).ToList()
             };
         }
         /// <summary>
@@ -217,6 +272,9 @@ namespace XiaoFeng.Xml
             else if (ValueType == ValueTypes.Enum)
             {
                 return this.Value.ToEnum(type);
+            }else if(ValueType== ValueTypes.IValue)
+            {
+                return this.Value.GetValue(type);
             }
             else
                 return this.Value.GetValue(type);
@@ -245,11 +303,11 @@ namespace XiaoFeng.Xml
                 var Name = m.Name;
                 var ArrayName = "";
                 var ItemName = "";
-                XmlValue xValue = xmlValue?.GetElement(Name);
+                XmlValue xValue = xmlValue?.GetElementByLocalName(Name);
                 if (m.IsDefined(typeof(XmlElementAttribute), false))
                 {
                     Name = m.GetCustomAttribute<XmlElementAttribute>().ElementName;
-                    xValue = xmlValue.GetElement(Name.IfEmpty(m.Name));
+                    xValue = xmlValue.GetElementByLocalName(Name.IfEmpty(m.Name));
                 }
                 else if (m.IsDefined(typeof(XmlArrayAttribute), false) || m.IsDefined(typeof(XmlArrayItemAttribute), false))
                 {
@@ -263,11 +321,11 @@ namespace XiaoFeng.Xml
                         //ArrayName = Name;
                     }
                     if (ArrayName.IsNotNullOrEmpty())
-                        _xmlValue = xmlValue?.GetElement(ArrayName);
+                        _xmlValue = xmlValue?.GetElementByLocalName(ArrayName);
                     if (m.IsDefined(typeof(XmlArrayItemAttribute), false))
                     {
                         ItemName = m.GetCustomAttribute<XmlArrayItemAttribute>().ElementName;
-                        xValue = (_xmlValue ?? xmlValue)?.GetElements(ItemName);
+                        xValue = (_xmlValue ?? xmlValue)?.GetElementByLocalNames(ItemName);
                     }
                 }
                 else if (m.IsDefined(typeof(XmlAttributeAttribute), false))
@@ -290,7 +348,7 @@ namespace XiaoFeng.Xml
                         {
                             if (xValue.HasChildNodes)
                             {
-                                xValue = xValue.GetElement(Path.Paths[i]);
+                                xValue = xValue.GetElementByLocalName(Path.Paths[i]);
                                 if (xValue == null) break;
                             }
                         }

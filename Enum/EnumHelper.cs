@@ -125,6 +125,11 @@ namespace XiaoFeng
         [Description("DataTable")]
         DataTable = 13,
         /// <summary>
+        /// IValue
+        /// </summary>
+        [Description("IValue")]
+        IValue = 14,
+        /// <summary>
         /// 其它
         /// </summary>
         [Description("其它")]
