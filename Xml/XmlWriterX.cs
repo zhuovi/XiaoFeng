@@ -175,7 +175,7 @@ namespace XiaoFeng.Xml
             else if (data is DateTime date)
             {
                 if (tagName.IsNotNullOrEmpty()) WriteStartElement(tagName, qualifiedName);
-                
+
                 if (isCData)
                     XmlWriter.WriteCData(date.ToString(this.SerializerSetting.DateTimeFormat));
                 else
@@ -374,15 +374,20 @@ namespace XiaoFeng.Xml
                           }
                           else if (_BaseType == ValueTypes.Array || _BaseType == ValueTypes.ArrayList || _BaseType == ValueTypes.IEnumerable || _BaseType == ValueTypes.List)
                           {
+                              var IsInterface = false;
                               if(ArrayName.IsNullOrEmpty() && ItemName.IsNullOrEmpty())
                               {
                                   ArrayName = FieldName;
                                   if(m is PropertyInfo p)
                                   {
-                                      ItemName = p.PropertyType.GetGenericArguments().FirstOrDefault()?.Name;
+                                      var typeName = p.PropertyType.GetGenericArguments().FirstOrDefault();
+                                      IsInterface = typeName.IsInterface;
+                                      ItemName = typeName?.Name;
                                   }else if (m is FieldInfo f)
                                   {
-                                      ItemName = f.FieldType.GetGenericArguments().FirstOrDefault()?.Name;
+                                      var typeName = f.FieldType.GetGenericArguments().FirstOrDefault();
+                                      IsInterface = typeName.IsInterface;
+                                      ItemName = typeName?.Name;
                                   }
                               }
                               if (ArrayName.IsNullOrEmpty())
@@ -390,15 +395,30 @@ namespace XiaoFeng.Xml
                                   if (!this.SerializerSetting.OmitArrayItemName && ItemName.IsNotNullOrEmpty())
                                       WriteStartElement(ItemName, qualifiedName);
                               }
-                              else
+                              else if (!IsInterface)
                                   WriteStartElement(ArrayName, qualifiedName);
-                              //if (!this.SerializerSetting.OmitArrayItemName && ItemName.IsNotNullOrEmpty())
-                              //    XmlWriter.WriteStartElement(FieldName);
+                              
                               if (value != null)
                               {
                                   foreach (var item in (IEnumerable)value)
                                   {
+                                      var elementName = string.Empty;
+                                      if (IsInterface)
+                                      {
+                                          var itemType = item.GetType();
+                                          if (itemType.IsDefined(typeof(XmlRootAttribute)))
+                                          {
+                                              elementName = itemType.GetCustomAttribute<XmlRootAttribute
+                                                  >()?.ElementName;
+                                          }
+                                          else
+                                              elementName = itemType.Name;
+                                          //WriteStartElement(elementName, qualifiedName);
+                                          ItemName = elementName;
+                                      }
                                       WriteValue(item, qualifiedName, false, ItemName.IfEmpty(this.SerializerSetting.OmitArrayItemName ? FieldName : item.GetType().Name));
+                                      //if (elementName.IsNotNullOrEmpty())
+                                         // XmlWriter.WriteEndElement();
                                   }
                               }
                               //else
@@ -408,7 +428,7 @@ namespace XiaoFeng.Xml
                                   if (!this.SerializerSetting.OmitArrayItemName && ItemName.IsNotNullOrEmpty())
                                       XmlWriter.WriteEndElement();
                               }
-                              else
+                              else if (!IsInterface)
                                   XmlWriter.WriteEndElement();
                           }
                           else
@@ -439,7 +459,24 @@ namespace XiaoFeng.Xml
                               }
                               else
                               {
+                                  if (m.IsDefined(typeof(XmlValueFormatAttribute), false))
+                                  {
+                                      try
+                                      {
+                                          var format = m.GetCustomAttribute<XmlValueFormatAttribute>().Format;
+                                          if (format.IsNotNullOrEmpty())
+                                          {
+                                              if (value is DateTime dv)
+                                                  value = dv.ToString(format);
+                                              else if (value is Guid g)
+                                                  value = g.ToString(format);
+                                          }
+                                      }
+                                      catch
+                                      {
 
+                                      }
+                                  }
                               }
                               WriteValue(value, qualifiedName, m.IsDefined(typeof(XmlCDataAttribute), false), m.IsDefined(typeof(XmlTextAttribute), false) ? "" : ItemName.IfEmpty(FieldName));
                           }

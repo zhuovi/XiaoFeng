@@ -12,7 +12,7 @@
 namespace XiaoFeng.Xml
 {
     /// <summary>
-    /// Json属性类
+    /// Xml属性类
     /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Interface | AttributeTargets.Parameter, AllowMultiple = false)]
     public sealed class XmlConverterAttribute : Attribute

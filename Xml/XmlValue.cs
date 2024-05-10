@@ -361,6 +361,64 @@ namespace XiaoFeng.Xml
                     else if (m is FieldInfo f)
                         f.SetValue(target, xValue?.ToObject(f.FieldType));
                 }
+                else if(xmlValue.HasChildNodes)
+                {
+                    Type iType = null;
+                    if (m is PropertyInfo p)
+                        iType = p.PropertyType;
+                    else if (m is FieldInfo f)
+                        iType = f.FieldType;
+                    if (iType != null)
+                    {                        
+                        var baseValueType = iType.GetValueType();
+                        if (baseValueType == ValueTypes.Array|| baseValueType == ValueTypes.List || baseValueType == ValueTypes.ArrayList || baseValueType == ValueTypes.IEnumerable)
+                        {
+                            var subType = iType.GetGenericArguments().FirstOrDefault();
+                            
+                            if (subType.IsInterface)
+                            {
+                                var types = new List<Type>();
+                                AppDomain.CurrentDomain.GetAssemblies().Each(a =>
+                                {
+                                    types.AddRange(a.GetTypes().Where(b => b.GetInterface(subType.Name) != null));
+                                });
+                                if(baseValueType == ValueTypes.Array)
+                                {
+                                    var array = Array.CreateInstance(subType, xmlValue.ChildNodes.Count);
+                                    var i = 0;
+                                    xmlValue.ChildNodes.Each(x =>
+                                    {
+                                        var name = x.LocalName;
+                                        var typeb = types.Find(a => a.Name == name);
+                                        if (typeb != null)
+                                            array.SetValue(x.ToObject(typeb, array.GetValue(i)), i++);
+                                    });
+                                    if (m is PropertyInfo pi)
+                                        pi.SetValue(target, array);
+                                    else if (m is FieldInfo fi)
+                                        fi.SetValue(target, array);
+                                }
+                                else
+                                {
+                                    subType = typeof(List<>).MakeGenericType(subType);
+                                    // 创建列表
+                                    var list = Activator.CreateInstance(subType) as IList;
+                                    xmlValue.ChildNodes.Each(x =>
+                                    {
+                                        var namea = x.LocalName;
+                                        var typea = types.Find(a => a.Name == namea);
+                                        if (typea != null)
+                                            list?.Add(x.ToObject(typea, null).GetValue(typea));
+                                    });
+                                    if (m is PropertyInfo pi)
+                                        pi.SetValue(target, list);
+                                    else if (m is FieldInfo fi)
+                                        fi.SetValue(target, list);
+                                }
+                            }
+                        }
+                    }
+                }
             });
             return target;
         }

@@ -2871,6 +2871,7 @@ namespace XiaoFeng
                     return _ = default;
                 case ValueTypes.Class:
                 case ValueTypes.Struct:
+                case ValueTypes.IValue:
                     return _ = Activator.CreateInstance<T>();
                 case ValueTypes.DataTable:
                     (_ as DataTable).Clear(); break;
