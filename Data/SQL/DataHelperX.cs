@@ -3645,9 +3645,9 @@ namespace XiaoFeng.Data.SQL
             for (int i = 0; i < func.Parameters.Count; i++)
             {
                 TableType tableType = (i + 1).ToEnum<TableType>();
-                string Name = func.Parameters[i].Name, Prefix = this.DataSQL.Prefix[tableType];
-                dTable.Add(Name, tableType);
-                dFunc.Add(FieldFormat(Name), Prefix);
+                string Name = func.Parameters[i].Name;
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(Name), (65 + i).ToCast<char>() + "");
             }
             if (func.Body is NewArrayExpression aex)
             {
@@ -3802,7 +3802,9 @@ namespace XiaoFeng.Data.SQL
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                string Name = func.Parameters[i].Name, /*TypeName = func.Parameters[i].Type.Name,*/ Prefix = this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                string Name = func.Parameters[i].Name, /*TypeName = func.Parameters[i].Type.Name,*/
+               //Prefix = this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                Prefix = (65 + i).ToCast<char>() + "";
                 //dFunc.Add(Name, Prefix);
                 dFunc.Add(FieldFormat(Name), Prefix);
             }
@@ -3928,7 +3930,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(FieldFormat(func.Parameters[i].Name), this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             Columns = ReplaceMatchTag(dFunc, Columns);
             this.DataSQL.SetColumns(Columns.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList<string>());
@@ -3966,7 +3969,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(FieldFormat(func.Parameters[i].Name), this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             Columns = ReplaceMatchTag(dFunc, Columns);
             /*dFunc.Each(k =>
@@ -4032,7 +4036,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(FieldFormat(func.Parameters[i].Name), this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             OrderByString = ReplaceMatchTag(dFunc, OrderByString);
             this.DataSQL.SetOrderBy(OrderByString);
@@ -4064,7 +4069,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(FieldFormat(func.Parameters[i].Name), this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             OrderByString = ReplaceMatchTag(dFunc, OrderByString);
             this.DataSQL.SetOrderBy(OrderByString);
@@ -4109,7 +4115,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(FieldFormat(func.Parameters[i].Name), this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             Columns = ReplaceMatchTag(dFunc, Columns);
             this.DataSQL.SetColumns(Columns.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList<string>());
@@ -4239,7 +4246,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(FieldFormat(func.Parameters[i].Name), this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             WhereString = ReplaceMatchTag(dFunc, WhereString);
             /*
@@ -4592,8 +4600,9 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             string _Bodys = func.Body.ToString();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                string Name = func.Parameters[i].Name, Prefix = this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
-                dFunc.Add(FieldFormat(Name), Prefix);
+                string Name = func.Parameters[i].Name;
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(Name), (65 + i).ToCast<char>() + "");
             }
             OnString = ReplaceMatchTag(dFunc, OnString);
             /*
@@ -4660,8 +4669,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             string _Bodys = func.Body.ToString();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                string Name = func.Parameters[i].Name, Prefix = this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
-                dFunc.Add(FieldFormat(Name), Prefix);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             OnString = ReplaceMatchTag(dFunc, OnString);
             /*
@@ -4720,7 +4729,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(FieldFormat(func.Parameters[i].Name), this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             Columns = ReplaceMatchTag(dFunc, Columns);
             this.DataSQL.SetColumns(Columns.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList<string>());
@@ -4755,7 +4765,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(FieldFormat(func.Parameters[i].Name), this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             Columns = ReplaceMatchTag(dFunc, Columns);
             /*
@@ -4822,7 +4833,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(FieldFormat(func.Parameters[i].Name), this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             OrderByString = ReplaceMatchTag(dFunc, OrderByString);
             this.DataSQL.SetOrderBy(OrderByString);
@@ -4854,7 +4866,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(FieldFormat(func.Parameters[i].Name), this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             OrderByString = ReplaceMatchTag(dFunc, OrderByString);
             this.DataSQL.SetOrderBy(OrderByString);
@@ -4916,7 +4929,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(func.Parameters[i].Name, this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(func.Parameters[i].Name, (65 + i).ToCast<char>() + "");
             }
             dFunc.Each(k =>
             {
@@ -5041,7 +5055,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(FieldFormat(func.Parameters[i].Name), this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             WhereString = ReplaceMatchTag(dFunc, WhereString);
             this.DataSQL.SetWhere(WhereString, TableType.TResult);
@@ -5370,8 +5385,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             string _Bodys = func.Body.ToString();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                string Name = func.Parameters[i].Name, Prefix = this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
-                dFunc.Add(FieldFormat(Name), Prefix);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             OnString = ReplaceMatchTag(dFunc, OnString);
             /*
@@ -5439,8 +5454,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             string _Bodys = func.Body.ToString();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                string Name = func.Parameters[i].Name, Prefix = this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
-                dFunc.Add(FieldFormat(Name), Prefix);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             OnString = ReplaceMatchTag(dFunc, OnString);
             /*
@@ -5521,7 +5536,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(FieldFormat(func.Parameters[i].Name), this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             Columns = ReplaceMatchTag(dFunc, Columns);
             this.DataSQL.SetColumns(Columns.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList<string>());
@@ -5556,7 +5572,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(FieldFormat(func.Parameters[i].Name), this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             Columns = ReplaceMatchTag(dFunc, Columns);
             /*
@@ -5624,7 +5641,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(FieldFormat(func.Parameters[i].Name), this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             OrderByString = ReplaceMatchTag(dFunc, OrderByString);
             this.DataSQL.SetOrderBy(OrderByString);
@@ -5656,7 +5674,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(FieldFormat(func.Parameters[i].Name), this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             OrderByString = ReplaceMatchTag(dFunc, OrderByString);
             this.DataSQL.SetOrderBy(OrderByString);
@@ -5719,7 +5738,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(func.Parameters[i].Name, this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(func.Parameters[i].Name, (65 + i).ToCast<char>() + "");
             }
             dFunc.Each(k =>
             {
@@ -5843,7 +5863,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(FieldFormat(func.Parameters[i].Name), this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             WhereString = ReplaceMatchTag(dFunc, WhereString);
             this.DataSQL.SetWhere(WhereString, TableType.TResult);
@@ -6177,8 +6198,9 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             string _Bodys = func.Body.ToString();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                string Name = func.Parameters[i].Name, Prefix = this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
-                dFunc.Add(FieldFormat(Name), Prefix);
+                string Name = func.Parameters[i].Name;
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(Name), (65 + i).ToCast<char>() + "");
             }
             OnString = ReplaceMatchTag(dFunc, OnString);
             /*
@@ -6246,7 +6268,9 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             string _Bodys = func.Body.ToString();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                string Name = func.Parameters[i].Name, /*TypeName = func.Parameters[i].Type.Name,*/ Prefix = this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                string Name = func.Parameters[i].Name, /*TypeName = func.Parameters[i].Type.Name,*/ 
+                Prefix = "";//this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                Prefix = (65 + i).ToCast<char>() + "";
                 dFunc.Add(FieldFormat(Name), Prefix);
             }
             OnString = ReplaceMatchTag(dFunc, OnString);
@@ -6331,7 +6355,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(FieldFormat(func.Parameters[i].Name), this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             Columns = ReplaceMatchTag(dFunc, Columns);
             this.DataSQL.SetColumns(Columns.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList<string>());
@@ -6366,7 +6391,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(FieldFormat(func.Parameters[i].Name), this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             Columns = ReplaceMatchTag(dFunc, Columns);
             /*
@@ -6434,7 +6460,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(FieldFormat(func.Parameters[i].Name), this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             OrderByString = ReplaceMatchTag(dFunc, OrderByString);
             this.DataSQL.SetOrderBy(OrderByString);
@@ -6466,7 +6493,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(FieldFormat(func.Parameters[i].Name), this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             OrderByString = ReplaceMatchTag(dFunc, OrderByString);
             this.DataSQL.SetOrderBy(OrderByString);
@@ -6528,7 +6556,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(func.Parameters[i].Name, this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(func.Parameters[i].Name, (65 + i).ToCast<char>() + "");
             }
             dFunc.Each(k =>
             {
@@ -6652,7 +6681,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(FieldFormat(func.Parameters[i].Name), this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             WhereString = ReplaceMatchTag(dFunc, WhereString);
 
@@ -6991,8 +7021,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             string _Bodys = func.Body.ToString();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                string Name = func.Parameters[i].Name, Prefix = this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
-                dFunc.Add(FieldFormat(Name), Prefix);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             OnString = ReplaceMatchTag(dFunc, OnString);
             /*
@@ -7060,7 +7090,9 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             string _Bodys = func.Body.ToString();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                string Name = func.Parameters[i].Name, /*TypeName = func.Parameters[i].Type.Name,*/ Prefix = this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                string Name = func.Parameters[i].Name, /*TypeName = func.Parameters[i].Type.Name,*/
+                Prefix = "";//this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                Prefix = (65 + i).ToCast<char>() + "";
                 dFunc.Add(FieldFormat(Name), Prefix);
             }
             OnString = ReplaceMatchTag(dFunc, OnString);
@@ -7149,7 +7181,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(FieldFormat(func.Parameters[i].Name), this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             Columns = ReplaceMatchTag(dFunc, Columns);
             this.DataSQL.SetColumns(Columns.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList<string>());
@@ -7184,7 +7217,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(FieldFormat(func.Parameters[i].Name), this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             Columns = ReplaceMatchTag(dFunc, Columns);
             /*
@@ -7252,7 +7286,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(FieldFormat(func.Parameters[i].Name), this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             OrderByString = ReplaceMatchTag(dFunc, OrderByString);
             this.DataSQL.SetOrderBy(OrderByString);
@@ -7284,7 +7319,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(FieldFormat(func.Parameters[i].Name), this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             OrderByString = ReplaceMatchTag(dFunc, OrderByString);
             this.DataSQL.SetOrderBy(OrderByString);
@@ -7346,7 +7382,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(func.Parameters[i].Name, this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(func.Parameters[i].Name, (65 + i).ToCast<char>() + "");
             }
             dFunc.Each(k =>
             {
@@ -7480,7 +7517,8 @@ select COUNT(0) as COUNT from {TableNameA} {JoinType} {TableNameB} {WhereString}
             Dictionary<string, string> dFunc = new Dictionary<string, string>();
             for (int i = 0; i < func.Parameters.Count; i++)
             {
-                dFunc.Add(FieldFormat(func.Parameters[i].Name), this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()]);
+                //this.DataSQL.Prefix[(i + 1).ToEnum<TableType>()];
+                dFunc.Add(FieldFormat(func.Parameters[i].Name), (65 + i).ToCast<char>() + "");
             }
             WhereString = ReplaceMatchTag(dFunc, WhereString);
 
