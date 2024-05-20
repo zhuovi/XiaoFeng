@@ -369,10 +369,30 @@ namespace XiaoFeng.FastSql.Providers
             sbr.Append(";");
             return sbr.ToString();
         }
+        /// <summary>
+        /// 插入SQL语句
+        /// </summary>
+        /// <returns></returns>
         public string GetInsertSqlString() { return string.Empty; }
+        /// <summary>
+        /// 更新SQL语句
+        /// </summary>
+        /// <returns></returns>
         public string GetUpdateSqlString() { return string.Empty; }
+        /// <summary>
+        /// 删除SQL语句
+        /// </summary>
+        /// <returns></returns>
         public string GetDeleteSqlString() { return string.Empty; }
+        /// <summary>
+        /// 查询SQL语句
+        /// </summary>
+        /// <returns></returns>
         public string GetSelectcSqlString() { return string.Empty; }
+        /// <summary>
+        /// 转换成SQL语句
+        /// </summary>
+        /// <returns></returns>
         public string ToSql() { return string.Empty; }
         #endregion
     }

@@ -441,13 +441,6 @@ namespace XiaoFeng.Net
         void AuthenticationEventHandler(string message);
         #endregion
 
-        #region 释放
-        /// <summary>
-        /// 释放
-        /// </summary>
-        void Dispose();
-        #endregion
-
         #endregion
     }
 }

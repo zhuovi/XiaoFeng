@@ -192,7 +192,7 @@ namespace XiaoFeng.Zip
         /// <summary>
         /// 释放资源
         /// </summary>
-        /// <param name="f"></param>
+        /// <param name="disposeValue">释放标识</param>
         protected virtual void Dispose(Boolean disposeValue)
         {
            
