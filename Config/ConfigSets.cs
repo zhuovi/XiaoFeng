@@ -8,6 +8,7 @@ using System.Text;
 using System.Xml.Serialization;
 using XiaoFeng.Cache;
 using XiaoFeng.IO;
+using XiaoFeng.Json;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -40,7 +41,7 @@ namespace XiaoFeng.Config
         /// 列表数据
         /// </summary>
         [Description("列表数据属性")]
-        [XmlArrayItem(nameof(TConfig))]
+        [JsonIgnore]
         public List<TConfig> List { get; set; }
         /// <summary>
         /// 获取配置
@@ -125,7 +126,7 @@ namespace XiaoFeng.Config
             if (this.List == null) return false;
             if (attr.Format == ConfigFormat.Json)
             {
-                val = this.ToJson(new Json.JsonSerializerSetting
+                val = this.List.ToJson(new Json.JsonSerializerSetting
                 {
                     Indented = indented,
                     IsComment = comment

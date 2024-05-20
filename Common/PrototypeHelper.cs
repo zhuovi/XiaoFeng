@@ -485,6 +485,7 @@ namespace XiaoFeng
         /// <returns></returns>
         public static object ToEnum(this object o, Type type, Boolean ignoreCase = true)
         {
+            if (type.IsGenericType) type = type.GetGenericArguments().First();
             if (!type.IsEnum || o.IsNullOrEmpty()) return null;
             Type t = o.GetType();
             if (t == type) return o;

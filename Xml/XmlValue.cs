@@ -298,6 +298,7 @@ namespace XiaoFeng.Xml
             Activator.CreateInstance(type);
             type.GetPropertiesAndFields(m =>
             {
+                if (m.IsDefined(typeof(XmlIgnoreAttribute))) return;
                 var PropertyType = m.MemberType == MemberTypes.Property ? (m as PropertyInfo).PropertyType : (m as FieldInfo).FieldType;
                 var ValueType = PropertyType.GetValueType();
                 var Name = m.Name;
