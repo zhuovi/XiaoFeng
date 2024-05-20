@@ -37,41 +37,41 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 5.0.5
+$ dotnet add package XiaoFeng --version 5.1.0
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 5.0.5
+PM> Install-Package XiaoFeng -Version 5.1.0
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="5.0.5" />
+<PackageReference Include="XiaoFeng" Version="5.1.0" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 5.0.5
+> paket add XiaoFeng --version 5.1.0
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 5.0.5"
+> #r "nuget: XiaoFeng, 5.1.0"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=5.0.5
+#addin nuget:?package=XiaoFeng&version=5.1.0
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=5.0.5
+#tool nuget:?package=XiaoFeng&version=5.1.0
 ```
 
 
@@ -2012,6 +2012,20 @@ client.UnSubscribe("取消订阅频道");
 ---
 
 # 更新日志
+
+## 2024-05-20   v 5.1.0
+
+1.修复HttpHelper传Cookie的bug;
+
+2.优化Xml序列化增加命名空间及前缀;
+
+3.优化Json序列化中自定义类型的解析;
+
+4.增加自定义类型设置继承 IValue接口即可实现xml,json序列化;
+
+5.优化ConfigSets类，解析出来的结构更加人性化;
+
+6.其它功能优化
 
 ## 2024-03-29   v 5.0.5
 
