@@ -256,6 +256,47 @@ namespace XiaoFeng.Config
             }
             return false;
         }
+        /// <summary>
+        /// 保存配置文件
+        /// </summary>
+        /// <param name="data">文件内容</param>
+        /// <returns></returns>
+        public virtual bool Save(string data)
+        {
+            var attr = this.ConfigFileAttribute;
+            if (attr == null) return false;
+            if (IsGenericPath(attr.FileName) && this[GetGenericKey(attr.FileName)].IsNullOrEmpty()) return false;
+            var configPath = this.GetConfigPath(attr.FileName);
+            var dirPath = configPath.GetDirectoryName();
+            if (!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
+            string val = "";
+            if (attr.Format == ConfigFormat.Json)
+            {
+                if (data.IsJson())
+                    val = data;
+                else
+                    return false;
+            }
+            else if (attr.Format == ConfigFormat.Xml)
+            {
+                if (data.IsXml())
+                    val = data;
+                else
+                    return false;
+            }
+            if (val.IsNotNullOrEmpty())
+            {
+                var f = FileHelper.WriteText(configPath, val, Encoding.UTF8);
+                /*
+                 * 更新缓存,有延迟,故直接清除缓存
+                 * Cache.CacheHelper.Set(attr.CacheKey, this as TConfig, attr.FileName);
+                 */
+                CacheFactory.Create(CacheType.Memory).Remove(this.GetConfigPath(attr.CacheKey));
+                this.Get(true);
+                return f;
+            }
+            return false;
+        }
         #endregion
 
         #region 打开文件

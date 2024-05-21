@@ -80,10 +80,10 @@ namespace XiaoFeng.Config
                     reLoad = true;
                 else
                 {
-                    var Config = new TConfig();
-                    typeof(TConfig).GetProperty("List", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase).SetValue(Config, val as List<TConfig>);
-
-                    return Config;
+                    //var Config = new TConfig();
+                    //typeof(TConfig).GetProperty("List", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase).SetValue(Config, val as List<TConfig>);
+                    this.List = val as List<TConfig>;
+                    return (TConfig)this;
                 }
             }
             if (reLoad)
@@ -104,9 +104,10 @@ namespace XiaoFeng.Config
                 }
                 if (this.ConfigFileAttribute == null) this.ConfigFileAttribute = attr;
                 cache.Set(attr.CacheKey, list, attr.FileName);
-                var Config = new TConfig();
-                typeof(TConfig).GetProperty("List", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase).SetValue(Config, list);
-                return Config;
+                //var Config = new TConfig();
+                //typeof(TConfig).GetProperty("List", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase).SetValue(Config, list);
+                this.List = list;
+                return (TConfig)this;
             }
             return null;
         }
