@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Xml;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -72,49 +73,6 @@ namespace XiaoFeng.Json
         /// <returns></returns>
         public void WriteValue(object value)
         {
-            /*if (value.IsNullOrEmpty())
-            {
-                Builder.Append("null");
-                return;
-            }
-            var t = value.GetType();
-            switch (Type.GetTypeCode(t))
-            {
-                case TypeCode.Empty:
-                    Builder.Append("null");break;
-                case TypeCode.String:
-                case TypeCode.Char:
-                    WriteString(value + "");break;
-                case TypeCode.Boolean:
-                    Builder.Append((value + "").ToLower());break;
-                case TypeCode.Int16:
-                case TypeCode.Int32:
-                case TypeCode.Int64:
-                case TypeCode.Double:
-                case TypeCode.Decimal:
-                case TypeCode.Single:
-                case TypeCode.Byte:
-                case TypeCode.SByte:
-                case TypeCode.UInt16:
-                case TypeCode.UInt32:
-                case TypeCode.UInt64:
-                    Builder.Append(value.ToString());break;
-                case TypeCode.DateTime:
-                    WriteDateTime((DateTime)value);break;
-                default:
-                    if (typeof(IEnumerable).IsAssignableFrom(t))
-                        WriteArray((IEnumerable)value);
-                    else
-                    {
-                        var ots = System.Diagnostics.Stopwatch.StartNew();
-                        ots.Start();
-                        WriteObject(value);
-                        ots.Stop();
-                        this.ObjectTimes += ots.ElapsedMilliseconds;
-                    }
-                    break;
-            }
-            return;*/
             if (value is Xml.XmlValue xmlValue)
             {
                 value = xmlValue.Value;
@@ -245,12 +203,7 @@ namespace XiaoFeng.Json
                 WriteString(ivalue.ToString());
                 return;
             }
-
-            //var ot = System.Diagnostics.Stopwatch.StartNew();
-            //ot.Start();
             WriteObject(value);
-            //ot.Stop();
-            //this.ObjectTimes += ot.ElapsedMilliseconds;
         }
         #endregion
 
@@ -261,7 +214,7 @@ namespace XiaoFeng.Json
         /// <param name="dateTime">时间</param>
         private void WriteDateTime(DateTime dateTime)
         {
-            Builder.AppendFormat("\"{0}\"", dateTime.ToString(this.SerializerSetting.DateTimeFormat));
+            Builder.AppendFormat($"\"{dateTime.ToString(this.SerializerSetting.DateTimeFormat)}\"");
         }
         #endregion
 
@@ -272,7 +225,7 @@ namespace XiaoFeng.Json
         /// <param name="guid">guid</param>
         private void WriteGuid(Guid guid)
         {
-            Builder.AppendFormat("\"{0}\"", guid.ToString(SerializerSetting.GuidFormat));
+            Builder.AppendFormat($"\"{guid.ToString(SerializerSetting.GuidFormat)}\"");
         }
         #endregion
 
@@ -284,8 +237,7 @@ namespace XiaoFeng.Json
         private void WriteObject(object obj)
         {
             //if (!_DepthDict.TryGetValue(obj, out var i)) _DepthDict.Add(obj, _DepthDict.Count + 1);
-            Builder.Append('{');
-            _Depth++;
+            FormatString('{');
             if (_Depth > SerializerSetting.MaxDepth) throw new JsonException("超过了序列化最大深度 " + SerializerSetting.MaxDepth);
             var t = obj.GetType();
             var first = true;
@@ -341,7 +293,6 @@ namespace XiaoFeng.Json
                 {
                     comment = m.GetDescription(false);
                     if (comment.IsNotNullOrEmpty()) comment = comment.RemovePattern(@"[\r\n\t]+");
-                    //if (desc.IsNotNullOrEmpty()) name = "/*{0}*/{1}".format(desc, name);
                 }
 
                 JsonConverterAttribute jsonConverter = m.GetCustomAttribute<JsonConverterAttribute>(false);
@@ -388,8 +339,7 @@ namespace XiaoFeng.Json
                 if (first && fw) first = false;
             });
             keys.Clear();
-            Builder.Append('}');
-            _Depth--;
+            FormatString('}');
         }
         #endregion
 
@@ -400,22 +350,22 @@ namespace XiaoFeng.Json
         /// <param name="data">数据表</param>
         private void WriteDataTable(DataTable data)
         {
-            Builder.Append('[');
+            FormatString('[');
             var first = true;
             data.Rows.Each<DataRow>(dr =>
             {
-                if (!first) Builder.Append(',');
-                Builder.Append('{');
-                first = false;
+                if (!first) FormatString(',');
+                else first = false;
+                FormatString('{');
                 var _first = true;
                 data.Columns.Each<DataColumn>(c =>
                 {
                     var fw = WritePair(c.ColumnName, dr[c.ColumnName], _first ? "" : ",");
                     if (_first && fw) _first = false;
                 });
-                Builder.Append('}');
+                FormatString('}');
             });
-            Builder.Append(']');
+            FormatString(']');
         }
         #endregion
 
@@ -429,11 +379,8 @@ namespace XiaoFeng.Json
             var first = true;
             dr.Table.Columns.Each<DataColumn>(c =>
             {
-                //if (!first) Builder.Append(',');
                 var fw = WritePair(c.ColumnName, dr[c.ColumnName], first ? "" : ",");
                 if (first && fw) first = false;
-                //Builder.Append("\"" + c.ColumnName + "\":");
-                //WriteValue(dr[c.ColumnName]);
             });
         }
         #endregion
@@ -445,7 +392,7 @@ namespace XiaoFeng.Json
         /// <param name="nvs">键值对</param>
         private void WriteNV(NameValueCollection nvs)
         {
-            Builder.Append('{');
+            FormatString('{');
             var first = true;
             foreach (string item in nvs)
             {
@@ -455,7 +402,7 @@ namespace XiaoFeng.Json
                     if (first && fw) first = false;
                 }
             }
-            Builder.Append('}');
+            FormatString('}');
         }
         /// <summary>
         /// 写键值对
@@ -472,13 +419,18 @@ namespace XiaoFeng.Json
                 if (value.GetType().GetInterface("ICollection", true) != null && ((ICollection)value).Count == 0) return false;
                 if (value is DataTable dt && dt.Rows.Count == 0) return false;
             }
-            if (prefix.IsNotNullOrEmpty()) Builder.Append(prefix);
+            if (prefix.IsNotNullOrEmpty())
+            {
+                //Builder.Append(prefix);
+                FormatString(prefix[0]);
+            }
             WriteStringFast(this.SerializerSetting.IgnoreCase ? name.ToLower() : name);
             if (comment.IsNotNullOrEmpty())
             {
                 Builder.Append($"/*{comment}*/");
             }
-            Builder.Append(':');
+            //Builder.Append(':');
+            FormatString(':');
             WriteValue(value);
             return true;
         }
@@ -491,14 +443,21 @@ namespace XiaoFeng.Json
         /// <param name="arr">数组</param>
         private void WriteArray(IEnumerable arr)
         {
-            Builder.Append('[');
-            foreach (var obj in arr)
+            FormatString('[');
+            var first = true;
+            foreach (var o in arr)
             {
-                this.WriteValue(obj);
-                Builder.Append(',');
+                if (!first)
+                    FormatString(',');
+                else
+                    first = false;
+                this.WriteValue(o);
             }
-            Builder = Builder.Replace(",", "", Builder.Length - 1, 1);
-            Builder.Append(']');
+            //var lastChar = ",";
+            //if (this.SerializerSetting.Indented)
+            //    lastChar += "\r\n" + GetIdentedString(2 * _Depth);
+            //Builder = Builder.Replace(lastChar, "", Builder.Length - lastChar.Length, lastChar.Length);
+            FormatString(']');
         }
         #endregion
 
@@ -509,14 +468,14 @@ namespace XiaoFeng.Json
         /// <param name="dic">字典</param>
         private void WriteSD(StringDictionary dic)
         {
-            Builder.Append('{');
+            FormatString('{');
             var first = true;
             foreach (DictionaryEntry item in dic)
             {
                 var fw = WritePair((string)item.Key, item.Value, first ? "" : ",");
                 if (first && fw) first = false;
             }
-            Builder.Append('}');
+            FormatString('}');
         }
         /// <summary>
         /// 写字典
@@ -524,14 +483,16 @@ namespace XiaoFeng.Json
         /// <param name="dic">字典</param>
         private void WriteStringDictionary(IDictionary<string, object> dic)
         {
-            Builder.Append('{');
+            //Builder.Append('{');
+            FormatString('{');
             var first = true;
             foreach (var item in dic)
             {
                 var fw = WritePair(item.Key, item.Value, first ? "" : ",");
                 if (first && fw) first = false;
             }
-            Builder.Append('}');
+            //Builder.Append('}');
+            FormatString('}');
         }
         /// <summary>
         /// 写字典
@@ -539,14 +500,16 @@ namespace XiaoFeng.Json
         /// <param name="dic">字典</param>
         private void WriteDictionary(IDictionary dic)
         {
-            Builder.Append('{');
+            //Builder.Append('{');
+            FormatString('{');
             var first = true;
             foreach (DictionaryEntry a in dic)
             {
                 var fw = WritePair(a.Key.ToString(), a.Value, first ? "" : ",");
                 if (first && fw) first = false;
             };
-            Builder.Append('}');
+            //Builder.Append('}');
+            FormatString('}');
         }
         #endregion
 
@@ -557,16 +520,7 @@ namespace XiaoFeng.Json
         /// <param name="str">字符串</param>
         private void WriteStringFast(string str)
         {
-            //var comment = "";
-            //if (str.IndexOfX("/*") > -1 && str.IndexOfX("*/") > -1 && str.IsMatch(@"^\/\*[\s\S]*?\*\/"))
-            //{
-            //    var _ = str.GetMatchs(@"^(?<a>\/\*[\s\S]*?\*\/)(?<b>[\s\S]*)$");
-            //    str = _["b"];
-            //    comment = _["a"];
-            //}
             Builder.Append($"\"{str}\"");
-            //if (comment.IsNotNullOrEmpty())
-            //    Builder.Append(" " + comment);
         }
         /// <summary>
         /// 写字符串
@@ -739,6 +693,46 @@ namespace XiaoFeng.Json
             return String.Concat(Enumerable.Repeat(this.SerializerSetting.IndentString, count));
         }
         #endregion
+
+        #region 格式化字符
+        /// <summary>
+        /// 格式化字符
+        /// </summary>
+        /// <param name="c">字符</param>
+        public void FormatString(char c)
+        {
+            if (!this.SerializerSetting.Indented)
+            {
+                Builder.Append(c);
+                return;
+            }
+            switch (c)
+            {
+                case '[':
+                case '{':
+                    Builder.Append(c);
+                    Builder.Append("\r\n");
+                    Builder.Append(GetIdentedString(++_Depth * 2));
+                    break;
+                case ']':
+                case '}':
+                    Builder.Append("\r\n");
+                    Builder.Append(GetIdentedString(--_Depth * 2));
+                    Builder.Append(c);
+                    break;
+                case ',':
+                    Builder.Append(c);
+                    Builder.Append("\r\n");
+                    Builder.Append(GetIdentedString(_Depth * 2));
+                    break;
+                case ':':
+                    Builder.Append(c);
+                    Builder.Append(this.SerializerSetting.IndentString);
+                    break;
+            }
+        }
+        #endregion
+
         #endregion
     }
 }

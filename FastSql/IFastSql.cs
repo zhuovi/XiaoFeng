@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using XiaoFeng.Data;
+using XiaoFeng.Json;
 
 /****************************************************************
 *  Copyright © (2024) www.eelf.cn All Rights Reserved.          *
@@ -28,10 +29,12 @@ namespace XiaoFeng.FastSql
         /// <summary>
         /// SQL 函数集
         /// </summary>
+        [JsonIgnore]
         Dictionary<string, string> SqlFunction { get; set; }
         /// <summary>
         /// 取反 SQL 函数集
         /// </summary>
+        [JsonIgnore] 
         Dictionary<string, string> SqlUnFunction { get; set; }
         /// <summary>
         /// 错误信息

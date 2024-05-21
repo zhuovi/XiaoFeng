@@ -202,6 +202,7 @@ namespace XiaoFeng.Data.SQL
         /// <summary>
         /// FastSql 驱动
         /// </summary>
+        [JsonIgnore]
         public IFastSql FastSql { get; set; }
         /// <summary>
         /// 数据库配置

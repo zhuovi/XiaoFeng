@@ -109,10 +109,7 @@ namespace XiaoFeng.Json
                 writer.WriteValue(value);
                 //Console.WriteLine("object:"+writer.ObjectTimes);
                 var json = writer.Builder.ToString();
-                //var ft = System.Diagnostics.Stopwatch.StartNew();
-                //ft.Start();
-                if (formatterSetting.Indented) json = writer.Format(json);
-                //ft.Stop();
+                //if (formatterSetting.Indented) json = writer.Format(json);
                 //Console.WriteLine("format:"+ft.ElapsedMilliseconds);
                 return json;
             }

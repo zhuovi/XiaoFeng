@@ -9,7 +9,7 @@
 		<Copyright>CopyRight @ 2008-2025 魔法精灵(www.eelf.cn) QQ:7092734 Email:jacky@eelf.cn</Copyright>
 		<Company>魔法精灵</Company>
 		<VersionPrefix>5.1</VersionPrefix>
-		<VersionSuffix>0</VersionSuffix>
+		<VersionSuffix>1</VersionSuffix>
 		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
 		<FileVersion>$(Version)</FileVersion>
 		<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
@@ -29,7 +29,7 @@
 		<AssemblyOriginatorKeyFile>XiaoFeng.snk</AssemblyOriginatorKeyFile>
 		<PackageIcon>x.png</PackageIcon>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>修复HttpHelper传Cookie的bug;优化Xml序列化增加命名空间及前缀;优化Json序列化中自定义类型的解析;增加自定义类型设置 继承 IValue接口即可实现xml,json序列化;优化ConfigSets类，解析出来的结构更加人性化;</PackageReleaseNotes>
+		<PackageReleaseNotes>ConfigSet类增加直接保存文件内容方法 Save(string data);优化Json序列化中格式化字符串效率，在原来序列化后再格式化优化为序列化过程中直接格式化，提高运行效率;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>

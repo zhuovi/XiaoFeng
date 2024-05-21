@@ -597,6 +597,7 @@ namespace XiaoFeng.Net
             {
                 this._Active = false;
             }
+            this.Client?.Close();
         }
         #endregion
 

@@ -90,7 +90,9 @@ namespace XiaoFeng.Data
             DbProviderFactory factory = null;
             try
             {
-                var type = Type.GetType(providerName);
+                Type type = null;
+                try { type = Type.GetType(providerName); }
+                catch (Exception ex) { }
                 if (type == null)
                 {
                     if (providerType == DbProviderType.SqlServer)
