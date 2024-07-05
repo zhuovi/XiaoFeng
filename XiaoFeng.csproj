@@ -46,6 +46,7 @@
 		<None Include="XiaoFeng.snk" Pack="true" PackagePath="\" />
 	</ItemGroup>
 	<ItemGroup>
+		<Compile Remove="Config\ConfigurationHelper.cs" />
 		<Compile Remove="Data\DataMapping.cs" />
 		<Compile Remove="Json\JsonWriterX.cs" />
 		<Compile Remove="Json\XValue.cs" />

@@ -372,7 +372,7 @@ namespace XiaoFeng.Xml
                               //if (ArrayName.IsNullOrEmpty()) ArrayName = FieldName;
                           }
 
-                          if (_BaseType == ValueTypes.Anonymous || _BaseType == ValueTypes.Dictionary || _BaseType == ValueTypes.IDictionary)
+                          if (_BaseType == ValueTypes.Dictionary || _BaseType == ValueTypes.IDictionary)
                           {
                               WriteStartElement(FieldName, qualifiedName);
                               foreach (DictionaryEntry item in (IEnumerable)value)

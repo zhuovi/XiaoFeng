@@ -10,6 +10,8 @@
 namespace XiaoFeng.Config
 {
 #if NETFRAMEWORK
+    using System.Configuration;
+    using System;
     /// <summary>
     /// ConfigurationHelper 类说明
     /// </summary>

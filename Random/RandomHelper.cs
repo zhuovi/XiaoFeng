@@ -122,7 +122,7 @@ namespace XiaoFeng
 
         #region 获取区间数字
         /// <summary>
-        /// 获取区间数字
+        /// 获取区间数字 大于等于最小值 小于最大值
         /// </summary>
         /// <param name="min">最小值</param>
         /// <param name="max">最大值</param>
@@ -189,7 +189,7 @@ namespace XiaoFeng
 
         #region 获取区间数字
         /// <summary>
-        /// 获取区间数字
+        /// 获取区间数字 大于等于最小值 小于最大值
         /// </summary>
         /// <param name="min">最小值</param>
         /// <param name="max">最大值</param>
