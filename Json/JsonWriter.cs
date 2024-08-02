@@ -256,6 +256,7 @@ namespace XiaoFeng.Json
                 if (m.IsDefined(typeof(JsonIgnoreAttribute), false)) return;
 
                 string name = m.Name;
+
                 keys.Add(name);
 
                 if (!this.SerializerSetting.IgnoreJsonElement)
@@ -376,12 +377,14 @@ namespace XiaoFeng.Json
         /// <param name="dr">数据</param>
         private void WriteDataRow(DataRow dr)
         {
+            FormatString('{');
             var first = true;
             dr.Table.Columns.Each<DataColumn>(c =>
             {
                 var fw = WritePair(c.ColumnName, dr[c.ColumnName], first ? "" : ",");
                 if (first && fw) first = false;
             });
+            FormatString('}');
         }
         #endregion
 
