@@ -2286,6 +2286,20 @@ namespace XiaoFeng.Redis
         /// <returns></returns>
         Task<Dictionary<string, string>> GetConfigAsync(string key = "*");
         /// <summary>
+        /// 获取配置值
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="key">配置key</param>
+        /// <returns></returns>
+        T GetConfig<T>(string key);
+        /// <summary>
+        /// 获取配置值 异步
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="key">配置key</param>
+        /// <returns></returns>
+        Task<T> GetConfigAsync<T>(string key);
+        /// <summary>
         /// 设置配置
         /// </summary>
         /// <param name="key">配置名称</param>

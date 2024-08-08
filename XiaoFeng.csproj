@@ -6,7 +6,7 @@
 		<Authors>Jacky</Authors>
 		<Product>基础类库 数据库中间件</Product>
 		<Description>基础类库、数据库中间件、网络通讯中间件、Redis、Socket、HttpHelper、IQueryableX、Cache、FTP、JSON、XML、IO、配置、各种加密码算法、作业调度、正则、通用数据库操作，支持10多种数据库</Description>
-		<Copyright>CopyRight @ 2008-2025 魔法精灵(www.eelf.cn) QQ:7092734 Email:jacky@eelf.cn</Copyright>
+		<Copyright>CopyRight © 2008-2025 魔法精灵(www.eelf.cn) QQ:7092734 Email:jacky@eelf.cn</Copyright>
 		<Company>魔法精灵</Company>
 		<VersionPrefix>5.1</VersionPrefix>
 		<VersionSuffix>1</VersionSuffix>
@@ -24,12 +24,12 @@
 		<RepositoryUrl>https://github.com/zhuovi/XiaoFeng</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageProjectUrl>https://www.eelf.cn</PackageProjectUrl>
-		<PackageIconUrl>http://nuget.fayelf.com/x.png</PackageIconUrl>
+		<PackageIconUrl>https://www.eelf.cn/x.png</PackageIconUrl>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<AssemblyOriginatorKeyFile>XiaoFeng.snk</AssemblyOriginatorKeyFile>
 		<PackageIcon>x.png</PackageIcon>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>ConfigSet类增加直接保存文件内容方法 Save(string data);优化Json序列化中格式化字符串效率，在原来序列化后再格式化优化为序列化过程中直接格式化，提高运行效率;</PackageReleaseNotes>
+		<PackageReleaseNotes>ConfigSet类增加直接保存文件内容方法 Save(string data);优化Json序列化中格式化字符串效率，在原来序列化后再格式化优化为序列化过程中直接格式化，提高运行效率;优化redis已经在第几库了又设置当前库时不执行直接返回true;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>

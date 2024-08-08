@@ -250,6 +250,34 @@ namespace XiaoFeng.Redis
             return reader.OK ? reader.Value.ToDictionary<string, string>() : new Dictionary<string, string>();
         }
         /// <summary>
+        /// 获取配置值
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="key">配置key</param>
+        /// <returns></returns>
+        public T GetConfig<T>(string key)
+        {
+            var dic = this.GetConfig(key);
+            if (dic == null || dic.Count == 0) return default(T);
+            if (dic.TryGetValue(key, out var val))
+                return val.ToCast<T>();
+            return default(T);
+        }
+        /// <summary>
+        /// 获取配置值 异步
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="key">配置key</param>
+        /// <returns></returns>
+        public async Task<T> GetConfigAsync<T>(string key)
+        {
+            var dic = await this.GetConfigAsync(key);
+            if (dic == null || dic.Count == 0) return default(T);
+            if (dic.TryGetValue(key, out var val))
+                return val.ToCast<T>();
+            return default(T);
+        }
+        /// <summary>
         /// 设置配置
         /// </summary>
         /// <param name="key">配置名称</param>

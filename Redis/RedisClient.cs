@@ -381,6 +381,8 @@ namespace XiaoFeng.Redis
         /// <returns>是否设置成功</returns>
         public Boolean Select(int dbNum = 0)
         {
+            var curDbNum = this.Redis.DbNum.GetValueOrDefault();
+            if (Interlocked.CompareExchange(ref curDbNum, dbNum, dbNum) == dbNum) return true;
             if (this.Execute(CommandType.SELECT, null, result => result.OK, Math.Abs(dbNum)))
             {
                 this.Redis.DbNum = dbNum;

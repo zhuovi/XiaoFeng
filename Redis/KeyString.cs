@@ -530,7 +530,7 @@ namespace XiaoFeng.Redis
         {
             if (key.IsNullOrEmpty()) return false;
             var args = new List<object>() { key, this.GetValue(value) };
-            if (timeSpan != null) args.Insert(1, timeSpan.Value.TotalSeconds);
+            if (timeSpan != null) args.Insert(1, (int)timeSpan.Value.TotalSeconds);
             return this.Execute(timeSpan != null ? CommandType.SETEX : CommandType.SET, dbNum, result => result.OK, args.ToArray());
         }
         /// <summary>

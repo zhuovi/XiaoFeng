@@ -55,6 +55,11 @@ namespace XiaoFeng.Redis
         /// 有序集合
         /// </summary>
         [Description("有序集合")]
-        ZSet = 5
+        ZSet = 5,
+        /// <summary>
+        /// 队列
+        /// </summary>
+        [Description("队列")]
+        Stream = 6,
     }
 }
