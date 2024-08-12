@@ -106,6 +106,14 @@ namespace XiaoFeng
         /// this索引器
         /// </summary>
         public const string Indexer = @"\s+Item\s+\[[^\[\]]+\]$";
+        /// <summary>
+        /// 内网IP正则
+        /// </summary>
+        public const string IntranetIp = @"(^(192\.168|10|172\.(1[6789]|2[0-9]|3[0-1]))\.|^(::1|127\.0\.0\.1)$)";
+        /// <summary>
+        /// 本地IP
+        /// </summary>
+        public const string LocalIp = @"^(::1|127.0.0.1)$";
         #endregion
 
         #endregion

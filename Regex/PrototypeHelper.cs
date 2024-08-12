@@ -237,6 +237,24 @@ namespace XiaoFeng
         /// <para><term>false</term> 不符合正则表达式</para>
         /// </returns>
         public static Boolean IsIP(this String _) { return _.IsMatch(RegexPattern.IP); }
+        /// <summary>
+        /// 是否是内网IP或本地IP
+        /// </summary>
+        /// <param name="_">字符串</param>
+        /// <returns>返回结果
+        /// <para><term>true</term> 符合正则表达式</para>
+        /// <para><term>false</term> 不符合正则表达式</para>
+        /// </returns>
+        public static Boolean IsIntranetIp(this String _) => _.IsMatch(RegexPattern.IntranetIp);
+        /// <summary>
+        /// 是否是本地IP
+        /// </summary>
+        /// <param name="_">字符串</param>
+        /// <returns>返回结果
+        /// <para><term>true</term> 符合正则表达式</para>
+        /// <para><term>false</term> 不符合正则表达式</para>
+        /// </returns>
+        public static Boolean IsLocalIp(this String _) => _.IsMatch(RegexPattern.LocalIp);
         #endregion
 
         #region 是否是bool格式

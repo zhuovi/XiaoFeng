@@ -8,6 +8,8 @@
 *  Version : v 1.0.0                                            *
 *  CLR Version : 4.0.30319.42000                                *
 *****************************************************************/
+using XiaoFeng.Data.SQL;
+
 namespace XiaoFeng.Json
 {
     /// <summary>
@@ -58,7 +60,20 @@ namespace XiaoFeng.Json
         /// <summary>
         /// 忽略大小写 key值统一变为小写
         /// </summary>
-        public bool IgnoreCase { get; set; } = false;
+        private bool _IgnoreCase = false;
+        /// <summary>
+        /// 忽略大小写 key值统一变为小写
+        /// </summary>
+        public bool IgnoreCase
+        {
+            get => this.PropertyNamingPolicy == PropertyNamingPolicy.LowerCase;
+            set
+            {
+                if (value)
+                    this.PropertyNamingPolicy = PropertyNamingPolicy.LowerCase;
+                this._IgnoreCase = value;
+            }
+        }
         /// <summary>
         /// 忽略空节点
         /// </summary>
@@ -71,6 +86,10 @@ namespace XiaoFeng.Json
         /// 长整型数字序列化成字符串（超过9007199254740992(2的53次方)的数字则前端会把后边数字给变成0）
         /// </summary>
         public bool LongSerializeString { get; set; } = false;
+        /// <summary>
+        /// 属性key命名规则
+        /// </summary>
+        public PropertyNamingPolicy PropertyNamingPolicy { get; set; } = PropertyNamingPolicy.Null;
         #endregion
     }
 }

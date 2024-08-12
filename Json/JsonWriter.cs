@@ -6,6 +6,7 @@ using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
 /****************************************************************
@@ -424,15 +425,13 @@ namespace XiaoFeng.Json
             }
             if (prefix.IsNotNullOrEmpty())
             {
-                //Builder.Append(prefix);
                 FormatString(prefix[0]);
             }
-            WriteStringFast(this.SerializerSetting.IgnoreCase ? name.ToLower() : name);
+            WriteKey(name);
             if (comment.IsNotNullOrEmpty())
             {
                 Builder.Append($"/*{comment}*/");
             }
-            //Builder.Append(':');
             FormatString(':');
             WriteValue(value);
             return true;
@@ -733,6 +732,41 @@ namespace XiaoFeng.Json
                     Builder.Append(this.SerializerSetting.IndentString);
                     break;
             }
+        }
+        #endregion
+
+        #region 写key
+        /// <summary>
+        /// 写key
+        /// </summary>
+        /// <param name="key">key</param>
+        private void WriteKey(string key)
+        {
+            var val = string.Empty;
+            if (key.IsNullOrEmpty())
+            {
+                Builder.Append($"\"{key}\"");
+                return;
+            }
+            switch (this.SerializerSetting.PropertyNamingPolicy)
+            {
+                case PropertyNamingPolicy.Null:
+                    val = key;
+                    break;
+                case PropertyNamingPolicy.LowerCase:
+                    val = key.ToLower();
+                    break;
+                case PropertyNamingPolicy.UpperCase:
+                    val = key.ToUpper();
+                    break;
+                case PropertyNamingPolicy.SmallCamelCase:
+                    val = key.ReplacePattern(@"^([a-z])", m => m.Groups[1].Value.ToLower()).ReplacePattern(@"_+([a-z])", m => m.Groups[1].Value.ToUpper());
+                    break;
+                case PropertyNamingPolicy.GreatCamelCase:
+                    val = key.ReplacePattern(@"^([a-z])", m => m.Groups[1].Value.ToUpper()).ReplacePattern(@"_+([a-z])", m => m.Groups[1].Value.ToUpper());
+                    break;
+            }
+            Builder.Append($"\"{val}\"");
         }
         #endregion
 
