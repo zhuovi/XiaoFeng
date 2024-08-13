@@ -1,6 +1,6 @@
 # XiaoFeng
 
-![fayelf](https://www.eelf.cn/logox.png)
+![fayelf](https://github.com/user-attachments/assets/b4ee80a1-adb1-4a4e-8edf-c3792506efa9)
 
 ![GitHub top language](https://img.shields.io/github/languages/top/zhuovi/xiaofeng?logo=github)
 ![GitHub License](https://img.shields.io/github/license/zhuovi/xiaofeng?logo=github)
