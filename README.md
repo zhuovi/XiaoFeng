@@ -1,6 +1,6 @@
 # XiaoFeng
 
-![fayelf](https://user-images.githubusercontent.com/16105174/197918392-29d40971-a8a2-4be4-ac17-323f1d0bed82.png)
+![fayelf](https://www.eelf.cn/logox.png)
 
 ![GitHub top language](https://img.shields.io/github/languages/top/zhuovi/xiaofeng?logo=github)
 ![GitHub License](https://img.shields.io/github/license/zhuovi/xiaofeng?logo=github)
@@ -15,7 +15,7 @@ Nuget：XiaoFeng
 | 748408911  | ![QQ 群](https://user-images.githubusercontent.com/16105174/198058269-0ea5928c-a2fc-4049-86da-cca2249229ae.png) | ![畅聊了个科技](https://user-images.githubusercontent.com/16105174/198059698-adbf29c3-60c2-4c76-b894-21793b40cf34.jpg) |
 
 
-源码： https://github.com/zhuovi/xiaofeng
+源码： https://github.com/zhuovi
 
 教程： https://www.eelf.cn
 
@@ -37,41 +37,41 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 5.1.0
+$ dotnet add package XiaoFeng --version 5.2.0
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 5.1.0
+PM> Install-Package XiaoFeng -Version 5.2.0
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="5.1.0" />
+<PackageReference Include="XiaoFeng" Version="5.2.0" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 5.1.0
+> paket add XiaoFeng --version 5.2.0
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 5.1.0"
+> #r "nuget: XiaoFeng, 5.2.0"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=5.1.0
+#addin nuget:?package=XiaoFeng&version=5.2.0
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=5.1.0
+#tool nuget:?package=XiaoFeng&version=5.2.0
 ```
 
 
@@ -1752,6 +1752,10 @@ public class JsonSerializerSetting
     /// 忽略空节点
     /// </summary>
     public bool OmitEmptyNode { get; set; } = false;
+    /// <summary>
+    /// 属性key命名规则 包括了 转成小写，大写，小驼峰，大驼峰规则
+    /// </summary>
+    public PropertyNamingPolicy PropertyNamingPolicy { get; set; } = PropertyNamingPolicy.Null;
     #endregion
 }
 ```
@@ -2012,6 +2016,20 @@ client.UnSubscribe("取消订阅频道");
 ---
 
 # 更新日志
+
+## 2024-08-13  v 5.2.0
+
+1.ConfigSet类增加直接保存文件内容方法 Save(string data);
+
+2.优化Json序列化中格式化字符串效率，在原来序列化后再格式化优化为序列化过程中直接格式化，提高运行效率;
+
+3.优化redis已经在第几库了又设置当前库时不执行直接返回true;
+
+4.增加判断是否是内网IP或本地IP;
+
+5.XiaoFeng Json中输出key规则增加小驼峰,大驼峰,小写,大写规则;
+
+6.其它功能优化
 
 ## 2024-05-20   v 5.1.0
 
