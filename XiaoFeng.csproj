@@ -29,7 +29,7 @@
 		<AssemblyOriginatorKeyFile>XiaoFeng.snk</AssemblyOriginatorKeyFile>
 		<PackageIcon>x.png</PackageIcon>
 		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>ConfigSet类增加直接保存文件内容方法 Save(string data);优化Json序列化中格式化字符串效率，在原来序列化后再格式化优化为序列化过程中直接格式化，提高运行效率;优化redis已经在第几库了又设置当前库时不执行直接返回true;增加判断是否是内网IP或本地IP;XiaoFeng Json中输出key规则增加小驼峰,大驼峰,小写,大写规则;</PackageReleaseNotes>
+		<PackageReleaseNotes>优化Configs中列表输出xml;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>

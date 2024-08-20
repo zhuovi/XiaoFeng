@@ -42,6 +42,7 @@ namespace XiaoFeng.Config
         /// </summary>
         [Description("列表数据属性")]
         [JsonIgnore]
+        [XmlArrayItem("Config")]
         public List<TConfig> List { get; set; }
         /// <summary>
         /// 获取配置

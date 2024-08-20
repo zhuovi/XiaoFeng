@@ -1,6 +1,6 @@
 # XiaoFeng
 
-![fayelf](https://www.eelf.cn/logox.png)
+![fayelf](https://camo.githubusercontent.com/4fb01e4715af3d34835b6872ef93a6b21c5371337d44c410d32e8d7c208e196a/68747470733a2f2f7777772e65656c662e636e2f6c6f676f782e706e67)
 
 ![GitHub top language](https://img.shields.io/github/languages/top/zhuovi/xiaofeng?logo=github)
 ![GitHub License](https://img.shields.io/github/license/zhuovi/xiaofeng?logo=github)
@@ -22,11 +22,12 @@ Nuget：XiaoFeng
 C#公用类库,包含了Redis,Memcached,Json,Xml,ADO.NET数据库操作兼容以下数据库（SQLSERVER,MYSQL,ORACLE,达梦,SQLITE,ACCESS,OLEDB,ODBC等数十种数据库）,正则表达式,QueryableX(ORM)和EF无缝对接,FTP,网络日志,调度器(作业),网络库(SocketServer,WebSocketServer,SocketClient,WebSocketClient),IO操作,加密算法(AES,DES,DES3,MD5,RSA,RC4,SHA等常用加密算法),超级好用的配置管理器,应用池,类型转换等功能。
 
 ## 感谢支持
-
+<!--| JetBrains | [![JetBrains](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg?_ga=2.18748729.1472960975.1710982503-1993260277.1703834590&_gl=1*1o75dn2*_ga*MTk5MzI2MDI3Ny4xNzAzODM0NTkw*_ga_9J976DJZ68*MTcxMDk4MjUwMi43LjEuMTcxMDk4NDUwOC4zOC4wLjA.)](https://jb.gg/OpenSourceSupport) |
+| Visual Studio | [![Visual Studio](https://visualstudio.microsoft.com/wp-content/uploads/2021/10/Product-Icon.svg)](https://visualstudio.microsoft.com/) |-->
 | 名称 | LOGO |
 | :----:| :----: |
-| JetBrains | [![JetBrains](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg?_ga=2.18748729.1472960975.1710982503-1993260277.1703834590&_gl=1*1o75dn2*_ga*MTk5MzI2MDI3Ny4xNzAzODM0NTkw*_ga_9J976DJZ68*MTcxMDk4MjUwMi43LjEuMTcxMDk4NDUwOC4zOC4wLjA.)](https://jb.gg/OpenSourceSupport) |
-| Visual Studio | [![Visual Studio](https://visualstudio.microsoft.com/wp-content/uploads/2021/10/Product-Icon.svg)](https://visualstudio.microsoft.com/) |
+| JetBrains | [![JetBrains](https://camo.githubusercontent.com/8dc9898d621b099ba0baef38e2255dc4a101a5fb0af5e10c7ee8f6104b2b4ad4/68747470733a2f2f7265736f75726365732e6a6574627261696e732e636f6d2f73746f726167652f70726f64756374732f636f6d70616e792f6272616e642f6c6f676f732f6a625f6265616d2e7376673f5f67613d322e31383734383732392e313437323936303937352e313731303938323530332d313939333236303237372e31373033383334353930265f676c3d312a316f3735646e322a5f67612a4d546b354d7a49324d4449334e7934784e7a417a4f444d304e546b772a5f67615f394a393736444a5a36382a4d5463784d446b344d6a55774d6934334c6a45754d5463784d446b344e4455774f43347a4f4334774c6a412e)](https://jb.gg/OpenSourceSupport) |
+| Visual Studio | [![Visual Studio](https://camo.githubusercontent.com/062bd93be4d796bb609715f79a861eac611ae9e43cf29e7d652f49b306c16b19/68747470733a2f2f76697375616c73747564696f2e6d6963726f736f66742e636f6d2f77702d636f6e74656e742f75706c6f6164732f323032312f31302f50726f647563742d49636f6e2e737667)](https://visualstudio.microsoft.com/) |
 
 ## XiaoFeng
 
