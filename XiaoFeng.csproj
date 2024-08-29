@@ -28,8 +28,8 @@
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<AssemblyOriginatorKeyFile>XiaoFeng.snk</AssemblyOriginatorKeyFile>
 		<PackageIcon>x.png</PackageIcon>
-		<PackageTags>XiaoFeng;FAYELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>优化Configs中列表输出xml;</PackageReleaseNotes>
+		<PackageTags>XiaoFeng;FAYELF;ELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
+		<PackageReleaseNotes>优化Configs中列表输出xml;增加Xml反序列化时接参可以字符串、字节组、数据流;优化NetUri中端口不录入根据NetType自动查询对应默认端口;优化HexStringToBytes扩展方法判断参数是否是16进制字符串;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>

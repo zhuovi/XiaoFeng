@@ -1674,6 +1674,10 @@ namespace XiaoFeng.Json
             }
             try
             {
+                if (type == typeof(String) && (jsonValue.Type == JsonType.Object || jsonValue.Type == JsonType.Array))
+                {
+                    target = jsonValue.ToJson(); return target;
+                }
                 if (target == null) target = Activator.CreateInstance(type);
             }
             catch

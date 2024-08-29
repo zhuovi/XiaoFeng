@@ -2348,6 +2348,7 @@ namespace XiaoFeng
         /// <returns></returns>
         public static byte[] HexStringToBytes(this string hexString)
         {
+            if (hexString.IsNullOrEmpty() || !hexString.IsHexString()) return Array.Empty<byte>();
             try
             {
                 hexString = hexString.RemovePattern(@"[\r\n\s]+");

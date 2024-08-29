@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Xml.Linq;
 using XiaoFeng.Xml;
@@ -49,7 +50,7 @@ namespace XiaoFeng
         /// <param name="Indented">是否格式化</param>
         /// <param name="namespaces">命名空间</param>
         /// <returns></returns>
-        public static string EntityToXml<T>(this T t, Encoding encoding = null, Boolean OmitXmlDeclaration = false, Boolean OmitEmptyNode = true, Boolean OmitNamespace = true, Boolean OmitComment = false, Boolean Indented = true,System.Xml.Serialization.XmlSerializerNamespaces namespaces=null) => XmlSerializer.Serializer(t, encoding, OmitXmlDeclaration, OmitEmptyNode, OmitNamespace, OmitComment, Indented, namespaces);
+        public static string EntityToXml<T>(this T t, Encoding encoding = null, Boolean OmitXmlDeclaration = false, Boolean OmitEmptyNode = true, Boolean OmitNamespace = true, Boolean OmitComment = false, Boolean Indented = true, System.Xml.Serialization.XmlSerializerNamespaces namespaces = null) => XmlSerializer.Serializer(t, encoding, OmitXmlDeclaration, OmitEmptyNode, OmitNamespace, OmitComment, Indented, namespaces);
         #endregion
 
         #region XML转对象
@@ -92,6 +93,38 @@ namespace XiaoFeng
         /// <param name="type">类型</param>
         /// <returns></returns>
         public static object XmlToEntity(this String xml, Type type = null) => XmlSerializer.Deserialize(xml, type);
+        /// <summary>
+        /// XML转对象
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="bytes">XML字节数组</param>
+        /// <param name="serializerSetting">反序列化配置</param>
+        /// <returns></returns>
+        public static T XmlToEntity<T>(this byte[] bytes, XmlSerializerSetting serializerSetting = null) => new MemoryStream(bytes).XmlToEntity<T>(serializerSetting);
+        /// <summary>
+        /// XML转对象
+        /// </summary>
+        /// <param name="bytes">XML字节数组</param>
+        /// <param name="type">类型</param>
+        /// <param name="serializerSetting">反序列化配置</param>
+        /// <returns></returns>
+        public static object XmlToEntity(this byte[] bytes, Type type, XmlSerializerSetting serializerSetting) => new MemoryStream(bytes).XmlToEntity(type, serializerSetting);
+        /// <summary>
+        /// XML转对象
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="stream">Xml流</param>
+        /// <param name="serializerSetting">反序列化配置</param>
+        /// <returns></returns>
+        public static T XmlToEntity<T>(this Stream stream, XmlSerializerSetting serializerSetting = null) => XmlSerializer.Deserialize<T>(stream, serializerSetting);
+        /// <summary>
+        /// XML转对象
+        /// </summary>
+        /// <param name="stream">Xml流</param>
+        /// <param name="type">类型</param>
+        /// <param name="serializerSetting">反序列化配置</param>
+        /// <returns></returns>
+        public static object XmlToEntity(this Stream stream, Type type, XmlSerializerSetting serializerSetting = null) => XmlSerializer.Deserialize(stream, type, serializerSetting);
         #endregion
 
         #region 获取节点

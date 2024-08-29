@@ -92,7 +92,7 @@ namespace XiaoFeng.Device
             {
                 var platform = OS.Platform.GetOSPlatform();
                 var result = CmdExecute(platform == PlatformOS.Windows ? "wmic baseboard get SerialNumber" : "dmidecode -s baseboard-serial-number");
-                return result.RemovePattern(@"^ProcessorID").RemovePattern(@"[\r\n\s]+");
+                return result.RemovePattern(@"^(ProcessorID|SerialNumber)").RemovePattern(@"[\r\n\s]+");
             }
         }
         #endregion

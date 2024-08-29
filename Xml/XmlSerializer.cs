@@ -64,20 +64,50 @@ namespace XiaoFeng.Xml
         /// </summary>
         /// <typeparam name="T">类型</typeparam>
         /// <param name="xml">xml内容</param>
+        /// <param name="serializerSetting">反序列化配置</param>
         /// <returns></returns>
-        public static T Deserialize<T>(String xml) => (T)Deserialize(xml, typeof(T));
+        public static T Deserialize<T>(String xml, XmlSerializerSetting serializerSetting = null) => (T)Deserialize(xml, typeof(T), serializerSetting);
         /// <summary>
         /// 反序列化
         /// </summary>
         /// <param name="xml">xml内容</param>
         /// <param name="type">类型</param>
+        /// <param name="serializerSetting">反序列化配置</param>
         /// <returns></returns>
-        public static object Deserialize(String xml, Type type)
+        public static object Deserialize(String xml, Type type, XmlSerializerSetting serializerSetting = null)
         {
             if (xml.IsNullOrEmpty()) return null;
             var reader = new XmlReaderX(xml, type)
             {
-                SerializerSetting = SerializerSetting
+                SerializerSetting = serializerSetting ?? SerializerSetting
+            };
+            if (reader == null) return null;
+            return reader.Read();
+        }
+        /// <summary>
+        /// 反序列化
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="stream">Xml文件流</param>
+        /// <param name="serializerSetting">序列化配置</param>
+        /// <returns></returns>
+        public static T Deserialize<T>(Stream stream, XmlSerializerSetting serializerSetting = null)
+        {
+            return (T)Deserialize(stream, typeof(T), serializerSetting);
+        }
+        /// <summary>
+        /// 反序列化
+        /// </summary>
+        /// <param name="stream">Xml文件流</param>
+        /// <param name="type">类型</param>
+        /// <param name="serializerSetting">序列化配置</param>
+        /// <returns></returns>
+        public static object Deserialize(Stream stream, Type type, XmlSerializerSetting serializerSetting = null)
+        {
+            if (stream == null) return null;
+            var reader = new XmlReaderX(stream, type)
+            {
+                SerializerSetting = serializerSetting ?? SerializerSetting
             };
             if (reader == null) return null;
             return reader.Read();

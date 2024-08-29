@@ -114,6 +114,10 @@ namespace XiaoFeng
         /// 本地IP
         /// </summary>
         public const string LocalIp = @"^(::1|127.0.0.1)$";
+        /// <summary>
+        /// 16进制
+        /// </summary>
+        public const string Hex = @"^[0-9a-f]+$";
         #endregion
 
         #endregion

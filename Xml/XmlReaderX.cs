@@ -35,16 +35,31 @@ namespace XiaoFeng.Xml
         /// <param name="type">类型</param>
         public XmlReaderX(string xml, Type type)
         {
-            this.Xml = xml;
+            //this.Xml = xml;
+            this.XmlStream = new MemoryStream(xml.GetBytes());
+            this.ObjectType = type;
+        }
+        /// <summary>
+        /// 初始化一个新的实例
+        /// </summary>
+        /// <param name="stream">Xml流</param>
+        /// <param name="type">类型</param>
+        public XmlReaderX(Stream stream,Type type)
+        {
+            this.XmlStream = stream;
             this.ObjectType = type;
         }
         #endregion
 
         #region 属性
-        /// <summary>
+        /*/// <summary>
         /// 数据
         /// </summary>
-        public string Xml { get; set; }
+        private string Xml { get; set; }*/
+        /// <summary>
+        /// Xml流
+        /// </summary>
+        private Stream XmlStream { get; set; }
         /// <summary>
         /// 类型
         /// </summary>
@@ -67,7 +82,7 @@ namespace XiaoFeng.Xml
         /// </summary>
         public XmlValue ParseXml()
         {
-            using (var reader = XmlReader.Create(new MemoryStream(this.Xml.GetBytes()), new XmlReaderSettings
+            using (var reader = XmlReader.Create(this.XmlStream, new XmlReaderSettings
             {
                 Async = true,
                 IgnoreComments = true,

@@ -508,6 +508,18 @@ namespace XiaoFeng
         }
         #endregion
 
+        #region 是否是16进制字符
+        /// <summary>
+        /// 是否是16进制字符
+        /// </summary>
+        /// <param name="_">字符串</param>
+        /// <returns>返回结果
+        /// <para><term>true</term> 符合规则</para>
+        /// <para><term>false</term> 不符合规则</para>
+        /// </returns>
+        public static Boolean IsHexString(this String _) => _.IsMatch(RegexPattern.Hex);
+        #endregion
+
         #endregion
     }
 }

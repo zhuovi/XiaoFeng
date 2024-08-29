@@ -303,7 +303,7 @@ namespace XiaoFeng.Net
             else if (userInfo.Length == 1)
                 this._Password = userInfo[0];
             this._Host = uri.Host;
-            this._Port = uri.Port == 0 ? this.NetType.GetPort() : uri.Port;
+            this._Port = uri.Port < 0 ? this.NetType.GetPort() : uri.Port;
             this._Query = uri.Query;
             if (this._Query.IsNotNullOrEmpty())
                 this._Parameters = new ParameterCollection(this._Query.TrimStart('?'));
