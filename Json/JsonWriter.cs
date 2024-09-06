@@ -748,24 +748,26 @@ namespace XiaoFeng.Json
                 Builder.Append($"\"{key}\"");
                 return;
             }
-            switch (this.SerializerSetting.PropertyNamingPolicy)
-            {
-                case PropertyNamingPolicy.Null:
-                    val = key;
-                    break;
-                case PropertyNamingPolicy.LowerCase:
-                    val = key.ToLower();
-                    break;
-                case PropertyNamingPolicy.UpperCase:
-                    val = key.ToUpper();
-                    break;
-                case PropertyNamingPolicy.SmallCamelCase:
-                    val = key.ReplacePattern(@"^([a-z])", m => m.Groups[1].Value.ToLower()).ReplacePattern(@"_+([a-z])", m => m.Groups[1].Value.ToUpper());
-                    break;
-                case PropertyNamingPolicy.GreatCamelCase:
-                    val = key.ReplacePattern(@"^([a-z])", m => m.Groups[1].Value.ToUpper()).ReplacePattern(@"_+([a-z])", m => m.Groups[1].Value.ToUpper());
-                    break;
-            }
+            if (!key.Contains('-'))
+                switch (this.SerializerSetting.PropertyNamingPolicy)
+                {
+                    case PropertyNamingPolicy.Null:
+                        val = key;
+                        break;
+                    case PropertyNamingPolicy.LowerCase:
+                        val = key.ToLower();
+                        break;
+                    case PropertyNamingPolicy.UpperCase:
+                        val = key.ToUpper();
+                        break;
+                    case PropertyNamingPolicy.SmallCamelCase:
+                        val = key.ReplacePattern(@"^([a-z])", m => m.Groups[1].Value.ToLower()).ReplacePattern(@"_+([a-z])", m => m.Groups[1].Value.ToUpper());
+                        break;
+                    case PropertyNamingPolicy.GreatCamelCase:
+                        val = key.ReplacePattern(@"^([a-z])", m => m.Groups[1].Value.ToUpper()).ReplacePattern(@"_+([a-z])", m => m.Groups[1].Value.ToUpper());
+                        break;
+                }
+            else val = key;
             Builder.Append($"\"{val}\"");
         }
         #endregion
