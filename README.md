@@ -38,41 +38,41 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 5.2.0
+$ dotnet add package XiaoFeng --version 5.2.1
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 5.2.0
+PM> Install-Package XiaoFeng -Version 5.2.1
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="5.2.0" />
+<PackageReference Include="XiaoFeng" Version="5.2.1" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 5.2.0
+> paket add XiaoFeng --version 5.2.1
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 5.2.0"
+> #r "nuget: XiaoFeng, 5.2.1"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=5.2.0
+#addin nuget:?package=XiaoFeng&version=5.2.1
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=5.2.0
+#tool nuget:?package=XiaoFeng&version=5.2.1
 ```
 
 
@@ -415,7 +415,7 @@ RandomHelper.GetRandomBytes(6);
 
 # 配置管理器 XiaoFeng.Config.ConfigSet<>
 
-通过继承当前类可以轻松实现配置文件的操作，缓存，增，删，改，查等功能.
+通过继承当前类可以轻松实现配置文件的操作，缓存，增，删，改，查等功能，还可实现配置文件的加密解密 。
 
 ## 用法实例
 
@@ -1083,7 +1083,7 @@ var result = await XiaoFeng.Http.HttpHelper.GetHtmlAsync(new XiaoFeng.Http.HttpR
 {
     Method = HttpMethod.Get,//不设置默认为Get请求
     HttpCore = HttpCore.HttpClient,//不设置默认为HttpClient内核
-    Address = "http://www.fayelf.com"
+    Address = "https://www.eelf.cn"
 });
 if (result.StatusCode == System.Net.HttpStatusCode.OK)
 {
@@ -1101,10 +1101,10 @@ else
 //第二种用法
 var result = await new HttpRequest{
     Method = HttpMethod.Get,
-    Address = "http://www.eelf.cn"
+    Address = "https://www.eelf.cn"
 }.GetResponseAsync();
 //第三种用法
-var result = await new HttpRequest("http://www.eelf.cn").SetMethod(HttpMethod.Get).GetResponseAsync();
+var result = await new HttpRequest("https://www.eelf.cn").SetMethod(HttpMethod.Get).GetResponseAsync();
 ```
 
 * POST 表单请求
@@ -1142,7 +1142,7 @@ var result = await XiaoFeng.Http.HttpHelper.GetHtmlAsync(new XiaoFeng.Http.HttpR
 {
     Method = HttpMethod.Post,
     ContentType = "application/json",
-    Address = "http://www.fayelf.com",
+    Address = "https://www.eelf.cn",
     BodyData = @"{""account"":""jacky"",""password"":""123456""}"
 });
 if (result.StatusCode == System.Net.HttpStatusCode.OK)
@@ -1167,7 +1167,7 @@ var result = await XiaoFeng.Http.HttpHelper.GetHtmlAsync(new XiaoFeng.Http.HttpR
 {
     Method = HttpMethod.Post,
     ContentType = "application/x-www-form-urlencoded",
-    Address = "http://www.fayelf.com",
+    Address = "https://www.eelf.cn",
     FormData = new List<XiaoFeng.Http.FormData>
     {
         new XiaoFeng.Http.FormData
@@ -1206,7 +1206,7 @@ else
 await XiaoFeng.Http.HttpHelper.Instance.DownFileAsync(new XiaoFeng.Http.HttpRequest
 {
     Method = HttpMethod.Get,
-    Address = "http://www.fayelf.com/test.rar"
+    Address = "https://www.eelf.cn/test.rar"
 }, @"E:/Work/test.rar");
 
 ```
@@ -2018,6 +2018,20 @@ client.UnSubscribe("取消订阅频道");
 ---
 
 # 更新日志
+
+## 2024-09-11  v 5.2.1
+
+1.优化Configs中列表输出xml;
+
+2.增加Xml反序列化时接参可以字符串、字节组、数据流;
+
+3.优化NetUri中端口不录入根据NetType自动查询对应默认端口;
+
+4.优化HexStringToBytes扩展方法判断参数是否是16进制字符串;
+
+5.扩展 MYSQL GROUP_CONCAT方法;
+
+6.其它功能优化;
 
 ## 2024-08-13  v 5.2.0
 

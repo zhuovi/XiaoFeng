@@ -9,7 +9,7 @@
 		<Copyright>CopyRight © 2008-2025 魔法精灵(www.eelf.cn) QQ:7092734 Email:jacky@eelf.cn</Copyright>
 		<Company>魔法精灵</Company>
 		<VersionPrefix>5.2</VersionPrefix>
-		<VersionSuffix>0</VersionSuffix>
+		<VersionSuffix>1</VersionSuffix>
 		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
 		<FileVersion>$(Version)</FileVersion>
 		<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
@@ -29,7 +29,7 @@
 		<AssemblyOriginatorKeyFile>XiaoFeng.snk</AssemblyOriginatorKeyFile>
 		<PackageIcon>x.png</PackageIcon>
 		<PackageTags>XiaoFeng;FAYELF;ELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>优化Configs中列表输出xml;增加Xml反序列化时接参可以字符串、字节组、数据流;优化NetUri中端口不录入根据NetType自动查询对应默认端口;优化HexStringToBytes扩展方法判断参数是否是16进制字符串;</PackageReleaseNotes>
+		<PackageReleaseNotes>优化Configs中列表输出xml;增加Xml反序列化时接参可以字符串、字节组、数据流;优化NetUri中端口不录入根据NetType自动查询对应默认端口;优化HexStringToBytes扩展方法判断参数是否是16进制字符串;扩展 MYSQL GROUP_CONCAT方法;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>

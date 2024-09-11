@@ -218,6 +218,7 @@ namespace XiaoFeng
                             if (m.MemberType == MemberTypes.Property)
                             {
                                 var p = m as PropertyInfo;
+                                if (!p.CanWrite) return;
                                 if (p.IsIndexer()) return;
                             }
                             this._AllKeys.Add(m.Name);

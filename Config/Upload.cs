@@ -56,7 +56,7 @@ namespace XiaoFeng.Config
         /// 生成文件名格式
         /// </summary>
         [Description("生成文件名格式")]
-        public string FileNameFormat { get; set; } = "ZW_{yyyy}{MM}{dd}{HH}{mm}{ss}{fff}_{rnd:4}.{ext}";
+        public string FileNameFormat { get; set; } = "ELF_{yyyy}{MM}{dd}{HH}{mm}{ss}{fff}_{rnd:4}.{ext}";
         /// <summary>
         /// 上传目录
         /// </summary>
