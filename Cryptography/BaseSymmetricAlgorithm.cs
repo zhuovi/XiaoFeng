@@ -56,13 +56,13 @@ namespace XiaoFeng.Cryptography
             {
                 encryptor.Mode = cipherMode;
                 encryptor.Padding = paddingMode;
-                //encryptor.Key = slatKey;
-                //encryptor.IV = vector;
+                encryptor.Key = slatKey;
+                encryptor.IV.Write(vector);
                 if (type == CryptographyType.Encrypt)
                 {
                     using (var memory = new MemoryStream())
                     {
-                        using (var encoder = new CryptoStream(memory, encryptor.CreateEncryptor(new byte[encryptor.Key.Length].Write(slatKey), new byte[encryptor.IV.Length].Write(vector)), CryptoStreamMode.Write))
+                        using (var encoder = new CryptoStream(memory, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
                         //using (var encoder = new CryptoStream(memory, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
                         {
                             encoder.Write(data, 0, data.Length);
@@ -77,7 +77,7 @@ namespace XiaoFeng.Cryptography
                     {
                         try
                         {
-                            using (var encoder = new CryptoStream(memory, encryptor.CreateDecryptor(new byte[encryptor.Key.Length].Write(slatKey), new byte[encryptor.IV.Length].Write(vector)), CryptoStreamMode.Read))
+                            using (var encoder = new CryptoStream(memory, encryptor.CreateDecryptor(), CryptoStreamMode.Read))
                             {
                                 using (var destMemory = new MemoryStream())
                                 {
