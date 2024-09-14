@@ -404,7 +404,8 @@ namespace XiaoFeng.Data
                         {"AvgSQL","AVG({0})" },
                         {"CastSQL","CAST({0} as {1})" },
                         {"StDevSQL","STDEV({0})" },
-                        {"StDevpSQL","STDEVP({0})" }
+                        {"StDevpSQL","STDEVP({0})" },
+                        {"GroupConcatSQL","GROUP_CONCAT({0})" }
                     };
                 }
                 return this._MySqlFun;
@@ -993,7 +994,9 @@ namespace XiaoFeng.Data
                 case DbProviderType.MySql:
                     _ = "`" + _ + "`"; break;
                 case DbProviderType.Dameng:
-                    _ = "\"" + _ + "\""; break;
+                     _ = "\"" + _ + "\"";
+                    break;
+                    
                 default:
                     break;
             }
