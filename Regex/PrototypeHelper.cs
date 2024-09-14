@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using XiaoFeng.Config;
+using XiaoFeng.IO;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -41,12 +42,7 @@ namespace XiaoFeng
         public static Boolean IsBasePath(this String _)
         {
             if (_.StartsWith("{*}")) return true;
-            var os = OS.Platform.GetOSPlatform();
-            if (os == PlatformOS.Linux)
-                return _.StartsWith("/");
-            if (os == PlatformOS.OSX)
-                return _.StartsWith("/");
-            return _.IsMatch(RegexPattern.BasePath);
+            return FileHelper.IsPathRoot(_);
         }
         #endregion
 

@@ -573,6 +573,19 @@ MIDI (mid)，文件头：4D546864
         public static long GetFolderSize(string path) => GetBasePath(path).ToDirectoryInfo().GetFiles("*.*", SearchOption.AllDirectories).Select(a => a.Length).Sum();
         #endregion
 
+        #region 是否是包含根目录
+        /// <summary>
+        /// 是否是包含根目录
+        /// </summary>
+        /// <param name="path">目录</param>
+        /// <returns></returns>
+        public static Boolean IsPathRoot(string path)
+        {
+            if (path.IsNullOrEmpty()) return false;
+            return OS.Platform.GetOSPlatform() == PlatformOS.Windows ? path.IsMatch(RegexPattern.BasePath) : path.StartsWith(DirectorySeparatorChar.ToString());
+        }
+        #endregion
+
         #region 获取文件路径
         /// <summary>
         /// 获取文件路径 如果是用绝对路径则前边可以加{*}或/则表示是根目录路径
@@ -588,18 +601,23 @@ MIDI (mid)，文件头：4D546864
                 return OS.Platform.GetOSPlatform() == PlatformOS.Windows ? _path : _path.ReplacePattern(@"(\\|\/)+", DirectorySeparatorChar.ToString());
             }
             /*
-             * 根目录路径
+             * 磁盘根目录路径
              */
             if (path.StartsWith("{*}"))
             {
                 path = "/" + path.SubstringX(3).TrimStart(new char[] { '/', '\\' });
+                
+                if (path == "/") return Path.GetPathRoot(GetCurrentDirectory());
+                var _Path = Path.GetFullPath(path);
+                return OS.Platform.GetOSPlatform() == PlatformOS.Windows ? _Path : _Path.ReplacePattern(@"(\\|\/)+", DirectorySeparatorChar.ToString());
             }
             /*
              * 家目录路径
              */
-            if (path.StartsWith("{Root}", StringComparison.OrdinalIgnoreCase) || path.StartsWith("{/}") || path.StartsWith("{RootPath}", StringComparison.OrdinalIgnoreCase))
+            if (path.IsMatch(@"^(\{(Root|RootPath|\/)\})?[\\/]*") || path.StartsWith("{Root}", StringComparison.OrdinalIgnoreCase) || path.StartsWith("{/}") || path.StartsWith("{RootPath}", StringComparison.OrdinalIgnoreCase) || path.StartsWith("/") || path.StartsWith("\\"))
             {
-                path = path.RemovePattern(@"\{(Root|RootPath|\/)\}[\\/]*");
+                path = path.RemovePattern(@"^(\{(Root|RootPath|\/)\})?[\\/]*");
+                if (path.IsNullOrEmpty() || path.Trim(new char[] { '/', '\\' }).IsNullOrEmpty()) return GetCurrentDirectory();
             }
             var _ = Path.GetFullPath(path);
             return OS.Platform.GetOSPlatform() == PlatformOS.Windows ? _ : _.ReplacePattern(@"(\\|\/)+", DirectorySeparatorChar.ToString());
