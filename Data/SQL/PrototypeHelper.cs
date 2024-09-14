@@ -551,6 +551,16 @@ namespace XiaoFeng.Data.SQL
         }
         #endregion
 
+        #region 扩展GROUP_CONCAT
+        /// <summary>
+        /// 扩展SQL GROUP_CONCAT
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="field">字段</param>
+        /// <returns></returns>
+        public static T GroupConcatSQL<T>(this T field) => field;
+        #endregion
+
         #endregion
     }
 }
