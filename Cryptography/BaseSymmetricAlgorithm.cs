@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Security.Cryptography;
+using XiaoFeng.IO;
 
 /****************************************************************
 *  Copyright © (2021) www.fayelf.com All Rights Reserved.       *
@@ -49,15 +50,29 @@ namespace XiaoFeng.Cryptography
         /// <param name="cipherMode">密码模式</param>
         /// <param name="paddingMode">填充类型</param>
         /// <returns></returns>
-        public byte[] Encode(byte[] data, byte[] slatKey, byte[] vector, SymmetricAlgorithmType algorithmType = SymmetricAlgorithmType.AES, CryptographyType type = CryptographyType.Encrypt, CipherMode cipherMode = CipherMode.CBC, PaddingMode paddingMode = PaddingMode.PKCS7)
+        public virtual byte[] Encode(byte[] data, byte[] slatKey, byte[] vector, SymmetricAlgorithmType algorithmType = SymmetricAlgorithmType.AES, CryptographyType type = CryptographyType.Encrypt, CipherMode cipherMode = CipherMode.CBC, PaddingMode paddingMode = PaddingMode.PKCS7)
         {
-            if (data == null) return null;
+            if (data == null) return Array.Empty<byte>();
             using (var encryptor = SymmetricAlgorithm.Create(algorithmType.GetDescription()))
             {
                 encryptor.Mode = cipherMode;
                 encryptor.Padding = paddingMode;
-                encryptor.Key = slatKey;
-                encryptor.IV.Write(vector);
+                //encryptor.Key = new byte[encryptor.Key.Length].Write(slatKey);
+                //encryptor.IV = new byte[encryptor.IV.Length].Write(vector);
+                if (slatKey.Length <= 16)
+                    encryptor.Key = new byte[16].Write(slatKey);
+                else if (slatKey.Length <= 24)
+                    encryptor.Key = new byte[24].Write(slatKey);
+                else if (slatKey.Length <= 32)
+                    encryptor.Key = new byte[32].Write(slatKey);
+                else encryptor.Key = new byte[32].Write(0, slatKey, 0, 32);
+
+                if (cipherMode != CipherMode.ECB)
+                {
+                    if (vector.Length <= 16)
+                        encryptor.IV = new byte[16].Write(vector);
+                    else encryptor.IV = new byte[16].Write(0, vector, 0, 16);
+                }
                 if (type == CryptographyType.Encrypt)
                 {
                     using (var memory = new MemoryStream())

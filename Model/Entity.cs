@@ -559,10 +559,10 @@ namespace XiaoFeng.Model
         /// </summary>
         /// <param name="func">委托</param>
         /// <returns></returns>
-        public Expression<Func<T,Boolean>> CreateWhere(Func<T,Boolean> func = null)
+        public Expression<Func<T,Boolean>> CreateWhere(Expression<Func<T,Boolean>> func = null)
         {
             Expression<Func<T, Boolean>> where = null;
-            if (func != null) where.And(a => func(a));
+            if (func != null) where = where.And(func);
             return where;
         }
         #endregion
