@@ -32,7 +32,7 @@ namespace XiaoFeng.IO
         /// </summary>
         /// <param name="_">路径</param>
         /// <returns></returns>
-        public static string GetBasePath(this string _) => FileHelper.GetBasePath(_);
+        public static string GetBasePath(this string _) => FileHelper.GetFullPathFunction(_);
         /// <summary>
         /// 复制目录到另一个目录
         /// </summary>

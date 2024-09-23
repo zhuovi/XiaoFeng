@@ -364,7 +364,79 @@ namespace XiaoFeng
         /// <param name="separator">连接字符串中间的字符</param>
         /// <returns></returns>
         public static String Join<T>(this IEnumerable<T> values, String separator = "") => string.Join(separator, values);
-        #endregion
+        /// <summary>
+        /// 数组转换成字符串
+        /// </summary>
+        /// <param name="values">数组对象</param>
+        /// <param name="separator">连接字符串中间的字符</param>
+        /// <returns></returns>
+        public static String Join(this String[] values, char separator) => JoinCore<String, char>(values, separator, 0, -1);
+        /// <summary>
+        /// 数组转换成字符串
+        /// </summary>
+        /// <param name="values">数组对象</param>
+        /// <param name="separator">连接字符串中间的字符</param>
+        /// <param name="startIndex">开始位置</param>
+        /// <param name="count">个数</param>
+        /// <returns></returns>
+        public static String Join(this String[] values, char separator, int startIndex, int count) => JoinCore<String, char>(values, separator, startIndex, count);
+        /// <summary>
+        /// 数组转换成字符串
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="values"></param>
+        /// <param name="separator"></param>
+        /// <returns></returns>
+        public static String Join<T>(this IEnumerable<T> values,char separator) => JoinCore<T,char>(values,separator,0,-1);
+        /// <summary>
+        /// 数组转换成字符串
+        /// </summary>
+        /// <typeparam name="T">数组类型</typeparam>
+        /// <typeparam name="T1">字符类型</typeparam>
+        /// <param name="values">数组</param>
+        /// <param name="separator">分隔符</param>
+        /// <param name="startIndex">开始位置</param>
+        /// <param name="count">数量</param>
+        /// <returns></returns>
+        private static String JoinCore<T,T1>(IEnumerable<T> values,T1 separator, int startIndex, int count)
+        {
+            if (values.IsNullOrEmpty()) return string.Empty;
+            if (separator.IsNullOrEmpty()) separator = default(T1);
+            var length = values.Count();
+            if (startIndex >= length) return string.Empty;
+            if (startIndex < 0) startIndex = 0;
+            if (count <= 0) count = length - startIndex;
+            else if (count + startIndex >= length) count = length - startIndex;
+            using (var enumerator = values.GetEnumerator())
+            {
+                if (!enumerator.MoveNext()) return string.Empty;
+                var sb = new StringBuilder();
+                var index = 1;
+
+                var current = enumerator.Current;
+                if ((object)current != null)
+                {
+                    sb.Append(current.ToStringX());
+                }
+                if (index < count)
+                {
+                    while (enumerator.MoveNext() && index < count)
+                    {
+                        index++;
+                        sb.Append(separator);
+                        current = enumerator.Current;
+                        if ((object)current != null)
+                        {
+                            var val = current.ToStringX();
+                            if (val.IsNotNullOrEmpty())
+                                sb.Append(val);
+                        }
+                    }
+                }
+                return sb.ToString();
+            }
+        }
+#endregion
 
         #region 键值对转换成对象
         /// <summary>
@@ -3138,6 +3210,7 @@ namespace XiaoFeng
         {
             if (o.IsNullOrEmpty()) return string.Empty;
             if (o is string _o) return _o;
+            if (o is char _c) return _c.ToString();
             var baseValueType = o.GetType().GetValueType();
             if (baseValueType == ValueTypes.String || baseValueType == ValueTypes.Value) return o.ToString();
             if (o is JsonValue jsonValue)

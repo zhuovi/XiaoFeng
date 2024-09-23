@@ -310,7 +310,7 @@ namespace XiaoFeng.Config
             var flag = "Encrypt";
             var content = string.Empty;
             var configPath = this.GetConfigPath(path);
-            if (!FileHelper.Exists(configPath)) return string.Empty;
+            if (!File.Exists(configPath)) return string.Empty;
 
             using (var fs = new FileStream(configPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
             {

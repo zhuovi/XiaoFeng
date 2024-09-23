@@ -39,7 +39,7 @@ namespace XiaoFeng.IO
         public static Boolean Exists(string path, FileAttribute attribute = FileAttribute.UnKnown)
         {
             if (path.IsNullOrEmpty()) return false;
-            var _path = GetBasePath(path);
+            var _path = GetFullPathFunction(path);
             if (attribute == FileAttribute.UnKnown)
                 attribute = _path.HasExtension() ? FileAttribute.File : FileAttribute.Directory;
             return attribute == FileAttribute.File ? File.Exists(_path) : Directory.Exists(_path);
@@ -54,7 +54,7 @@ namespace XiaoFeng.IO
         /// <param name="attribute">文件类型</param>
         public static void Create(string path, FileAttribute attribute = FileAttribute.UnKnown)
         {
-            var _path = GetBasePath(path);
+            var _path = GetFullPathFunction(path);
             if (attribute == FileAttribute.UnKnown)
                 attribute = path.HasExtension() ? FileAttribute.File : FileAttribute.Directory;
             if (attribute == FileAttribute.Directory)
@@ -82,7 +82,14 @@ namespace XiaoFeng.IO
         /// </summary>
         /// <param name="path">路径</param>
         /// <returns></returns>
-        public static void CreateDirectory(string path) => Create(path, FileAttribute.Directory);
+        public static DirectoryInfo CreateDirectory(string path)
+        {
+            if (path.IsNullOrEmpty()) return null;
+            var d = new DirectoryInfo(path.GetBasePath());
+            if (d.Exists) return d;
+            d.Create();
+            return d;
+        }
         #endregion
 
         #region 删除文件或目录
@@ -94,7 +101,7 @@ namespace XiaoFeng.IO
         public static void Delete(string path, FileAttribute attribute = FileAttribute.UnKnown)
         {
             if (path.IsNullOrEmpty()) return;
-            var _path = GetBasePath(path);
+            var _path = GetFullPathFunction(path);
             var file = new FileInfo(_path);
             if ((FileAttributes.ReadOnly | FileAttributes.System | FileAttributes.Offline | FileAttributes.Device).HasFlag(file.Attributes)) return;
             if (attribute == FileAttribute.UnKnown)
@@ -136,7 +143,7 @@ namespace XiaoFeng.IO
         public static byte[] OpenBytes(string path, int offset = 0, long length = 0)
         {
             if (path.IsNullOrEmpty()) return null;
-            var _path = GetBasePath(path);
+            var _path = GetFullPathFunction(path);
             if (!File.Exists(_path)) return null;
             byte[] bytes = Array.Empty<byte>();
             if (offset < 0) offset = 0;
@@ -179,7 +186,7 @@ namespace XiaoFeng.IO
         public static byte[] OpenReadMime(string path, int length = 4)
         {
             if (path.IsNullOrEmpty()) return null;
-            var _path = GetBasePath(path);
+            var _path = GetFullPathFunction(path);
             if (!File.Exists(_path)) return null;
             byte[] bytes = Array.Empty<byte>();
             if (length < 0) length = 4;
@@ -256,7 +263,7 @@ MIDI (mid)，文件头：4D546864
         public static Boolean WriteBytes(string path, byte[] bytes, int offset = 0)
         {
             if (path.IsNullOrEmpty()) return false;
-            var _path = GetBasePath(path);
+            var _path = GetFullPathFunction(path);
             Create(_path.GetDirectoryName(), FileAttribute.Directory);
             try
             {
@@ -350,13 +357,13 @@ MIDI (mid)，文件头：4D546864
         public static void DeleteDirectoryEmpty(string path, string root)
         {
             if (path.IsNullOrEmpty()) return;
-            var _path = GetBasePath(path);
+            var _path = GetFullPathFunction(path);
             if (!Directory.Exists(_path)) return;
             if (root.IsNullOrEmpty())
                 Directory.Delete(_path, true);
             else
             {
-                var _root = GetBasePath(root);
+                var _root = GetFullPathFunction(root);
                 if (!Directory.Exists(_root))
                     Directory.Delete(_path, true);
                 else
@@ -405,7 +412,7 @@ MIDI (mid)，文件头：4D546864
         {
             if (source.IsNullOrEmpty()) return false;
             if (newName.IsNullOrEmpty()) return false;
-            var _source = GetBasePath(source);
+            var _source = GetFullPathFunction(source);
             if (!File.Exists(_source)) return false;
             return MoveFile(source, source.ReplacePattern(DirectorySeparatorChar + @"[\s\S]+$", DirectorySeparatorChar + newName));
         }
@@ -421,9 +428,9 @@ MIDI (mid)，文件头：4D546864
         public static Boolean MoveFile(string source, string dest)
         {
             if (source.IsNullOrEmpty() || dest.IsNullOrEmpty()) return false;
-            var _source = GetBasePath(source);
+            var _source = GetFullPathFunction(source);
             if (!File.Exists(_source)) return false;
-            var _dest = GetBasePath(dest);
+            var _dest = GetFullPathFunction(dest);
             Create(Path.GetDirectoryName(_dest), FileAttribute.Directory);
             try
             {
@@ -448,10 +455,10 @@ MIDI (mid)，文件头：4D546864
         public static void MoveDirectory(string source, string dest)
         {
             if (source.IsNullOrEmpty()) return;
-            var _source = GetBasePath(source);
+            var _source = GetFullPathFunction(source);
             if (!Directory.Exists(_source)) return;
             if (dest.IsNullOrEmpty()) return;
-            var _dest = GetBasePath(dest);
+            var _dest = GetFullPathFunction(dest);
             if (!Directory.Exists(_dest)) Directory.CreateDirectory(Path.GetDirectoryName(_dest));
             MoveDirectory(new DirectoryInfo(_source), new DirectoryInfo(_dest));
         }
@@ -486,9 +493,9 @@ MIDI (mid)，文件头：4D546864
         public static Boolean CopyFile(string source, string dest)
         {
             if (source.IsNullOrEmpty() || dest.IsNullOrEmpty()) return false;
-            var _source = GetBasePath(source);
+            var _source = GetFullPathFunction(source);
             if (!File.Exists(_source)) return false;
-            var _dest = GetBasePath(dest);
+            var _dest = GetFullPathFunction(dest);
             if (!Directory.Exists(Path.GetDirectoryName(_dest))) Directory.CreateDirectory(Path.GetDirectoryName(_dest));
             try
             {
@@ -513,10 +520,10 @@ MIDI (mid)，文件头：4D546864
         public static void CopyDirectory(string source, string dest)
         {
             if (source.IsNullOrEmpty()) return;
-            var _source = GetBasePath(source);
+            var _source = GetFullPathFunction(source);
             if (!Directory.Exists(_source)) return;
             if (dest.IsNullOrEmpty()) return;
-            var _dest = GetBasePath(dest);
+            var _dest = GetFullPathFunction(dest);
             if (!Directory.Exists(_dest)) return;
             CopyDirectory(new DirectoryInfo(_source), new DirectoryInfo(_dest));
         }
@@ -570,7 +577,7 @@ MIDI (mid)，文件头：4D546864
         /// </summary>
         /// <param name="path">路径</param>
         /// <returns></returns>
-        public static long GetFolderSize(string path) => GetBasePath(path).ToDirectoryInfo().GetFiles("*.*", SearchOption.AllDirectories).Select(a => a.Length).Sum();
+        public static long GetFolderSize(string path) => GetFullPathFunction(path).ToDirectoryInfo().GetFiles("*.*", SearchOption.AllDirectories).Select(a => a.Length).Sum();
         #endregion
 
         #region 是否是包含根目录
@@ -586,13 +593,31 @@ MIDI (mid)，文件头：4D546864
         }
         #endregion
 
-        #region 获取文件路径
+        #region 获取文件全路径
         /// <summary>
-        /// 获取文件路径 如果是用绝对路径则前边可以加{*}或/则表示是根目录路径
+        /// 获取文件全路径
         /// </summary>
         /// <param name="path">路径</param>
         /// <returns></returns>
-        public static string GetBasePath(string path)
+        public static string GetFullPath(string path) => path.GetBasePath();
+        /// <summary>
+        /// 文件全路径函数
+        /// </summary>
+        private static Func<string, string> _GetFullPathFunction = a => GetBasePath(a);
+        /// <summary>
+        /// 获取文件全路径函数
+        /// </summary>
+        public static Func<string, string> GetFullPathFunction
+        {
+            get => _GetFullPathFunction;
+            set => _GetFullPathFunction = value;
+        }
+        /// <summary>
+        /// 获取文件全路径 如果是用绝对路径则前边可以加{*}或/则表示是根目录路径
+        /// </summary>
+        /// <param name="path">路径</param>
+        /// <returns></returns>
+        public static string GetBasePath(string path = "")
         {
             if (path.IsNullOrEmpty()) return GetCurrentDirectory();
             if (path.IsBasePath())
@@ -606,7 +631,7 @@ MIDI (mid)，文件头：4D546864
             if (path.StartsWith("{*}"))
             {
                 path = "/" + path.SubstringX(3).TrimStart(new char[] { '/', '\\' });
-                
+
                 if (path == "/") return Path.GetPathRoot(GetCurrentDirectory());
                 var _Path = Path.GetFullPath(path);
                 return OS.Platform.GetOSPlatform() == PlatformOS.Windows ? _Path : _Path.ReplacePattern(@"(\\|\/)+", DirectorySeparatorChar.ToString());
@@ -621,39 +646,6 @@ MIDI (mid)，文件头：4D546864
             }
             var _ = Path.GetFullPath(path);
             return OS.Platform.GetOSPlatform() == PlatformOS.Windows ? _ : _.ReplacePattern(@"(\\|\/)+", DirectorySeparatorChar.ToString());
-            /*
-                path = path.TrimEnd(new char[] { '\\', '/' });
-                if (!path.IsBasePath())
-            {
-                DirectoryInfo directoryInfo = GetCurrentDirectory().ToDirectoryInfo();
-                path = path.RemovePattern(@"^\.\/");
-                while (path.IsMatch(@"^\.\.\/"))
-                {
-                    path = path.RemovePattern(@"^\.\.\/");
-                    directoryInfo = directoryInfo.Parent;
-                }
-                path = directoryInfo.FullName + DirectorySeparatorChar + path;
-            }
-            else
-            {
-                if (path.StartsWith("{*}") || path.StartsWith("{/}"))
-                {
-                    path = path.RemovePattern(@"^\{(\*|\/)\}");
-                    var os = OS.Platform.GetOSPlatform();
-                    if (!path.IsBasePath())
-                    {
-                        if (os == PlatformOS.Windows)
-                        {
-                            path = GetCurrentDirectory().ToDirectoryInfo().Root.FullName + path.TrimStart(new char[] { '/', '\\' });
-                        }
-                        else
-                        {
-                            path = VolumeSeparatorChar + path.TrimStart(new char[] { '/', '\\' });
-                        }
-                    }
-                }
-            }
-            return path.ReplacePattern(@"[\/\\]+", DirectorySeparatorChar.ToString());*/
         }
         #endregion
 

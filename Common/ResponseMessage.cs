@@ -130,6 +130,75 @@ namespace XiaoFeng
         [XmlIgnore]
         public Encoding Encoding { get; set; } = Encoding.UTF8;
         #endregion
+
+        #region 方法
+        /// <summary>
+        /// 输出成功数据
+        /// </summary>
+        /// <param name="message">消息</param>
+        /// <param name="data">数据</param>
+        /// <param name="counts">条目</param>
+        /// <param name="other">其它数据</param>
+        /// <returns></returns>
+        public static ResponseMessage<T> Success(string message, T data, int? counts=null, object other=null)
+        {
+            return new ResponseMessage<T>()
+            {
+                Status = ResponseState.success,
+                Message = message,
+                Data = data,
+                Counts = counts,
+                Other = other
+            };
+        }
+        /// <summary>
+        /// 输出成功数据
+        /// </summary>
+        /// <param name="data">数据</param>
+        /// <param name="counts">条目</param>
+        /// <param name="other">其它数据</param>
+        /// <returns></returns>
+        public static ResponseMessage<T> Success(T data, int? counts = null, object other = null)
+        {
+            return new ResponseMessage<T>()
+            {
+                Status = ResponseState.success,
+                Data = data,
+                Counts = counts,
+                Other = other
+            };
+        }
+        /// <summary>
+        /// 输出错误数据
+        /// </summary>
+        /// <param name="message">消息</param>
+        /// <param name="data">数据</param>
+        /// <returns></returns>
+        public static ResponseMessage<T> Error(string message, T data)
+        {
+            return new ResponseMessage<T>
+            {
+                Status = ResponseState.error,
+                Message = message,
+                Data = data
+            };
+        }
+        /// <summary>
+        /// 输出警告数据
+        /// </summary>
+        /// <param name="message">消息</param>
+        /// <param name="data">数据</param>
+        /// <returns></returns>
+        public static ResponseMessage<T> Warn(string message, T data)
+        {
+            return new ResponseMessage<T>
+            {
+                Status = ResponseState.warning,
+                Message = message,
+                Data = data
+            };
+        }
+        #endregion
     }
 
     #region 输出消息
