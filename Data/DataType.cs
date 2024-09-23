@@ -75,6 +75,9 @@ namespace XiaoFeng.Data
                     case DbProviderType.Oracle:
                         _ = this.Oracle.ContainsKey(dataType) ? this.Oracle[dataType] : "VARCHAR";
                         break;
+                    case DbProviderType.Dameng:
+                        _ = this.Dameng.ContainsKey(dataType) ? this.Dameng[dataType] : "varchar";
+                        break;
                     default:
                         _ = "varchar";
                         break;
@@ -424,7 +427,7 @@ namespace XiaoFeng.Data
                         { "DOUBLE","Double" },
                         { "REAL","int" },
                         { "DOUBLE PRECISION","Double" },
-                        { "BIT","int"},
+                        { "BIT","Boolean"},
                         { "DATE","DateTime"},
                         { "TIME","DateTime"},
                         { "TIMESTAMP","DateTime"},
@@ -432,7 +435,6 @@ namespace XiaoFeng.Data
                         { "TIME WITH TIME ZONE","DateTime"},
                         { "DATETIME WITH TIME ZONE","DateTime"},
                         { "TIMESTAMP WITH LOCAL TIME ZONE","DateTime"},
-                        { "DATETIME WITH TIME ZONE","DateTime"},
                         { "INTERVAL YEAR","String"},
                         { "INTERVAL YEAR TO MONTH","String"},
                         { "INTERVAL MONTH","String"},
@@ -487,6 +489,9 @@ namespace XiaoFeng.Data
                     break;
                 case DbProviderType.Oracle:
                     _ = this.OracleToDotNet.ContainsKey(dbType) ? this.OracleToDotNet[dbType] : "string";
+                    break;
+                case DbProviderType.Dameng:
+                    _ = this.DamengToDotNet.ContainsKey(dbType) ? this.DamengToDotNet[dbType] : "string";
                     break;
                 default:
                     _ = "string";
