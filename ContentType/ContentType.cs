@@ -50,6 +50,7 @@ namespace XiaoFeng
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:命名样式", Justification = "<挂起>")]
         public static string get(string ext)
         {
+            ext = ext.Trim('.');
             return (ext.IsNullOrEmpty() || !Data.ContainsKey(ext)) ? "" : Data[ext];
         }
 

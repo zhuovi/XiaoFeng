@@ -39,11 +39,7 @@ namespace XiaoFeng
         /// <para><term>true</term> 符合正则表达式</para>
         /// <para><term>false</term> 不符合正则表达式</para>
         /// </returns>
-        public static Boolean IsBasePath(this String _)
-        {
-            if (_.StartsWith("{*}")) return true;
-            return FileHelper.IsPathRoot(_);
-        }
+        public static Boolean IsBasePath(this String _) => _.StartsWith("{*}") || FileHelper.IsPathRoot(_);
         #endregion
 
         #region 是否是汉字格式
@@ -55,7 +51,19 @@ namespace XiaoFeng
         /// <para><term>true</term> 符合正则表达式</para>
         /// <para><term>false</term> 不符合正则表达式</para>
         /// </returns>
-        public static Boolean IsChinese(this String _) { return _.IsMatch(RegexPattern.Chinese); }
+        public static Boolean IsChinese(this String _) { return _.IsMatch(Pattern.Chinese); }
+        #endregion
+
+        #region 是否包含汉字
+        /// <summary>
+        /// 是否包含汉字
+        /// </summary>
+        /// <param name="_">字符串</param>
+        /// <returns>返回结果
+        /// <para><term>true</term> 包含</para>
+        /// <para><term>false</term> 不包含</para>
+        /// </returns>
+        public static Boolean IsContainsChinese(this String _) => _.IsMatch(Pattern.Chinese.Trim(new char[] { '^', '$' }));
         #endregion
 
         #region 是否是字母格式
@@ -79,7 +87,7 @@ namespace XiaoFeng
         /// <para><term>true</term> 符合正则表达式</para>
         /// <para><term>false</term> 不符合正则表达式</para>
         /// </returns>
-        public static Boolean IsSite(this String _) { return _.IsMatch(RegexPattern.Site); }
+        public static Boolean IsSite(this String _) { return _.IsMatch(Pattern.Site); }
         #endregion
 
         #region 是否是FTP格式
@@ -91,7 +99,7 @@ namespace XiaoFeng
         /// <para><term>true</term> 符合正则表达式</para>
         /// <para><term>false</term> 不符合正则表达式</para>
         /// </returns>
-        public static Boolean IsFTP(this String _) { return _.IsMatch(RegexPattern.Ftp); }
+        public static Boolean IsFTP(this String _) { return _.IsMatch(Pattern.Ftp); }
         #endregion
 
         #region 是否是GUID格式
@@ -103,7 +111,7 @@ namespace XiaoFeng
         /// <para><term>true</term> 符合正则表达式</para>
         /// <para><term>false</term> 不符合正则表达式</para>
         /// </returns>
-        public static Boolean IsGuid(this String _) => _.Trim(new char[] { '{', '}', '(', ')' }).IsMatch(RegexPattern.Guid);
+        public static Boolean IsGuid(this String _) => _.Trim(new char[] { '{', '}', '(', ')' }).IsMatch(Pattern.Guid);
         /// <summary>
         /// 是否是UUID
         /// </summary>
@@ -124,7 +132,7 @@ namespace XiaoFeng
         /// <para><term>true</term> 符合正则表达式</para>
         /// <para><term>false</term> 不符合正则表达式</para>
         /// </returns>
-        public static Boolean IsEmail(this String _) { return _.IsMatch(RegexPattern.Email); }
+        public static Boolean IsEmail(this String _) { return _.IsMatch(Pattern.Email); }
         #endregion
 
         #region 是否是数字格式
@@ -160,7 +168,7 @@ namespace XiaoFeng
         /// <para><term>true</term> 符合正则表达式</para>
         /// <para><term>false</term> 不符合正则表达式</para>
         /// </returns>
-        public static Boolean IsTel(this String _) => _.IsMatch(RegexPattern.Tel);
+        public static Boolean IsTel(this String _) => _.IsMatch(Pattern.Tel);
         #endregion
 
         #region 是否是手机格式
@@ -172,7 +180,7 @@ namespace XiaoFeng
         /// <para><term>true</term> 符合正则表达式</para>
         /// <para><term>false</term> 不符合正则表达式</para>
         /// </returns>
-        public static Boolean IsPhone(this String _) => _.IsMatch(RegexPattern.Phone);
+        public static Boolean IsPhone(this String _) => _.IsMatch(Pattern.Phone);
         #endregion
 
         #region 是否是日期格式
@@ -184,7 +192,7 @@ namespace XiaoFeng
         /// <para><term>true</term> 符合正则表达式</para>
         /// <para><term>false</term> 不符合正则表达式</para>
         /// </returns>
-        public static Boolean IsDate(this String _) { return _.IsMatch(RegexPattern.Date); }
+        public static Boolean IsDate(this String _) { return _.IsMatch(Pattern.Date); }
         #endregion
 
         #region 是否是时间格式
@@ -196,7 +204,7 @@ namespace XiaoFeng
         /// <para><term>true</term> 符合正则表达式</para>
         /// <para><term>false</term> 不符合正则表达式</para>
         /// </returns>
-        public static Boolean IsTime(this String _) { return _.IsMatch(RegexPattern.Time); }
+        public static Boolean IsTime(this String _) { return _.IsMatch(Pattern.Time); }
         #endregion
 
         #region 是否是日期时间格式
@@ -208,7 +216,7 @@ namespace XiaoFeng
         /// <para><term>true</term> 符合正则表达式</para>
         /// <para><term>false</term> 不符合正则表达式</para>
         /// </returns>
-        public static Boolean IsDateTime(this String _) { return _.IsMatch(RegexPattern.DateTime); }
+        public static Boolean IsDateTime(this String _) { return _.IsMatch(Pattern.DateTime); }
         #endregion
 
         #region 是否是日期时间格式
@@ -220,7 +228,7 @@ namespace XiaoFeng
         /// <para><term>true</term> 符合正则表达式</para>
         /// <para><term>false</term> 不符合正则表达式</para>
         /// </returns>
-        public static Boolean IsDateOrTime(this String _) { return _.IsMatch(RegexPattern.DateOrTime); }
+        public static Boolean IsDateOrTime(this String _) { return _.IsMatch(Pattern.DateOrTime); }
         #endregion
 
         #region 是否是IP格式
@@ -232,7 +240,7 @@ namespace XiaoFeng
         /// <para><term>true</term> 符合正则表达式</para>
         /// <para><term>false</term> 不符合正则表达式</para>
         /// </returns>
-        public static Boolean IsIP(this String _) { return _.IsMatch(RegexPattern.IP); }
+        public static Boolean IsIP(this String _) { return _.IsMatch(Pattern.IP); }
         /// <summary>
         /// 是否是内网IP或本地IP
         /// </summary>
@@ -241,7 +249,7 @@ namespace XiaoFeng
         /// <para><term>true</term> 符合正则表达式</para>
         /// <para><term>false</term> 不符合正则表达式</para>
         /// </returns>
-        public static Boolean IsIntranetIp(this String _) => _.IsMatch(RegexPattern.IntranetIp);
+        public static Boolean IsIntranetIp(this String _) => _.IsMatch(Pattern.IntranetIp);
         /// <summary>
         /// 是否是本地IP
         /// </summary>
@@ -250,7 +258,7 @@ namespace XiaoFeng
         /// <para><term>true</term> 符合正则表达式</para>
         /// <para><term>false</term> 不符合正则表达式</para>
         /// </returns>
-        public static Boolean IsLocalIp(this String _) => _.IsMatch(RegexPattern.LocalIp);
+        public static Boolean IsLocalIp(this String _) => _.IsMatch(Pattern.LocalIp);
         #endregion
 
         #region 是否是bool格式
@@ -262,7 +270,7 @@ namespace XiaoFeng
         /// <para><term>true</term> 符合正则表达式</para>
         /// <para><term>false</term> 不符合正则表达式</para>
         /// </returns>
-        public static Boolean IsBoolean(this String _) { return _.IsMatch(RegexPattern.Boolean); }
+        public static Boolean IsBoolean(this String _) { return _.IsMatch(Pattern.Boolean); }
         #endregion
 
         #region 指定字符串是否为 null 或 System.String.Empty 字符串
@@ -422,7 +430,7 @@ namespace XiaoFeng
         /// <para><term>true</term> 符合正则表达式</para>
         /// <para><term>false</term> 不符合正则表达式</para>
         /// </returns>
-        public static Boolean IsQuery(this String _) => _.IsMatch(RegexPattern.Query);
+        public static Boolean IsQuery(this String _) => _.IsMatch(Pattern.Query);
         #endregion
 
         #region 是否是Json
@@ -458,7 +466,7 @@ namespace XiaoFeng
         /// <para><term>true</term> 符合正则表达式</para>
         /// <para><term>false</term> 不符合正则表达式</para>
         /// </returns>
-        public static Boolean IsIndexer(this String _) => _.IsMatch(RegexPattern.Indexer);
+        public static Boolean IsIndexer(this String _) => _.IsMatch(Pattern.Indexer);
         #endregion
 
         #region 是否是银行卡号

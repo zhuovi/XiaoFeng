@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using XiaoFeng.Config;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -589,7 +590,7 @@ MIDI (mid)，文件头：4D546864
         public static Boolean IsPathRoot(string path)
         {
             if (path.IsNullOrEmpty()) return false;
-            return OS.Platform.GetOSPlatform() == PlatformOS.Windows ? path.IsMatch(RegexPattern.BasePath) : path.StartsWith(DirectorySeparatorChar.ToString());
+            return OS.Platform.GetOSPlatform() == PlatformOS.Windows ? path.IsMatch(@"^[a-z]+:(\\|\/)") : path.StartsWith(DirectorySeparatorChar.ToString());
         }
         #endregion
 

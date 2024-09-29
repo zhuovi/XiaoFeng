@@ -24,11 +24,6 @@ namespace XiaoFeng.Config
         [Description("汉字正则")]
         public string Chinese { get; set; } = @"^[\u4e00-\u9fa5？，“”‘’。、；：（）·！￥]+$";
         /// <summary>
-        /// 字母正则
-        /// </summary>
-        [Description("字母正则")]
-        public string Letter { get; set; } = @"^[a-zA-Z]+$";
-        /// <summary>
         /// FTP正则
         /// </summary>
         [Description("FTP正则")]
@@ -92,16 +87,21 @@ namespace XiaoFeng.Config
         /// 参数正则
         /// </summary>
         [Description("参数正则")]
-        public string Query { get; set; } = @"^([^{ get; set; } =&]+{ get; set; } =[^&]*&?)*$";
+        public string Query { get; set; } = @"^([^=&]+=[^&]*&?)*$";
         /// <summary>
-        /// Json正则
+        /// this索引器
         /// </summary>
-        [Description("Json正则")]
-        public string Json { get; set; } = @"^[\s\r\n\t]*(({[\s\S]+})|(\[[\s\S]+\]))[\s\r\n\t]*$";
+        [Description("this索引器")] 
+        public string Indexer { get; set; } = @"\s+Item\s+\[[^\[\]]+\]$";
         /// <summary>
-        /// Xml正则
+        /// 内网IP正则
         /// </summary>
-        [Description("Xml正则")]
-        public string Xml { get; set; } = @"((^<\?xml[^>]+?\?>)|(<([a-z0-9]+?)(\s+[^>]*?)>[\s\S]*?</\3>)|(<[a-z0-9]+?[^>]*?/>))";
+        [Description("内网IP正则")] 
+        public string IntranetIp { get; set; } = @"(^(192\.168|10|172\.(1[6789]|2[0-9]|3[0-1]))\.|^(::1|127\.0\.0\.1)$)";
+        /// <summary>
+        /// 本地IP
+        /// </summary>
+        [Description("本地IP")] 
+        public string LocalIp { get; set; } = @"^(::1|127.0.0.1)$";
     }
 }
