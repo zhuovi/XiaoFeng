@@ -983,6 +983,7 @@ namespace XiaoFeng.Data.SQL
                         }
                         else if (this.DataHelper.ProviderType == DbProviderType.MySql)
                         {
+
                             if (_dfType == "yy")
                                 dfType = "'%y'";
                             else if (_dfType == "yyyy")

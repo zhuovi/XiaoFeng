@@ -44,7 +44,7 @@ namespace XiaoFeng.Data
         #endregion
 
         #region 属性
-
+        
         #endregion
 
         #region 方法
@@ -117,6 +117,8 @@ LEFT JOIN ALL_CONS_COLUMNS AS B
 ON A.CONSTRAINT_NAME = B.CONSTRAINT_NAME
  WHERE A.TABLE_NAME = '{0}';
 ".format(tableName)).ToList<TableIndexModel>();
+            //结构体无法动态修改里面的属性值，新定义了一个集合
+            var _nlist = new List<DataColumns>();
             list.Each(a =>
             {
                 var index = indexs.Find(b => b.COLUMN_NAME == a.Name);
@@ -132,8 +134,10 @@ ON A.CONSTRAINT_NAME = B.CONSTRAINT_NAME
                     }
                     else if (index.CONSTRAINT_TYPE == "U") a.IsUnique = true;
                 }
+                _nlist.Add(a);
             });
-            return list;
+           
+            return _nlist;
         }
         /// <summary>
         /// 获取当前表所有列
@@ -211,12 +215,12 @@ ON A.CONSTRAINT_NAME = B.CONSTRAINT_NAME
         public virtual Boolean CreateTable(Type modelType, string tableName = "")
         {
             string SQLString = @"
-DROP TABLE IF EXISTS `{0}`;
-CREATE TABLE `{0}` (
+DROP TABLE IF EXISTS {0};
+CREATE TABLE {0} (
    {1}
    {2}
-   {3}
-)ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='{4}';
+) STORAGE(ON ""MAIN"", CLUSTERBTR);
+{3}
 select 1;
 ";
             TableAttribute Table = modelType.GetTableAttribute();
@@ -226,9 +230,56 @@ select 1;
             Table ??=
 #endif
             new TableAttribute();
-            string Fields = "", Indexs = "", PrimaryKey = "";
+            var fields = new List<string>();
+            var indexs = new List<string>();
+            var PrimaryKeys = new List<string>();
             Table.Name = (Table.Name == null || Table.Name.IsNullOrEmpty()) ? modelType.Name : Table.Name;
             DataType dType = new DataType(this.ProviderType);
+            modelType.GetProperties(BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance).Each(p =>
+            {
+                if (p.GetCustomAttribute<FieldIgnoreAttribute>() != null) return;
+                if (",ConnectionString,ConnectionTimeOut,CommandTimeOut,ProviderType,IsTransaction,ErrorMessage,tableName,QueryableX,".IndexOf("," + p.Name + ",") > -1) return;
+                ColumnAttribute Column = p.GetColumnAttribute(false);
+#if NETSTANDARD2_0
+                    Column = Column ??
+#else
+                Column ??=
+#endif
+                new ColumnAttribute { AutoIncrement = false, IsIndex = false, IsNullable = true, IsUnique = false, PrimaryKey = false, Length = 0, DefaultValue = "" };
+                Column.Name = (Column.Name == null || Column.Name.IsNullOrEmpty()) ? p.Name : Column.Name;
+                Column.DataType = Column.DataType.IsNullOrEmpty() ? dType[p.PropertyType] : Column.DataType;
+                if (Column.Length == 0 && ",varchar,nvarchar,".IndexOf("," + Column.DataType.ToString() + ",", StringComparison.OrdinalIgnoreCase) > -1)
+                {
+                    Column.Length = 2000;
+                }
+                if (Column.AutoIncrement)
+                {
+                    string type = "INTEGER IDENTITY(1, 1)", DefaultValue = "";
+                    if (Column.DataType.ToString() == "bigint" || Column.DataType.ToString() == "int")
+                    {
+                        type = $"INTEGER IDENTITY({Column.AutoIncrementSeed}, {Column.AutoIncrementStep})";
+                    }
+                    else if (Column.DataType.ToString() == "uniqueidentifier")
+                    {
+                        type = "STRING";
+                        DefaultValue = "00000000-0000-0000-0000-000000000000";
+                    }
+                    else
+                    {
+                        type = Column.DataType.ToString();
+                        DefaultValue = "DEFAULT '{0}' ".format(Column.DefaultValue);
+                    }
+                    fields.Add($"{Column.Name} {type} NOT NULL {DefaultValue} COMMENT '{Column.Description.Multivariate(Column.Name)}'");
+                    PrimaryKeys.Add(Column.Name);
+                }
+                else
+                {
+                    if (Column.PrimaryKey)
+                        PrimaryKeys.Add(Column.Name);
+                }
+            });
+                string Fields = "", Indexs = "", PrimaryKey = "";
+            
             modelType.GetProperties(BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance).Each(p =>
             {
                 if (p.GetCustomAttribute<FieldIgnoreAttribute>() != null) return;
@@ -267,7 +318,7 @@ select 1;
                             type = Column.DataType.ToString();
                             DefaultValue = "DEFAULT '{0}' ".format(Column.DefaultValue);
                         }
-                        Fields += "`{0}` {1} NOT NULL {2} COMMENT '{3}',".format(Column.Name, type, DefaultValue, Column.Description);
+                        Fields += "{0} {1} NOT NULL {2} COMMENT '{3}',".format(Column.Name, type, DefaultValue, Column.Description);
                     }
                     else
                     {
@@ -279,19 +330,18 @@ select 1;
                         }
                         var FieldType = dType[p.PropertyType.GetBaseType()];
                         Fields += String.Format(@"
-                        `{0}` {1}{2}{3},",
+                        {0} {1}{2},",
                         Column.Name,
                         FieldType,
-                        ((Column.Length == 0 || ",datetime,".IndexOf("," + FieldType.ToString().ToLower() + ",") > -1) ? " " : ("(" + Column.Length + ") ")) + ((Column.IsNullable && !Column.PrimaryKey) ? "NULL" : "NOT NULL") + (Column.DefaultValue.IsNullOrEmpty() ? "" : (" DEFAULT " + (DefaultValue.IsNumberic() ? Column.DefaultValue : ((DefaultValue.StartsWith("'") && DefaultValue.EndsWith("'")) || DefaultValue.ToLower() == "datetime('now','localtime')" || Column.Name.ToLower().IndexOf("timestamp") > -1) ? DefaultValue : ("'" + DefaultValue + "'")) + "")),
-                         " COMMENT '{0}'".format(Column.Description));
+                        ((Column.Length == 0 || ",datetime,".IndexOf("," + FieldType.ToString().ToLower() + ",") > -1) ? " " : ("(" + Column.Length + ") ")) + ((Column.IsNullable && !Column.PrimaryKey) ? "NULL" : "NOT NULL") + (Column.DefaultValue.IsNullOrEmpty() ? "" : (" DEFAULT " + (DefaultValue.IsNumberic() ? Column.DefaultValue : ((DefaultValue.StartsWith("'") && DefaultValue.EndsWith("'")) || DefaultValue.ToLower() == "datetime('now','localtime')" || Column.Name.ToLower().IndexOf("timestamp") > -1) ? DefaultValue : ("'" + DefaultValue + "'")) + "")));
                     }
                     if (Column.PrimaryKey)
                     {
-                        PrimaryKey = ",PRIMARY KEY (`{0}`)".format(Column.Name);
+                        PrimaryKey = ",PRIMARY KEY ({0})".format(Column.Name);
                     }
                     if (Column.IsIndex)
                     {
-                        Indexs += ",`{0}`".format(Column.Name);
+                        Indexs += ",{0}".format(Column.Name);
                     }
                 }
             });
@@ -314,20 +364,23 @@ select 1;
             {
                 tableIndexs.Each(index =>
                 {
-                    var list = index.Keys.Select(a =>
-                    {
-                        return a
-#if NETSTANDARD2_0
-.Substring(a.IndexOf(","))
-#else
-                        [a.IndexOf(",")..]
-#endif
-                        ;
-                    });
-                    SbrIndexs.AppendLine($@",INDEX {index.TableIndexType.ToString().ToUpper()} {index.Name} ({list.Join(",")}) USING BTREE");
+                    /* var list = index.Keys.Select(a =>
+                     {
+                         return a
+ #if NETSTANDARD2_0
+ .Substring(a.IndexOf(","))
+ #else
+                         [a.IndexOf(",")..]
+ #endif
+                         ;
+                     });
+                     SbrIndexs.AppendLine($@",INDEX {index.TableIndexType.ToString().ToUpper()} {index.Name} ({list.Join(",")}) USING BTREE");*/
+                    SbrIndexs.AppendLine($@",INDEX {index.TableIndexType.ToString().ToUpper()} {index.Name} ({index.Keys[0]}) USING BTREE");
                 });
             }
-            return base.ExecuteScalar(SQLString.format(Table.Name, Fields.TrimEnd(','), PrimaryKey, SbrIndexs.ToString(), Table.Description.IsNullOrEmpty() ? Table.Name : Table.Description)).ToString().ToInt16() == 1;
+            //2024-07-10 不要索引
+            //SbrIndexs.Clear();
+            return base.ExecuteScalar(SQLString.Replace("\r\n","").format(Table.Name, Fields.Replace("\r\n", "").Replace("\n","").TrimEnd(','), PrimaryKey, SbrIndexs.Replace("\r\n", "").ToString())).ToString().ToInt16() == 1;
         }
         /// <summary>
         /// 创建数据库表 属性用 TableAttribute,ColumnAttribute
@@ -430,7 +483,7 @@ select 1;
             if (modelType == ModelType.Table)
                 sql = "SELECT count(0) FROM USER_TABLES WHERE TABLE_NAME=@tbName;";
             else if (modelType == ModelType.View)
-                sql = "SELECT COUNT(0) FROM USER_VIEWS WHERE VIEW_NAMEE=@tbName;";
+                sql = "SELECT COUNT(0) FROM USER_VIEWS WHERE VIEW_NAME=@tbName;";
             else if (ModelType.Procedure == modelType)
                 sql = "SELECT COUNT(0) FROM USER_PROCEDURES WHERE OBJECT_NAME=@tbName;";
             else if (modelType == ModelType.Function)

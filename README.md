@@ -38,41 +38,41 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 5.2.1
+$ dotnet add package XiaoFeng --version 5.2.2
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 5.2.1
+PM> Install-Package XiaoFeng -Version 5.2.2
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="5.2.1" />
+<PackageReference Include="XiaoFeng" Version="5.2.2" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 5.2.1
+> paket add XiaoFeng --version 5.2.2
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 5.2.1"
+> #r "nuget: XiaoFeng, 5.2.2"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=5.2.1
+#addin nuget:?package=XiaoFeng&version=5.2.2
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=5.2.1
+#tool nuget:?package=XiaoFeng&version=5.2.2
 ```
 
 
@@ -2018,6 +2018,18 @@ client.UnSubscribe("取消订阅频道");
 ---
 
 # 更新日志
+
+## 2024-10-17  v 5.2.2
+
+1.优化AES加密中ECP不需要IV的bug;
+
+2.优化AES加密中KEY补位的算法;
+
+3.修复CreateWhere带条件时没有设置到条件中的bug;
+
+4.增加判断目录是否包含根目录方法 FileHelper.IsPathRoot;
+
+5.增加验证格式正则可配置;
 
 ## 2024-09-11  v 5.2.1
 

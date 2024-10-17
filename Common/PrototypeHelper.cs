@@ -1820,15 +1820,15 @@ namespace XiaoFeng
                 else if (BaseTargetType == ValueTypes.String) return string.Empty;
                 else return null;
             }
-            else if (o is JsonValue JValue)
+            if (o is JsonValue JValue)
             {
                 return JValue.ToObject(targetType);
             }
-            else if (o is Redis.RedisValue RValue)
+            if (o is Redis.RedisValue RValue)
             {
                 return RValue.ToObject(targetType);
             }
-            else if (o is XmlValue XValue)
+            if (o is XmlValue XValue)
             {
                 return XValue.ToObject(targetType);
             }

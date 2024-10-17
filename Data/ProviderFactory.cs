@@ -92,7 +92,7 @@ namespace XiaoFeng.Data
             {
                 Type type = null;
                 try { type = Type.GetType(providerName); }
-                catch (Exception ex) { }
+                catch (Exception ex) { LogHelper.Error(ex); }
                 if (type == null)
                 {
                     if (providerType == DbProviderType.SqlServer)

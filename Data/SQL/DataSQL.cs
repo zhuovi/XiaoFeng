@@ -101,9 +101,9 @@ namespace XiaoFeng.Data.SQL
                 {
                     TableAttribute Table = this.ModelType.GetTableAttribute();
                     if (Table == null)
-                        this._TableName = this.ModelType.Name;
+                        this._TableName = this.ModelType?.Name;
                     else
-                        this._TableName = Table.Name ?? this.ModelType.Name;
+                        this._TableName = Table.Name ?? this.ModelType?.Name;
                     var tables = this.TableSplitConfig.List;
                     if (tables.Any())
                     {
