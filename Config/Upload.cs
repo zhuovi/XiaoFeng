@@ -152,6 +152,11 @@ namespace XiaoFeng.Config
         /// </summary>
         [Description("后缀名 多个用逗号隔开")]
         public string Ext { get; set; } = "jpg,jpeg,gif,bmp,png,txt";
+        /// <summary>
+        /// 是否独立目录
+        /// </summary>
+        [Description("是否独立目录")]
+        public Boolean IsAlone { get; set; }
     }
     #endregion
 }

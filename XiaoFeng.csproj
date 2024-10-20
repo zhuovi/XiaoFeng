@@ -9,7 +9,7 @@
 		<Copyright>CopyRight © 2008-2025 魔法精灵(www.eelf.cn) QQ:7092734 Email:jacky@eelf.cn</Copyright>
 		<Company>魔法精灵</Company>
 		<VersionPrefix>5.2</VersionPrefix>
-		<VersionSuffix>2</VersionSuffix>
+		<VersionSuffix>3</VersionSuffix>
 		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
 		<FileVersion>$(Version)</FileVersion>
 		<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
@@ -29,7 +29,7 @@
 		<AssemblyOriginatorKeyFile>XiaoFeng.snk</AssemblyOriginatorKeyFile>
 		<PackageIcon>x.png</PackageIcon>
 		<PackageTags>XiaoFeng;FAYELF;ELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>优化AES加密中ECP不需要IV的bug;优化AES加密中KEY补位的算法;修复CreateWhere带条件时没有设置到条件中的bug;增加判断目录是否包含根目录方法 FileHelper.IsPathRoot;增加验证格式正则可配置;</PackageReleaseNotes>
+		<PackageReleaseNotes>upload配置增加独立目录配置;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>
