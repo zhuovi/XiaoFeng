@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
-using XiaoFeng.Config;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -30,7 +30,24 @@ namespace XiaoFeng.IO
     /// </summary>
     public static class FileHelper
     {
-        #region 文件是否存在
+        #region 路径是文件还是目录
+        /// <summary>
+        /// 路径是文件还是目录
+        /// </summary>
+        /// <param name="path">路径</param>
+        /// <returns></returns>
+        public static FileAttribute GetFileAttributes(string path)
+        {
+            if (path.IsNullOrEmpty()) return FileAttribute.UnKnown;
+            var _path = GetFullPathFunction(path);
+            var dir = new DirectoryInfo(_path);
+            if (dir.Attributes.HasFlag(FileAttributes.Directory)) return FileAttribute.Directory;
+            else if (dir.Attributes.HasFlag(FileAttribute.Device)) return FileAttribute.Device;
+            return FileAttribute.File;
+        }
+        #endregion
+
+        #region 文件或目录是否存在
         /// <summary>
         /// 文件或目录是否存在
         /// </summary>
@@ -42,7 +59,10 @@ namespace XiaoFeng.IO
             if (path.IsNullOrEmpty()) return false;
             var _path = GetFullPathFunction(path);
             if (attribute == FileAttribute.UnKnown)
-                attribute = _path.HasExtension() ? FileAttribute.File : FileAttribute.Directory;
+            {
+                var dir = new DirectoryInfo(_path);
+                return dir.Exists || File.Exists(_path);
+            }
             return attribute == FileAttribute.File ? File.Exists(_path) : Directory.Exists(_path);
         }
         #endregion
@@ -57,17 +77,38 @@ namespace XiaoFeng.IO
         {
             var _path = GetFullPathFunction(path);
             if (attribute == FileAttribute.UnKnown)
-                attribute = path.HasExtension() ? FileAttribute.File : FileAttribute.Directory;
+            {
+                var _dir = _path.ToDirectoryInfo();
+                if (_dir.Attributes.HasFlag(FileAttributes.Directory))
+                {
+                    if (!_dir.Exists) _dir.Create();
+                    return;
+                }
+                var _fileInfo = _path.ToFileInfo();
+                _dir = _fileInfo.Directory;
+                if (!_dir.Exists) _dir.Create();
+                if (!_fileInfo.Exists)
+                {
+                    var fs = _fileInfo.Create();
+                    fs.Close();
+                    fs.Dispose();
+                }
+                return;
+            }
             if (attribute == FileAttribute.Directory)
             {
-                if (!Directory.Exists(_path)) Directory.CreateDirectory(_path);
+                var _dir = _path.ToDirectoryInfo();
+                if (!_dir.Exists) _dir.Create();
+                return;
             }
-            else if (attribute == FileAttribute.File)
+            var fileInfo = _path.ToFileInfo();
+            var dir = fileInfo.Directory;
+            if (!dir.Exists) dir.Create();
+            if (!fileInfo.Exists)
             {
-                //Create(path.GetDirectoryName(), FileAttribute.Directory);
-                var dir = _path.GetDirectoryName();
-                if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
-                if (!File.Exists(_path)) using (var fs = File.Create(_path)) { fs.Close(); fs.Dispose(); }
+                var fs = fileInfo.Create();
+                fs.Close();
+                fs.Dispose();
             }
         }
         /// <summary>
@@ -103,19 +144,29 @@ namespace XiaoFeng.IO
         {
             if (path.IsNullOrEmpty()) return;
             var _path = GetFullPathFunction(path);
-            var file = new FileInfo(_path);
-            if ((FileAttributes.ReadOnly | FileAttributes.System | FileAttributes.Offline | FileAttributes.Device).HasFlag(file.Attributes)) return;
+
             if (attribute == FileAttribute.UnKnown)
-                attribute = file.Attributes == FileAttributes.Directory ? FileAttribute.Directory : FileAttribute.File;
+            {
+                var dir = _path.ToDirectoryInfo();
+                if (dir.Attributes.HasFlag(FileAttributes.Directory))
+                {
+                    if (dir.Exists) dir.Delete(true);
+                    return;
+                }
+                var fileInfo = _path.ToFileInfo();
+                if (fileInfo.Exists) fileInfo.Delete();
+                return;
+            }
             if (attribute == FileAttribute.File)
             {
-                if (File.Exists(_path))
-                    File.Delete(_path);
+                var fileInfo = _path.ToFileInfo();
+                if (fileInfo.Exists) fileInfo.Delete();
+                return;
             }
-            else if (attribute == FileAttribute.Directory)
+            if (attribute == FileAttribute.Directory)
             {
-                if (Directory.Exists(_path))
-                    Directory.Delete(_path, true);
+                var _dir = _path.ToDirectoryInfo();
+                if (_dir.Exists) _dir.Delete(true);
             }
         }
         #endregion
@@ -359,30 +410,18 @@ MIDI (mid)，文件头：4D546864
         {
             if (path.IsNullOrEmpty()) return;
             var _path = GetFullPathFunction(path);
-            if (!Directory.Exists(_path)) return;
-            if (root.IsNullOrEmpty())
-                Directory.Delete(_path, true);
-            else
+            var _root = GetFullPathFunction(root);
+            if (!_path.StartsWith(_root))
             {
-                var _root = GetFullPathFunction(root);
-                if (!Directory.Exists(_root))
-                    Directory.Delete(_path, true);
-                else
-                    DeleteDirectoryEmpty(new DirectoryInfo(_path), root);
+                DeleteDirectory(_path);
+                return;
             }
-        }
-        /// <summary>
-        /// 删除目录如果空目录继续向上删除
-        /// </summary>
-        /// <param name="directory">目录</param>
-        /// <param name="root">根目录</param>
-        public static void DeleteDirectoryEmpty(DirectoryInfo directory, string root)
-        {
-            if (directory.FullName.EqualsIgnoreCase(root)) return;
-            if (!directory.Exists) { DeleteDirectoryEmpty(directory.Parent, root); return; }
-            if (directory.GetFiles().Length > 0 || directory.GetDirectories().Length > 0) return;
-            directory.Delete(true);
-            DeleteDirectoryEmpty(directory.Parent, root);
+            var dir = _path.ToDirectoryInfo();
+            do
+            {
+                if (dir.Exists) dir.Delete(true);
+                dir = dir.Parent;
+            } while (dir.Parent != null && dir.FullName != _root);
         }
         /// <summary>
         /// 删除目录
@@ -836,6 +875,73 @@ MIDI (mid)，文件头：4D546864
         /// <param name="paths">由路径的各部分构成的数组。</param>
         /// <returns>已组合的路径。</returns>
         public static string Combine(IEnumerable<string> paths) => paths == null || !paths.Any() ? string.Empty : Combine(paths.ToArray());
+        #endregion
+
+        #region 创建 zip 存档，该存档包含指定目录的文件和目录
+        /// <summary>
+        /// 创建 zip 存档，该存档包含指定目录的文件和目录。
+        /// </summary>
+        /// <param name="sourceDirectoryName">到要存档的目录的路径，指定为相对路径或绝对路径。 相对路径被解释为相对于当前工作目录。</param>
+        /// <param name="destination">要存储 zip 存档的流。</param>
+        /// <param name="compressionLevel">指示创建项时是否强调速度或压缩有效性的枚举值之一。</param>
+        /// <param name="includeBaseDirectory">包括从在存档的根的 sourceDirectoryName 的目录名称，则为 true；仅包含目录中的内容，则为 false 。</param>
+        /// <param name="entryNameEncoding">在存档中读取或写入项名时使用的编码。 仅当需要针对具有不支持条目名称的 UTF-8 编码的 zip 归档工具和库的互操作性进行编码时，为此参数指定值。</param>
+        public static Boolean CreateZipArchiveFromDirectory(string sourceDirectoryName, Stream destination, CompressionLevel compressionLevel = CompressionLevel.Fastest, bool includeBaseDirectory = true, Encoding entryNameEncoding = null)
+        {
+            var dir = sourceDirectoryName.GetBasePath().ToDirectoryInfo();
+            if (!dir.Exists) return false;
+            using (var zip = new ZipArchive(destination, ZipArchiveMode.Create, false, entryNameEncoding == null ? Encoding.UTF8 : entryNameEncoding))
+            {
+                CreateZipArchiveFromDirectory(zip, dir, includeBaseDirectory ? (dir.Name + "/") : "", compressionLevel);
+                zip.Dispose();
+            }
+            return true;
+        }
+        /// <summary>
+        /// 打包文件夹下的文件到文档流
+        /// </summary>
+        /// <param name="zip">压缩包流</param>
+        /// <param name="dir">目录</param>
+        /// <param name="path">相对路径</param>
+        /// <param name="compressionLevel">指示创建项时是否强调速度或压缩有效性的枚举值之一。</param>
+        public static void CreateZipArchiveFromDirectory(ZipArchive zip, DirectoryInfo dir, string path, CompressionLevel compressionLevel = CompressionLevel.Fastest)
+        {
+            if (path.IsNotNullOrEmpty())
+            {
+                path = path.Trim(new char[] { '/', '\\' }).ReplacePattern(@"\\+", "/") + "/";
+            }
+            dir.GetDirectories().Each(d =>
+            {
+                CreateZipArchiveFromDirectory(zip, d, path + d.Name + "/", compressionLevel);
+            });
+            dir.GetFiles().Each(f =>
+            {
+                var entry = zip.CreateEntryFromFile(f.FullName, path + f.Name, compressionLevel);
+                entry.TryDispose();
+            });
+        }
+        /// <summary>
+        /// 创建 zip 存档，该存档包含指定目录的文件和目录。
+        /// </summary>
+        /// <param name="sourceDirectoryName">到要存档的目录的路径，指定为相对路径或绝对路径。 相对路径被解释为相对于当前工作目录。</param>
+        /// <param name="destinationArchiveFileName">要生成的存档路径，指定为相对路径或绝对路径。 相对路径被解释为相对于当前工作目录。</param>
+        /// <param name="compressionLevel">指示创建项时是否强调速度或压缩有效性的枚举值之一。</param>
+        /// <param name="includeBaseDirectory">包括从在存档的根的 sourceDirectoryName 的目录名称，则为 true；仅包含目录中的内容，则为 false 。</param>
+        /// <param name="entryNameEncoding">在存档中读取或写入项名时使用的编码。 仅当需要针对具有不支持条目名称的 UTF-8 编码的 zip 归档工具和库的互操作性进行编码时，为此参数指定值。</param>
+        public static void CreateZipArchiveFromDirectory(string sourceDirectoryName, string destinationArchiveFileName, CompressionLevel compressionLevel = CompressionLevel.Fastest, bool includeBaseDirectory = true, Encoding entryNameEncoding = null)
+        {
+            try
+            {
+                using (var fs = new FileStream(destinationArchiveFileName.GetBasePath(), FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite, 4096, true))
+                {
+                    CreateZipArchiveFromDirectory(sourceDirectoryName, fs, compressionLevel, includeBaseDirectory, entryNameEncoding);
+                }
+            }
+            catch (IOException ex)
+            {
+                LogHelper.Error(ex);
+            }
+        }
         #endregion
     }
 }

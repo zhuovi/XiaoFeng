@@ -317,7 +317,12 @@ namespace XiaoFeng
         /// 目录
         /// </summary>
         [Description("目录")]
-        Directory = 2
+        Directory = 2,
+        /// <summary>
+        /// 磁盘
+        /// </summary>
+        [Description("磁盘")]
+        Device = 3
     }
     #endregion
 
