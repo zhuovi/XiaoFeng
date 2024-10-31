@@ -668,9 +668,9 @@ MIDI (mid)，文件头：4D546864
             /*
              * 磁盘根目录路径
              */
-            if (path.StartsWith("{*}"))
+            if (path.StartsWith("{*}") || path.StartsWith("/"))
             {
-                path = "/" + path.SubstringX(3).TrimStart(new char[] { '/', '\\' });
+                path = "/" + path.RemovePattern(@"\{\*\}").TrimStart(new char[] { '/', '\\' });
 
                 if (path == "/") return Path.GetPathRoot(GetCurrentDirectory());
                 var _Path = Path.GetFullPath(path);
@@ -679,7 +679,7 @@ MIDI (mid)，文件头：4D546864
             /*
              * 家目录路径
              */
-            if (path.IsMatch(@"^(\{(Root|RootPath|\/)\})?[\\/]*") || path.StartsWith("{Root}", StringComparison.OrdinalIgnoreCase) || path.StartsWith("{/}") || path.StartsWith("{RootPath}", StringComparison.OrdinalIgnoreCase) || path.StartsWith("/") || path.StartsWith("\\"))
+            if (path.IsMatch(@"^(\{(Root|RootPath|\/)\})?[\\/]*") || path.StartsWith("{Root}", StringComparison.OrdinalIgnoreCase) || path.StartsWith("{/}") || path.StartsWith("{RootPath}", StringComparison.OrdinalIgnoreCase) || path.StartsWith("\\"))
             {
                 path = path.RemovePattern(@"^(\{(Root|RootPath|\/)\})?[\\/]*");
                 if (path.IsNullOrEmpty() || path.Trim(new char[] { '/', '\\' }).IsNullOrEmpty()) return GetCurrentDirectory();

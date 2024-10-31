@@ -116,15 +116,18 @@ namespace XiaoFeng.IO
         /// <summary>
         /// 读取流文件内容
         /// </summary>
-        /// <param name="stream">流</param>
-        /// <param name="encoding">编码</param>
+        /// <param name="stream">要读取的流</param>
+        /// <param name="encoding">要使用的字符编码</param>
+        /// <param name="detectEncodingFromByteOrderMarks">如果要在文件开头查找字节顺序标记，则为true ；否则为 false。</param>
+        /// <param name="bufferSize">最小缓冲区大小</param>
+        /// <param name="leaveOpen">如果在释放 System.IO.StreamReader 对象后保持流处于打开状态，则为 true；否则为 false</param>
         /// <returns></returns>
-        public static string ReadToEnd(this Stream stream, Encoding encoding = null)
+        public static string ReadToEnd(this Stream stream, Encoding encoding = null, bool detectEncodingFromByteOrderMarks = true, int bufferSize = 4096, bool leaveOpen = false)
         {
             var content = string.Empty;
             if (stream == null || !stream.CanRead) return content;
             stream.Position = 0;
-            using (var reader = new StreamReader(stream, encoding ?? Encoding.UTF8))
+            using (var reader = new StreamReader(stream, encoding ?? Encoding.UTF8, detectEncodingFromByteOrderMarks, bufferSize, leaveOpen))
             {
                 content = reader.ReadToEnd();
                 reader.Close();
@@ -135,14 +138,17 @@ namespace XiaoFeng.IO
         /// <summary>
         /// 异步读取流文件内容
         /// </summary>
-        /// <param name="stream">流</param>
-        /// <param name="encoding">编码</param>
+        /// <param name="stream">要读取的流</param>
+        /// <param name="encoding">要使用的字符编码</param>
+        /// <param name="detectEncodingFromByteOrderMarks">如果要在文件开头查找字节顺序标记，则为true ；否则为 false。</param>
+        /// <param name="bufferSize">最小缓冲区大小</param>
+        /// <param name="leaveOpen">如果在释放 System.IO.StreamReader 对象后保持流处于打开状态，则为 true；否则为 false</param>
         /// <returns></returns>
-        public static async Task<string> ReadToEndAsync(this Stream stream, Encoding encoding = null)
+        public static async Task<string> ReadToEndAsync(this Stream stream, Encoding encoding = null, bool detectEncodingFromByteOrderMarks = true, int bufferSize = 4096, bool leaveOpen = false)
         {
             var content = string.Empty;
             if (stream == null || !stream.CanRead) return content;
-            using (var reader = new StreamReader(stream, encoding ?? Encoding.UTF8))
+            using (var reader = new StreamReader(stream, encoding ?? Encoding.UTF8, detectEncodingFromByteOrderMarks, bufferSize, leaveOpen))
             {
                 content = await reader.ReadToEndAsync();
                 reader.Close();
