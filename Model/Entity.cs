@@ -719,11 +719,20 @@ namespace XiaoFeng.Model
         /// <returns>返回是否创建成功</returns>
         public async Task<Boolean> CreateSubTable(string suffix)
         {
+            return await CreateSubTableSuffix($"_FB_{suffix}").ConfigureAwait(false);
+        }
+        /// <summary>
+        /// 创建分表
+        /// </summary>
+        /// <param name="suffix">后缀</param>
+        /// <returns>返回是否创建成功</returns>
+        public async Task<Boolean> CreateSubTableSuffix(string suffix)
+        {
             if (suffix.IsNullOrEmpty() ||
                 this.TableAttr == null ||
                 this.TableAttr.ModelType != XiaoFeng.ModelType.Table ||
                 this.TableAttr.Name.IsNullOrEmpty()) return false;
-            return await this.Data.DataHelper.ExecuteNonQueryAsync($"select * into {this.TableAttr.Name}_FB_{suffix} from {this.TableAttr.Name} where 1=0;").ConfigureAwait(false) != -1;
+            return await this.Data.DataHelper.ExecuteNonQueryAsync($"select * into {this.TableAttr.Name}{suffix} from {this.TableAttr.Name} where 1=0;").ConfigureAwait(false) != -1;
         }
         #endregion
 
@@ -869,7 +878,7 @@ namespace XiaoFeng.Model
             return this as T;
         }
         /// <summary>
-        /// 使用分表
+        /// 使用分表默认带 _FB_
         /// </summary>
         /// <param name="suffix">分表后缀</param>
         /// <param name="isGlobal">是否全局使用</param>
@@ -877,26 +886,20 @@ namespace XiaoFeng.Model
         public T SubTable(string suffix, bool isGlobal = false)
         {
             this.TableName.IfEmptyValue(() => this.TableAttr?.Name.IfEmpty(this.ModelType?.Name));
-            this.TableName = this.TableName.RemovePattern(@"_FB_[\s\S]*$");
-            if (suffix.IsNotNullOrEmpty())
-            {
-                this.TableName += "_FB_" + suffix;
-                if (isGlobal)
-                {
-                    /*
-                    var SessionID = UserSession.Id;
-                    if (SessionID.IsNotNullOrEmpty())
-                    {
-                        var value = Cache.CacheHelper.Get(SessionID);
-                        if (value != null)
-                        {
-                            var val = value as SubDataBaseTable;
-                            val.Suffix = suffix;
-                            Cache.CacheHelper.Set(SessionID, val);
-                        }
-                    }*/
-                }
-            }
+            if(this.TableName.IsMatch(@"_FB_"))
+                this.TableName = this.TableName.RemovePattern(@"_FB_[\s\S]*$");
+            return this.SubTableSuffix("_FB_" + suffix);
+        }
+        /// <summary>
+        /// 使用分表不带_FB_
+        /// </summary>
+        /// <param name="suffix">分表后缀</param>
+        /// <returns></returns>
+        public T SubTableSuffix(string suffix)
+        {
+            if (suffix.IsNullOrEmpty()) return this as T;
+            this.TableName.IfEmptyValue(() => this.TableAttr?.Name.IfEmpty(this.ModelType?.Name));
+            this.TableName += suffix;
             this.SetDataX();
             return this as T;
         }
@@ -912,6 +915,13 @@ namespace XiaoFeng.Model
             this._Data.DataSQL.TableName = this.TableName;
             this._DataQ = new DataHelperQ(this.Config, this.RunSqlCallBack);
         }
+        #endregion
+
+        #region 当前模型的数据库对象
+        /// <summary>
+        /// 当前模型的数据库对象
+        /// </summary>
+        public IDataHelper DataHelper { get => this.Data.DataHelper; }
         #endregion
     }
     /// <summary>

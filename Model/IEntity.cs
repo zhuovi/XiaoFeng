@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
+using XiaoFeng.Data;
 using XiaoFeng.Data.SQL;
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
@@ -19,30 +21,84 @@ namespace XiaoFeng.Model
     /// </summary>
     public interface IEntity<T> : IEntity
     {
-        #region 设置分库
+        #region 创建分表
         /// <summary>
-        /// 设置分库
+        /// 创建分表
+        /// </summary>
+        /// <param name="suffix">后缀</param>
+        /// <returns>返回是否创建成功</returns>
+        Task<Boolean> CreateSubTable(string suffix);
+        /// <summary>
+        /// 创建分表
+        /// </summary>
+        /// <param name="suffix">后缀</param>
+        /// <returns>返回是否创建成功</returns>
+        Task<Boolean> CreateSubTableSuffix(string suffix);
+        #endregion
+
+        #region 使用分库
+        /// <summary>
+        /// 使用分库分表
+        /// </summary>
+        /// <returns></returns>
+        T Sub();
+        /// <summary>
+        /// 使用分库
+        /// </summary>
+        /// <returns></returns>
+        T SubDataBase();
+        /// <summary>
+        /// 使用分库
+        /// </summary>
+        /// <param name="key">数据库连接串</param>
+        /// <param name="isGlobal">是否全局使用</param>
+        /// <returns></returns>
+        T SubDataBase(string key, bool isGlobal = false);
+        /// <summary>
+        /// 使用分库
+        /// </summary>
+        /// <param name="num">库索引</param>
+        /// <param name="isGlobal">是否全局使用</param>
+        /// <returns></returns>
+        T SubDataBase(uint num, bool isGlobal = false);
+        /// <summary>
+        /// 使用分库
         /// </summary>
         /// <param name="key">分库数据库连接串</param>
         /// <param name="num">库索引</param>
         /// <param name="suffix">分表后缀</param>
-        /// <returns>对象</returns>
-        T SetSubDataBase(string key, uint num, string suffix = "");
-        /// <summary>
-        /// 设置分库
-        /// </summary>
-        /// <param name="num">库索引</param>
+        /// <param name="isGlobal">是否全局使用</param>
         /// <returns></returns>
-        T SetSubDataBase(uint num);
+        T SubDataBase(string key, uint num, string suffix = "", bool isGlobal = false);
+        /// <summary>
+        /// 使用分库
+        /// </summary>
+        /// <param name="config">数据库配置</param>
+        /// <param name="suffix">分表后缀</param>
+        /// <param name="isGlobal">是否全局使用</param>
+        /// <returns></returns>
+        T SubDataBase(ConnectionConfig config, string suffix = "", bool isGlobal = false);
         #endregion
 
-        #region 设置分表名称
+        #region 使用分表
         /// <summary>
-        /// 设置分表名称
+        /// 使用分表
         /// </summary>
-        /// <param name="suffix">后缀</param>
-        /// <returns>对象</returns>
-        T SetSubTable(string suffix);
+        /// <returns></returns>
+        T SubTable();
+        /// <summary>
+        /// 使用分表默认带 _FB_
+        /// </summary>
+        /// <param name="suffix">分表后缀</param>
+        /// <param name="isGlobal">是否全局使用</param>
+        /// <returns></returns>
+        T SubTable(string suffix, bool isGlobal = false);
+        /// <summary>
+        /// 使用分表不带_FB_
+        /// </summary>
+        /// <param name="suffix">分表后缀</param>
+        /// <returns></returns>
+        T SubTableSuffix(string suffix);
         #endregion
 
         #region 增删改查
@@ -158,6 +214,13 @@ namespace XiaoFeng.Model
         /// <param name="where">条件</param>
         /// <returns></returns>
         int Count(Expression<Func<T, bool>> where = null);
+        #endregion
+
+        #region 当前模型的数据库对象
+        /// <summary>
+        /// 当前模型的数据库对象
+        /// </summary>
+        IDataHelper DataHelper { get; }
         #endregion
     }
     /// <summary>
