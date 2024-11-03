@@ -3032,7 +3032,7 @@ namespace XiaoFeng
             var i = 0;
             while (size >= mod)
             {
-                size %= mod;
+                size /= mod;
                 i++;
             }
             if (i >= Units.Length) return string.Empty;
