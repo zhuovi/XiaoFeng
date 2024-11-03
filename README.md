@@ -38,41 +38,41 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 5.2.2
+$ dotnet add package XiaoFeng --version 5.2.3
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 5.2.2
+PM> Install-Package XiaoFeng -Version 5.2.3
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="5.2.2" />
+<PackageReference Include="XiaoFeng" Version="5.2.3" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 5.2.2
+> paket add XiaoFeng --version 5.2.3
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 5.2.2"
+> #r "nuget: XiaoFeng, 5.2.3"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=5.2.2
+#addin nuget:?package=XiaoFeng&version=5.2.3
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=5.2.2
+#tool nuget:?package=XiaoFeng&version=5.2.3
 ```
 
 
@@ -2018,6 +2018,17 @@ client.UnSubscribe("取消订阅频道");
 ---
 
 # 更新日志
+
+## 2024-11-03  v 5.2.3
+
+1.upload配置增加独立目录配置;
+
+2.FileHelper增加CreateZipArchiveFromDirectory方法兼容.net8.0以下没有当前方法;
+
+3.zip文件内容类型增加application/x-zip-compressed;
+
+4.优化Stream的ReadToEnd方法中关闭读流不关闭Stream流的参数;
+
 
 ## 2024-10-17  v 5.2.2
 

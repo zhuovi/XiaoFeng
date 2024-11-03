@@ -346,7 +346,8 @@ WITH FILLFACTOR = 30;
             if (tableName.IsNullOrEmpty())
                 Table.Name = (Table.Name == null || Table.Name.IsNullOrEmpty()) ? modelType.Name : Table.Name;
             else Table.Name = tableName;
-            string Fields = "", PrimaryKey = "", Indexs = "", Description = "", Unique = "";
+            string Fields = "", PrimaryKey = "", Description = "", Unique = "";
+            var Indexs = new List<string>();
             DataType dType = new DataType(this.ProviderType);
             modelType.GetProperties(BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance).Each(p =>
             {
@@ -354,9 +355,40 @@ WITH FILLFACTOR = 30;
                 if (",ConnectionString,ConnectionTimeOut,CommandTimeOut,ProviderType,IsTransaction,ErrorMessage,tableName,QueryableX,".IndexOf("," + p.Name + ",") == -1)
                 {
                     ColumnAttribute Column = p.GetCustomAttribute<ColumnAttribute>();
-                    Column = Column ?? new ColumnAttribute { AutoIncrement = false, IsIndex = false, IsNullable = true, IsUnique = false, PrimaryKey = false, Length = 0, DefaultValue = "" };
+                    if (Column != null)
+                    {
+                        if (Column.DataType.IsNotNullOrEmpty())
+                        {
+                            switch (Column.DataType.ToString().ToUpper())
+                            {
+                                case "VARCHAR":
+                                    Column.DataType = "varchar";break;
+                                    case "NVARCHAR":
+                                    Column.DataType = "nvarchar"; break;
+                                case "TEXT":
+                                    Column.DataType = "text"; break;
+                                case "NTEXT":
+                                    Column.DataType = "ntext"; break;
+                                default:
+                                    Column.DataType = p.PropertyType.IsGenericType ? p.PropertyType.GetGenericArguments()[0].Name : p.PropertyType.Name;
+                                    break;
+                            }
+                        }
+                    }
+                    else 
+                        Column = new ColumnAttribute { 
+                            AutoIncrement = false, 
+                            IsIndex = false, 
+                            IsNullable = true, 
+                            IsUnique = false, 
+                            PrimaryKey = false, 
+                            Length = 0,
+                            DefaultValue = "",
+                            DataType = p.PropertyType.IsGenericType? p.PropertyType.GetGenericArguments()[0].Name: p.PropertyType.Name
+                        };
                     Column.Name = (Column.Name == null || Column.Name.IsNullOrEmpty()) ? p.Name : Column.Name;
-                    Column.DataType = Column.DataType.IsNullOrEmpty() ? dType[p.PropertyType] : Column.DataType;
+                    //Column.DataType = Column.DataType.IsNullOrEmpty() ? dType[p.PropertyType] : Column.DataType;
+                    Column.DataType = dType[Column.DataType.ToString()];
 
                     var defaultValue = Column.DefaultValue.ToString();
                     switch (defaultValue.ToUpper())
@@ -366,6 +398,9 @@ WITH FILLFACTOR = 30;
                             break;
                         case "NOW":
                             defaultValue = "getdate()";
+                            break;
+                        case "TIMESTAMP":
+                            defaultValue = "0";
                             break;
                     }
 
@@ -380,6 +415,7 @@ WITH FILLFACTOR = 30;
     [{0}] {1} IDENTITY({2},{3}) NOT NULL,", Column.Name, Column.DataType, (defaultValue.IsNullOrEmpty() ? 1 : defaultValue.ToCast<int>()), Column.AutoIncrementStep);
                     }
                     else
+                    {
                         Fields += String.Format(@"
     [{0}] {1}{2},",
                                       Column.Name,
@@ -388,21 +424,21 @@ WITH FILLFACTOR = 30;
                                       ",int,bigint,smallint,tinyint,".IndexOf("," + Column.DataType.ToString().ToLower() + ",") > -1
                                       ) ? " " : ("(" + (Column.Length == 0 ? 20 : Column.Length) + ") ")) +
                                       ((Column.IsNullable && !Column.PrimaryKey) ? "NULL" : "NOT NULL") + (defaultValue.IsNullOrEmpty() ? "" : (" DEFAULT (" + ((",int,bigint,smallint,tinyint,".IndexOf("," + Column.DataType.ToString().ToLower() + ",") > -1 || (defaultValue.StartsWith("'") && defaultValue.EndsWith("'")) || defaultValue == "newid()" || defaultValue.ToString().ToLower() == "getdate()") ? defaultValue : ("'" + defaultValue + "'")) + ")")));
+                    }
                     if (Column.PrimaryKey)
                     {
                         PrimaryKey = String.Format(@"
                     [{0}] ASC,", Column.Name);
-                        if (("," + Indexs + ",").IndexOf("," + Column.Name + ",") == -1)
-                            Indexs += Column.Name + ",";
+                        if (!Indexs.Contains($"[{Column.Name}]"))
+                            Indexs.Add($"[{Column.Name}]");
                     }
                     if (Column.IsUnique) Unique += Column.Name + ",";
-                    if (Column.IsIndex && ("," + Indexs + ",").IndexOf("," + Column.Name + ",") == -1) Indexs += Column.Name + ",";
+                    if (Column.IsIndex && !Indexs.Contains($"[{Column.Name}]")) Indexs.Add($"[{Column.Name}]");
                     Description += @"
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'{0}' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'{1}', @level2type=N'COLUMN',@level2name=N'{2}';".format(Column.Description, Table.Name, Column.Name);
                 }
             });
             PrimaryKey = PrimaryKey.TrimEnd(',');
-            Indexs = Indexs.TrimEnd(',');
             Unique = Unique.TrimEnd(',');
             if (Unique.IsNotNullOrEmpty()) Fields += "CONSTRAINT [UN_{0}] UNIQUE ({1}),{2}".format(Table.Name, Unique, Environment.NewLine);
             if (PrimaryKey.IsNullOrEmpty()) PrimaryKey = "ID";
@@ -416,7 +452,7 @@ WITH(PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_
 IF EXISTS (SELECT * FROM SYSINDEXES WHERE NAME='IX_{Table.Name}')
     DROP INDEX {Table.Name}.IX_{Table.Name};
 CREATE NONCLUSTERED INDEX IX_{Table.Name}
-ON {Table.Name}({Indexs})");
+ON {Table.Name}({Indexs.Join(",")})");
             }
             else
             {
@@ -426,12 +462,13 @@ ON {Table.Name}({Indexs})");
 IF EXISTS (SELECT * FROM SYSINDEXES WHERE NAME='{index.Name}')
     DROP INDEX {Table.Name}.{index.Name};
 CREATE {index.TableIndexType.ToString().ToUpper()} INDEX {index.Name}
-ON {Table.Name}({(from a in index.Keys select a.RemovePattern(@",[a-z]*$").Replace(",", " ")).Join(",")})");
+ON {Table.Name}({(from a in index.Keys select a.RemovePattern(@",[a-z]*$").Replace(",", " ").ReplacePattern(@"([^\s]+)(\s+(ASC|DESC))$","[$1]$2")).Join(",")})");
                 });
             }
             SQLString = SQLString.format(Table.Name, Fields, SbrIndexs.ToString(), Description);
 
-            return base.ExecuteScalar(SQLString).ToString().ToInt16() == 1;
+            base.ExecuteNonQuery(SQLString);
+            return true;
         }
         /// <summary>
         /// 创建数据库表 属性用 TableAttribute,ColumnAttribute
@@ -525,8 +562,10 @@ ON {Table.Name}({(from a in index.Keys select a.RemovePattern(@",[a-z]*$").Repla
             {
                 var count = this.ExecuteScalar($@"SELECT count(0) FROM sys.sql_modules AS m INNER JOIN sys.all_objects AS o ON m.object_id = o.object_id WHERE o.[type] = 'v' and o.Name = '{view.Name}'").ToCast<int>();
                 if (count > 0) return true;
-                else return this.ExecuteNonQuery($@"CREATE VIEW [dbo].[{view.Name}] AS
-    {view.Definition.ReplacePattern(@"ifnull", "ISNULL")};") > 0;
+                else 
+                    this.ExecuteNonQuery($@"CREATE VIEW [dbo].[{view.Name}] AS
+    {view.Definition.ReplacePattern(@"ifnull", "ISNULL")};");
+                return true;
             }
         }
         #endregion

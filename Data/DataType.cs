@@ -45,7 +45,7 @@ namespace XiaoFeng.Data
         /// <returns></returns>
         public object this[Type dataType]
         {
-            get { return this[dataType.ToString()]; }
+            get { return this[dataType.Name]; }
         }
         /// <summary>
         /// 获取相关数据库类型
@@ -113,6 +113,7 @@ namespace XiaoFeng.Data
                         {"UInt64","bigint"},
                         {"Binary","varbinary"},
                         {"Boolean","bit"},
+                        {"Bool","bit"},
                         {"DateTime","datetime"},
                         {"Decimal","decimal"},
                         {"Double","float"},
