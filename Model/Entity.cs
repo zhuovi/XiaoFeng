@@ -921,6 +921,7 @@ namespace XiaoFeng.Model
         /// <summary>
         /// 当前模型的数据库对象
         /// </summary>
+        [JsonIgnore,XmlIgnore]
         public IDataHelper DataHelper { get => this.Data.DataHelper; }
         #endregion
     }
