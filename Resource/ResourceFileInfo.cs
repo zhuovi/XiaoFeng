@@ -186,6 +186,7 @@ namespace XiaoFeng.Resource
         {
             using (var stream = CreateReadStream())
             {
+                if (stream == null) return Array.Empty<byte>();
                 var bytes = new byte[stream.Length];
                 stream.Read(bytes, 0, bytes.Length);
                 return bytes;

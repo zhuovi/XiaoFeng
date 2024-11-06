@@ -2470,7 +2470,7 @@ namespace XiaoFeng
         /// <typeparam name="TTarget">目标类型</typeparam>
         /// <param name="source">源对象</param>
         /// <param name="target">目标对象</param>
-        public static void CopyTo<TSource, TTarget>(this TSource source, TTarget target)
+        public static void CopyTo<TSource, TTarget>(this TSource source, TTarget target) where TTarget:new()
         {
             if (source == null) { target = default; return; }
             var sourceType = source.GetType();
