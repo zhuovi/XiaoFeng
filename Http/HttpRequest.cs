@@ -1007,10 +1007,7 @@ namespace XiaoFeng.Http
             if (this.Data == null) { this.Data = data; return this; }
             data.Each(d =>
             {
-                if (this.Data.ContainsKey(d.Key))
-                    this.Data[d.Key] = d.Value;
-                else
-                    this.Data.Add(d.Key, d.Value);
+                this.AddParameter(d.Key, d.Value);
             });
             return this;
         }
@@ -1362,6 +1359,15 @@ namespace XiaoFeng.Http
         public IHttpRequest AddHeader(string key, string value)
         {
             if (key.IsNullOrEmpty()) return this;
+            switch (key.Replace("-", "").ToLower())
+            {
+                case "acceptencoding":
+                    this.AcceptEncoding = value;
+                    return this;
+                case "acceptlanguage":
+                    this.AcceptLanguage = value;
+                    return this;
+            }
             if (this.Headers == null) this.Headers = new Dictionary<string, string>();
             if (this.Headers.ContainsKey(key))
                 this.Headers[key] = value;
@@ -1380,10 +1386,7 @@ namespace XiaoFeng.Http
             if (this.Headers == null) this.Headers = new Dictionary<string, string>();
             vals.Each(k =>
             {
-                if (this.Headers.ContainsKey(k.Key))
-                    this.Headers[k.Key] = k.Value;
-                else
-                    this.Headers.Add(k.Key, k.Value);
+                this.AddHeader(k.Key, k.Value);
             });
             return this;
         }
@@ -1398,6 +1401,34 @@ namespace XiaoFeng.Http
         public IHttpRequest SetHttpCore(HttpCore httpCore)
         {
             this.HttpCore = httpCore;
+            return this;
+        }
+        #endregion
+
+        #region 设置 Accept-Charset 标头
+        /// <summary>
+        /// 设置 Accept-Charset 标头，指定响应可接受的内容编码。
+        /// </summary>
+        /// <param name="acceptEncoding">Accept-Charset 标头</param>
+        /// <returns></returns>
+        public IHttpRequest SetAcceptEncoding(string acceptEncoding)
+        {
+            if (acceptEncoding.IsNullOrEmpty()) return this;
+            this.AcceptEncoding = acceptEncoding;
+            return this;
+        }
+        #endregion
+
+        #region 设置 Accept-Langauge 标头
+        /// <summary>
+        /// 设置 Accept-Langauge 标头，指定用于响应的首选自然语言。
+        /// </summary>
+        /// <param name="acceptLanguage">Accept-Charset 标头</param>
+        /// <returns></returns>
+        public IHttpRequest SetAcceptLanguage(string acceptLanguage)
+        {
+            if (acceptLanguage.IsNullOrEmpty()) return this;
+            this.AcceptLanguage = acceptLanguage;
             return this;
         }
         #endregion

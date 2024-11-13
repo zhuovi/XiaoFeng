@@ -1945,7 +1945,7 @@ namespace XiaoFeng
             {
                 if (sourceType == typeof(int)) return ((int)o).ToDateTime();
                 else if (sourceType == typeof(long)) return ((long)o).ToDateTime();
-                if (!_val.IsDateOrTime()) return isGeneric ? default(DateTime?) : default(DateTime);
+                if (!_val.IsDateOrTime() && !_val.IsTime()) return isGeneric ? default(DateTime?) : default(DateTime);
                 else o = _val.Replace("T", " ").Replace("点", "时");
             }
             else if (targetType == typeof(Guid))

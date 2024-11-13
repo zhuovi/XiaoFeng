@@ -170,6 +170,13 @@ namespace XiaoFeng.IO
         /// <returns>路径</returns>
         public static string Combine(this String _, params String[] param) => Path.Combine(new string[] { _ }.Concat(param).ToArray());
         /// <summary>
+        /// 合并成相对路径
+        /// </summary>
+        /// <param name="_">初始路径</param>
+        /// <param name="paths">由路径的各部分构成的数组。</param>
+        /// <returns>已组合的路径。</returns>
+        public static string CombineRelativePath(this string _, params string[] paths) => FileHelper.CombineRelativePath(new string[] { _ }.Concat(paths));
+        /// <summary>
         /// 写字符串
         /// </summary>
         /// <param name="fileStream">文件流</param>

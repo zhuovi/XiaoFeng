@@ -875,6 +875,30 @@ MIDI (mid)，文件头：4D546864
         /// <param name="paths">由路径的各部分构成的数组。</param>
         /// <returns>已组合的路径。</returns>
         public static string Combine(IEnumerable<string> paths) => paths == null || !paths.Any() ? string.Empty : Combine(paths.ToArray());
+        /// <summary>
+        /// 将字符串数组组合成一个相对路径。
+        /// </summary>
+        /// <param name="paths">由路径的各部分构成的数组。</param>
+        /// <returns>已组合的路径。</returns>
+        public static string CombineRelativePath(IEnumerable<string> paths) => paths == null || !paths.Any() ? string.Empty : CombineRelativePath(paths.ToArray());
+        /// <summary>
+        /// 将字符串数组组合成一个相对路径。
+        /// </summary>
+        /// <param name="paths">由路径的各部分构成的数组。</param>
+        /// <returns>已组合的路径。</returns>
+        public static string CombineRelativePath(params string[] paths)
+        {
+            if (paths == null || !paths.Any()) return string.Empty;
+            var list = new List<string>();
+            if (paths.Length > 0)
+                paths.Each(s =>
+                {
+                    if (s.IsNotNullOrEmpty())
+                        list.AddRange(s.Split(new char[] { '\\', '/' }, StringSplitOptions.RemoveEmptyEntries));
+                });
+            if (list.Count == 0) return string.Empty;
+            return string.Join(AltDirectorySeparatorChar.ToString(), list);
+        }
         #endregion
 
         #region 创建 zip 存档，该存档包含指定目录的文件和目录

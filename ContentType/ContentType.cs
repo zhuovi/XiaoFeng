@@ -91,6 +91,7 @@ namespace XiaoFeng
             {"pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation"},
             {"xml", "text/xml" },
             {"flr", "x-world/x-vrml" },
+            {"properties","text/plain" },
             /*字体*/
             {"woff", "application/font-woff" },
             {"woff2", "application/font-woff2" },

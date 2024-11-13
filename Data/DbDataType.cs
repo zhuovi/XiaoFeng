@@ -48,6 +48,10 @@ namespace XiaoFeng.Data
         /// </summary>
         DATE,
         /// <summary>
+        /// 时间
+        /// </summary>
+        TIME,
+        /// <summary>
         /// 时间戳
         /// </summary>
         TIMESTAMP,

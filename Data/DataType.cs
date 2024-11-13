@@ -115,6 +115,8 @@ namespace XiaoFeng.Data
                         {"Boolean","bit"},
                         {"Bool","bit"},
                         {"DateTime","datetime"},
+                        {"DateOnly","date" },
+                        {"TimeOnly","time" },
                         {"Decimal","decimal"},
                         {"Double","float"},
                         {"Single","real"},
@@ -148,6 +150,8 @@ namespace XiaoFeng.Data
                         {"varbinary","Binary"},
                         {"bit","Boolean"},
                         {"datetime","DateTime"},
+                        {"date","DateOnly"},
+                        {"time","TimeOnly"},
                         {"decimal","Decimal"},
                         {"float","Double"},
                         {"real","Single"},
@@ -186,6 +190,8 @@ namespace XiaoFeng.Data
                         {"Boolean","BOOLEAN"},
                         {"String","VARCHAR"},
                         {"DateTime","DATETIME"},
+                        {"DateOnly","DATE" },
+                        {"TimeOnly","TIME" },
                         {"Decimal","DECIMAL"},
                         {"Double","DOUBLE"},
                         {"Float","DOUBLE"},
@@ -260,7 +266,9 @@ namespace XiaoFeng.Data
                         { "Double","DOUBLE" },
                         { "Decimal","DECIMAL" },
                         { "String","VARCHAR" },
-                        { "DateTime","DATETIME" }
+                        { "DateTime","DATETIME" },
+                        { "DateOnly","DATE" },
+                        { "TimeOnly","TIME" }
                     };
                 }
                 return this._MySql;
@@ -296,6 +304,8 @@ namespace XiaoFeng.Data
                         { "JSON","String" },
                         { "LONGTEXT","String" },
                         { "DATETIME","DateTime" },
+                        {"DATE","DateOnly"},
+                        {"TIME","TimeOnly"},
                         { "DATE","DateTime" },
                         { "TIME","DateTime" },
                         { "TimeStamp","DateTime" }
@@ -331,7 +341,9 @@ namespace XiaoFeng.Data
                         { "Int64","INTERVAL" },
                         { "TimeSpan","INTERVAL" },
                         { "String","VARCHAR" },
-                        { "DateTime","TIMESTAMP" }
+                        { "DateTime","TIMESTAMP" },
+                        { "DateOnly","DATE" },
+                        { "TimeOnly","TIME" }
                     };
                 }
                 return this._Oracle;
@@ -356,7 +368,9 @@ namespace XiaoFeng.Data
                         { "INTERVAL","Int64" },
                         { "VARCHAR","String" },
                         { "NUMBER","Decimal" },
-                        { "TIMESTAMP","DateTime" }
+                        { "TIMESTAMP","DateTime" },
+                        { "DATE","DateOnly"},
+                        { "TIME","TimeOnly"},
                     };
                 }
                 return this._OracleToDotNet;
@@ -389,7 +403,9 @@ namespace XiaoFeng.Data
                         { "Int64","BIGINT" },
                         { "TimeSpan","BIGINT" },
                         { "String","VARCHAR" },
-                        { "DateTime","TIMESTAMP" }
+                        { "DateTime","TIMESTAMP" },
+                        { "DateOnly","DATE" },
+                        { "TimeOnly","TIME" }
                     };
                 }
                 return this._Dameng;
@@ -433,6 +449,8 @@ namespace XiaoFeng.Data
                         { "TIME","DateTime"},
                         { "TIMESTAMP","DateTime"},
                         { "DATETIME","DateTime"},
+                        { "DATE","DateOnly"},
+                        { "TIME","TimeOnly"},
                         { "TIME WITH TIME ZONE","DateTime"},
                         { "DATETIME WITH TIME ZONE","DateTime"},
                         { "TIMESTAMP WITH LOCAL TIME ZONE","DateTime"},

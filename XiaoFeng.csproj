@@ -10,7 +10,7 @@
 		<Copyright>CopyRight © 2008-2025 魔法精灵(www.eelf.cn) QQ:7092734 Email:jacky@eelf.cn</Copyright>
 		<Company>魔法精灵</Company>
 		<VersionPrefix>5.2</VersionPrefix>
-		<VersionSuffix>5</VersionSuffix>
+		<VersionSuffix>6</VersionSuffix>
 		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
 		<FileVersion>$(Version)</FileVersion>
 		<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
@@ -29,8 +29,8 @@
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<AssemblyOriginatorKeyFile>XiaoFeng.snk</AssemblyOriginatorKeyFile>
 		<PackageIcon>x.png</PackageIcon>
-		<PackageTags>XiaoFeng;FAYELF;ELF;DataHelper;HttpHelper;Redis;Socket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>修复字节转相应单位bug;修复Entity放出去的属性IDataHelper增加属性忽略序列化;增加contentType字典数据;</PackageReleaseNotes>
+		<PackageTags>XiaoFeng;FAYELF;ELF;DataHelper;HttpHelper;Redis;Socket;WebSocket;Ftp;JSON;XML;</PackageTags>
+		<PackageReleaseNotes>增加合并相对目录路径方法 FileHelper.CombineRelativePath;优化HttpHelper中设置Accept-Encoding及Accpet-Language的方法;生成数据库模型增加DateOnly,TimeOnly对应数据库字段类型中的DATE,TIME;修复ToCast转换DateTime类型时的值为时间字符串时的bug;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>
