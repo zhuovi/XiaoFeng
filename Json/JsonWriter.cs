@@ -204,10 +204,49 @@ namespace XiaoFeng.Json
                 WriteString(ivalue.ToString());
                 return;
             }
+#if NET
+            if(value is DateOnly date)
+            {
+                WriteDateOnly(date);
+                return;
+            }
+            if(value is TimeOnly time)
+            {
+                WriteTimeOnly(time);
+                return;
+            }
+#endif
             WriteObject(value);
         }
         #endregion
 
+        #region 转换器
+
+        #endregion
+
+#if NET
+        #region 写DateOnly
+        /// <summary>
+        /// 写DateOnly
+        /// </summary>
+        /// <param name="date">日期</param>
+        private void WriteDateOnly(DateOnly date)
+        {
+            Builder.AppendFormat($"\"{date.ToString(this.SerializerSetting.DateFormat)}\"");
+        }
+        #endregion
+
+        #region 写TimeOnly
+        /// <summary>
+        /// 写TimeOnly
+        /// </summary>
+        /// <param name="time">日期</param>
+        private void WriteTimeOnly(TimeOnly time)
+        {
+            Builder.AppendFormat($"\"{time.ToString(this.SerializerSetting.TimeFormat)}\"");
+        }
+        #endregion
+#endif
         #region 写时间
         /// <summary>
         /// 写时间
@@ -772,6 +811,6 @@ namespace XiaoFeng.Json
         }
         #endregion
 
-        #endregion
+#endregion
     }
 }

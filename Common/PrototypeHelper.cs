@@ -1783,6 +1783,48 @@ namespace XiaoFeng
         }
         #endregion
 
+#if NET
+        #region 字符串转换成DateOnly
+        /// <summary>
+        /// 字符串转换成DateOnly
+        /// </summary>
+        /// <param name="_">字符串</param>
+        /// <param name="defaultValue">默认值</param>
+        /// <returns></returns>
+        public static DateOnly ToDateOnly(this string _, DateOnly defaultValue = default)
+        {
+            if (_.IsNullOrWhiteSpace()) return defaultValue;
+            try
+            {
+                _ = _.Trim();
+                DateOnly dt = defaultValue;
+                return DateOnly.TryParse(_, out dt) ? dt : defaultValue;
+            }
+            catch { return defaultValue; }
+        }
+        #endregion
+
+        #region 字符串转换成TimeOnly
+        /// <summary>
+        /// 字符串转换成TimeOnly
+        /// </summary>
+        /// <param name="_">字符串</param>
+        /// <param name="defaultValue">默认值</param>
+        /// <returns></returns>
+        public static TimeOnly ToTimeOnly(this string _, TimeOnly defaultValue = default)
+        {
+            if (_.IsNullOrWhiteSpace()) return defaultValue;
+            try
+            {
+                _ = _.Trim();
+                TimeOnly dt = defaultValue;
+                return TimeOnly.TryParse(_, out dt) ? dt : defaultValue;
+            }
+            catch { return defaultValue; }
+        }
+        #endregion
+#endif
+
         #region 类型相互转换
         /// <summary>
         /// 类型相互转换
@@ -1855,6 +1897,30 @@ namespace XiaoFeng
             }
             if (targetType.IsEnum) return o.ToEnum(targetType);
             if (targetType == typeof(string)) return o.IsNullOrEmpty() ? String.Empty : o.ToString();
+#if NET
+            if(targetType == typeof(DateOnly))
+            {
+                var val = o.ToString();
+                if (val.IsDate() || val.IsDateOrTime() ||val.IsDateTime()) return DateOnly.Parse(val);
+                if (val.IsNumberic())
+                {
+                    if (val.Length > 10)
+                        return DateOnly.FromDateTime(val.ToCast<long>().ToDateTime());
+                    else return DateOnly.FromDateTime(val.ToCast<int>().ToDateTime());
+                }
+                return default(DateOnly);
+            }
+            if (targetType == typeof(TimeOnly))
+            {
+                var val = o.ToString();
+                if (val.IsDate() || val.IsDateOrTime() || val.IsDateTime() || val.IsTime()) return TimeOnly.Parse(val.ToDateTime().ToString("HH:mm:ss.fffffff"));
+                if (val.IsNumberic())
+                {
+                    return new TimeOnly(val.ToCast<long>());
+                }
+                return default(TimeOnly);
+            }
+#endif
             if (o.IsNullOrEmpty()) return null;
             /*判断是否是基础类型值类型*/
             ValueTypes BaseSourceType = sourceType.GetValueType();

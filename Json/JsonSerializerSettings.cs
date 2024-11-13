@@ -30,9 +30,17 @@ namespace XiaoFeng.Json
         /// </summary>
         public string GuidFormat { get; set; } = "D";
         /// <summary>
-        /// 日期格式
+        /// 日期时间格式
         /// </summary>
         public string DateTimeFormat { get; set; } = "yyyy-MM-dd HH:mm:ss.fff";
+        /// <summary>
+        /// 日期格式
+        /// </summary>
+        public string DateFormat { get; set; } = "yyyy-MM-dd";
+        /// <summary>
+        /// 时间格式
+        /// </summary>
+        public string TimeFormat { get; set; } = "HH:mm:ss.fffffff";
         /// <summary>
         /// 是否格式化
         /// </summary>

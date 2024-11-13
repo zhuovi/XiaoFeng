@@ -2,6 +2,10 @@
 using System.Collections;
 using System.Linq.Expressions;
 using System.Text;
+#if NET
+using System.Collections.Concurrent;
+using System.Linq;
+#endif
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -254,7 +258,7 @@ namespace XiaoFeng.Expressions
         }
         #endregion
     }
-#if NETCOREAPP
+#if NET
     /// <summary>
     /// 动态创建表达式
     /// </summary>

@@ -1138,19 +1138,29 @@ namespace XiaoFeng.Json
                 else
                     return null;
             }
-            else if (this.Type == JsonType.Bool || this.Type == JsonType.Float || this.Type == JsonType.Guid || this.Type == JsonType.Number || this.Type == JsonType.String)
+            if (this.Type == JsonType.Bool || this.Type == JsonType.Float || this.Type == JsonType.Guid || this.Type == JsonType.Number || this.Type == JsonType.String)
                 return this.value.GetValue(type);
-            else if (this.Type == JsonType.DateTime)
+            if (this.Type == JsonType.DateTime)
             {
                 return this.value.ToCast<DateTime>().ToString(this.SerializerSetting.DateTimeFormat);
             }
-            else if (this.Type == JsonType.Null)
+#if NET
+            if(this.Type == JsonType.Date)
+            {
+                return this.value.ToCast<DateOnly>().ToString(this.SerializerSetting.DateFormat);
+            }
+            if (this.Type == JsonType.Time)
+            {
+                return this.value.ToCast<TimeOnly>().ToString(this.SerializerSetting.DateFormat);
+            }
+#endif
+            if (this.Type == JsonType.Null)
                 return null;
-            else if (this.Type == JsonType.Object)
+            if (this.Type == JsonType.Object)
                 return ParseObject(this, type, target);
-            else if (this.Type == JsonType.Type)
+            if (this.Type == JsonType.Type)
                 return this.value;
-            else
+            
                 return this.value.GetValue(type);
         }
         /// <summary>

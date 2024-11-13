@@ -181,18 +181,43 @@ namespace XiaoFeng.Xml
                 if (tagName.IsNotNullOrEmpty()) XmlWriter.WriteEndElement();
                 return;
             }
-            else if (data is DateTime date)
+            if (data is DateTime dateTime)
             {
                 if (tagName.IsNotNullOrEmpty()) WriteStartElement(tagName, qualifiedName);
 
                 if (isCData)
-                    XmlWriter.WriteCData(date.ToString(this.SerializerSetting.DateTimeFormat));
+                    XmlWriter.WriteCData(dateTime.ToString(this.SerializerSetting.DateTimeFormat));
                 else
-                    XmlWriter.WriteString(date.ToString(this.SerializerSetting.DateTimeFormat));
+                    XmlWriter.WriteString(dateTime.ToString(this.SerializerSetting.DateTimeFormat));
                 if (tagName.IsNotNullOrEmpty()) XmlWriter.WriteEndElement();
                 return;
             }
-            else if (data is Guid guid)
+#if NET
+            if(data is DateOnly date)
+            {
+                if (tagName.IsNotNullOrEmpty()) WriteStartElement(tagName, qualifiedName);
+
+                if (isCData)
+                    XmlWriter.WriteCData(date.ToString(this.SerializerSetting.DateFormat));
+                else
+                    XmlWriter.WriteString(date.ToString(this.SerializerSetting.DateFormat));
+                if (tagName.IsNotNullOrEmpty()) XmlWriter.WriteEndElement();
+                return;
+            }
+
+            if (data is TimeOnly time)
+            {
+                if (tagName.IsNotNullOrEmpty()) WriteStartElement(tagName, qualifiedName);
+
+                if (isCData)
+                    XmlWriter.WriteCData(time.ToString(this.SerializerSetting.TimeFormat));
+                else
+                    XmlWriter.WriteString(time.ToString(this.SerializerSetting.TimeFormat));
+                if (tagName.IsNotNullOrEmpty()) XmlWriter.WriteEndElement();
+                return;
+            }
+#endif
+            if (data is Guid guid)
             {
                 if (tagName.IsNotNullOrEmpty()) WriteStartElement(tagName, qualifiedName);
                 if (isCData)
@@ -202,14 +227,14 @@ namespace XiaoFeng.Xml
                 if (tagName.IsNotNullOrEmpty()) XmlWriter.WriteEndElement();
                 return;
             }
-            else if (data is IEnumerable ie)
+            if (data is IEnumerable ie)
             {
                 foreach (var item in ie)
                 {
                     WriteValue(item, qualifiedName, isCData, tagName);
                 }
             }
-            else if (data is Enum)
+            if (data is Enum)
             {
                 if (SerializerSetting.EnumValueType == EnumValueType.Name)
                     data = data.ToString();
@@ -225,7 +250,7 @@ namespace XiaoFeng.Xml
                 if (tagName.IsNotNullOrEmpty()) XmlWriter.WriteEndElement();
                 return;
             }
-            else if (data is XmlValue xvalue)
+            if (data is XmlValue xvalue)
             {
                 if (xvalue.IsEmpty && this.SerializerSetting.OmitEmptyNode) return;
 
@@ -258,7 +283,7 @@ namespace XiaoFeng.Xml
                 XmlWriter.WriteEndElement();
                 return;
             }
-            else if (data is IValue ivalue)
+            if (data is IValue ivalue)
             {
                 if (tagName.IsNotNullOrEmpty()) WriteStartElement(tagName, qualifiedName);
                 if (isCData)
@@ -268,232 +293,230 @@ namespace XiaoFeng.Xml
                 if (tagName.IsNotNullOrEmpty()) XmlWriter.WriteEndElement();
                 return;
             }
-            else
+
+            if (BaseType == ValueTypes.Value || BaseType == ValueTypes.String || BaseType == ValueTypes.Null)
             {
-                if (BaseType == ValueTypes.Value || BaseType == ValueTypes.String || BaseType == ValueTypes.Null)
-                {
+                WriteStartElement(tagName, qualifiedName);
+                if (isCData)
+                    XmlWriter.WriteCData(data.ToString());
+                else
+                    XmlWriter.WriteString(EncodeString(data.ToString()));
+                XmlWriter.WriteEndElement();
+            }
+            else if (BaseType == ValueTypes.Class || BaseType == ValueTypes.Struct || BaseType == ValueTypes.Anonymous)
+            {
+                if (tagName.IsNotNullOrEmpty())
                     WriteStartElement(tagName, qualifiedName);
-                    if (isCData)
-                        XmlWriter.WriteCData(data.ToString());
-                    else
-                        XmlWriter.WriteString(EncodeString(data.ToString()));
-                    XmlWriter.WriteEndElement();
-                }
-                else if (BaseType == ValueTypes.Class || BaseType == ValueTypes.Struct || BaseType == ValueTypes.Anonymous)
+                /*类是否有忽略空节点*/
+                var ClassOmitEmptyNode = type.IsDefined(typeof(OmitEmptyNodeAttribute), false);
+                var fields = new List<MemberInfo>(type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase));
+                fields.AddRange(type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase));
+                fields.Where(a => a.IsDefined(typeof(XmlAttributeAttribute), false)).Each(a =>
                 {
-                    if (tagName.IsNotNullOrEmpty())
-                        WriteStartElement(tagName, qualifiedName);
-                    /*类是否有忽略空节点*/
-                    var ClassOmitEmptyNode = type.IsDefined(typeof(OmitEmptyNodeAttribute), false);
-                    var fields = new List<MemberInfo>(type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase));
-                    fields.AddRange(type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase));
-                    fields.Where(a => a.IsDefined(typeof(XmlAttributeAttribute), false)).Each(a =>
+                    var val = (a.MemberType == MemberTypes.Property ? (a as PropertyInfo).GetValue(data) : (a as FieldInfo).GetValue(data));
+                    if (val.IsNullOrEmpty()) return;
+                    string value = string.Empty;
+                    if (val is String _data)
+                        value = EncodeString(_data);
+                    else if (val is DateTime _date)
                     {
-                        var val = (a.MemberType == MemberTypes.Property ? (a as PropertyInfo).GetValue(data) : (a as FieldInfo).GetValue(data));
-                        if (val.IsNullOrEmpty()) return;
-                        string value = string.Empty;
-                        if (val is String _data)
-                            value = EncodeString(_data);
-                        else if (val is DateTime _date)
+                        var valueFormat = this.SerializerSetting.DateTimeFormat;
+                        if (a.IsDefined(typeof(XmlValueFormatAttribute)))
+                            valueFormat = a.GetCustomAttribute<XmlValueFormatAttribute>()?.Format;
+                        value = _date.ToString(valueFormat);
+                    }
+                    else if (val is Guid _guid)
+                    {
+                        var valueFormat = this.SerializerSetting.GuidFormat;
+                        if (a.IsDefined(typeof(XmlValueFormatAttribute)))
+                            valueFormat = a.GetCustomAttribute<XmlValueFormatAttribute>()?.Format;
+                        value = _guid.ToString(valueFormat);
+                    }
+                    else if (val is Boolean _val)
+                        value = _val.ToString().ToLower();
+                    else if (val is Enum _enum)
+                    {
+                        if (a.IsDefined(typeof(XmlConverterAttribute), false))
                         {
-                            var valueFormat = this.SerializerSetting.DateTimeFormat;
-                            if (a.IsDefined(typeof(XmlValueFormatAttribute)))
-                                valueFormat = a.GetCustomAttribute<XmlValueFormatAttribute>()?.Format;
-                            value = _date.ToString(valueFormat);
-                        }
-                        else if (val is Guid _guid)
-                        {
-                            var valueFormat = this.SerializerSetting.GuidFormat;
-                            if (a.IsDefined(typeof(XmlValueFormatAttribute)))
-                                valueFormat = a.GetCustomAttribute<XmlValueFormatAttribute>()?.Format;
-                            value = _guid.ToString(valueFormat);
-                        }
-                        else if (val is Boolean _val)
-                            value = _val.ToString().ToLower();
-                        else if (val is Enum _enum)
-                        {
-                            if (a.IsDefined(typeof(XmlConverterAttribute), false))
+                            var converter = a.GetCustomAttribute<XmlConverterAttribute>();
+                            if (converter.ConverterType == typeof(DescriptionConverter))
                             {
-                                var converter = a.GetCustomAttribute<XmlConverterAttribute>();
-                                if (converter.ConverterType == typeof(DescriptionConverter))
-                                {
-                                    value = _enum.GetDescription().IfEmpty(((int)val).ToString());
-                                }
-                                else if (converter.ConverterType == typeof(StringEnumConverter))
-                                {
-                                    value = _enum.ToString();
-                                }
+                                value = _enum.GetDescription().IfEmpty(((int)val).ToString());
                             }
-                            else
+                            else if (converter.ConverterType == typeof(StringEnumConverter))
                             {
-                                value = ((int)val).ToString();
+                                value = _enum.ToString();
                             }
                         }
-                        else if (val is IValue _ivalue)
+                        else
                         {
-                            value = _ivalue.ToString();
+                            value = ((int)val).ToString();
                         }
-                        else value = val.ToString();
-                        /*属性是否有忽略属性*/
-                        var FieldOmitEmptyNode = a.IsDefined(typeof(OmitEmptyNodeAttribute), false);
-                        if (value.IsNullOrEmpty() && (this.SerializerSetting.OmitEmptyNode || ClassOmitEmptyNode || FieldOmitEmptyNode)) return;
-                        XmlWriter.WriteAttributeString(a.GetCustomAttribute<XmlAttributeAttribute>().AttributeName.IfEmpty(a.Name), value);
-                    });
-                    fields.Where(a => !a.IsDefined(typeof(XmlAttributeAttribute), false)).Each(m =>
+                    }
+                    else if (val is IValue _ivalue)
+                    {
+                        value = _ivalue.ToString();
+                    }
+                    else value = val.ToString();
+                    /*属性是否有忽略属性*/
+                    var FieldOmitEmptyNode = a.IsDefined(typeof(OmitEmptyNodeAttribute), false);
+                    if (value.IsNullOrEmpty() && (this.SerializerSetting.OmitEmptyNode || ClassOmitEmptyNode || FieldOmitEmptyNode)) return;
+                    XmlWriter.WriteAttributeString(a.GetCustomAttribute<XmlAttributeAttribute>().AttributeName.IfEmpty(a.Name), value);
+                });
+                fields.Where(a => !a.IsDefined(typeof(XmlAttributeAttribute), false)).Each(m =>
+                  {
+                      var FieldName = m.Name;
+                      var ItemName = "";
+                      var ArrayName = "";
+                      if (m.IsDefined(typeof(XmlIgnoreAttribute), false) || !(m.MemberType == MemberTypes.Property || m.MemberType == MemberTypes.Field)) return;
+                      var value = m.MemberType == MemberTypes.Property ? (m as PropertyInfo).GetValue(data) : (m as FieldInfo).GetValue(data);
+                      /*属性是否有忽略属性*/
+                      var FieldOmitEmptyNode = m.IsDefined(typeof(OmitEmptyNodeAttribute), false);
+                      if (value.IsNullOrEmpty() && (this.SerializerSetting.OmitEmptyNode || ClassOmitEmptyNode || FieldOmitEmptyNode)) return;
+                      /*写注释*/
+                      if (!this.SerializerSetting.OmitComment && m.IsDefined(typeof(DescriptionAttribute), false))
                       {
-                          var FieldName = m.Name;
-                          var ItemName = "";
-                          var ArrayName = "";
-                          if (m.IsDefined(typeof(XmlIgnoreAttribute), false) || !(m.MemberType == MemberTypes.Property || m.MemberType == MemberTypes.Field)) return;
-                          var value = m.MemberType == MemberTypes.Property ? (m as PropertyInfo).GetValue(data) : (m as FieldInfo).GetValue(data);
-                          /*属性是否有忽略属性*/
-                          var FieldOmitEmptyNode = m.IsDefined(typeof(OmitEmptyNodeAttribute), false);
-                          if (value.IsNullOrEmpty() && (this.SerializerSetting.OmitEmptyNode || ClassOmitEmptyNode || FieldOmitEmptyNode)) return;
-                          /*写注释*/
-                          if (!this.SerializerSetting.OmitComment && m.IsDefined(typeof(DescriptionAttribute), false))
-                          {
-                              var description = m.GetDescription();
-                              if (description.IsNotNullOrEmpty())
-                                  XmlWriter.WriteComment(description);
-                          }
-                          /*写节点名称*/
-                          if (m.IsDefined(typeof(XmlElementAttribute), false))
-                              FieldName = m.GetCustomAttribute<XmlElementAttribute>().ElementName.IfEmpty(FieldName);
-                          var _type = m.MemberType == MemberTypes.Property ? (m as PropertyInfo).PropertyType : (m as FieldInfo).FieldType;
-                          var _BaseType = _type.GetValueType();
-                          if (m.IsDefined(typeof(XmlArrayAttribute), false))
-                          {
-                              ArrayName = m.GetCustomAttribute<XmlArrayAttribute>().ElementName;
-                          }
-                          /*字节名称*/
-                          if (m.IsDefined(typeof(XmlArrayItemAttribute), false))
-                          {
-                              ItemName = m.GetCustomAttribute<XmlArrayItemAttribute>().ElementName.IfEmpty(FieldName);
-                              //if (ArrayName.IsNullOrEmpty()) ArrayName = FieldName;
-                          }
+                          var description = m.GetDescription();
+                          if (description.IsNotNullOrEmpty())
+                              XmlWriter.WriteComment(description);
+                      }
+                      /*写节点名称*/
+                      if (m.IsDefined(typeof(XmlElementAttribute), false))
+                          FieldName = m.GetCustomAttribute<XmlElementAttribute>().ElementName.IfEmpty(FieldName);
+                      var _type = m.MemberType == MemberTypes.Property ? (m as PropertyInfo).PropertyType : (m as FieldInfo).FieldType;
+                      var _BaseType = _type.GetValueType();
+                      if (m.IsDefined(typeof(XmlArrayAttribute), false))
+                      {
+                          ArrayName = m.GetCustomAttribute<XmlArrayAttribute>().ElementName;
+                      }
+                      /*字节名称*/
+                      if (m.IsDefined(typeof(XmlArrayItemAttribute), false))
+                      {
+                          ItemName = m.GetCustomAttribute<XmlArrayItemAttribute>().ElementName.IfEmpty(FieldName);
+                          //if (ArrayName.IsNullOrEmpty()) ArrayName = FieldName;
+                      }
 
-                          if (_BaseType == ValueTypes.Dictionary || _BaseType == ValueTypes.IDictionary)
+                      if (_BaseType == ValueTypes.Dictionary || _BaseType == ValueTypes.IDictionary)
+                      {
+                          WriteStartElement(FieldName, qualifiedName);
+                          foreach (DictionaryEntry item in (IEnumerable)value)
                           {
-                              WriteStartElement(FieldName, qualifiedName);
-                              foreach (DictionaryEntry item in (IEnumerable)value)
-                              {
-                                  WriteValue(item.Value, qualifiedName, false, ItemName.IfEmpty(item.Key.ToString()));
-                              }
-                              XmlWriter.WriteEndElement();
+                              WriteValue(item.Value, qualifiedName, false, ItemName.IfEmpty(item.Key.ToString()));
                           }
-                          else if (_BaseType == ValueTypes.Array || _BaseType == ValueTypes.ArrayList || _BaseType == ValueTypes.IEnumerable || _BaseType == ValueTypes.List)
+                          XmlWriter.WriteEndElement();
+                      }
+                      else if (_BaseType == ValueTypes.Array || _BaseType == ValueTypes.ArrayList || _BaseType == ValueTypes.IEnumerable || _BaseType == ValueTypes.List)
+                      {
+                          var IsInterface = false;
+                          if (ArrayName.IsNullOrEmpty() && ItemName.IsNullOrEmpty())
                           {
-                              var IsInterface = false;
-                              if (ArrayName.IsNullOrEmpty() && ItemName.IsNullOrEmpty())
+                              ArrayName = FieldName;
+                              if (m is PropertyInfo p)
                               {
-                                  ArrayName = FieldName;
-                                  if (m is PropertyInfo p)
-                                  {
-                                      var typeName = p.PropertyType.GetGenericArguments().FirstOrDefault();
-                                      IsInterface = typeName.IsInterface;
-                                      ItemName = typeName?.Name;
-                                  }
-                                  else if (m is FieldInfo f)
-                                  {
-                                      var typeName = f.FieldType.GetGenericArguments().FirstOrDefault();
-                                      IsInterface = typeName.IsInterface;
-                                      ItemName = typeName?.Name;
-                                  }
+                                  var typeName = p.PropertyType.GetGenericArguments().FirstOrDefault();
+                                  IsInterface = typeName.IsInterface;
+                                  ItemName = typeName?.Name;
                               }
-                              if (ArrayName.IsNullOrEmpty())
+                              else if (m is FieldInfo f)
                               {
-                                  if (!this.SerializerSetting.OmitArrayItemName && ItemName.IsNotNullOrEmpty())
-                                      WriteStartElement(ItemName, qualifiedName);
+                                  var typeName = f.FieldType.GetGenericArguments().FirstOrDefault();
+                                  IsInterface = typeName.IsInterface;
+                                  ItemName = typeName?.Name;
                               }
-                              else if (!IsInterface)
-                                  WriteStartElement(ArrayName, qualifiedName);
+                          }
+                          if (ArrayName.IsNullOrEmpty())
+                          {
+                              if (!this.SerializerSetting.OmitArrayItemName && ItemName.IsNotNullOrEmpty())
+                                  WriteStartElement(ItemName, qualifiedName);
+                          }
+                          else if (!IsInterface)
+                              WriteStartElement(ArrayName, qualifiedName);
 
-                              if (value != null)
+                          if (value != null)
+                          {
+                              foreach (var item in (IEnumerable)value)
                               {
-                                  foreach (var item in (IEnumerable)value)
+                                  var elementName = string.Empty;
+                                  if (IsInterface)
                                   {
-                                      var elementName = string.Empty;
-                                      if (IsInterface)
+                                      var itemType = item.GetType();
+                                      if (itemType.IsDefined(typeof(XmlRootAttribute)))
                                       {
-                                          var itemType = item.GetType();
-                                          if (itemType.IsDefined(typeof(XmlRootAttribute)))
-                                          {
-                                              elementName = itemType.GetCustomAttribute<XmlRootAttribute
-                                                  >()?.ElementName;
-                                          }
-                                          else
-                                              elementName = itemType.Name;
-                                          //WriteStartElement(elementName, qualifiedName);
-                                          ItemName = elementName;
+                                          elementName = itemType.GetCustomAttribute<XmlRootAttribute
+                                              >()?.ElementName;
                                       }
-                                      WriteValue(item, qualifiedName, false, ItemName.IfEmpty(this.SerializerSetting.OmitArrayItemName ? FieldName : item.GetType().Name));
-                                      //if (elementName.IsNotNullOrEmpty())
-                                      // XmlWriter.WriteEndElement();
+                                      else
+                                          elementName = itemType.Name;
+                                      //WriteStartElement(elementName, qualifiedName);
+                                      ItemName = elementName;
                                   }
+                                  WriteValue(item, qualifiedName, false, ItemName.IfEmpty(this.SerializerSetting.OmitArrayItemName ? FieldName : item.GetType().Name));
+                                  //if (elementName.IsNotNullOrEmpty())
+                                  // XmlWriter.WriteEndElement();
                               }
-                              //else
-                              //XmlWriter.WriteValue(null);
-                              if (ArrayName.IsNullOrEmpty())
-                              {
-                                  if (!this.SerializerSetting.OmitArrayItemName && ItemName.IsNotNullOrEmpty())
-                                      XmlWriter.WriteEndElement();
-                              }
-                              else if (!IsInterface)
+                          }
+                          //else
+                          //XmlWriter.WriteValue(null);
+                          if (ArrayName.IsNullOrEmpty())
+                          {
+                              if (!this.SerializerSetting.OmitArrayItemName && ItemName.IsNotNullOrEmpty())
                                   XmlWriter.WriteEndElement();
                           }
-                          else
+                          else if (!IsInterface)
+                              XmlWriter.WriteEndElement();
+                      }
+                      else
+                      {
+                          if (_BaseType == ValueTypes.Enum)
                           {
-                              if (_BaseType == ValueTypes.Enum)
+                              if (m.IsDefined(typeof(XmlConverterAttribute), false))
                               {
-                                  if (m.IsDefined(typeof(XmlConverterAttribute), false))
+                                  var converter = m.GetCustomAttribute<XmlConverterAttribute>();
+                                  if (converter.ConverterType == typeof(DescriptionConverter))
                                   {
-                                      var converter = m.GetCustomAttribute<XmlConverterAttribute>();
-                                      if (converter.ConverterType == typeof(DescriptionConverter))
+                                      if ((m.MemberType == MemberTypes.Field ? (m as FieldInfo).FieldType : (m as PropertyInfo).PropertyType).GetValueType() == ValueTypes.Enum)
                                       {
-                                          if ((m.MemberType == MemberTypes.Field ? (m as FieldInfo).FieldType : (m as PropertyInfo).PropertyType).GetValueType() == ValueTypes.Enum)
-                                          {
-                                              value = value.GetType().GetBaseType().GetField(value.ToString()).GetDescription().IfEmpty(((int)value).ToString());
-                                          }
-                                          else
-                                              value = m.GetDescription().IfEmpty(((int)value).ToString());
+                                          value = value.GetType().GetBaseType().GetField(value.ToString()).GetDescription().IfEmpty(((int)value).ToString());
                                       }
-                                      else if (converter.ConverterType == typeof(StringEnumConverter))
-                                      {
-                                          value = value.ToString();
-                                      }
+                                      else
+                                          value = m.GetDescription().IfEmpty(((int)value).ToString());
                                   }
-                                  else
+                                  else if (converter.ConverterType == typeof(StringEnumConverter))
                                   {
-                                      value = (int)value;
+                                      value = value.ToString();
                                   }
                               }
                               else
                               {
-                                  if (m.IsDefined(typeof(XmlValueFormatAttribute), false))
+                                  value = (int)value;
+                              }
+                          }
+                          else
+                          {
+                              if (m.IsDefined(typeof(XmlValueFormatAttribute), false))
+                              {
+                                  try
                                   {
-                                      try
+                                      var format = m.GetCustomAttribute<XmlValueFormatAttribute>().Format;
+                                      if (format.IsNotNullOrEmpty())
                                       {
-                                          var format = m.GetCustomAttribute<XmlValueFormatAttribute>().Format;
-                                          if (format.IsNotNullOrEmpty())
-                                          {
-                                              if (value is DateTime dv)
-                                                  value = dv.ToString(format);
-                                              else if (value is Guid g)
-                                                  value = g.ToString(format);
-                                          }
-                                      }
-                                      catch
-                                      {
-
+                                          if (value is DateTime dv)
+                                              value = dv.ToString(format);
+                                          else if (value is Guid g)
+                                              value = g.ToString(format);
                                       }
                                   }
+                                  catch
+                                  {
+
+                                  }
                               }
-                              WriteValue(value, qualifiedName, m.IsDefined(typeof(XmlCDataAttribute), false), m.IsDefined(typeof(XmlTextAttribute), false) ? "" : ItemName.IfEmpty(FieldName));
                           }
-                      });
-                    if (tagName.IsNotNullOrEmpty())
-                        XmlWriter.WriteEndElement();
-                }
+                          WriteValue(value, qualifiedName, m.IsDefined(typeof(XmlCDataAttribute), false), m.IsDefined(typeof(XmlTextAttribute), false) ? "" : ItemName.IfEmpty(FieldName));
+                      }
+                  });
+                if (tagName.IsNotNullOrEmpty())
+                    XmlWriter.WriteEndElement();
             }
         }
         /// <summary>

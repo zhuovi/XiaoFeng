@@ -62,6 +62,14 @@ namespace XiaoFeng.Json
         /// <summary>
         /// 字符
         /// </summary>
-        Char = 13
+        Char = 13,
+        /// <summary>
+        /// 日期
+        /// </summary>
+        Date = 14,
+        /// <summary>
+        /// 时间
+        /// </summary>
+        Time =15
     }
 }

@@ -257,27 +257,28 @@ namespace XiaoFeng.Xml
             {
                 return this.Value.GetValue(type);
             }
-            else if (ValueType == ValueTypes.Class || ValueType == ValueTypes.Struct)
+            if (ValueType == ValueTypes.Class || ValueType == ValueTypes.Struct)
             {
                 return ParseObject(this, type, target);
             }
-            else if (ValueType == ValueTypes.Array)
+            if (ValueType == ValueTypes.Array)
             {
                 return ParseArray(this, type, target);
             }
-            else if (ValueType == ValueTypes.ArrayList || ValueType == ValueTypes.IEnumerable || ValueType == ValueTypes.List)
+            if (ValueType == ValueTypes.ArrayList || ValueType == ValueTypes.IEnumerable || ValueType == ValueTypes.List)
             {
                 return ParseList(this, type, target);
             }
-            else if (ValueType == ValueTypes.Enum)
+            if (ValueType == ValueTypes.Enum)
             {
                 return this.Value.ToEnum(type);
-            }else if(ValueType== ValueTypes.IValue)
+            }
+            if (ValueType == ValueTypes.IValue)
             {
                 return this.Value.GetValue(type);
             }
-            else
-                return this.Value.GetValue(type);
+
+            return this.Value.GetValue(type);
         }
         /// <summary>
         /// 转成对象
