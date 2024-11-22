@@ -119,6 +119,10 @@ namespace XiaoFeng.Threading
         /// 执行任务时间偏差 单位为毫秒 默认是1s 建议不要超过10s;
         /// </summary>
         long Deviation { get; set; }
+        /// <summary>
+        /// 运行时间段
+        /// </summary>
+        TimePeriodCollection RunTimePeriod { get; set; }
         #endregion
 
         #region 启动作业
@@ -254,6 +258,24 @@ namespace XiaoFeng.Threading
         /// <param name="token">取消指令 <see cref="CancellationToken"/></param>
         /// <returns>一个作业 <see cref="IJob"/></returns>
         IJob SetCancelToken(CancellationToken token);
+        /// <summary>
+        /// 设置运行时间段
+        /// </summary>
+        /// <param name="timePeriods">时间段</param>
+        /// <returns>一个作业 <see cref="IJob"/></returns>
+        IJob AddTimePeriod(IEnumerable<ITimePeriod> timePeriods);
+        /// <summary>
+        /// 添加运行时间段
+        /// </summary>
+        /// <param name="timePeriod">时间段</param>
+        /// <returns>一个作业 <see cref="IJob"/></returns>
+        IJob AddTimePeriod(params ITimePeriod[] timePeriods);
+        /// <summary>
+        /// 设置时间段类型
+        /// </summary>
+        /// <param name="timePeriodType">时间段类型</param>
+        /// <returns></returns>
+        IJob SetTimePeriodType(TimePeriodType timePeriodType);
         /// <summary>
         /// 添加工作作业
         /// </summary>

@@ -129,6 +129,8 @@ namespace XiaoFeng.Threading
             {
                 return;
             }
+            if (job.ExpireTime.HasValue && job.ExpireTime <= DateTime.Now) return;
+            
             if (job.StartTime.HasValue)
             {
                 var startTime = job.StartTime.Value;
@@ -387,40 +389,49 @@ namespace XiaoFeng.Threading
             if (job.TimerType == TimerType.Interval)
             {
                 var cancel = CancellationTokenSource.CreateLinkedTokenSource(this.CancelTokenSource.Token, job.CancelToken.Token);
-                Task.Run(async () =>
+                Task.Factory.StartNew(async (joba) =>
                 {
-                    if (job.ExpireTime.HasValue)
+                    var jobA = joba as IJob;
+                    if (jobA.ExpireTime.HasValue)
                     {
-                        if (job.ExpireTime.Value > DateTime.Now)
-                            cancel.CancelAfter(job.ExpireTime.Value.Subtract(DateTime.Now));
+                        if (jobA.ExpireTime.Value > DateTime.Now)
+                            cancel.CancelAfter(jobA.ExpireTime.Value.Subtract(DateTime.Now));
 
-                        await Task.Delay(job.NextTime.Value.Subtract(DateTime.Now)).ConfigureAwait(false);
+                        await Task.Delay(jobA.NextTime.Value.Subtract(DateTime.Now)).ConfigureAwait(false);
                     }
                     while (!cancel.IsCancellationRequested)
                     {
-                        job.Status = JobStatus.Runing;
-                        job.LastTime = DateTime.Now;
-                        this.Log($"开始运行作业 [{job.Name}] - {this.SchedulerJobs.Count}");
-                        if (job.CompleteCallBack == null) job.Status = JobStatus.Waiting;
-                        if (!job.Async)
-                            Execute(job);
+                        if (jobA.RunTimePeriod != null && jobA.RunTimePeriod.Count > 0)
+                        {
+                            do
+                            {
+                                if (jobA.RunTimePeriod.IsBetween(DateTime.Now)) break;
+                                await Task.Delay(TimeSpan.FromMilliseconds(jobA.Period)).ConfigureAwait(false);
+                            } while (true);
+                        }
+                        jobA.Status = JobStatus.Runing;
+                        jobA.LastTime = DateTime.Now;
+                        this.Log($"开始运行作业 [{jobA.Name}] - {this.SchedulerJobs.Count}");
+                        if (jobA.CompleteCallBack == null) jobA.Status = JobStatus.Waiting;
+                        if (!jobA.Async)
+                            Execute(jobA);
                         else
                         {
                             /*
                              * Date:2022-04-01
                              * 优化调度执行完成后再间隔时间
                              */
-                            var task = Task.Factory.StartNew(this.Execute, job, cancel.Token, TaskCreationOptions.LongRunning, TaskScheduler.Current).ContinueWith((t, j) =>
+                            var task = Task.Factory.StartNew(this.Execute, jobA, cancel.Token, TaskCreationOptions.LongRunning, TaskScheduler.Current).ContinueWith((t, j) =>
                              {
                                  var _job = (IJob)j;
                                  if (_job.CompleteCallBack != null)
                                      _job.Status = JobStatus.Waiting;
-                             }, job, cancel.Token);
-                            if (job.CompleteCallBack != null) await task;
+                             }, jobA, cancel.Token);
+                            if (jobA.CompleteCallBack != null) await task;
                         }
-                        await Task.Delay(TimeSpan.FromMilliseconds(job.Period)).ConfigureAwait(false);
+                        await Task.Delay(TimeSpan.FromMilliseconds(jobA.Period)).ConfigureAwait(false);
                     }
-                }, cancel.Token);
+                }, job, cancel.Token, TaskCreationOptions.LongRunning, TaskScheduler.Current);
             }
         }
         #endregion
@@ -520,6 +531,7 @@ namespace XiaoFeng.Threading
         private Boolean CheckTimes(IJob job, DateTime now, out long period)
         {
             period = -1;
+            if (job.RunTimePeriod != null && job.RunTimePeriod.Count > 0 && job.RunTimePeriod.IsBetween(DateTime.Now)) return true;
             //if (job.Status == JobStatus.Runing) return false;
             if ((job.MaxCount.HasValue && job.Count >= job.MaxCount) ||
             (job.ExpireTime.HasValue && job.ExpireTime < now))

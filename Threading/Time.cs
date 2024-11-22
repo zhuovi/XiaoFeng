@@ -79,6 +79,14 @@ namespace XiaoFeng.Threading
             this.Minute = time.Minute;
             this.Second = time.Second;
         }
+        /// <summary>
+        /// 初始化一个新实例
+        /// </summary>
+        /// <param name="totalSeconds">总秒数</param>
+        public Time(int totalSeconds)
+        {
+            this.Second = totalSeconds;
+        }
         #endregion;
 
         #region 属性

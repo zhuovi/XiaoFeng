@@ -162,7 +162,7 @@ namespace XiaoFeng
             /*附件*/
             {"apk", "application/vnd.android,application/octet-stream,application/vnd.android.package-archive" },
             {"ipa", "application/octet-stream.ipa,application/octet-stream,application/iphone-package-archive,application/x-itunes-ipa,application/vnd.iphone,application/iphone" },
-            {"rar", "application/x-rar,application/octet-stream" },
+            {"rar", "application/x-rar,application/octet-stream,application/x-compressed" },
             {"zip", "application/zip,application/octet-stream,application/x-compressed,application/x-zip-compressed" },
             {"gzip", "application/zip,application/octet-stream" },
             {"gtar", "application/x-gtar" },

@@ -131,13 +131,13 @@ namespace XiaoFeng.Threading
         /// </summary>
         public DateTime? StartTime { get; set; }
         /// <summary>
-        /// 最大运行次数
-        /// </summary>
-        public int? MaxCount { get; set; }
-        /// <summary>
         /// 过期时间
         /// </summary>
         public DateTime? ExpireTime { get; set; }
+        /// <summary>
+        /// 最大运行次数
+        /// </summary>
+        public int? MaxCount { get; set; }
         /// <summary>
         /// 运行完是否销毁
         /// </summary>
@@ -185,6 +185,10 @@ namespace XiaoFeng.Threading
         /// 间隔 单位毫秒
         /// </summary>
         public long Period { get; set; }
+        /// <summary>
+        /// 运行时间段
+        /// </summary>
+        public TimePeriodCollection RunTimePeriod { get; set; }
         #endregion
 
         #region 方法
@@ -338,6 +342,29 @@ namespace XiaoFeng.Threading
         {
             if (job == null) job = (a, e) => { };
             this.FailureCallBack = job;
+            return this;
+        }
+        ///<inheritdoc/>
+        public IJob AddTimePeriod(IEnumerable<ITimePeriod> timePeriods)
+        {
+            if (timePeriods == null || !timePeriods.Any()) return this;
+            if (this.RunTimePeriod == null) this.RunTimePeriod = new TimePeriodCollection();
+            this.RunTimePeriod.AddRange(timePeriods);
+            return this;
+        }
+        ///<inheritdoc/>
+        public IJob AddTimePeriod(params ITimePeriod[] timePeriods)
+        {
+            if (timePeriods == null || !timePeriods.Any()) return this;
+            if (this.RunTimePeriod == null) this.RunTimePeriod = new TimePeriodCollection();
+            this.RunTimePeriod.AddRange(timePeriods);
+            return this;
+        }
+        ///<inheritdoc/>
+        public IJob SetTimePeriodType(TimePeriodType timePeriodType)
+        {
+            if (this.RunTimePeriod == null) this.RunTimePeriod = new TimePeriodCollection();
+            this.RunTimePeriod.TimePeriodType = timePeriodType;
             return this;
         }
         ///<inheritdoc/>
