@@ -30,7 +30,7 @@
 		<AssemblyOriginatorKeyFile>XiaoFeng.snk</AssemblyOriginatorKeyFile>
 		<PackageIcon>x.png</PackageIcon>
 		<PackageTags>XiaoFeng;FAYELF;ELF;DataHelper;HttpHelper;Redis;Socket;WebSocket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>增加合并相对目录路径方法 FileHelper.CombineRelativePath;优化HttpHelper中设置Accept-Encoding及Accpet-Language的方法;生成数据库模型增加DateOnly,TimeOnly对应数据库字段类型中的DATE,TIME;修复ToCast转换DateTime类型时的值为时间字符串时的bug;目标框架增加net6.0,net7.0,net8.0,net9.0;转换类型增加DateOnly,TimeOnly;Json,Xml序列化,反序列化增加针对DateOnly,TimeOnly的类型支持;升级作业可以在指定的时间段内按类型去执行;</PackageReleaseNotes>
+		<PackageReleaseNotes>增加合并相对目录路径方法 FileHelper.CombineRelativePath;优化HttpHelper中设置Accept-Encoding及Accpet-Language的方法;生成数据库模型增加DateOnly,TimeOnly对应数据库字段类型中的DATE,TIME;修复ToCast转换DateTime类型时的值为时间字符串时的bug;目标框架增加net6.0,net7.0,net8.0,net9.0;转换类型增加DateOnly,TimeOnly;Json,Xml序列化,反序列化增加针对DateOnly,TimeOnly的类型支持;升级作业可以在指定的时间段内按类型去执行;增加ofd内容头类型;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>
