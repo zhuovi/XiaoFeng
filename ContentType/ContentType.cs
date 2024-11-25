@@ -83,6 +83,7 @@ namespace XiaoFeng
             {"dotm", "application/vnd.ms-word.template.macroEnabled.12" },
             {"dotx", "application/vnd.openxmlformats-officedocument.wordprocessingml.template" },
             {"pdf", "application/pdf" },
+            {"ofd", "application/ofd" },
             {"xls", "application/vnd.ms-excel" },
             {"csv", "application/vnd.ms-excel,application/octet-stream" },
             {"xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" },

@@ -1374,6 +1374,30 @@ job.Start();
 
 当前作业为，5分钟后运行，然后每周的周一10点12分13秒和11点12分13秒各执行一次。
 
+5.在一个时间段内执行不同的类型
+
+在下边的时间段内每10秒执行一次作业任务
+
+```csharp
+new Job().SetName("测试时间段调度").Interval(10000，job =>
+Console.WriteLine("我去执行了...");
+})
+//一个一个添加
+.AddTimePeriod(new TimePeriod(new Time(16, 00,00)，new Time(20, 00,00)))
+.AddTimePeriod(new DateTimePeriod(new DateTime(2024, 1,1), new DateTime(2024, 12,20)))
+. AddTimePeriod(new DayPeriod(1,5))
+.AddTimePeriod(new WeekPeriod(3,5))
+//一个一个添加
+.AddTimePeriod(new DayPeriod(1，2)，new DayPeriod(3,5))
+//添加集合
+.AddTimePeriod(new List<ITimePeriod> { new DayPeriod(1，2)，new DayPeriod(3,5) })
+//默认是OR
+.SetTimePeriodType(TimePeriodType.OR)
+.Start();
+```
+
+
+
 ### 新写法
 
 ```csharp
