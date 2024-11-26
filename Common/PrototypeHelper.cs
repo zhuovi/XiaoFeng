@@ -1898,10 +1898,14 @@ namespace XiaoFeng
             if (targetType.IsEnum) return o.ToEnum(targetType);
             if (targetType == typeof(string)) return o.IsNullOrEmpty() ? String.Empty : o.ToString();
 #if NET
-            if(targetType == typeof(DateOnly))
+            if(targetType == typeof(DateOnly) || targetType == typeof(DateOnly?))
             {
                 var val = o.ToString();
-                if (val.IsDate() || val.IsDateOrTime() ||val.IsDateTime()) return DateOnly.Parse(val);
+                if (val.IsDate() || val.IsDateOrTime() || val.IsDateTime())
+                {
+                    var date = val.ToDateTime();
+                    return DateOnly.Parse(date.ToString("yyyy-MM-dd"));
+                }
                 if (val.IsNumberic())
                 {
                     if (val.Length > 10)
@@ -1910,7 +1914,7 @@ namespace XiaoFeng
                 }
                 return default(DateOnly);
             }
-            if (targetType == typeof(TimeOnly))
+            if (targetType == typeof(TimeOnly) || targetType == typeof(TimeOnly?))
             {
                 var val = o.ToString();
                 if (val.IsDate() || val.IsDateOrTime() || val.IsDateTime() || val.IsTime()) return TimeOnly.Parse(val.ToDateTime().ToString("HH:mm:ss.fffffff"));

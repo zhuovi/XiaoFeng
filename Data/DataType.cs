@@ -225,8 +225,8 @@ namespace XiaoFeng.Data
                         {"STRING","String"},
                         {"TEXT","String"},
                         {"DATETIME","DateTime"},
-                        {"DATE","DateTime"},
-                        {"TIME","DateTime"},
+                        {"DATE","DateOnly"},
+                        {"TIME","TimeOnly"},
                         {"DECIMAL","Decimal"},
                         {"DOUBLE","Double"},
                         {"NUMERIC","Double"},
@@ -304,10 +304,8 @@ namespace XiaoFeng.Data
                         { "JSON","String" },
                         { "LONGTEXT","String" },
                         { "DATETIME","DateTime" },
-                        {"DATE","DateOnly"},
-                        {"TIME","TimeOnly"},
-                        { "DATE","DateTime" },
-                        { "TIME","DateTime" },
+                        { "DATE","DateOnly"},
+                        { "TIME","TimeOnly"},
                         { "TimeStamp","DateTime" }
                     };
                 }

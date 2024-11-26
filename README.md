@@ -38,41 +38,41 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 5.2.5
+$ dotnet add package XiaoFeng --version 5.2.7
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 5.2.5
+PM> Install-Package XiaoFeng -Version 5.2.7
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="5.2.5" />
+<PackageReference Include="XiaoFeng" Version="5.2.7" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 5.2.5
+> paket add XiaoFeng --version 5.2.7
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 5.2.5"
+> #r "nuget: XiaoFeng, 5.2.7"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=5.2.5
+#addin nuget:?package=XiaoFeng&version=5.2.7
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=5.2.5
+#tool nuget:?package=XiaoFeng&version=5.2.7
 ```
 
 
@@ -2042,6 +2042,30 @@ client.UnSubscribe("取消订阅频道");
 ---
 
 # 更新日志
+
+## 2024-11-26   v 5.2.7
+
+1.修复DateOnly,TimeOnly DataTable转换对象的bug;
+
+## 2024-11-26   v 5.2.6
+
+1.增加合并相对目录路径方法 FileHelper.CombineRelativePath;
+
+2.优化HttpHelper中设置Accept-Encoding及Accpet-Language的方法;
+
+3.生成数据库模型增加DateOnly,TimeOnly对应数据库字段类型中的DATE,TIME;
+
+4.修复ToCast转换DateTime类型时的值为时间字符串时的bug;
+
+5.目标框架增加net6.0,net7.0,net8.0,net9.0;
+
+6.转换类型增加DateOnly,TimeOnly;
+
+7.Json,Xml序列化,反序列化增加针对DateOnly,TimeOnly的类型支持;
+
+8.升级作业可以在指定的时间段内按类型去执行;
+
+9.增加ofd内容头类型;
 
 ## 2024-11-10  v 5.2.5
 

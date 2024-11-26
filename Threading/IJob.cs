@@ -267,7 +267,7 @@ namespace XiaoFeng.Threading
         /// <summary>
         /// 添加运行时间段
         /// </summary>
-        /// <param name="timePeriod">时间段</param>
+        /// <param name="timePeriods">时间段</param>
         /// <returns>一个作业 <see cref="IJob"/></returns>
         IJob AddTimePeriod(params ITimePeriod[] timePeriods);
         /// <summary>
