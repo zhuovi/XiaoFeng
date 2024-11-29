@@ -58,7 +58,8 @@ namespace XiaoFeng.Device
                         }
                         else
                         {
-                            macAddress.Add(address.GetAddressBytes().Join(separator));
+                            //macAddress.Add(address.GetAddressBytes().Select(a => a.ToString("X2")).Join(separator));
+                            macAddress.Add(address.ToString().ReplacePattern(@"([a-f0-9]{2})(?!$)", "$1-"));
                         }
                     }
                 }
