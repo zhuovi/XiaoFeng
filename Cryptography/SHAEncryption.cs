@@ -48,7 +48,21 @@ namespace XiaoFeng.Cryptography
         public byte[] Encode(byte[] data, SHAType type = SHAType.SHA1)
         {
             if (data == null) return Array.Empty<byte>();
-            return HashAlgorithm.Create(type.GetDescription()).ComputeHash(data);
+            switch (type)
+            {
+                case SHAType.SHA1:
+                    return SHA1.Create().ComputeHash(data);
+                case SHAType.SHA256:
+                    return SHA256.Create().ComputeHash(data);
+                case SHAType.SHA384:
+                    return SHA384.Create().ComputeHash(data);
+                case SHAType.SHA512:
+                    return SHA512.Create().ComputeHash(data);
+                case SHAType.MD5:
+                default:
+                    return MD5.Create().ComputeHash(data);
+            }
+            //return HashAlgorithm.Create(type.GetDescription()).ComputeHash(data);
             /*HashAlgorithm sha;
             if (type == SHAType.SHA1)
                 sha = new SHA1CryptoServiceProvider();
@@ -70,7 +84,21 @@ namespace XiaoFeng.Cryptography
         public byte[] Encode(Stream inputStream, SHAType type = SHAType.SHA1)
         {
             if (inputStream == null || inputStream.Length == 0) return Array.Empty<byte>();
-            return HashAlgorithm.Create(type.GetDescription()).ComputeHash(inputStream);
+            switch (type)
+            {
+                case SHAType.SHA1:
+                    return SHA1.Create().ComputeHash(inputStream);
+                case SHAType.SHA256:
+                    return SHA256.Create().ComputeHash(inputStream);
+                case SHAType.SHA384:
+                    return SHA384.Create().ComputeHash(inputStream);
+                case SHAType.SHA512:
+                    return SHA512.Create().ComputeHash(inputStream);
+                case SHAType.MD5:
+                default:
+                    return MD5.Create().ComputeHash(inputStream);
+            }
+            //return HashAlgorithm.Create(type.GetDescription()).ComputeHash(inputStream);
             /*HashAlgorithm sha;
             if (type == SHAType.SHA1)
                 sha = new SHA1CryptoServiceProvider();

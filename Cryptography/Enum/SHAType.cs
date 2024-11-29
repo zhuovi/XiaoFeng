@@ -42,7 +42,22 @@ namespace XiaoFeng.Cryptography
         /// MD5
         /// </summary>
         [Description("MD5")]
-        MD5 = 5
+        MD5 = 5,
+        /// <summary>
+        /// SHA3-256
+        /// </summary>
+        [Description("SHA3-256")]
+        SHA3_256 = 6,
+        /// <summary>
+        /// SHA3-384
+        /// </summary>
+        [Description("SHA3-384")]
+        SHA3_384 = 7,
+        /// <summary>
+        /// SHA3-512
+        /// </summary>
+        [Description("SHA3-512")]
+        SHA3_512 = 8
     }
     #endregion
 }

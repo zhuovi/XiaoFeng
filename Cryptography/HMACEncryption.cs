@@ -48,6 +48,7 @@ namespace XiaoFeng.Cryptography
         public byte[] Encode(byte[] data, byte[] slatKey, HMACType type = HMACType.MD5)
         {
             if (data == null) return Array.Empty<byte>();
+            
             var hmac = HMAC.Create(type.GetDescription());
             if (slatKey != null && slatKey.Length > 0) hmac.Key = slatKey;
             return hmac.ComputeHash(data);

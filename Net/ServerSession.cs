@@ -238,7 +238,7 @@ namespace XiaoFeng.Net
                 string msg;
                 if (this.DataType == SocketDataType.HexString)
                 {
-                    msg = buffer.ByteToHexString(0, length);
+                    msg = buffer.ToHexString(0, length);
                 }
                 else
                 {
@@ -328,7 +328,7 @@ namespace XiaoFeng.Net
                     EndIndex = endIndex;
                     /*获取消息*/
                     if (this.DataType == SocketDataType.HexString)
-                        messageReceived = ReceivedDataBuffer.ByteToHexString(startIndex, endIndex - startIndex);
+                        messageReceived = ReceivedDataBuffer.ToHexString(startIndex, endIndex - startIndex);
                     else
                         messageReceived = ReceivedDataBuffer.GetString(this.Encoding, startIndex, endIndex - startIndex);
                 }
@@ -559,7 +559,8 @@ namespace XiaoFeng.Net
         {
             const string MagicKEY = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
             string ret = secWebSocketKey.Trim(new char[] { '\r', '\n' }) + MagicKEY;
-            SHA1 sha = new SHA1CryptoServiceProvider();
+            //SHA1 sha = new SHA1CryptoServiceProvider();
+            SHA1 sha = SHA1.Create();
             byte[] sha1Hash = sha.ComputeHash(ret.GetBytes(this.Encoding));
             return Convert.ToBase64String(sha1Hash);
         }
@@ -864,7 +865,7 @@ namespace XiaoFeng.Net
                     EndIndex = endIndex;
                     /*获取消息*/
                     if (this.DataType == SocketDataType.HexString)
-                        messageReceived = ReceivedDataBuffer.ByteToHexString(startIndex, endIndex - startIndex);
+                        messageReceived = ReceivedDataBuffer.ToHexString(startIndex, endIndex - startIndex);
                     else
                         messageReceived = ReceivedDataBuffer.GetString(this.Encoding, startIndex, endIndex - startIndex);
                 }

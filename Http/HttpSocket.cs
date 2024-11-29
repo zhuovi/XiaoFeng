@@ -172,7 +172,13 @@ namespace XiaoFeng.Http
                 var cert = this.Request.CertPath.GetBasePath();
                 if (File.Exists(cert))
                 {
-                    var x509 = this.Request.CertPassWord.IsNullOrEmpty() ? new X509Certificate2(cert) : new X509Certificate2(cert, this.Request.CertPassWord);
+                    var x509 = this.Request.CertPassWord.IsNullOrEmpty() ?
+#if NET9_0_OR_GREATER
+    X509CertificateLoader.LoadCertificateFromFile(cert) : X509CertificateLoader.LoadPkcs12(FileHelper.OpenBytes(cert), this.Request.CertPassWord)
+#else
+                        new X509Certificate2(cert) : new X509Certificate2(cert, this.Request.CertPassWord)
+#endif
+                    ;
                     if (this.Request.ClientCertificates == null) this.Request.ClientCertificates = new X509Certificate2Collection(x509);
                     else
                         this.Request.ClientCertificates.Add(x509);
@@ -191,7 +197,7 @@ namespace XiaoFeng.Http
             await this.Client.ConnectAsync();
             return await Task.FromResult(this.Client);
         }
-        #endregion
+#endregion
 
         #region 发送请求
         /// <summary>
@@ -466,6 +472,6 @@ namespace XiaoFeng.Http
         }
         #endregion
 
-        #endregion
+#endregion
     }
 }

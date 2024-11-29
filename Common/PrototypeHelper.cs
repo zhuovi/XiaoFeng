@@ -2441,6 +2441,7 @@ namespace XiaoFeng
         /// <param name="bytes">字节</param>
         /// <param name="isSpace">是否有空格隔开 默认为有空格</param>
         /// <returns></returns>
+        [Obsolete("请使用 ToHexString")]
         public static string ByteToHexString(this byte[] bytes, bool isSpace = true) => bytes.ToHexString(0, bytes.Length, isSpace);
         /// <summary>
         /// 字节数组转16进制字符串
@@ -2450,6 +2451,7 @@ namespace XiaoFeng
         /// <param name="length">长度</param>
         /// <param name="isSpace">是否有空格隔开 默认为有空格</param>
         /// <returns></returns>
+        [Obsolete("请使用 ToHexString")] 
         public static string ByteToHexString(this byte[] bytes, int start, int length, bool isSpace = true) => bytes.ToHexString(start, length, isSpace);
         /// <summary>
         /// 字节数组转16进制字符串

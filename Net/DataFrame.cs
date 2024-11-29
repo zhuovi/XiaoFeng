@@ -245,7 +245,7 @@ namespace XiaoFeng.Net
                 // return string.Empty;
                 if (this.DataType == SocketDataType.HexString)
                 {
-                    return _Content.ByteToHexString();
+                    return _Content.ToHexString();
                 }
                 else
                     return _Content.GetString(this.Encoding);

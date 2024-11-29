@@ -735,7 +735,7 @@ MIDI (mid)，文件头：4D546864
             var bom = data;
             //data.CopyTo(bom,3)
             /*UTF7*/
-            if (bom[0] == 0x2b && bom[1] == 0x2f && bom[2] == 0x76) return Encoding.UTF7;
+            //if (bom[0] == 0x2b && bom[1] == 0x2f && bom[2] == 0x76) return Encoding.UTF7;
             /*UTF8 带BOM的UTF8*/
             if (bom[0] == 0xef && bom[1] == 0xbb && bom[2] == 0xbf) return Encoding.UTF8;
             /*UTF-16LE*/

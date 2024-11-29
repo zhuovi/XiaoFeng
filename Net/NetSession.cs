@@ -113,7 +113,7 @@ namespace XiaoFeng.Net
         /// </summary>
         /// <param name="bytes">字节数组</param>
         /// <returns></returns>
-        public string GetString(byte[] bytes) => this.DataType == SocketDataType.HexString ? bytes.ByteToHexString() : bytes.GetString(this.Encoding);
+        public string GetString(byte[] bytes) => this.DataType == SocketDataType.HexString ? bytes.ToHexString() : bytes.GetString(this.Encoding);
         #endregion
 
         #region 连接状态

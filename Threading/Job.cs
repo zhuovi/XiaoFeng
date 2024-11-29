@@ -256,7 +256,7 @@ namespace XiaoFeng.Threading
         ///<inheritdoc/>
         public IJob SetStartTime(DateTime startTime)
         {
-            if (startTime == null || startTime < DateTime.Now) return this;
+            if (startTime < DateTime.Now) return this;
             this.StartTime = startTime;
             return this;
         }

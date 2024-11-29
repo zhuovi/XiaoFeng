@@ -376,7 +376,7 @@ namespace XiaoFeng
         public static string ToString(this byte[] data, OutputMode outputMode = OutputMode.Base64)
         {
             if (data == null || data.Length == 0) return string.Empty;
-            return outputMode == OutputMode.Base64 ? data.ToBase64String() : data.ByteToHexString().RemovePattern(@"\s+");
+            return outputMode == OutputMode.Base64 ? data.ToBase64String() : data.ToHexString().RemovePattern(@"\s+");
         }
         #endregion
 

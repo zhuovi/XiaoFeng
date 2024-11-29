@@ -55,12 +55,13 @@ namespace XiaoFeng.Cryptography
         public byte[] Encrypt(byte[] data, byte[] salt, int hashIterations, SHAType type = SHAType.MD5)
         {
             if (hashIterations <= 0) hashIterations = 1;
-            var hash = HashAlgorithm.Create(type.GetDescription());
+            //var hash = HashAlgorithm.Create(type.GetDescription());
+            var hash = new SHAEncryption();
             if (salt != null && salt.Length > 0)
                 data = salt.Concat(data).ToArray();
             for (var i = 0; i < hashIterations; i++)
             {
-                data = hash.ComputeHash(data);
+                data = hash.Encode(data, type);
             }
             hash.Dispose();
             return data;

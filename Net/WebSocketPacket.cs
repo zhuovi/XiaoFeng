@@ -250,7 +250,8 @@ namespace XiaoFeng.Net
         {
             const string MagicKEY = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
             string ret = secWebSocketKey.Trim(new char[] { '\r', '\n' }) + MagicKEY;
-            SHA1 sha = new SHA1CryptoServiceProvider();
+            //SHA1 sha = new SHA1CryptoServiceProvider();
+            SHA1 sha = SHA1.Create();
             byte[] sha1Hash = sha.ComputeHash(ret.GetBytes(this.Encoding));
             return sha1Hash.ToBase64String();
         }

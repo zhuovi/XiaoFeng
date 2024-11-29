@@ -164,8 +164,6 @@ namespace XiaoFeng
                 settings.Encoding = new UTF8Encoding();
             else if (_Encode == Encoding.ASCII)
                 settings.Encoding = new ASCIIEncoding();
-            else if (_Encode == Encoding.UTF7)
-                settings.Encoding = new UTF7Encoding();
             else if (_Encode == Encoding.Unicode)
                 settings.Encoding = new UnicodeEncoding();
             else if (_Encode == Encoding.UTF32)

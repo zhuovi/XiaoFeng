@@ -950,7 +950,7 @@ namespace XiaoFeng.Net
                     this.Stop();
                     return;
                 }
-                var ReceiveMessage = this.DataType == SocketDataType.String ? bytes.GetString(this.Encoding) : bytes.ByteToHexString();
+                var ReceiveMessage = this.DataType == SocketDataType.String ? bytes.GetString(this.Encoding) : bytes.ToHexString();
 
                 var flags = await this.CheckWebSocketAsync(ReceiveMessage).ConfigureAwait(false);
                 if (flags == -1) return;
@@ -1051,7 +1051,7 @@ namespace XiaoFeng.Net
                     //断开了
                     break;
                 }
-                var ReceiveMessage = this.DataType == SocketDataType.String ? bytes.GetString(this.Encoding) : bytes.ByteToHexString();
+                var ReceiveMessage = this.DataType == SocketDataType.String ? bytes.GetString(this.Encoding) : bytes.ToHexString();
                 if (this.IsServer)
                 {
                     var flags = await this.CheckWebSocketAsync(ReceiveMessage).ConfigureAwait(false);

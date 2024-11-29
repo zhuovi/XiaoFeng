@@ -53,6 +53,7 @@ namespace XiaoFeng.Cryptography
         public virtual byte[] Encode(byte[] data, byte[] slatKey, byte[] vector, SymmetricAlgorithmType algorithmType = SymmetricAlgorithmType.AES, CryptographyType type = CryptographyType.Encrypt, CipherMode cipherMode = CipherMode.CBC, PaddingMode paddingMode = PaddingMode.PKCS7)
         {
             if (data == null) return Array.Empty<byte>();
+            
             using (var encryptor = SymmetricAlgorithm.Create(algorithmType.GetDescription()))
             {
                 encryptor.Mode = cipherMode;

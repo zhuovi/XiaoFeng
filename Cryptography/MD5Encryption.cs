@@ -39,7 +39,8 @@ namespace XiaoFeng.Cryptography
         public override byte[] Encode(byte[] data, byte[] slatKey, byte[] vector, CryptographyType type = CryptographyType.Encrypt, CipherMode cipherMode = CipherMode.CBC, PaddingMode paddingModel = PaddingMode.PKCS7)
         {
             if (data == null) return Array.Empty<byte>();
-            using (var md5 = new MD5CryptoServiceProvider())
+            //using (var md5 = new MD5CryptoServiceProvider())
+            using(var md5 = MD5.Create())
             {
                 return md5.ComputeHash(data);
             }
