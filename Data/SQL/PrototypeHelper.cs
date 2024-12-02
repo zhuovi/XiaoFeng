@@ -561,6 +561,45 @@ namespace XiaoFeng.Data.SQL
         public static T GroupConcatSQL<T>(this T field) => field;
         #endregion
 
+        #region 补字符串
+
+        #endregion
+        /// <summary>
+        /// 左边补字符
+        /// </summary>
+        /// <typeparam name="T">字段类型</typeparam>
+        /// <param name="field">字段</param>
+        /// <param name="length">补加长度</param>
+        /// <param name="str">补加字符串</param>
+        /// <returns></returns>
+        public static string PadLeft<T>(this T field, int length, string str) => str;
+        /// <summary>
+        /// 右边补字符
+        /// </summary>
+        /// <typeparam name="T">字段类型</typeparam>
+        /// <param name="field">字段</param>
+        /// <param name="length">补加长度</param>
+        /// <param name="str">补加字符串</param>
+        /// <returns></returns>
+        public static string PadRight<T>(this T field, int length, string str) => str;
+        /// <summary>
+        /// 左边补字符
+        /// </summary>
+        /// <typeparam name="T">字段类型</typeparam>
+        /// <param name="field">字段</param>
+        /// <param name="length">补加长度</param>
+        /// <param name="str">补加字符串</param>
+        /// <returns></returns>
+        public static string PadLeftSQL<T>(this T field, int length, string str) => str;
+        /// <summary>
+        /// 右边补字符
+        /// </summary>
+        /// <typeparam name="T">字段类型</typeparam>
+        /// <param name="field">字段</param>
+        /// <param name="length">补加长度</param>
+        /// <param name="str">补加字符串</param>
+        /// <returns></returns>
+        public static string PadRightSQL<T>(this T field, int length, string str) => str;
         #endregion
     }
 }

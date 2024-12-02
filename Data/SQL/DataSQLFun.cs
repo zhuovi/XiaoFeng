@@ -90,7 +90,11 @@ namespace XiaoFeng.Data
                         {"AvgSQL","AVG({0})" },
                         {"CastSQL","CAST({0} as {1})" },
                         {"StDevSQL","STDEV({0})" },
-                        {"StDevpSQL","STDEVP({0})" }
+                        {"StDevpSQL","STDEVP({0})" },
+                        {"PadLeftSQL","REPLAICATE('{2}',{1}-LEN({0}))+CAST({0} as VARCHARE)" },
+                        {"PadRightSQL","CAST({0} as VARCHARE)+REPLAICATE('{2}',{1}-LEN({0}))" },
+                        {"PadLeft","REPLAICATE('{2}',{1}-LEN({0}))+CAST({0} as VARCHARE)" },
+                        {"PadRight","CAST({0} as VARCHARE)+REPLAICATE('{2}',{1}-LEN({0}))" }
                     };
                 }
                 return this._MsSqlFun;
@@ -167,7 +171,11 @@ namespace XiaoFeng.Data
                         {"AvgSQL","AVG({0})" },
                         {"CastSQL","CAST({0} as {1})" },
                         {"StDevSQL","STDEV({0})" },
-                        {"StDevpSQL","STDEVP({0})" }
+                        {"StDevpSQL","STDEVP({0})" },
+                        {"PadLeftSQL","REPLAICATE('{2}',{1}-LEN({0}))+CAST({0} as VARCHARE)" },
+                        {"PadRightSQL","CAST({0} as VARCHARE)+REPLAICATE('{2}',{1}-LEN({0}))" },
+                        {"PadLeft","REPLAICATE('{2}',{1}-LEN({0}))+CAST({0} as VARCHARE)" },
+                        {"PadRight","CAST({0} as VARCHARE)+REPLAICATE('{2}',{1}-LEN({0}))" }
                     };
                 }
                 return this._MsSqlUnFun;
@@ -247,7 +255,11 @@ namespace XiaoFeng.Data
                         {"AvgSQL","AVG({0})" },
                         {"CastSQL","CAST({0} as {1})" },
                         {"StDevSQL","STDEV({0})" },
-                        {"StDevpSQL","STDEVP({0})" }
+                        {"StDevpSQL","STDEVP({0})" },
+                        {"PadLeftSQL","LPAD({0},{1},'{2}')" },
+                        {"PadRightSQL","RPAD({0},{1},'{2}')" },
+                        {"PadLeft","LPAD({0},{1},'{2}')" },
+                        {"PadRight","RPAD({0},{1},'{2}')" }
                     };
                 }
                 return this._SQLiteFun;
@@ -324,7 +336,11 @@ namespace XiaoFeng.Data
                         {"AvgSQL","AVG({0})" },
                         {"CastSQL","CAST({0} as {1})" },
                         {"StDevSQL","STDEV({0})" },
-                        {"StDevpSQL","STDEVP({0})" }
+                        {"StDevpSQL","STDEVP({0})" },
+                        {"PadLeftSQL","LPAD({0},{1},'{2}')" },
+                        {"PadRightSQL","RPAD({0},{1},'{2}')" },
+                        {"PadLeft","LPAD({0},{1},'{2}')" },
+                        {"PadRight","RPAD({0},{1},'{2}')" }
                     };
                 }
                 return this._SQLiteUnFun;
@@ -405,7 +421,11 @@ namespace XiaoFeng.Data
                         {"CastSQL","CAST({0} as {1})" },
                         {"StDevSQL","STDEV({0})" },
                         {"StDevpSQL","STDEVP({0})" },
-                        {"GroupConcatSQL","GROUP_CONCAT({0})" }
+                        {"GroupConcatSQL","GROUP_CONCAT({0})" },
+                        {"PadLeftSQL","LPAD({0},{1},'{2}')" },
+                        {"PadRightSQL","RPAD({0},{1},'{2}')" },
+                        {"PadLeft","LPAD({0},{1},'{2}')" },
+                        {"PadRight","RPAD({0},{1},'{2}')" }
                     };
                 }
                 return this._MySqlFun;
@@ -482,7 +502,11 @@ namespace XiaoFeng.Data
                         {"AvgSQL","AVG({0})" },
                         {"CastSQL","CAST({0} as {1})" },
                         {"StDevSQL","STDEV({0})" },
-                        {"StDevpSQL","STDEVP({0})" }
+                        {"StDevpSQL","STDEVP({0})" },
+                        {"PadLeftSQL","LPAD({0},{1},'{2}')" },
+                        {"PadRightSQL","RPAD({0},{1},'{2}')" },
+                        {"PadLeft","LPAD({0},{1},'{2}')" },
+                        {"PadRight","RPAD({0},{1},'{2}')" }
                     };
                 }
                 return this._MySqlUnFun;
@@ -562,7 +586,11 @@ namespace XiaoFeng.Data
                         {"AvgSQL","AVG({0})" },
                         {"CastSQL","CAST({0} as {1})" },
                         {"StDevSQL","STDEV({0})" },
-                        {"StDevpSQL","STDEVP({0})" }
+                        {"StDevpSQL","STDEVP({0})" },
+                        {"PadLeftSQL","LPAD({0},{1},'{2}')" },
+                        {"PadRightSQL","RPAD({0},{1},'{2}')" },
+                        {"PadLeft","LPAD({0},{1},'{2}')" },
+                        {"PadRight","RPAD({0},{1},'{2}')" }
                     };
                 }
                 return this._OracleFun;
@@ -639,7 +667,11 @@ namespace XiaoFeng.Data
                         {"AvgSQL","AVG({0})" },
                         {"CastSQL","CAST({0} as {1})" },
                         {"StDevSQL","STDEV({0})" },
-                        {"StDevpSQL","STDEVP({0})" }
+                        {"StDevpSQL","STDEVP({0})" },
+                        {"PadLeftSQL","LPAD({0},{1},'{2}')" },
+                        {"PadRightSQL","RPAD({0},{1},'{2}')" },
+                        {"PadLeft","LPAD({0},{1},'{2}')" },
+                        {"PadRight","RPAD({0},{1},'{2}')" }
                     };
                 }
                 return this._OracleUnFun;
@@ -719,7 +751,11 @@ namespace XiaoFeng.Data
                         {"AvgSQL","AVG({0})" },
                         {"CastSQL","CAST({0} as {1})" },
                         {"StDevSQL","STDEV({0})" },
-                        {"StDevpSQL","STDEVP({0})" }
+                        {"StDevpSQL","STDEVP({0})" },
+                        {"PadLeftSQL","LPAD({0},{1},'{2}')" },
+                        {"PadRightSQL","RPAD({0},{1},'{2}')" },
+                        {"PadLeft","LPAD({0},{1},'{2}')" },
+                        {"PadRight","RPAD({0},{1},'{2}')" }
                     };
                 }
                 return this._OledbFun;
@@ -796,7 +832,11 @@ namespace XiaoFeng.Data
                         {"AvgSQL","AVG({0})" },
                         {"CastSQL","CAST({0} as {1})" },
                         {"StDevSQL","STDEV({0})" },
-                        {"StDevpSQL","STDEVP({0})" }
+                        {"StDevpSQL","STDEVP({0})" },
+                        {"PadLeftSQL","LPAD({0},{1},'{2}')" },
+                        {"PadRightSQL","RPAD({0},{1},'{2}')" },
+                        {"PadLeft","LPAD({0},{1},'{2}')" },
+                        {"PadRight","RPAD({0},{1},'{2}')" }
                     };
                 }
                 return this._OledbUnFun;
@@ -876,7 +916,11 @@ namespace XiaoFeng.Data
                         {"AvgSQL","AVG({0})" },
                         {"CastSQL","CAST({0} as {1})" },
                         {"StDevSQL","STDEV({0})" },
-                        {"StDevpSQL","STDEVP({0})" }
+                        {"StDevpSQL","STDEVP({0})" },
+                        {"PadLeftSQL","LPAD({0},{1},'{2}')" },
+                        {"PadRightSQL","RPAD({0},{1},'{2}')" },
+                        {"PadLeft","LPAD({0},{1},'{2}')" },
+                        {"PadRight","RPAD({0},{1},'{2}')" }
                     };
                 }
                 return this._DamengFun;
@@ -953,7 +997,11 @@ namespace XiaoFeng.Data
                         {"AvgSQL","AVG({0})" },
                         {"CastSQL","CAST({0} as {1})" },
                         {"StDevSQL","STDEV({0})" },
-                        {"StDevpSQL","STDEVP({0})" }
+                        {"StDevpSQL","STDEVP({0})" },
+                        {"PadLeftSQL","LPAD({0},{1},'{2}')" },
+                        {"PadRightSQL","RPAD({0},{1},'{2}')" },
+                        {"PadLeft","LPAD({0},{1},'{2}')" },
+                        {"PadRight","RPAD({0},{1},'{2}')" }
                     };
                 }
                 return this._DamengUnFun;

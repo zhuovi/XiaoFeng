@@ -171,7 +171,8 @@ namespace XiaoFeng.Model
             {
                 if (this._Data == null)
                 {
-                    if (this.Config == null) return null;
+                    //if (this.Config == null) return null;
+                    if (this.Config == null) throw new DataHelperException("请配置数据库.");
                     this._Data = new DataHelperX<T>(this.Config, this.RunSqlCallBack);
                     if (this.TableName.IsNotNullOrEmpty())
                         this._Data.DataSQL.TableName = this.TableName;
