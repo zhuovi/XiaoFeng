@@ -30,7 +30,7 @@
 		<AssemblyOriginatorKeyFile>XiaoFeng.snk</AssemblyOriginatorKeyFile>
 		<PackageIcon>x.png</PackageIcon>
 		<PackageTags>XiaoFeng;FAYELF;ELF;DataHelper;HttpHelper;Redis;Socket;WebSocket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>IQueryableX增加PadLeft,PadRight,PadLeftSQL,PadRightSQL方法;</PackageReleaseNotes>
+		<PackageReleaseNotes>IQueryableX增加PadLeft,PadRight,PadLeftSQL,PadRightSQL方法;ConfigFileAttribute调试时显示文件路径;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>

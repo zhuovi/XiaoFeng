@@ -103,5 +103,13 @@ namespace XiaoFeng.Config
         [Description("配置格式")]
         public ConfigFormat Format { get; set; } = ConfigFormat.Json;
         #endregion
+
+        #region 方法
+        ///<inheritdoc/>
+        public override string ToString()
+        {
+            return this.FileName;
+        }
+        #endregion
     }
 }
