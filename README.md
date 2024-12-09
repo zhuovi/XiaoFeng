@@ -38,41 +38,41 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 5.2.7
+$ dotnet add package XiaoFeng --version 5.2.8
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 5.2.7
+PM> Install-Package XiaoFeng -Version 5.2.8
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="5.2.7" />
+<PackageReference Include="XiaoFeng" Version="5.2.8" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 5.2.7
+> paket add XiaoFeng --version 5.2.8
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 5.2.7"
+> #r "nuget: XiaoFeng, 5.2.8"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=5.2.7
+#addin nuget:?package=XiaoFeng&version=5.2.8
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=5.2.7
+#tool nuget:?package=XiaoFeng&version=5.2.8
 ```
 
 
@@ -2042,6 +2042,12 @@ client.UnSubscribe("取消订阅频道");
 ---
 
 # 更新日志
+
+## 2024-12-09   v 5.2.8
+
+1.IQueryableX增加PadLeft,PadRight,PadLeftSQL,PadRightSQL方法;
+
+2.ConfigFileAttribute调试时显示文件路径;
 
 ## 2024-11-26   v 5.2.7
 
