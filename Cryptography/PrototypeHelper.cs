@@ -165,22 +165,24 @@ namespace XiaoFeng
         /// </summary>
         /// <param name="_">密文</param>
         /// <param name="key">密钥</param>
+        /// <param name="outputMode">输出编码</param>
         /// <returns></returns>
-        public static string ELFEncrypt(this string _, string key = "")
+        public static string ELFEncrypt(this string _, string key = "", OutputMode outputMode = OutputMode.Base64)
         {
             //return ELFCrypto.ELF.Encrypt(_, key);
-            return new ELFEncryption().Encrypt(_, key);
+            return new ELFEncryption().Encrypt(_, key, outputMode);
         }
         /// <summary>
         /// ELF解密
         /// </summary>
         /// <param name="_">密文</param>
         /// <param name="key">密钥</param>
+        /// <param name="outputMode">输出编码</param>
         /// <returns></returns>
-        public static string ELFDecrypt(this string _, string key = "")
+        public static string ELFDecrypt(this string _, string key = "", OutputMode outputMode = OutputMode.Base64)
         {
             //return ELFCrypto.ELF.Decrypt(_, key);
-            return new ELFEncryption().Decrypt(_, key);
+            return new ELFEncryption().Decrypt(_, key, outputMode);
         }
         #endregion
 
