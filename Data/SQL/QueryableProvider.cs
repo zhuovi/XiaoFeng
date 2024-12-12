@@ -788,7 +788,7 @@ namespace XiaoFeng.Data.SQL
                         {
                             RemoveParam(a["a"]);
                         });
-                        args.Insert(args.Count - 1, "'" + _Start + b + _End + "'");
+                        args.Insert(args.Count - 1, "" + _Start + b + _End + "");
                     }
                     else if (SqlFun.IsMatch(@"\s+IN\s+\("))
                     {
@@ -1058,8 +1058,8 @@ namespace XiaoFeng.Data.SQL
                         var b =/* args.Last();*/(ev is IQueryableX x) ? GetIQueryableXSQL(x) : ev.ToString();
                         b = b.Trim('\'');
                         string _Start = "", _End = "";
-                        if (mce.Method.Name == "StartsWith") _End = "%";
-                        else if (mce.Method.Name == "EndsWith") _Start = "%";
+                        //if (mce.Method.Name == "StartsWith") _End = "%";
+                        //else if (mce.Method.Name == "EndsWith") _Start = "%";
                         if (b.IsNotNullOrWhiteSpace())
                         {
                             Dictionary<string, string> d = b.GetMatchs(@"^(?<a>[%_]?)(?<b>[\s\S]*?)(?<c>[%_]?)$");
@@ -1071,7 +1071,7 @@ namespace XiaoFeng.Data.SQL
                             }
                             b = d["a"] + val.GetValue() + d["c"];
                         }
-                        args.Insert(args.Count - 1, "'" + _Start + b + _End + "'");
+                        args.Insert(args.Count - 1, "" + _Start + b + _End + "");
                     }
                     else if (SqlFun.IsMatch(@"\s+IN\s+\("))
                     {
@@ -1349,8 +1349,8 @@ namespace XiaoFeng.Data.SQL
                         var b =/* args.Last();*/(ev is IQueryableX x) ? GetIQueryableXSQL(x) : ev.ToString();
                         b = b.Trim('\'');
                         string _Start = "", _End = "";
-                        if (mce.Method.Name == "StartsWith") _End = "%";
-                        else if (mce.Method.Name == "EndsWith") _Start = "%";
+                        //if (mce.Method.Name == "StartsWith") _End = "%";
+                        //else if (mce.Method.Name == "EndsWith") _Start = "%";
                         if (b.IsNotNullOrWhiteSpace())
                         {
                             Dictionary<string, string> d = b.GetMatchs(@"^(?<a>[%_]?)(?<b>[\s\S]*?)(?<c>[%_]?)$");
@@ -1362,7 +1362,7 @@ namespace XiaoFeng.Data.SQL
                             }
                             b = d["a"] + val.GetValue() + d["c"];
                         }
-                        args.Insert(args.Count - 1, "'" + _Start + b + _End + "'");
+                        args.Insert(args.Count - 1, "" + _Start + b + _End + "");
                     }
                     else if (SqlFun.IsMatch(@"\s+IN\s+\("))
                     {
