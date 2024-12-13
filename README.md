@@ -972,6 +972,36 @@ var set13 = await redis.GetSetUnionStoreAsync("a", "c", "b");
 
 ```
 
+### 发布与订阅
+
+#### 发布
+
+```csharp
+var redis = new XiaoFeng.Redis.RedisClient("redis://127.0.0.1:6379/0");
+redis.Publish("频道消息","频道名称");
+```
+
+#### 订阅
+
+> 订阅要单独启用一个实例,因为订阅消息后一直占用一个通道去等待接收所订阅的消息.
+
+
+```csharp
+var redis = new XiaoFeng.Redis.RedisClient("redis://127.0.0.1:6379/0");
+redis.OnMessage += o =>
+{
+//接收消息 redis server返回的数据格式
+    Console.WriteLine(o);
+};
+redis.OnReceived += o =>
+{
+//接收到频道消息
+    Console.WriteLine(o.ToJson());
+};
+//订阅频道
+redis.SubScribe("频道名称");
+```
+
 ## XiaoFeng.Memcached
 
 XiaoFeng.Memcached提供了友好的访问API。Memcached中间件,支持.NET框架、.NET内核和.NET标准库,一种非常方便操作的客户端工具。实现了Set,Add,Replace,PrePend,Append,Cas,Get,Gets,Gat,Gats,Delete,Touch,Stats,Stats Items,Stats Slabs,Stats Sizes,Flush_All,线程池功能。

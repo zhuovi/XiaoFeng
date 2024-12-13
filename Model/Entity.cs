@@ -560,7 +560,7 @@ namespace XiaoFeng.Model
         /// </summary>
         /// <param name="func">委托</param>
         /// <returns></returns>
-        public Expression<Func<T,Boolean>> CreateWhere(Expression<Func<T,Boolean>> func = null)
+        public Expression<Func<T, Boolean>> CreateWhere(Expression<Func<T, Boolean>> func = null)
         {
             Expression<Func<T, Boolean>> where = null;
             if (func != null) where = where.And(func);
@@ -887,7 +887,7 @@ namespace XiaoFeng.Model
         public T SubTable(string suffix, bool isGlobal = false)
         {
             this.TableName.IfEmptyValue(() => this.TableAttr?.Name.IfEmpty(this.ModelType?.Name));
-            if(this.TableName.IsMatch(@"_FB_"))
+            if (this.TableName.IsMatch(@"_FB_"))
                 this.TableName = this.TableName.RemovePattern(@"_FB_[\s\S]*$");
             return this.SubTableSuffix("_FB_" + suffix);
         }
@@ -922,7 +922,7 @@ namespace XiaoFeng.Model
         /// <summary>
         /// 当前模型的数据库对象
         /// </summary>
-        [JsonIgnore,XmlIgnore]
+        [JsonIgnore, XmlIgnore, FieldIgnore]
         public IDataHelper DataHelper { get => this.Data.DataHelper; }
         #endregion
     }

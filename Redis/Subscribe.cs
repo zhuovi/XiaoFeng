@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 /****************************************************************
@@ -113,7 +114,9 @@ namespace XiaoFeng.Redis
             {
                 while (this.Redis.IsConnected && !SubscribeToken.IsCancellationRequested)
                 {
-                    var reader = new RedisReader(CommandType.SUBSCRIBE, this.Redis.GetStream());
+                    var stream = this.Redis.GetStream();
+                    stream.ReadTimeout = -1;
+                    var reader = new RedisReader(CommandType.SUBSCRIBE, stream);
                     if (reader.Status == ResultType.Error) continue;
                     if (this.OnReceived != null)
                     {
