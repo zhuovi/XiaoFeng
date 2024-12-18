@@ -17,6 +17,7 @@ namespace XiaoFeng.Config
     /// XiaoFeng总配置
     /// </summary>
     [ConfigFile("Config/XiaoFeng.json", 0, "FAYELF-CONFIG-XIAOFENG", ConfigFormat.Json)]
+    [EncryptFile(false)]
     public class Setting : ConfigSet<Setting>, ISetting
     {
         #region 构造器

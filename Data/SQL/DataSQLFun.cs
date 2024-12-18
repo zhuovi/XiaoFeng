@@ -48,7 +48,7 @@ namespace XiaoFeng.Data
                         {"Count","COUNT({0})"},
                         {"Sum","SUM({0})"},
                         {"LikeSQL","{0} LIKE '%{1}%'"},
-                        {"LikeSQLX","{0} LIKE {1}"},
+                        {"LikeSQLX","{0} LIKE '{1}'"},
                         {"NotLikeSQL","{0} NOT LIKE '%{1}%'"},
                         {"NotLikeSQLX","{0} NOT LIKE '{1}'"},
                         {"InSQL","{0} IN ({1})"},

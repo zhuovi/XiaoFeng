@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 using System.Xml.Serialization;
 using XiaoFeng.Cache;
@@ -15,6 +16,7 @@ namespace XiaoFeng.Config
     /// <summary>
     /// 配置基类
     /// </summary>
+    [EncryptFile]
     public class ConfigSet<TConfig> : EntityBase, IConfigSet<TConfig> where TConfig : ConfigSet<TConfig>, new()
     {
         #region 构造器
@@ -27,7 +29,25 @@ namespace XiaoFeng.Config
             var attr = type.GetCustomAttribute<ConfigFileAttribute>();
             if (attr != null)
                 this.ConfigFileAttribute = attr;
-            this.EncryptFile = type.IsDefined(typeof(EncryptFileAttribute), false);
+
+            if (type.IsDefined(typeof(EncryptFileAttribute), true))
+            {
+                var encryptAttr = type.GetCustomAttribute<EncryptFileAttribute>(true);
+                this.EncryptFile = encryptAttr.IsEncrypt;
+            }
+            else this.EncryptFile = false;
+            if (this.EncryptFile)
+            {
+                this.Options = OptionsHelper.ConfigOptions;
+                if (this.Options == null || !this.Options.IsEncryptConfig.HasValue)
+                {
+                    if (this.Options == null) this.Options = new ConfigOptions();
+                    var set = XiaoFeng.Config.Setting.Current;
+                    this.Options.EncryptKey = set.DataKey;
+                    this.Options.IsEncryptConfig = set.DataEncrypt;
+                    OptionsHelper.ConfigOptions = this.Options;
+                }
+            }
         }
         /// <summary>
         /// 设置配置文件名
@@ -64,6 +84,10 @@ namespace XiaoFeng.Config
                 return new TConfig().Get();
             }
         }
+        /// <summary>
+        /// 配置
+        /// </summary>
+        private ConfigOptions Options { get; set; }
         #endregion
 
         #region 方法
@@ -328,17 +352,17 @@ namespace XiaoFeng.Config
                     fs.Read(bytes, 0, bytes.Length);
                     return bytes.GetString();
                 }
-                var setting = Setting.Current;
                 var first = new byte[flag.Length];
                 fs.Read(first, 0, first.Length);
-                var DES = new Cryptography.DESEncryption();
+                //var DES = new Cryptography.DESEncryption();
                 if (first.GetString().EqualsIgnoreCase(flag))
                 {
                     var bytes = new byte[fs.Length - flag.Length];
                     fs.Read(bytes, 0, bytes.Length);
-                    bytes = DES.Decrypt(bytes, setting.DataKey);
+                    bytes = Decrypt(bytes);
+                    //bytes = DES.Decrypt(bytes, setting.DataKey);
                     content = bytes.GetString();
-                    if (!setting.DataEncrypt)
+                    if (!this.Options.IsEncryptConfig.GetValueOrDefault())
                     {
                         fs.Seek(0, SeekOrigin.Begin);
                         fs.SetLength(0);
@@ -352,9 +376,10 @@ namespace XiaoFeng.Config
                     fs.Seek(0, SeekOrigin.Begin);
                     fs.Read(bytes, 0, bytes.Length);
                     content = bytes.GetString();
-                    if (setting.DataEncrypt)
+                    if (this.Options.IsEncryptConfig.GetValueOrDefault())
                     {
-                        bytes = DES.Encrypt(bytes, setting.DataKey);
+                        //bytes = DES.Encrypt(bytes, setting.DataKey);
+                        bytes = Encrypt(bytes);
                         fs.Seek(0, SeekOrigin.Begin);
                         fs.SetLength(0);
                         var FirstByte = flag.GetBytes();
@@ -365,6 +390,72 @@ namespace XiaoFeng.Config
                 }
             }
             return content;
+        }
+        #endregion
+
+        #region 加密文件
+        /// <summary>
+        /// 加密
+        /// </summary>
+        /// <param name="data">数据</param>
+        /// <returns></returns>
+        private byte[] Encrypt(byte[] data)
+        {
+            var aes = Aes.Create();
+            var keyIV = this.GetKeyIV();
+            aes.Key = new byte[32].Write(0, keyIV.Item1);
+            aes.IV = new byte[16].Write(0, keyIV.Item2);
+            aes.Mode = CipherMode.CBC;
+            aes.Padding = PaddingMode.PKCS7;
+            using (var ms = new MemoryStream())
+            {
+                using (var crypt = new CryptoStream(ms, aes.CreateEncryptor(), CryptoStreamMode.Write))
+                {
+                    crypt.Write(data, 0, data.Length);
+                    crypt.FlushFinalBlock();
+                }
+                return ms.ToArray();
+            }
+        }
+        #endregion
+
+        #region 解密文件
+        /// <summary>
+        /// 解密
+        /// </summary>
+        /// <param name="data">数据</param>
+        /// <returns></returns>
+        private byte[] Decrypt(byte[] data)
+        {
+            var aes = Aes.Create();
+            var keyIV = this.GetKeyIV();
+            aes.Key = new byte[32].Write(0, keyIV.Item1);
+            aes.IV = new byte[16].Write(0, keyIV.Item2);
+            aes.Mode = CipherMode.CBC;
+            aes.Padding = PaddingMode.PKCS7;
+            using (var ms = new MemoryStream())
+            {
+                using (var crypt = new CryptoStream(ms, aes.CreateDecryptor(), CryptoStreamMode.Write))
+                {
+                    crypt.Write(data, 0, data.Length);
+                    crypt.FlushFinalBlock();
+                    return ms.ToArray();
+                }
+            }
+        }
+        #endregion
+
+        #region 获取Key IV
+        /// <summary>
+        /// 获取Key IV
+        /// </summary>
+        /// <returns></returns>
+        private (byte[], byte[]) GetKeyIV()
+        {
+            var bytes = this.Options.EncryptKey.GetBytes();
+            var key = bytes;
+            var iv = bytes;
+            return (key,iv);
         }
         #endregion
 
