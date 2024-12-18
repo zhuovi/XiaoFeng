@@ -354,13 +354,13 @@ namespace XiaoFeng.Config
                 }
                 var first = new byte[flag.Length];
                 fs.Read(first, 0, first.Length);
-                //var DES = new Cryptography.DESEncryption();
+
                 if (first.GetString().EqualsIgnoreCase(flag))
                 {
                     var bytes = new byte[fs.Length - flag.Length];
                     fs.Read(bytes, 0, bytes.Length);
                     bytes = Decrypt(bytes);
-                    //bytes = DES.Decrypt(bytes, setting.DataKey);
+
                     content = bytes.GetString();
                     if (!this.Options.IsEncryptConfig.GetValueOrDefault())
                     {
