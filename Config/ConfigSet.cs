@@ -16,7 +16,6 @@ namespace XiaoFeng.Config
     /// <summary>
     /// 配置基类
     /// </summary>
-    [EncryptFile]
     public class ConfigSet<TConfig> : EntityBase, IConfigSet<TConfig> where TConfig : ConfigSet<TConfig>, new()
     {
         #region 构造器
@@ -43,8 +42,10 @@ namespace XiaoFeng.Config
                 {
                     if (this.Options == null) this.Options = new ConfigOptions();
                     var set = XiaoFeng.Config.Setting.Current;
-                    this.Options.EncryptKey = set.DataKey;
-                    this.Options.IsEncryptConfig = set.DataEncrypt;
+                    if (this.Options.EncryptKey.IsNullOrEmpty())
+                        this.Options.EncryptKey = set.DataKey;
+                    if (!this.Options.IsEncryptConfig.HasValue)
+                        this.Options.IsEncryptConfig = set.DataEncrypt;
                     OptionsHelper.ConfigOptions = this.Options;
                 }
             }
@@ -336,7 +337,7 @@ namespace XiaoFeng.Config
             var configPath = this.GetConfigPath(path);
             if (!File.Exists(configPath)) return string.Empty;
 
-            using (var fs = new FileStream(configPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+            using (var fs = new FileStream(configPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite, 8192, FileOptions.Asynchronous))
             {
                 /*长度少于加密标识,说明一定不会加密,直接返回数据*/
                 if (fs.Length <= flag.Length)
@@ -433,6 +434,20 @@ namespace XiaoFeng.Config
             aes.IV = new byte[16].Write(0, keyIV.Item2);
             aes.Mode = CipherMode.CBC;
             aes.Padding = PaddingMode.PKCS7;
+
+            //using (MemoryStream ms = new MemoryStream(data))
+            //using (CryptoStream cs = new CryptoStream(ms, aes.CreateDecryptor(), CryptoStreamMode.Read))
+            //using (MemoryStream ms2 = new MemoryStream())
+            //{
+            //    byte[] buffer = new byte[1024];
+            //    int readBytes = 0;
+            //    while ((readBytes = cs.Read(buffer, 0, buffer.Length)) > 0)
+            //    {
+            //        ms2.Write(buffer, 0, readBytes);
+            //    }
+            //    return ms2.ToArray();
+            //}
+
             using (var ms = new MemoryStream())
             {
                 using (var crypt = new CryptoStream(ms, aes.CreateDecryptor(), CryptoStreamMode.Write))

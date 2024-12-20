@@ -30,7 +30,7 @@
 		<AssemblyOriginatorKeyFile>XiaoFeng.snk</AssemblyOriginatorKeyFile>
 		<PackageIcon>x.png</PackageIcon>
 		<PackageTags>XiaoFeng;FAYELF;ELF;DataHelper;HttpHelper;Redis;Socket;WebSocket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>ELFEncrypt增加输出编码参数;修复LikeSQL不带%的bug;增加媒体文件头类型;优化Redis订阅设置为不超时;优化配置文件加密解密;</PackageReleaseNotes>
+		<PackageReleaseNotes>ELFEncrypt增加输出编码参数;修复LikeSQL不带%的bug;增加媒体文件头类型;优化Redis订阅设置为不超时;优化配置文件加密解密;增加ElfFile文件操作类，文件后缀为.elfx,内容类型为application/elf</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>
