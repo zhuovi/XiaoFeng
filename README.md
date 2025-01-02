@@ -38,41 +38,41 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 5.2.8
+$ dotnet add package XiaoFeng --version 5.2.9
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 5.2.8
+PM> Install-Package XiaoFeng -Version 5.2.9
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="5.2.8" />
+<PackageReference Include="XiaoFeng" Version="5.2.9" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 5.2.8
+> paket add XiaoFeng --version 5.2.9
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 5.2.8"
+> #r "nuget: XiaoFeng, 5.2.9"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=5.2.8
+#addin nuget:?package=XiaoFeng&version=5.2.9
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=5.2.8
+#tool nuget:?package=XiaoFeng&version=5.2.9
 ```
 
 
@@ -2072,6 +2072,22 @@ client.UnSubscribe("取消订阅频道");
 ---
 
 # 更新日志
+
+## 2024-12-31   v 5.2.9
+
+1.ELFEncrypt增加输出编码参数;
+
+2.修复LikeSQL不带%的bug;
+
+3.增加媒体文件头类型;
+
+4.优化Redis订阅设置为不超时;
+
+5.优化配置文件加密解密;
+
+6.增加ElfFile文件操作类，文件后缀为.elfx,内容类型为application/elf;
+
+7.修复mysql下timestampdiff转换单位的bug;
 
 ## 2024-12-09   v 5.2.8
 
