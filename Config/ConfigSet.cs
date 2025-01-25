@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -35,18 +36,27 @@ namespace XiaoFeng.Config
                 this.EncryptFile = encryptAttr.IsEncrypt;
             }
             else this.EncryptFile = false;
+
+            this.Options = OptionsHelper.ConfigOptions;
             if (this.EncryptFile)
             {
-                this.Options = OptionsHelper.ConfigOptions;
-                if (this.Options == null || !this.Options.IsEncryptConfig.HasValue)
+                if (this.Options == null) this.Options = new ConfigOptions();
+                if (!this.Options.IsEncryptConfig.HasValue)
                 {
-                    if (this.Options == null) this.Options = new ConfigOptions();
                     var set = XiaoFeng.Config.Setting.Current;
                     if (this.Options.EncryptKey.IsNullOrEmpty())
                         this.Options.EncryptKey = set.DataKey;
                     if (!this.Options.IsEncryptConfig.HasValue)
                         this.Options.IsEncryptConfig = set.DataEncrypt;
                     OptionsHelper.ConfigOptions = this.Options;
+                }
+            }
+            else
+            {
+                if (this.Options != null &&
+                    this.Options.IsEncryptConfig.GetValueOrDefault() && this.Options.EncryptKey.IsNotNullOrEmpty() && this.Options.EncryptConfigFileTypes != null && this.Options.EncryptConfigFileTypes.Count > 0 && this.Options.EncryptConfigFileTypes.Contains(type))
+                {
+                    this.EncryptFile = true;
                 }
             }
         }
@@ -161,6 +171,7 @@ namespace XiaoFeng.Config
             if (attr == null) return string.Empty;
             if (IsGenericPath(attr.FileName) && this[GetGenericKey(attr.FileName)].IsNullOrEmpty()) return string.Empty;
             var configPath = this.GetConfigPath(attr.FileName);
+            //LogHelper.Logger($"ReadContent:{configPath}-{File.Exists(configPath)}");
             if (File.Exists(configPath))
             {
                 return this.OpenFile(configPath);
@@ -194,45 +205,49 @@ namespace XiaoFeng.Config
         {
             var attr = this.ConfigFileAttribute;
             if (attr == null) return null;
-            var Reload = false;
-            var cache = CacheFactory.Create(CacheType.Memory);
-            var cacheKey = this.GetConfigPath(attr.CacheKey);
-            var configPath = this.GetConfigPath(attr.FileName);
-            if (!reload)
+            lock (attr)
             {
-                var val = cache.Get(cacheKey);
-                if (val == null || val == default(TConfig))
-                    Reload = true;
-                else
-                {
-                    val.ToCast<TConfig>().CopyTo(this as TConfig);
-                    return this as TConfig;
-                }
-            }
-            if (reload || Reload)
-            {
-                if ((this as TConfig) == null) return null;
-                var val = (this as TConfig).ReadContent();
-                if (val.IsNullOrEmpty()) return new TConfig();
-                if (attr.Format == ConfigFormat.Json)
-                {
-                    val.JsonToObject<TConfig>().CopyTo(this as TConfig);
-                }
-                else if (attr.Format == ConfigFormat.Xml)
-                {
-                    val.XmlToEntity<TConfig>().CopyTo(this as TConfig);
-                }
-                else if (attr.Format == ConfigFormat.Ini)
-                {
+                var Reload = false;
+                var cache = CacheFactory.Create(CacheType.Memory);
+                var cacheKey = this.GetConfigPath(attr.CacheKey);
+                var configPath = this.GetConfigPath(attr.FileName);
 
+                if (!reload)
+                {
+                    var val = cache.Get(cacheKey);
+                    if (val == null || val == default(TConfig))
+                        Reload = true;
+                    else
+                    {
+                        val.ToCast<TConfig>().CopyTo(this as TConfig);
+                        return this as TConfig;
+                    }
                 }
+                if (reload || Reload)
+                {
+                    if ((this as TConfig) == null) return null;
+                    var val = (this as TConfig).ReadContent();
+                    if (val.IsNullOrEmpty()) return new TConfig();
+                    if (attr.Format == ConfigFormat.Json)
+                    {
+                        val.JsonToObject<TConfig>().CopyTo(this as TConfig);
+                    }
+                    else if (attr.Format == ConfigFormat.Xml)
+                    {
+                        val.XmlToEntity<TConfig>().CopyTo(this as TConfig);
+                    }
+                    else if (attr.Format == ConfigFormat.Ini)
+                    {
+
+                    }
 #if NETSTANDARD2_0
-                if (this.ConfigFileAttribute == null) this.ConfigFileAttribute = 
+                    if (this.ConfigFileAttribute == null) this.ConfigFileAttribute =
 #else
                 this.ConfigFileAttribute ??=
 #endif
-                attr;
-                if (Reload) cache.Set(cacheKey, this as TConfig, configPath);
+                    attr;
+                    if (Reload) cache.Set(cacheKey, this as TConfig, configPath);
+                }
             }
             return this as TConfig;
         }
@@ -279,6 +294,7 @@ namespace XiaoFeng.Config
                 CacheFactory.Create(CacheType.Memory).Remove(this.GetConfigPath(attr.CacheKey));
                 return f;
             }
+            
             return false;
         }
         /// <summary>
@@ -573,5 +589,7 @@ namespace XiaoFeng.Config
         #endregion
 
         #endregion
+
+        
     }
 }

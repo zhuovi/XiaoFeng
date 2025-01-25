@@ -41,6 +41,11 @@ namespace XiaoFeng.Config
         /// </summary>
         [Description("加密KEY")]
         public string EncryptKey { get; set; }
+        /// <summary>
+        /// 加密配置文件类型
+        /// </summary>
+        [Description("加密配置文件类型")]
+        public List<Type> EncryptConfigFileTypes { get; set; }
         #endregion
 
         #region 方法

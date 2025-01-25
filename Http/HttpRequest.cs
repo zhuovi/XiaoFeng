@@ -892,30 +892,40 @@ namespace XiaoFeng.Http
                 foreach (X509Certificate2 c in this.ClientCertificates)
                     ClientCerts.Add(c);
             }
+#if !NETSTANDARD2_0
             if (this.Address.IsMatch(@"^https://"))
             {
                 /*设置最大连接数*/
-                ServicePointManager.DefaultConnectionLimit = this.Connectionlimit;
+                //ServicePointManager.DefaultConnectionLimit = this.Connectionlimit;
+                this.ClientHandler.MaxConnectionsPerServer = this.Connectionlimit;
+                this.ClientHandler.ServerCertificateCustomValidationCallback = CheckValidationResult;
+                this.ClientHandler.SslProtocols = (System.Security.Authentication.SslProtocols)(int)this.ProtocolType;
                 if (this.CertPath.IsNotNullOrWhiteSpace())
                 {
                     /*这一句一定要写在创建连接的前面,使用回调的方法进行证书验证。*/
-                    ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(CheckValidationResult);
+                    //ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(CheckValidationResult);
                     /*将证书添加到请求里*/
                     var cert = this.CertPath.GetBasePath();
                     if (File.Exists(cert))
                     {
-                        ClientCerts.Add(this.CertPassWord.IsNullOrEmpty() ? new X509Certificate2(cert) : new X509Certificate2(cert, this.CertPassWord));
+#if NET9_0_OR_GREATER
+    ClientCerts.Add(this.CertPassWord.IsNullOrEmpty() ? X509CertificateLoader.LoadCertificateFromFile(cert) : X509CertificateLoader.LoadPkcs12FromFile(cert, this.CertPassWord));
+#else
+                        ClientCerts.Add(this.CertPassWord.IsNullOrEmpty() ? X509Certificate2.CreateFromCertFile(cert) : new X509Certificate2(cert, this.CertPassWord));
+#endif
+
                     }
                 }
                 else
                 {
-                    ServicePointManager.SecurityProtocol = this.ProtocolType;
+                    //ServicePointManager.SecurityProtocol = this.ProtocolType;
                     //ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
-                    ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(CheckValidationResult);
+                    //ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(CheckValidationResult);
                 }
             }
-        }
-        #endregion
+#endif
+                    }
+#endregion
 
         #region 添加cookie
         /// <summary>
@@ -1470,6 +1480,6 @@ namespace XiaoFeng.Http
         }
         #endregion
 
-        #endregion
+#endregion
     }
 }

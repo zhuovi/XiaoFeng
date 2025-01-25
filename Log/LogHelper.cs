@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Text;
 using XiaoFeng.Log;
 using XiaoFeng.Threading;
 /****************************************************************
@@ -40,6 +43,10 @@ namespace XiaoFeng
         /// 日志队列
         /// </summary>
         private static ITaskServiceQueue<LogData> LogTaskQueue = new LogTask();
+        /// <summary>
+        /// 静态锁
+        /// </summary>
+        private static object lockObject = new object();
         #endregion
 
         #region 方法
@@ -164,6 +171,46 @@ namespace XiaoFeng
             LogType = logType
         });
         #endregion
+
+        #region 调试日志
+        /// <summary>
+        /// 写调试日志
+        /// </summary>
+        /// <param name="message">日志信息</param>
+        /// <param name="path">日志路径</param>
+        public static void DebugLogger(string message, string path = "debug.log")
+        {
+            var entry = System.Reflection.Assembly.GetEntryAssembly();
+            var debuggable = entry.GetCustomAttributes(typeof(DebuggableAttribute), false).FirstOrDefault();
+            if (debuggable != null)
+            {
+                var debug = debuggable as DebuggableAttribute;
+                if (!debug.IsJITTrackingEnabled) return;
+            }
+            if (path.IsNullOrEmpty()) path = "debug.log";
+            path = Path.GetFullPath("debug.log");
+            var msg = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fffffff}] - {message}";
+            using (var fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite, 4096, true))
+            {
+                fs.Seek(0, SeekOrigin.End);
+                if (fs.Position > 0)
+                {
+                    var brs = Encoding.UTF8.GetBytes("\r\n");
+                    fs.Write(brs, 0, brs.Length);
+                }
+                var bytes = Encoding.UTF8.GetBytes(msg);
+                fs.Write(bytes, 0, bytes.Length);
+            }
+            lock (lockObject)
+            {
+                var oColor = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine(msg);
+                Console.ForegroundColor = oColor;
+            }
+        }
+        #endregion
+
         #endregion
     }
 }

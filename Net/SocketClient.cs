@@ -34,7 +34,7 @@ namespace XiaoFeng.Net
         /// <summary>
         /// 无参构造器
         /// </summary>
-        public SocketClient() { }
+        public SocketClient() { this.ClientConnectionId = Guid.NewGuid(); }
         /// <summary>
         /// 连接socket
         /// </summary>
@@ -42,7 +42,7 @@ namespace XiaoFeng.Net
         /// <param name="networkDelay">网络延时 单位为毫秒</param>
         /// <param name="authentication">认证</param>
         /// <param name="certificate">ssl证书</param>
-        internal SocketClient(Socket socket, int networkDelay, Func<ISocketClient, bool> authentication = null, X509Certificate certificate = null)
+        internal SocketClient(Socket socket, int networkDelay, Func<ISocketClient, bool> authentication = null, X509Certificate certificate = null) : this()
         {
             this.SetSocket(socket, networkDelay, authentication, certificate);
         }
@@ -51,7 +51,7 @@ namespace XiaoFeng.Net
         /// </summary>
         /// <param name="host">主机</param>
         /// <param name="port">端口</param>
-        public SocketClient(string host, int port)
+        public SocketClient(string host, int port) : this()
         {
             if (host.IsNullOrEmpty() || host.EqualsIgnoreCase("localhost")) host = "127.0.0.1";
             if (!ValidatePortNumber(port))
@@ -75,7 +75,7 @@ namespace XiaoFeng.Net
         /// 设置连接终端
         /// </summary>
         /// <param name="endPoint">终端</param>
-        public SocketClient(IPEndPoint endPoint)
+        public SocketClient(IPEndPoint endPoint) : this()
         {
             this.EndPoint = endPoint;
             InitializeClientSocket();
@@ -83,6 +83,10 @@ namespace XiaoFeng.Net
         #endregion
 
         #region 属性
+        /// <summary>
+        /// 客户端连接Id
+        /// </summary>
+        public Guid ClientConnectionId { get; private set; }
         /// <summary>
         /// 客户端SOCKET
         /// </summary>

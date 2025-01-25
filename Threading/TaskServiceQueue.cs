@@ -237,7 +237,7 @@ namespace XiaoFeng.Threading
                 {
                     Interlocked.CompareExchange(ref ConsumeState, 0, 1);
                 });
-                this.ConsoleWrite($"-- 有新任务,启动消费任务[{this.QueueName}]. --");
+                this.ConsoleWrite($"有新任务,启动消费任务[{this.QueueName}].");
                 this.ConsumeTask();
             }
         }

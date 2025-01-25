@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using XiaoFeng.Cache;
-using XiaoFeng.FastSql;
 using XiaoFeng.Json;
 /****************************************************************
 *  Copyright © (2017) www.eelf.cn All Rights Reserved.          *
@@ -199,11 +198,11 @@ namespace XiaoFeng.Data.SQL
         /// </summary>
         [JsonConverter(typeof(Json.StringEnumConverter))]
         public SQLType SQLType { get; set; }
-        /// <summary>
+        /*/// <summary>
         /// FastSql 驱动
         /// </summary>
         [JsonIgnore]
-        public IFastSql FastSql { get; set; }
+        public IDbFastSql DbFastSql { get; set; }*/
         /// <summary>
         /// 数据库配置
         /// </summary>
@@ -218,7 +217,7 @@ namespace XiaoFeng.Data.SQL
                 this._Config = value;
                 var FastSqlProviderType = Type.GetType($"XiaoFeng.FastSql.Providers.{value.ProviderType}");
                 if (FastSqlProviderType == null) return;
-                this.FastSql = (IFastSql)Activator.CreateInstance(FastSqlProviderType, new object[] { value });
+                //this.DbFastSql = (IDbFastSql)Activator.CreateInstance(FastSqlProviderType, new object[] { value });
             }
         }
         /// <summary>
