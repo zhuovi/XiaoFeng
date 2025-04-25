@@ -115,8 +115,15 @@ namespace XiaoFeng.Data
             if (this.Connection == null) return null;
             if (this.Connection.State != ConnectionState.Open && this.Connection.State != ConnectionState.Connecting)
             {
-                this.Connection.Open();
-                this.IsOpen = true;
+                try
+                {
+                    this.Connection.Open();
+                    this.IsOpen = true;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"ConnectionString:{this.Connection.ConnectionString}", ex);
+                }
             }
             var cmd = this.Connection.CreateCommand();
             cmd.Transaction = this.Transaction;

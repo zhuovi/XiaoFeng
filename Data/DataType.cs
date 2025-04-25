@@ -447,8 +447,6 @@ namespace XiaoFeng.Data
                         { "TIME","DateTime"},
                         { "TIMESTAMP","DateTime"},
                         { "DATETIME","DateTime"},
-                        { "DATE","DateOnly"},
-                        { "TIME","TimeOnly"},
                         { "TIME WITH TIME ZONE","DateTime"},
                         { "DATETIME WITH TIME ZONE","DateTime"},
                         { "TIMESTAMP WITH LOCAL TIME ZONE","DateTime"},

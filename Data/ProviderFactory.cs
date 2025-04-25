@@ -110,6 +110,10 @@ namespace XiaoFeng.Data
                     {
                         providerName = "MySqlConnector.MySqlConnectorFactory,MySqlConnector";
                         type = Type.GetType(providerName);
+                    }else if(providerType == DbProviderType.Dameng)
+                    {
+                        providerName = "Dm.DmClientFactory,DM.DmProvider";
+                        type = Type.GetType(providerName);
                     }
                 }
                 if (type == null)

@@ -36,6 +36,12 @@ namespace XiaoFeng.Http
         /// 初始化一个新实例
         /// </summary>
         /// <param name="name">名称</param>
+        /// <param name="value">值</param>
+        public FormData(string name,string value):this(name,value,FormType.Text) { }
+        /// <summary>
+        /// 初始化一个新实例
+        /// </summary>
+        /// <param name="name">名称</param>
         /// <param name="data">文件流</param>
         public FormData(string name, byte[] data)
         {

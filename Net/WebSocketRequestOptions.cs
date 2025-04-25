@@ -134,6 +134,10 @@ namespace XiaoFeng.Net
         /// </summary>
         public String SecWebSocketVersion => this["Sec-WebSocket-Version"];
         /// <summary>
+        /// WebSocket协议
+        /// </summary>
+        public String SecWebSocketProtocol => this["Sec-WebSocket-Protocol"];
+        /// <summary>
         /// Upgrade 标头，指定客户端支持的其他通信协议。向服务器指定某种传输协议以便服务器进行转换。
         /// </summary>
         public String Upgrade => this[HttpRequestHeader.Upgrade];

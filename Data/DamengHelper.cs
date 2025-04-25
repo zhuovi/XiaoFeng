@@ -431,10 +431,10 @@ select 1;
         public List<TableIndexAttribute> GetTableIndexs(string tbName)
         {
             if (tbName.IsNullOrEmpty()) return null;
-            var dt = this.ExecuteDataTable(@"select A.INDEX_TYPE,A.TABLE_NAME,A.TABLE_TYPE,A.UNIQUENESS,B.COLUMN_NAME,B.DESCEND FROM ""USER_INDEXES"" as A left join USER_IND_COLUMNS as B on A.INDEX_NAME=B.INDEX_NAME where A.TABLE_NAME=@tbname;
+            var dt = this.ExecuteDataTable(@"select A.INDEX_NAME,A.INDEX_TYPE,A.TABLE_NAME,A.TABLE_TYPE,A.UNIQUENESS,B.COLUMN_NAME,B.DESCEND FROM ""USER_INDEXES"" as A left join USER_IND_COLUMNS as B on A.INDEX_NAME=B.INDEX_NAME where A.TABLE_NAME=:tbname;
 ", CommandType.Text, new DbParameter[]
             {
-                this.MakeParam(@"tbname",tbName)
+                this.MakeParam(@":tbname",tbName)
             });
             if (dt == null || dt.Rows.Count == 0) return null;
             var list = new List<TableIndexAttribute>();
@@ -481,15 +481,15 @@ select 1;
         {
             var sql = "";
             if (modelType == ModelType.Table)
-                sql = "SELECT count(0) FROM USER_TABLES WHERE TABLE_NAME=@tbName;";
+                sql = "SELECT count(0) FROM USER_TABLES WHERE TABLE_NAME=:tbName;";
             else if (modelType == ModelType.View)
-                sql = "SELECT COUNT(0) FROM USER_VIEWS WHERE VIEW_NAME=@tbName;";
+                sql = "SELECT COUNT(0) FROM USER_VIEWS WHERE VIEW_NAME=:tbName;";
             else if (ModelType.Procedure == modelType)
-                sql = "SELECT COUNT(0) FROM USER_PROCEDURES WHERE OBJECT_NAME=@tbName;";
+                sql = "SELECT COUNT(0) FROM USER_PROCEDURES WHERE OBJECT_NAME=:tbName;";
             else if (modelType == ModelType.Function)
-                sql = "select count(0) FROM USER_OBJECTS WHERE OBJECT_TYPE='FUNCTION' OBJECT_NAME=@tbName;";
+                sql = "select count(0) FROM USER_OBJECTS WHERE OBJECT_TYPE='FUNCTION' OBJECT_NAME=:tbName;";
             return this.ExecuteScalar(sql, CommandType.Text, new DbParameter[]{
-                this.MakeParam(@"tbName",tableName)
+                this.MakeParam(@":tbName",tableName)
             }).ToCast<int>() > 0;
         }
         #endregion

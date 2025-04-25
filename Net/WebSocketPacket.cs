@@ -87,6 +87,11 @@ namespace XiaoFeng.Net
                 this.UserAgent = useragent;
             if (this.Data.TryGetValue("Origin", out var origin))
                 this.Origin = origin;
+            if (this.Data.TryGetValue("Sec-WebSocket-Protocol", out var secwebsocketprotocol))
+            {
+                var ssl = secwebsocketprotocol.IndexOf(",") > -1 ? secwebsocketprotocol.Split(',')[0] : secwebsocketprotocol;
+                this.SecWebSocketProtocol = ssl;
+            }
             if (this.Data.TryGetValue("Sec-WebSocket-Key", out var secwebsocketkey))
             {
                 this.SecWebSocketKey = secwebsocketkey;
@@ -147,6 +152,10 @@ namespace XiaoFeng.Net
         /// WebSocketAccept
         /// </summary>
         public string SecWebSocketAccept { get; set; }
+        /// <summary>
+        /// WebSocket Protocol
+        /// </summary>
+        public string SecWebSocketProtocol { get; set; }
         /// <summary>
         /// 请求地址
         /// </summary>
@@ -226,7 +235,7 @@ namespace XiaoFeng.Net
             sbr.AppendLine("Connection: Upgrade");
             sbr.AppendLine("Upgrade: WebSocket");
             sbr.AppendLine($"Date: {DateTime.Now.ToString("ddd, dd-MMM-yyyy HH:mm:ss.fff 'GMT'zzz", System.Globalization.CultureInfo.GetCultureInfo("en-US"))}");
-            sbr.AppendLine($"Server: FayElf v2.0({OS.Platform.GetOSPlatform()})");
+            sbr.AppendLine($"Server: ELF v2.0({OS.Platform.GetOSPlatform()})");
             sbr.AppendLine("Author: Jacky(QQ:7092734,Email:jacky@eelf.cn,Site:www.eelf.cn)");
             sbr.AppendLine("Copyright: 未经授权禁止使用,盗版必究.");
 
@@ -236,6 +245,9 @@ namespace XiaoFeng.Net
                 sbr.AppendLine($"Sec-WebSocket-Accept: {this.ComputeWebSocketHandshakeSecurityHash09(this.SecWebSocketKey)}");
             }
             else return string.Empty;
+
+            if (this.SecWebSocketProtocol.IsNotNullOrEmpty())
+                sbr.AppendLine($"Sec-WebSocket-Protocol: {this.SecWebSocketProtocol}");
 
             sbr.AppendLine();
             return sbr.ToString();

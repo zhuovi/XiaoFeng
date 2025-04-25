@@ -7,10 +7,10 @@
 		<Product>基础类库 数据库中间件</Product>
 		<Description>
 			基础类库、数据库中间件、网络通讯中间件、Redis、Socket、HttpHelper、IQueryableX、Cache、FTP、JSON、XML、IO、配置、各种加密码算法、作业调度、正则、通用数据库操作，支持10多种数据库</Description>
-		<Copyright>CopyRight © 2008-2025 魔法精灵(www.eelf.cn) QQ:7092734 Email:jacky@eelf.cn</Copyright>
+		<Copyright>CopyRight © 2008-2026 魔法精灵(www.eelf.cn) QQ:7092734 Email:jacky@eelf.cn</Copyright>
 		<Company>魔法精灵</Company>
 		<VersionPrefix>5.2</VersionPrefix>
-		<VersionSuffix>9</VersionSuffix>
+		<VersionSuffix>10</VersionSuffix>
 		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
 		<FileVersion>$(Version)</FileVersion>
 		<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
@@ -30,7 +30,7 @@
 		<AssemblyOriginatorKeyFile>XiaoFeng.snk</AssemblyOriginatorKeyFile>
 		<PackageIcon>x.png</PackageIcon>
 		<PackageTags>XiaoFeng;FAYELF;ELF;DataHelper;HttpHelper;Redis;Socket;WebSocket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>LogHelper增加Logger调试日志,日志文件可指定;增加控制台进度条功能;</PackageReleaseNotes>
+		<PackageReleaseNotes>LogHelper增加Logger调试日志,日志文件可指定;增加控制台进度条功能;增加达梦数据库驱动;修复HttpHelper中请求内容为空时设置请求内容类型的bug;增加websocket子协议支持;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>

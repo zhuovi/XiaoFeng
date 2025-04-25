@@ -289,7 +289,7 @@ namespace XiaoFeng.Data
                 {
                     using (var conn = this.CreateConn())
                     {
-                        if (conn == null) throw new Exception("驱动或数据库连接串有问题.");
+                        if (conn == null) throw new Exception($"驱动或数据库连接串有问题.ConnectionString:{this.ConnectionString}");
                         var t = fun.Invoke(conn, ProviderFactory);
                         if (conn.State != ConnectionState.Closed) conn.Close();
                         return t;
@@ -833,13 +833,14 @@ namespace XiaoFeng.Data
                         paramName = "@" + paramName.TrimStart(new char[] { ':' });
                     break;
                 case DbProviderType.Oracle:
+                case DbProviderType.Dameng:
                     if (!paramName.StartsWith(":"))
                         paramName = ":" + paramName.TrimStart(new char[] { '@' });
                     break;
-                case DbProviderType.Dameng:
-                    if (paramName.StartsWith(":") || paramName.StartsWith("@"))
-                        paramName = paramName.TrimStart(new char[] { ':', '@' });
-                    break;
+                //case DbProviderType.Dameng:
+                //    if (paramName.StartsWith(":") || paramName.StartsWith("@"))
+                //        paramName = paramName.TrimStart(new char[] { ':', '@' });
+                //    break;
             }
             if (Param == null) return null;
             Param.ParameterName = paramName;

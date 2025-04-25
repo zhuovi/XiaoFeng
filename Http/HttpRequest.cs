@@ -330,6 +330,8 @@ namespace XiaoFeng.Http
                             this.ContentType = "application/octet-stream";
                         HttpContent = new ByteArrayContent(this.BodyBytes);
                     }
+                    if (HttpContent == null)
+                        HttpContent = new StringContent(string.Empty, this.Encoding);
                     if (this.ContentType.IsNotNullOrEmpty())
                         HttpContent.Headers.ContentType = new MediaTypeHeaderValue(this.ContentType);
                 }

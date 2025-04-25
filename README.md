@@ -38,41 +38,41 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 5.2.9
+$ dotnet add package XiaoFeng --version 5.2.10
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 5.2.9
+PM> Install-Package XiaoFeng -Version 5.2.10
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="5.2.9" />
+<PackageReference Include="XiaoFeng" Version="5.2.10" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 5.2.9
+> paket add XiaoFeng --version 5.2.10
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 5.2.9"
+> #r "nuget: XiaoFeng, 5.2.10"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=5.2.9
+#addin nuget:?package=XiaoFeng&version=5.2.10
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=5.2.9
+#tool nuget:?package=XiaoFeng&version=5.2.10
 ```
 
 
@@ -2072,6 +2072,19 @@ client.UnSubscribe("取消订阅频道");
 ---
 
 # 更新日志
+
+## 2025-04-25   v 5.2.10
+
+1.LogHelper增加Logger调试日志,日志文件可指定;
+
+2.增加控制台进度条功能;
+
+3.增加达梦数据库驱动;
+
+4.修复HttpHelper中请求内容为空时设置请求内容类型的bug;
+
+5.增加websocket子协议支持;
+
 
 ## 2024-12-31   v 5.2.9
 
