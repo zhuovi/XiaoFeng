@@ -1,6 +1,6 @@
 # XiaoFeng
 
-![fayelf](https://github.com/user-attachments/assets/7f0768d2-62a8-45bd-8246-49688d9a05ad)
+![fayelf](https://www.eelf.cn/logox.png)
 
 ![GitHub top language](https://img.shields.io/github/languages/top/zhuovi/xiaofeng?logo=github)
 ![GitHub License](https://img.shields.io/github/license/zhuovi/xiaofeng?logo=github)
@@ -1413,14 +1413,14 @@ new Job().SetName("测试时间段调度").Interval(10000，job =>
 Console.WriteLine("我去执行了...");
 })
 //一个一个添加
-.AddTimePeriod(new TimePeriod(new Time(16, 00,00)，new Time(20, 00,00)))
-.AddTimePeriod(new DateTimePeriod(new DateTime(2024, 1,1), new DateTime(2024, 12,20)))
-. AddTimePeriod(new DayPeriod(1,5))
+.AddTimePeriod(new TimePeriod(new Time(16,00,00)，new Time(20,00,00)))
+.AddTimePeriod(new DateTimePeriod(new DateTime(2024,1,1), new DateTime(2024,12,20)))
+.AddTimePeriod(new DayPeriod(1,5))
 .AddTimePeriod(new WeekPeriod(3,5))
 //一个一个添加
-.AddTimePeriod(new DayPeriod(1，2)，new DayPeriod(3,5))
+.AddTimePeriod(new DayPeriod(1,2)，new DayPeriod(3,5))
 //添加集合
-.AddTimePeriod(new List<ITimePeriod> { new DayPeriod(1，2)，new DayPeriod(3,5) })
+.AddTimePeriod(new List<ITimePeriod> { new DayPeriod(1,2)，new DayPeriod(3,5) })
 //默认是OR
 .SetTimePeriodType(TimePeriodType.OR)
 .Start();
@@ -1436,7 +1436,7 @@ Console.WriteLine("我去执行了...");
  }).SetInterval(2*1000).Start();
  
  //也可以继承 IJobWorker 实现
- public class MyJob : IJobWoker
+ public class MyJob : IJobWorker
  {
      //作业内容
      public async Task Invoke()

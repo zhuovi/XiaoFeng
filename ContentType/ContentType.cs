@@ -41,6 +41,7 @@ namespace XiaoFeng
         /// <returns></returns>
         public static string[] Get(string ext)
         {
+            ext = ext.Trim('.');
             return (ext.IsNullOrEmpty() || !Data.ContainsKey(ext)) ? Array.Empty<string>() : Data[ext].Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
         }
         /// <summary>
