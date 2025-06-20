@@ -8,6 +8,8 @@
 *  Version : v 1.0.0                                            *
 *  CLR Version : 4.0.30319.42000                                *
 *****************************************************************/
+using System.ComponentModel;
+
 namespace XiaoFeng.Net
 {
     #region WebSocket类型
@@ -72,14 +74,17 @@ namespace XiaoFeng.Net
         /// <summary>
         /// 空闲
         /// </summary>
+        [Description("空闲")]
         Idle = 0,
         /// <summary>
         /// 运行中
         /// </summary>
+        [Description("运行中")]
         Runing = 1,
         /// <summary>
         /// 停止
         /// </summary>
+        [Description("停止")]
         Stop = 2
     }
     #endregion

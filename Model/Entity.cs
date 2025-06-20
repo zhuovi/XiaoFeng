@@ -139,6 +139,7 @@ namespace XiaoFeng.Model
             set
             {
                 this.ModelType = value;
+                if (this.DataBaseName.IsNullOrEmpty()) return;
                 /*设置表名*/
                 this._Data = new DataHelperX<T>(this.Config, this.RunSqlCallBack);
                 this._Data.DataSQL.TableName = value.GetTableAttribute().Name;
@@ -169,6 +170,7 @@ namespace XiaoFeng.Model
         {
             get
             {
+                if (this.DataBaseName.IsNullOrEmpty()) return null;
                 if (this._Data == null)
                 {
                     //if (this.Config == null) return null;
@@ -202,6 +204,7 @@ namespace XiaoFeng.Model
         {
             get
             {
+                if (this.DataBaseName.IsNullOrEmpty()) return null;
                 if (this._DataQ == null)
                 {
                     if (this.Config == null) return null;
@@ -923,7 +926,7 @@ namespace XiaoFeng.Model
         /// 当前模型的数据库对象
         /// </summary>
         [JsonIgnore, XmlIgnore, FieldIgnore]
-        public IDataHelper DataHelper { get => this.Data.DataHelper; }
+        public IDataHelper DataHelper { get => this.Data?.DataHelper; }
         #endregion
     }
     /// <summary>
