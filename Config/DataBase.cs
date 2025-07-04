@@ -41,13 +41,13 @@ namespace XiaoFeng.Config
         /// <summary>
         /// 数据
         /// </summary>
-        public Dictionary<string, ConnectionConfig[]> Data { get; set; }
+        public Dictionary<string, List<ConnectionConfig>> Data { get; set; }
         /// <summary>
         /// 获取配置数据
         /// </summary>
         /// <param name="key">key</param>
         /// <returns></returns>
-        public new ConnectionConfig[] this[string key] => this.Get(key);
+        public new List<ConnectionConfig> this[string key] => this.Get(key);
         #endregion
 
         #region 方法
@@ -71,7 +71,7 @@ namespace XiaoFeng.Config
         /// </summary>
         /// <param name="key">key</param>
         /// <returns></returns>
-        public ConnectionConfig[] Get(string key = "")
+        public List<ConnectionConfig> Get(string key = "")
         {
             if (this.Data.IsNullOrEmpty())
                 return null;
@@ -119,15 +119,15 @@ namespace XiaoFeng.Config
                 var val = this.ReadContent();
                 if (attr.Format == ConfigFormat.Json)
                 {
-                    this.Data = val.JsonToObject<Dictionary<string, ConnectionConfig[]>>();
+                    this.Data = val.JsonToObject<Dictionary<string, List<ConnectionConfig>>>();
                 }
                 else if (attr.Format == ConfigFormat.Xml)
                 {
-                    this.Data = val.XmlToEntity<Dictionary<string, ConnectionConfig[]>>();
+                    this.Data = val.XmlToEntity<Dictionary<string, List<ConnectionConfig>>>();
                 }
                 else if (attr.Format == ConfigFormat.Ini)
                 {
-                    this.Data = new Dictionary<string, ConnectionConfig[]>();
+                    this.Data = new Dictionary<string, List<ConnectionConfig>>();
                 }
                 if (this.ConfigFileAttribute == null) this.ConfigFileAttribute = attr;
                 if (Reload) cache.Set(attr.CacheKey, this, attr.FileName);
@@ -158,9 +158,9 @@ namespace XiaoFeng.Config
             }
             else
             {
-                this.Data = new Dictionary<string, ConnectionConfig[]>
+                this.Data = new Dictionary<string, List<ConnectionConfig>>
                 {
-                    {"www.eelf.cn",new ConnectionConfig[]
+                    {"www.eelf.cn",new List <ConnectionConfig>
                         {
                             new ConnectionConfig
                             {
@@ -206,6 +206,14 @@ namespace XiaoFeng.Config
                         FileShare.ReadWrite),
                         Encoding.UTF8))
             {
+                this.Data.Keys.Each(k =>
+                {
+                    var configs = this.Data[k];
+                    configs.Each(c =>
+                    {
+                        c.AppKey = k;
+                    });
+                });
                 string val = "";
                 if (attr.Format == ConfigFormat.Json)
                 {
@@ -247,41 +255,42 @@ namespace XiaoFeng.Config
         public void Set(string key, int index = 0, ConnectionConfig config = null)
         {
             if (key.IsNullOrEmpty()) return;
-            if (this.Data == null || this.Data == default(Dictionary<string, ConnectionConfig[]>))
+            if (this.Data == null || this.Data == default(Dictionary<string, List<ConnectionConfig>>))
             {
-                this.Data = new Dictionary<string, ConnectionConfig[]>();
+                this.Data = new Dictionary<string, List<ConnectionConfig>>();
             }
-            if (this.Data.ContainsKey(key))
+            if (config.AppKey.IsNullOrEmpty() || !config.AppKey.EqualsIgnoreCase(key)) config.AppKey = key;
+
+            if (this.Data.TryGetValue(key,out var list))
             {
                 if (index == -1)
                 {
-                    this.Data.Remove(key); Save(); return;
+                    this.Data.Remove(key);
+                    Save(); 
+                    return;
                 }
-                var list = this.Data[key];
+                //var list = this.Data[key];
                 if (config == null)
                 {
-                    if (index >= list.Length) return;
+                    if (index >= list.Count) return;
                     var _list = list.ToList<ConnectionConfig>();
                     _list.RemoveAt(index);
-                    this.Data[key] = _list.ToArray<ConnectionConfig>();
-                    if (this.Data[key].Length == 0) this.Data.Remove(key);
+                    this.Data[key] = _list;
+                    if (this.Data[key].Count == 0) this.Data.Remove(key);
                 }
                 else
                 {
-                    if (index >= list.Length)
+                    if (index >= list.Count)
                     {
-                        index = list.Length;
-                        var _list = new ConnectionConfig[index + 1];
-                        list.CopyTo(_list, 0);
-                        list = _list;
-                    }
-                    list[index] = config;
+                        list.Add(config);
+                    }else
+                        list[index] = config;
                     this.Data[key] = list;
                 }
             }
             else
             {
-                this.Data.Add(key, new ConnectionConfig[] { config });
+                this.Data.Add(key, new List<ConnectionConfig> { config });
             }
             Save();
         }
@@ -290,13 +299,18 @@ namespace XiaoFeng.Config
         /// </summary>
         /// <param name="key">key</param>
         /// <param name="configs">配置数据</param>
-        public void Add(string key, ConnectionConfig[] configs)
+        public void Add(string key, List<ConnectionConfig> configs)
         {
             if (key.IsNullOrEmpty()) return;
             if (this.Data.ContainsKey(key))
                 this.Data[key] = configs;
             else
                 this.Data.Add(key, configs);
+            configs.Each(c =>
+            {
+                if (c.AppKey.IsNullOrEmpty() || !c.AppKey.EqualsIgnoreCase(key))
+                    c.AppKey = key;
+            });
             Save();
         }
         #endregion

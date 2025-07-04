@@ -60,8 +60,9 @@ namespace XiaoFeng.Data
         /// <summary>
         /// 创建Data数据库连接
         /// </summary>
+        /// <param name="isWrite">是否可写</param>
         /// <returns></returns>
-        DbConnection CreateConn();
+        DbConnection CreateConn(bool? isWrite = null);
         #endregion
 
         #region 获取连接对象
@@ -71,8 +72,9 @@ namespace XiaoFeng.Data
         /// <typeparam name="T">类型</typeparam>
         /// <param name="fun">方法</param>
         /// <param name="isCloseConn">是否关闭连接</param>
+        /// <param name="isWrite">是否可写</param>
         /// <returns></returns>
-        T GetConn<T>(Func<DbConnection, DbProviderFactory, T> fun, Boolean isCloseConn = true);
+        T GetConn<T>(Func<DbConnection, DbProviderFactory, T> fun, Boolean isCloseConn = true,bool? isWrite=null);
         #endregion
 
         #region 执行Command
@@ -81,39 +83,43 @@ namespace XiaoFeng.Data
         /// </summary>
         /// <typeparam name="T">对象类型</typeparam>
         /// <param name="fun">方法体</param>
+        /// <param name="isWrite">是否可写</param>
         /// <param name="isolationLevel">事务级别</param>
         /// <param name="error">错误回调</param>
         /// <param name="isCloseConn">是否关闭连接</param>
         /// <returns></returns>
-        T Execute<T>(Func<DbCommand, DbProviderFactory, T> fun, IsolationLevel isolationLevel = IsolationLevel.ReadCommitted, Action<Exception, string> error = null, Boolean isCloseConn = true);
+        T Execute<T>(Func<DbCommand, DbProviderFactory, T> fun,bool? isWrite=null, IsolationLevel isolationLevel = IsolationLevel.ReadCommitted, Action<Exception, string> error = null, Boolean isCloseConn = true);
         /// <summary>
         /// 执行Command
         /// </summary>
         /// <param name="fun">方法体</param>
         /// <param name="error">错误回调</param>
+        /// <param name="isWrite">是否可写</param>
         /// <param name="isolationLevel">事务级别</param>
         /// <param name="isCloseConn">是否关闭连接</param>
         /// <returns></returns>
-        T Execute<T>(Func<DbCommand, DbProviderFactory, T> fun, Action<Exception, string> error, IsolationLevel isolationLevel, Boolean isCloseConn);
+        T Execute<T>(Func<DbCommand, DbProviderFactory, T> fun, Action<Exception, string> error,bool? isWrite, IsolationLevel isolationLevel, Boolean isCloseConn);
         /// <summary>
         /// 执行Command
         /// </summary>
         /// <typeparam name="T">对象类型</typeparam>
         /// <param name="fun">方法体</param>
+        /// <param name="isWirte">是否可写</param>
         /// <param name="isolationLevel">事务级别</param>
         /// <param name="error">错误回调</param>
         /// <param name="isCloseConn">是否关闭连接</param>
         /// <returns></returns>
-        T Execute<T>(Func<DbCommand, T> fun, IsolationLevel isolationLevel = IsolationLevel.ReadCommitted, Action<Exception, string> error = null, Boolean isCloseConn = true);
+        T Execute<T>(Func<DbCommand, T> fun,bool? isWirte=null, IsolationLevel isolationLevel = IsolationLevel.ReadCommitted, Action<Exception, string> error = null, Boolean isCloseConn = true);
         /// <summary>
         /// 执行SQL语句
         /// </summary>
         /// <param name="fun">方法体</param>
         /// <param name="error">错误回调</param>
+        /// <param name="isWrite">是否可写</param>
         /// <param name="isolationLevel">事务级别</param>
         /// <param name="isCloseConn">是否关闭连接</param>
         /// <returns></returns>
-        T Execute<T>(Func<DbCommand, T> fun, Action<Exception, string> error, IsolationLevel isolationLevel, Boolean isCloseConn);
+        T Execute<T>(Func<DbCommand, T> fun, Action<Exception, string> error, bool? isWrite, IsolationLevel isolationLevel, Boolean isCloseConn);
         #endregion
 
         #region 执行SQL语句

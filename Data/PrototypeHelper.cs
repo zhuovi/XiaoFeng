@@ -117,5 +117,19 @@ namespace XiaoFeng
         /// <returns></returns>
         public static string CreateTable<T>(this ConnectionConfig config, string tableName = "", string connName = "", int index = -1) where T : Entity<T>, new() => config.CreateTable(typeof(T), tableName, connName, index);
         #endregion
+
+        #region 屏蔽数据库连接串中的密码
+        /// <summary>
+        /// 屏蔽数据库连接串中的密码
+        /// </summary>
+        /// <param name="connectionString">连接串</param>
+        /// <returns></returns>
+        public static string BlockPassword(this string connectionString)
+        {
+            var _ = connectionString.ReplacePattern(@"(^|;)(\s*)(pwd|password)=[\s\S]*(;|$)", "$1$2$3=******$4");
+            _ = _.ReplacePattern(@":([^@]+)@", ":******@");
+            return _;
+        }
+        #endregion
     }
 }

@@ -60,14 +60,14 @@ namespace XiaoFeng.Model
                 this.TableName = table.Name.IfEmpty(this.ModelType.Name);
                 ConnectionConfig config;
                 var db = DataBase.Current;
-                ConnectionConfig[] configs = db.Get(this.DataBaseName);
+                var configs = db.Get(this.DataBaseName);
                 if (configs == null) return;
                 uint index = this.DataBaseNum;
-                if (index >= configs.Length) index = 0;
-                config = configs[index];
+                if (index >= configs.Count) index = 0;
+                config = configs[(int)index];
                 this.Config = config;
                 this.Config.AppKey = this.DataBaseName;
-                //改为用的时候再实例化 不同则不实例化 减少开销
+                //改为用的时候再实例化 不用则不实例化 减少开销
                 //this.Data = new DataHelperX<T>(config);
                 //this.DataQ = new DataHelperQ(config);
             }
@@ -668,7 +668,7 @@ namespace XiaoFeng.Model
         public T SetSubDataBase(string key, uint num, string suffix = "")
         {
             var db = DataBase.Current;
-            ConnectionConfig[] configs;
+            List<ConnectionConfig> configs;
             if (key.IsNotNullOrEmpty() && key.EqualsIgnoreCase(this.DataBaseName))
             {
                 this.DataBaseName = key;
@@ -677,7 +677,7 @@ namespace XiaoFeng.Model
 
             configs = db.Get(this.DataBaseName);
             if (configs == null) return null;
-            this.Config = configs[num];
+            this.Config = configs[(int)num];
 
             this.DataBaseNum = num;
             if (suffix.IsNotNullOrEmpty())
@@ -803,7 +803,7 @@ namespace XiaoFeng.Model
         public T SubDataBase(string key, uint num, string suffix = "", bool isGlobal = false)
         {
             var db = DataBase.Current;
-            ConnectionConfig[] configs;
+            List<ConnectionConfig> configs;
             if (key.IsNotNullOrEmpty() && key.EqualsIgnoreCase(this.DataBaseName))
             {
                 this.DataBaseName = key;
@@ -827,7 +827,7 @@ namespace XiaoFeng.Model
 
             configs = db.Get(this.DataBaseName);
             if (configs == null) return null;
-            this.Config = configs[num];
+            this.Config = configs[(int)num];
 
             this.DataBaseNum = num;
 

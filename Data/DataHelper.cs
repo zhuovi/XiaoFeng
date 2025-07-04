@@ -3,10 +3,12 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using XiaoFeng.Cache;
 using XiaoFeng.Collections;
+using XiaoFeng.Config;
 using XiaoFeng.Data.SQL;
 using XiaoFeng.Model;
 /****************************************************************
@@ -247,25 +249,55 @@ namespace XiaoFeng.Data
         /// <summary>
         /// 创建Data数据库连接
         /// </summary>
+        /// <param name="isWrite">是否可写</param>
         /// <returns></returns>
-        public virtual DbConnection CreateConn()
+        public virtual DbConnection CreateConn(bool? isWrite = null)
         {
+            var connectionString = this.ConnectionString;
             try
             {
-                if (this.ConnectionString.IsNullOrEmpty())
+                if (connectionString.IsNullOrEmpty())
                 {
                     this.ErrorMessage = "没有设置数据库连接配置.";
                     throw new DataHelperException("请设置数据库连接串.");
                 }
                 if (this.ProviderFactory == null) return null;
                 DbConnection Conn = this.ProviderFactory.CreateConnection();
-                Conn.ConnectionString = this.ConnectionString;
+
+                if (isWrite.HasValue)
+                {
+                    if (this.ConnConfig.AppKey.IsNotNullOrEmpty())
+                    {
+                        var db = DataBase.Current;
+                        if (db != null)
+                        {
+                            var configs = db.Get(this.ConnConfig.AppKey);
+                            var configType = isWrite.Value ? DbConfigType.OnlyWrite : DbConfigType.OnlyRead;
+                            if (configs != null && configs.Count > 0)
+                            {
+                                var config = configs.Where(a => a.ConfigType == DbConfigType.ReadAndWrite || a.ConfigType == configType).ToList();
+                                var count = config.Count;
+                                if (count == 0) throw new DataHelperException($"数据库配置中没有[{configType}]的数据库配置.");
+                                if (count == 1)
+                                {
+                                    connectionString = config[0].ConnectionString;
+                                }
+                                else
+                                {
+                                    var index = RandomHelper.GetRandomInt(0, count);
+                                    connectionString = config[index].ConnectionString;
+                                }
+                            }
+                        }
+                    }
+                }
+                Conn.ConnectionString = connectionString;
                 return Conn;
             }
             catch (DbException e)
             {
                 this.ErrorMessage = "创建数据库连接失败:" + e.Message;
-                LogHelper.Error(e, "\r\n数据库连接字符串:" + this.ConnectionString + "[" + Data.ProviderFactory.GetProviderInvariantName(this.ProviderType) + "]");
+                LogHelper.Error(e, "\r\n数据库连接字符串:" + connectionString.BlockPassword() + "[" + Data.ProviderFactory.GetProviderInvariantName(this.ProviderType) + "]");
                 return null;
             }
         }
@@ -278,8 +310,9 @@ namespace XiaoFeng.Data
         /// <typeparam name="T">类型</typeparam>
         /// <param name="fun">方法</param>
         /// <param name="isCloseConn">是否关闭连接</param>
+        /// <param name="isWrite">是否可写</param>
         /// <returns></returns>
-        public T GetConn<T>(Func<DbConnection, DbProviderFactory, T> fun, Boolean isCloseConn = true)
+        public T GetConn<T>(Func<DbConnection, DbProviderFactory, T> fun, Boolean isCloseConn = true,bool? isWrite = null)
         {
             if (isCloseConn)
             {
@@ -287,9 +320,9 @@ namespace XiaoFeng.Data
                     return this.Pool.Execute(fun);
                 else
                 {
-                    using (var conn = this.CreateConn())
+                    using (var conn = this.CreateConn(isWrite))
                     {
-                        if (conn == null) throw new Exception($"驱动或数据库连接串有问题.ConnectionString:{this.ConnectionString}");
+                        if (conn == null) throw new Exception($"驱动或数据库连接串有问题.ConnectionString:{this.ConnectionString.BlockPassword()}");
                         var t = fun.Invoke(conn, ProviderFactory);
                         if (conn.State != ConnectionState.Closed) conn.Close();
                         return t;
@@ -297,7 +330,7 @@ namespace XiaoFeng.Data
                 }
             }
             else
-                return fun.Invoke(this.CreateConn(), ProviderFactory);
+                return fun.Invoke(this.CreateConn(isWrite), ProviderFactory);
         }
         #endregion
 
@@ -307,11 +340,12 @@ namespace XiaoFeng.Data
         /// </summary>
         /// <typeparam name="T">对象类型</typeparam>
         /// <param name="fun">方法体</param>
+        /// <param name="isWrite">是否可写</param>
         /// <param name="isolationLevel">事务级别</param>
         /// <param name="error">错误回调</param>
         /// <param name="isCloseConn">是否关闭连接</param>
         /// <returns></returns>
-        public T Execute<T>(Func<DbCommand, DbProviderFactory, T> fun, IsolationLevel isolationLevel = IsolationLevel.ReadCommitted, Action<Exception, string> error = null, Boolean isCloseConn = true)
+        public T Execute<T>(Func<DbCommand, DbProviderFactory, T> fun,bool? isWrite=null, IsolationLevel isolationLevel = IsolationLevel.ReadCommitted, Action<Exception, string> error = null, Boolean isCloseConn = true)
         {
             return this.GetConn((conn, factory) =>
             {
@@ -344,36 +378,51 @@ namespace XiaoFeng.Data
                     tran.EndTransaction();
                 }
                 return t;
-            }, isCloseConn);
+            }, isCloseConn, isWrite);
         }
         /// <summary>
         /// 执行Command
         /// </summary>
         /// <param name="fun">方法体</param>
         /// <param name="error">错误回调</param>
+        /// <param name="isWrite">是否可写</param>
         /// <param name="isolationLevel">事务级别</param>
         /// <param name="isCloseConn">是否关闭连接</param>
         /// <returns></returns>
-        public T Execute<T>(Func<DbCommand, DbProviderFactory, T> fun, Action<Exception, string> error, IsolationLevel isolationLevel, Boolean isCloseConn) => this.Execute(fun, isolationLevel, error, isCloseConn);
+        public T Execute<T>(Func<DbCommand, DbProviderFactory, T> fun, Action<Exception, string> error,bool? isWrite, IsolationLevel isolationLevel, Boolean isCloseConn) => this.Execute(fun,isWrite, isolationLevel, error, isCloseConn);
         /// <summary>
         /// 执行Command
         /// </summary>
         /// <typeparam name="T">对象类型</typeparam>
+        /// <param name="isWrite">是否可写</param>
         /// <param name="fun">方法体</param>
         /// <param name="isolationLevel">事务级别</param>
         /// <param name="error">错误回调</param>
         /// <param name="isCloseConn">是否关闭连接</param>
         /// <returns></returns>
-        public T Execute<T>(Func<DbCommand, T> fun, IsolationLevel isolationLevel = IsolationLevel.ReadCommitted, Action<Exception, string> error = null, Boolean isCloseConn = true) => this.Execute((cmd, factory) => fun.Invoke(cmd), isolationLevel, error, isCloseConn);
+        public T Execute<T>(Func<DbCommand, T> fun, bool? isWrite = null, IsolationLevel isolationLevel = IsolationLevel.ReadCommitted, Action<Exception, string> error = null, Boolean isCloseConn = true) => this.Execute((cmd, factory) => fun.Invoke(cmd),isWrite, isolationLevel, error, isCloseConn);
         /// <summary>
         /// 执行SQL语句
         /// </summary>
         /// <param name="fun">方法体</param>
         /// <param name="error">错误回调</param>
+        /// <param name="isWrite">是否可写</param>
         /// <param name="isolationLevel">事务级别</param>
         /// <param name="isCloseConn">是否关闭连接</param>
         /// <returns></returns>
-        public T Execute<T>(Func<DbCommand, T> fun, Action<Exception, string> error, IsolationLevel isolationLevel, Boolean isCloseConn) => this.Execute(fun, isolationLevel, error, isCloseConn);
+        public T Execute<T>(Func<DbCommand, T> fun, Action<Exception, string> error, bool? isWrite, IsolationLevel isolationLevel, Boolean isCloseConn) => this.Execute(fun,isWrite, isolationLevel, error, isCloseConn);
+        #endregion
+
+        #region 是否用可写配置
+        /// <summary>
+        /// 是否用可写配置
+        /// </summary>
+        /// <param name="sqlString">SQL语句</param>
+        /// <returns></returns>
+        private bool IsWriteData(string sqlString)
+        {
+            return sqlString.IsMatch(@"(^|;)\s*(insert|update|delete)\s+");
+        }
         #endregion
 
         #region 执行SQL语句
@@ -393,7 +442,7 @@ namespace XiaoFeng.Data
                   if (cmd == null) return 0;
                   cmd.CommandText = commandText;
                   return cmd.ExecuteNonQuery();
-              }, isolationLevel, (e, msg) =>
+              },this.IsWriteData(commandText), isolationLevel, (e, msg) =>
               {
                   flag = false;
                   error?.Invoke(e, msg);
@@ -436,7 +485,7 @@ namespace XiaoFeng.Data
                     }
                 });
                 return dict;
-            }, isolationLevel, error);
+            },this.IsWriteData(commandText.Join(";")), isolationLevel, error);
         }
         /// <summary>
         /// 执行SQL语句
@@ -467,7 +516,7 @@ namespace XiaoFeng.Data
                  cmd.CommandText = commandText;
                  return await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
 
-             }, isolationLevel, (e, msg) =>
+             },this.IsWriteData(commandText), isolationLevel, (e, msg) =>
              {
                  flag = false;
                  error?.Invoke(e, msg);
@@ -500,7 +549,7 @@ namespace XiaoFeng.Data
                 var CacheValue = this.GetCacheValue(ref commandText);
                 cmd.CommandText = commandText;
                 return cmd.ExecuteScalar();
-            }, isolationLevel, error);
+            },this.IsWriteData(commandText), isolationLevel, error);
         }
         /// <summary>
         /// 执行SQL语句返回首行首列
@@ -528,7 +577,7 @@ namespace XiaoFeng.Data
                 var CacheValue = this.GetCacheValue(ref commandText);
                 cmd.CommandText = commandText;
                 return await cmd.ExecuteScalarAsync().ConfigureAwait(false);
-            }, isolationLevel, error);
+            },this.IsWriteData(commandText), isolationLevel, error);
         }
         /// <summary>
         /// 异步执行SQL语句
@@ -617,7 +666,7 @@ namespace XiaoFeng.Data
 #endif
                 if (flag) this.SetCacheData(CacheKey, Dt);
                 return Dt;
-            }, isolationLevel, error);
+            },this.IsWriteData(commandText), isolationLevel, error);
         }
         /// <summary>
         /// 执行SQL语句返回一个DataTable
@@ -688,7 +737,7 @@ namespace XiaoFeng.Data
                 if (CacheValue.ToUpper() == "CACHE" || this.IsCache)
                     this.SetCacheData(commandText, Ds);
                 return Ds;
-            }, isolationLevel, error);
+            },this.IsWriteData(commandText), isolationLevel, error);
         }
         /// <summary>
         /// 执行SQL语句返回一个DataSet
@@ -744,7 +793,7 @@ namespace XiaoFeng.Data
             {
                 cmd.CommandText = commandText;
                 return cmd.ExecuteReader(CommandBehavior.CloseConnection);
-            }, isolationLevel, error, false);
+            }, this.IsWriteData(commandText), isolationLevel, error);
         }
         /// <summary>
         /// 执行SQL返回一个DataReader
@@ -772,7 +821,7 @@ namespace XiaoFeng.Data
             {
                 cmd.CommandText = commandText;
                 return await cmd.ExecuteReaderAsync(CommandBehavior.CloseConnection);
-            }, isolationLevel, error, false);
+            }, this.IsWriteData(commandText), isolationLevel, error);
         }
         /// <summary>
         /// 异步执行SQL返回一个DataReader
@@ -954,7 +1003,7 @@ namespace XiaoFeng.Data
                 var N = cmd.ExecuteNonQuery();
                 cmd.Parameters.Clear();
                 return N;
-            }, isolationLevel, (e, msg) =>
+            },this.IsWriteData(commandText), isolationLevel, (e, msg) =>
             {
                 flag = false;
                 error?.Invoke(e, msg);
@@ -1005,7 +1054,7 @@ namespace XiaoFeng.Data
                  var N = await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
                  cmd.Parameters.Clear();
                  return N;
-             }, isolationLevel, (e, msg) =>
+             },this.IsWriteData(commandText), isolationLevel, (e, msg) =>
              {
                  flag = false;
                  error?.Invoke(e, msg);
@@ -1036,7 +1085,7 @@ namespace XiaoFeng.Data
                 object data = cmd.ExecuteScalar();
                 cmd.Parameters.Clear();
                 return data;
-            }, isolationLevel, error);
+            },this.IsWriteData(commandText), isolationLevel, error);
         }
         /// <summary>
         /// 执行储存过程返回首行首列
@@ -1081,7 +1130,7 @@ namespace XiaoFeng.Data
                 object data = await cmd.ExecuteScalarAsync().ConfigureAwait(false);
                 cmd.Parameters.Clear();
                 return data;
-            }, isolationLevel, error);
+            },this.IsWriteData(commandText), isolationLevel, error);
         }
         /// <summary>
         /// 异步执行储存过程返回首行首列
@@ -1183,7 +1232,7 @@ namespace XiaoFeng.Data
                 if (flag) this.SetCacheData(CacheKey, Dt);
                 cmd.Parameters.Clear();
                 return Dt;
-            }, isolationLevel, error);
+            },this.IsWriteData(commandText), isolationLevel, error);
         }
         /// <summary>
         /// 执行储存过程返回一个DataTable
@@ -1274,7 +1323,7 @@ namespace XiaoFeng.Data
                     this.SetCacheData(commandText, Ds);
                 cmd.Parameters.Clear();
                 return Ds;
-            }, isolationLevel, error);
+            },this.IsWriteData(commandText), isolationLevel, error);
         }
         /// <summary>
         /// 执行储存过程返回一个DataSet
@@ -1359,7 +1408,7 @@ namespace XiaoFeng.Data
                 var sdr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
                 cmd.Parameters.Clear();
                 return sdr;
-            }, isolationLevel, error, false);
+            }, this.IsWriteData(commandText), isolationLevel, error);
         }
         /// <summary>
         /// 执行储存过程返回一个DataReader
@@ -1405,7 +1454,7 @@ namespace XiaoFeng.Data
                 var sdr = await cmd.ExecuteReaderAsync(CommandBehavior.CloseConnection).ConfigureAwait(false);
                 cmd.Parameters.Clear();
                 return sdr;
-            }, isolationLevel, error, false);
+            }, this.IsWriteData(commandText), isolationLevel, error);
         }
         /// <summary>
         /// 异步执行储存过程返回一个DataReader

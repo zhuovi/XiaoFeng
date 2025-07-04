@@ -393,4 +393,28 @@ namespace XiaoFeng
         Description = 2
     }
     #endregion
+
+    #region 数据库配置类型
+    /// <summary>
+    /// 数据库配置类型
+    /// </summary>
+    public enum DbConfigType
+    {
+        /// <summary>
+        /// 可读可写
+        /// </summary>
+        [Description("可读可写")]
+        ReadAndWrite = 0,
+        /// <summary>
+        /// 只读
+        /// </summary>
+        [Description("只读")]
+        OnlyRead = 1,
+        /// <summary>
+        /// 只写
+        /// </summary>
+        [Description("只写")]
+        OnlyWrite = 2
+    }
+    #endregion
 }

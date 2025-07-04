@@ -96,6 +96,10 @@ namespace XiaoFeng.Collections
         /// 定时作业
         /// </summary>
         public IJob Job { get; set; } = null;
+        /// <summary>
+        /// 锁
+        /// </summary>
+        private static object objLock = new object();
         #endregion
 
         #region 初始化
@@ -113,7 +117,7 @@ namespace XiaoFeng.Collections
                 else
                     this.Name = $"Pool<{typeof(T).Name}>";
             }
-            /*先初如化最小数*/
+            /*先初始化最小数*/
             for (var i = 0; i < this.Min; i++)
             {
                 Task.Run(() =>
@@ -162,43 +166,64 @@ namespace XiaoFeng.Collections
         /// <returns>返回一个对象</returns>
         public virtual PoolItem<T> Get()
         {
-            Interlocked.Increment(ref this._TotalCount);
-            PoolItem<T> pi = null;
-            int i = 0;
-            do
+            lock (objLock)
             {
-                //LogHelper.Debug($"空闲数:{this.FreeItems.Count},繁忙数:{this.BusyItems.Count}");
-                Interlocked.Increment(ref i);
-                //从空闲集合借一个
-                if (this.FreeItems.TryDequeue(out pi))
+                Interlocked.Increment(ref this._TotalCount);
+                PoolItem<T> pi = null;
+                int i = 0;
+                do
                 {
-                    Interlocked.Decrement(ref this._FreeCount);
-                    break;
-                }
-                else
-                {
-                    if (Synchronized.Run(() =>
+                    LogHelper.Debug($"{this.Name},空闲数:{this.FreeItems.Count},繁忙数:{this.BusyItems.Count},最大数:{this.Max}");
+                    Interlocked.Increment(ref i);
+                    //从空闲集合借一个
+                    if (this.FreeItems.TryDequeue(out pi))
                     {
+                        Interlocked.Decrement(ref this._FreeCount);
+                        break;
+                    }
+                    else
+                    {
+                        /*if (Synchronized.Run(() =>
+                        {
+                            //超出最大值后,等待一会继续借直到借到为止
+                            if (this.Max > 0 && this.Max <= this.FreeCount + this.BusyCount)
+                            {
+                                var msg = $"申请失败,已有 {this.FreeCount + this.BusyCount:n0} 个资源,达到或超过最大值 {this.Max:n0} .";
+                                LogHelper.Info(this.Name + " " + msg);
+                                if (i < 4) return false;
+                            }
+                            pi = new PoolItem<T>(OnCreate());
+                            return true;
+                        })) break;*/
+
                         //超出最大值后,等待一会继续借直到借到为止
                         if (this.Max > 0 && this.Max <= this.FreeCount + this.BusyCount)
                         {
-                            var msg = $"申请失败,已有 {this.FreeCount + this.BusyCount:n0} 个资源,达到或超过最大值 {this.Max:n0} .";
-                            LogHelper.Info(this.Name + " " + msg);
-                            if (i < 4) return false;
+                            var msg = $"{this.Name},申请失败,已有 {this.FreeCount + this.BusyCount:n0} 个资源,达到或超过最大值 {this.Max:n0} .";
+                            LogHelper.Debug(this.Name + " " + msg);
+                            if (i >= 10)
+                            {
+                                return pi;
+                                //pi = new PoolItem<T>(OnCreate());
+                                //break;
+                            }
                         }
-                        pi = new PoolItem<T>(OnCreate());
-                        return true;
-                    })) break;
-                }
-                //如果超过最大连接数 则等100毫秒后再去取
-                Task.Delay(50).Wait();
-            } while (!OnGet(pi));
-            //最后时间
-            pi.LastTime = DateTime.Now;
-            //加入繁忙集合
-            this.BusyItems.TryAdd(pi.ID, pi);
-            Interlocked.Increment(ref this._BusyCount);
-            return pi;
+                        else
+                        {
+                            pi = new PoolItem<T>(OnCreate());
+                            break;
+                        }
+                    }
+                    //如果超过最大连接数 则等100毫秒后再去取
+                    Task.Delay(100).Wait();
+                } while (!OnGet(pi));
+                //最后时间
+                pi.LastTime = DateTime.Now;
+                //加入繁忙集合
+                this.BusyItems.TryAdd(pi.ID, pi);
+                Interlocked.Increment(ref this._BusyCount);
+                return pi;
+            }
         }
         #endregion
 
@@ -212,7 +237,7 @@ namespace XiaoFeng.Collections
         {
             if (value == null || value.Value == null) return false;
             //关闭资源
-            //this.Close(value.Value);
+            this.Close(value.Value);
             try
             {
                 //从繁忙队列找到并移除缓存项

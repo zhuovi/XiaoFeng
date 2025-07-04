@@ -122,7 +122,7 @@ namespace XiaoFeng.Data
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception($"ConnectionString:{this.Connection.ConnectionString}", ex);
+                    throw new Exception($"打开数据库连接出错({ex.Message}):{this.Connection.ConnectionString.BlockPassword()}", ex);
                 }
             }
             var cmd = this.Connection.CreateCommand();

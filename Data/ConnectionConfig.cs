@@ -141,6 +141,12 @@ namespace XiaoFeng.Data
         /// </summary>
         [Description("格式化字段字符串")]
         public string FormatField { get; set; }
+        /// <summary>
+        /// 数据库配置类型
+        /// </summary>
+        [Description("数据库配置类型")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public DbConfigType ConfigType { get; set; } = DbConfigType.ReadAndWrite;
         #endregion
 
         #region 方法

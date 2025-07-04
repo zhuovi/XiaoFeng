@@ -55,8 +55,10 @@ namespace XiaoFeng.Collections
         {
             this.ConnectionString = config.ConnectionString;
             this.Factory = ProviderFactory.GetDbProviderFactory(config.ProviderType);
-            this.Max = Math.Max(Environment.ProcessorCount, config.MaxPool);
-            this.Min = Environment.ProcessorCount;
+            //this.Max = Math.Max(Environment.ProcessorCount, config.MaxPool);
+            //this.Min = Environment.ProcessorCount;
+            this.Max = config.MaxPool;
+            this.Min = 1;
             if (poolName.IsNullOrEmpty())
                 this.Name = $"Pool<ConnectionPool>[{this.ConnectionString.ReplacePattern(@"((password|pwd)=)([^;]*)(;|$)", "$1******$4")}]";
             //this.Init();
@@ -93,7 +95,7 @@ namespace XiaoFeng.Collections
             try { conn.Open(); }
             catch (DbException ex)
             {
-                LogHelper.Error(ex, "数据库连接对象创建失败.");
+                LogHelper.Error(ex, $"数据库连接对象创建失败.[{this.ConnectionString.BlockPassword()}]");
             }
             finally
             {
@@ -113,6 +115,7 @@ namespace XiaoFeng.Collections
                             SuccessCallBack = Work,
                             StopCallBack = job =>
                             {
+                                job.Stop();
                                 this.Job = null;
                                 //Console.ForegroundColor = ConsoleColor.Magenta;
                                 LogHelper.Warn($"-- 等待时长超过连接等待时长 {Math.Min(this.TimeOut, 1 * 60 * 60)}S 限制,终止当前作业[{this.Name}]. --");
@@ -132,6 +135,11 @@ namespace XiaoFeng.Collections
         public override PoolItem<DbConnection> Get()
         {
             var value = base.Get();
+            if(value == null)
+            {
+                LogHelper.Trace("未申请到资源.");
+                return null;
+            }
             if (value.Value.State == ConnectionState.Closed) value.Value.Open();
             return value;
         }
@@ -181,13 +189,13 @@ namespace XiaoFeng.Collections
         public T Execute<T>(Func<DbConnection, DbProviderFactory, T> callback)
         {
             var conn = Get();
+            if (conn == null) return default(T);
             try
             {
                 return callback.Invoke(conn.Value, Factory);
             }
             finally
             {
-                //if (conn.Value.State == ConnectionState.Open) conn.Value.Close();
                 Put(conn);
             }
         }
@@ -198,8 +206,8 @@ namespace XiaoFeng.Collections
             if (value.State != ConnectionState.Closed)
             {
                 value.Close();
-                value.Dispose();
             }
+            value.Dispose();
             base.OnDispose(value);
         }
         /// <summary>
@@ -212,8 +220,7 @@ namespace XiaoFeng.Collections
 
             if (item.State != ConnectionState.Closed)
             {
-                //conn.Close();
-                //conn.Dispose();
+                item.Close();
             }
         }
         #endregion

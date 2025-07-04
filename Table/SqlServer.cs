@@ -129,7 +129,7 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'{0}' , @level0
             else
             {
                 var configs = XiaoFeng.Config.DataBase.Current[table.ConnName];
-                if (configs.Length > table.ConnIndex)
+                if (configs.Count > table.ConnIndex)
                     this.Config = configs[table.ConnIndex];
                 else if (this.Config.ConnectionString.IsNullOrEmpty())
                     this.Config = configs.First();

@@ -287,7 +287,7 @@ namespace XiaoFeng.Threading
                         }
                         catch (Exception ex)
                         {
-
+                            LogHelper.Error(ex);
                         }
                         if (QueueData.IsEmpty)
                         {

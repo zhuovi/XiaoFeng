@@ -118,7 +118,7 @@ PRAGMA foreign_keys = on;
             else
             {
                 var configs = XiaoFeng.Config.DataBase.Current[table.ConnName];
-                if (configs.Length > table.ConnIndex)
+                if (configs.Count > table.ConnIndex)
                     this.Config = configs[table.ConnIndex];
                 else if (this.Config.ConnectionString.IsNullOrEmpty())
                     this.Config = configs.First();
