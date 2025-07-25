@@ -86,7 +86,7 @@ namespace XiaoFeng.Cryptography
         {
             using (var rsa = new RSACryptoServiceProvider(keySize))
             {
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
                 var parameters = rsa.ExportParameters(true);
                 return ToPEM(parameters, pKCSType);
 #else

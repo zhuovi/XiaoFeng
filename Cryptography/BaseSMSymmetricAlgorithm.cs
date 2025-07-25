@@ -59,7 +59,7 @@ namespace XiaoFeng.Cryptography
         public byte[] Encode(byte[] data, byte[] slatKey, byte[] vector, SMType algorithmType = SMType.FOUR, CryptographyType type = CryptographyType.Encrypt, CipherMode cipherMode = CipherMode.ECB, PaddingMode paddingMode = PaddingMode.PKCS7)
         {
             if (data == null) return null;
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
             using (var encryptor = Activator.CreateInstance(Type.GetType(algorithmType.GetDescription() + "Cipher")) as SymmetricAlgorithm)
 #else
             using var encryptor = Activator.CreateInstance(Type.GetType(algorithmType.GetDescription() + "Cipher")) as SymmetricAlgorithm;
@@ -71,13 +71,13 @@ namespace XiaoFeng.Cryptography
                 encryptor.IV = vector;
                 if (type == CryptographyType.Encrypt)
                 {
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
                     using (var memory = new MemoryStream())
 #else
                     using var memory = new MemoryStream();
 #endif
                     {
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
                         using (var encoder = new CryptoStream(memory, encryptor.CreateEncryptor(new byte[encryptor.Key.Length].Write(slatKey), new byte[encryptor.IV.Length].Write(vector)), CryptoStreamMode.Write))
 #else
                         using var encoder = new CryptoStream(memory, encryptor.CreateEncryptor(new byte[encryptor.Key.Length].Write(slatKey), new byte[encryptor.IV.Length].Write(vector)), CryptoStreamMode.Write);
@@ -91,7 +91,7 @@ namespace XiaoFeng.Cryptography
                 }
                 else
                 {
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
                     using (var memory = new MemoryStream(data))
 #else
                     using var memory = new MemoryStream(data);
@@ -99,13 +99,13 @@ namespace XiaoFeng.Cryptography
                     {
                         try
                         {
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
                             using (var encoder = new CryptoStream(memory, encryptor.CreateDecryptor(new byte[encryptor.Key.Length].Write(slatKey), new byte[encryptor.IV.Length].Write(vector)), CryptoStreamMode.Read))
 #else
                             using var encoder = new CryptoStream(memory, encryptor.CreateDecryptor(new byte[encryptor.Key.Length].Write(slatKey), new byte[encryptor.IV.Length].Write(vector)), CryptoStreamMode.Read);
 #endif
                             {
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
                                 using (var destMemory = new MemoryStream())
 #else
                                 using var destMemory = new MemoryStream();

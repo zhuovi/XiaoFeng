@@ -38,7 +38,7 @@ namespace XiaoFeng.Config
         /// <param name="callback">回调</param>
         public static void Add(string key, string path, Action<WatcherChangeType, string, string> callback = null)
         {
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
             if (ConfigFiles == null) ConfigFiles = 
 #else
             ConfigFiles ??=
@@ -56,7 +56,7 @@ namespace XiaoFeng.Config
                 ConfigFiles.TryAdd(path, item);
             XiaoFeng.Threading.Synchronized.Run(() =>
             {
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
                 if (FileProvider == null) FileProvider = 
 #else
                 FileProvider ??=

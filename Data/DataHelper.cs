@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using XiaoFeng.Cache;
@@ -11,6 +12,10 @@ using XiaoFeng.Collections;
 using XiaoFeng.Config;
 using XiaoFeng.Data.SQL;
 using XiaoFeng.Model;
+
+#if NETFRAMEWORK
+using System.Configuration;
+#endif
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -262,34 +267,23 @@ namespace XiaoFeng.Data
                     throw new DataHelperException("请设置数据库连接串.");
                 }
                 if (this.ProviderFactory == null) return null;
+
                 DbConnection Conn = this.ProviderFactory.CreateConnection();
 
                 if (isWrite.HasValue)
                 {
-                    if (this.ConnConfig.AppKey.IsNotNullOrEmpty())
+                    if (this.ConnConfig.ReadDbs != null && this.ConnConfig.ReadDbs.Any())
                     {
-                        var db = DataBase.Current;
-                        if (db != null)
+                        if (isWrite.Value)
+                            Conn.ConnectionString = connectionString;
+                        else
                         {
-                            var configs = db.Get(this.ConnConfig.AppKey);
-                            var configType = isWrite.Value ? DbConfigType.OnlyWrite : DbConfigType.OnlyRead;
-                            if (configs != null && configs.Count > 0)
-                            {
-                                var config = configs.Where(a => a.ConfigType == DbConfigType.ReadAndWrite || a.ConfigType == configType).ToList();
-                                var count = config.Count;
-                                if (count == 0) throw new DataHelperException($"数据库配置中没有[{configType}]的数据库配置.");
-                                if (count == 1)
-                                {
-                                    connectionString = config[0].ConnectionString;
-                                }
-                                else
-                                {
-                                    var index = RandomHelper.GetRandomInt(0, count);
-                                    connectionString = config[index].ConnectionString;
-                                }
-                            }
+                            var readConfig = GetReadOnlyDbConfig();
+                            Conn.ConnectionString = readConfig.ConnectionString;
                         }
                     }
+                    else
+                        Conn.ConnectionString = connectionString;
                 }
                 Conn.ConnectionString = connectionString;
                 return Conn;
@@ -299,6 +293,42 @@ namespace XiaoFeng.Data
                 this.ErrorMessage = "创建数据库连接失败:" + e.Message;
                 LogHelper.Error(e, "\r\n数据库连接字符串:" + connectionString.BlockPassword() + "[" + Data.ProviderFactory.GetProviderInvariantName(this.ProviderType) + "]");
                 return null;
+            }
+        }
+        #endregion
+
+        #region 读取可读库连接串
+        /// <summary>
+        /// 读取可读库连接串
+        /// </summary>
+        /// <returns></returns>
+        private ReadOnlyDbConfig GetReadOnlyDbConfig()
+        {
+            var list = new List<ReadOnlyDbConfig>();
+
+            if (this.ConnConfig.ReadDbs != null && this.ConnConfig.ReadDbs.Any())
+                list.AddRange(this.ConnConfig.ReadDbs);
+            else
+                return new ReadOnlyDbConfig(this.ConnConfig.ConnectionString, true, false, 1);
+
+            switch (this.ConnConfig.ReadDbAlgorithmType)
+            {
+                case ReadOnlyDbAlgorithmType.Weight:
+                    var totalWeight = list.Select(a => a.Weight).Sum();
+                    var _ = new List<int>();
+                    for (var i = 0; i < list.Count; i++)
+                    {
+                        var item = list[i];
+                        for (var j = 0; j < item.Weight; j++)
+                            _.Add(i);
+                    }
+                    var rans = _.OrderBy(a => Guid.NewGuid()).ToList();
+                    return list[rans[RandomHelper.GetRandomInt(0, rans.Count)]];
+                case ReadOnlyDbAlgorithmType.LeastConnection:
+                    return LeastConnectionsLoadBalancer.Current.GetLeastConnection(ConnConfig);
+                case ReadOnlyDbAlgorithmType.Random:
+                default:
+                    return list[RandomHelper.GetRandomInt(0, list.Count)];
             }
         }
         #endregion
@@ -621,7 +651,7 @@ namespace XiaoFeng.Data
                     flag = true;
                 }
                 cmd.CommandText = commandText;
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
                 var sda = factory.CreateDataAdapter();
                 sda.SelectCommand = cmd;
                 sda.Fill(Dt);
@@ -1186,7 +1216,7 @@ namespace XiaoFeng.Data
                 if (parameter != null && parameter.Length > 0)
                     cmd.Parameters.AddRange(parameter);
 
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
                 var sda = factory.CreateDataAdapter();
                 sda.SelectCommand = cmd;
                 sda.Fill(Dt);

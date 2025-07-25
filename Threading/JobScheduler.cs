@@ -144,7 +144,7 @@ namespace XiaoFeng.Threading
             /*检查作业定时执行时间*/
             if ((TimerType.Hour | TimerType.Day | TimerType.Week | TimerType.Month | TimerType.Year).HasFlag(job.TimerType))
             {
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
                 if (job.Times == null) job.Times =
 #else
                 job.Times ??=
@@ -346,7 +346,7 @@ namespace XiaoFeng.Threading
                         this.Log($"-- 下一次检测作业时间为:{now.AddMilliseconds(this.Period):yyyy-MM-dd HH:mm:ss.ffff} --");
                     });
                     //this.Log($"等待间隔:{this.Period}");
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
                     if (this.Manual == null)this.Manual =
 #else
                     this.Manual ??=

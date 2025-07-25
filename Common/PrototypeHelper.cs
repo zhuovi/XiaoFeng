@@ -1228,7 +1228,7 @@ namespace XiaoFeng
         public static SortedDictionary<string, string> GetParams(this string _)
         {
             if (_.IsNullOrEmpty()) return new SortedDictionary<string, string>();
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
             using (var queryHelper = new ParamHelper(_))
 #else
             using var queryHelper = new ParamHelper(_);
@@ -2316,7 +2316,7 @@ namespace XiaoFeng
         public static int GetChars(this byte[] _, int byteIndex, int length, char[] chars, int charIndex, Encoding encoding = null)
         {
             if (_.IsNullOrEmpty()) return 0;
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
             if (chars == null) chars = new char[_.Length];
 #else
             chars ??= new char[_.Length];
@@ -2766,7 +2766,7 @@ namespace XiaoFeng
                 p += after.Length;
             }
             if (before.IsNullOrEmpty()) return str
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
             .Substring(p)
 #else
             [p..]
@@ -2775,7 +2775,7 @@ namespace XiaoFeng
             var f = str.IndexOf(before, p >= 0 ? p : startIndex);
             if (f < 0) return null;
             return (p >= 0 && f - p > 0) ?
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
              str.Substring(p, f - p) : str.Substring(0, f)
 #else
              str[p..f] : str[..f]

@@ -214,7 +214,7 @@ namespace XiaoFeng.Net
         /// <summary>
         /// 获取包含构成指定 URI 的路径段的数组
         /// </summary>
-        public string[] Segments => this.AbsolutePath.Split('/', StringSplitOptions.RemoveEmptyEntries);
+        public string[] Segments => this.AbsolutePath.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
         /// <summary>
         /// 资源的绝对路径
         /// </summary>
@@ -294,7 +294,7 @@ namespace XiaoFeng.Net
             this._Scheme = uri.Scheme;
             this._NetType = this.Scheme.ToEnum<NetType>();
             this._AbsolutePath = uri.AbsolutePath;
-            var userInfo = uri.UserInfo.Split(':', StringSplitOptions.RemoveEmptyEntries);
+            var userInfo = uri.UserInfo.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
             if (userInfo.Length == 2)
             {
                 this._UserName = userInfo[0];

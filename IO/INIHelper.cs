@@ -1,5 +1,8 @@
 ﻿
 #if NETFRAMEWORK
+using System.Runtime.InteropServices;
+using System;
+using System.Text;
 namespace XiaoFeng
 {
     /// <summary>

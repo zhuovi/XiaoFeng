@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Data;
 using System.Data.Common;
+#if NETFRAMEWORK
+
+#endif
 /****************************************************************
 *  Copyright © (2015) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *

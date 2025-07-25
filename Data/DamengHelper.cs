@@ -224,7 +224,7 @@ CREATE TABLE {0} (
 select 1;
 ";
             TableAttribute Table = modelType.GetTableAttribute();
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
             Table = Table ?? 
 #else
             Table ??=
@@ -240,8 +240,8 @@ select 1;
                 if (p.GetCustomAttribute<FieldIgnoreAttribute>() != null) return;
                 if (",ConnectionString,ConnectionTimeOut,CommandTimeOut,ProviderType,IsTransaction,ErrorMessage,tableName,QueryableX,".IndexOf("," + p.Name + ",") > -1) return;
                 ColumnAttribute Column = p.GetColumnAttribute(false);
-#if NETSTANDARD2_0
-                    Column = Column ??
+#if NETSTANDARD2_0 || NETFRAMEWORK
+                Column = Column ??
 #else
                 Column ??=
 #endif
@@ -286,7 +286,7 @@ select 1;
                 if (",ConnectionString,ConnectionTimeOut,CommandTimeOut,ProviderType,IsTransaction,ErrorMessage,tableName,QueryableX,".IndexOf("," + p.Name + ",") == -1)
                 {
                     ColumnAttribute Column = p.GetColumnAttribute(false);
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
                     Column = Column ??
 #else
                     Column ??=
@@ -456,7 +456,7 @@ select 1;
                     var UNIQUE = a["UNIQUENESS"].ToCast<int>();
                     index.TableIndexType = UNIQUE == 0 ? TableIndexType.Unique : TableIndexType.NonClustered;
                 }
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
                 if (index.Keys == null) index.Keys =
 #else
                 index.Keys ??=

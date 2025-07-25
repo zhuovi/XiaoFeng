@@ -231,7 +231,7 @@ namespace XiaoFeng.Net
         ///<inheritdoc/>
         public virtual SocketError Connect(IPEndPoint remoteEP)
         {
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
             if (remoteEP == null) remoteEP =
 #else
             remoteEP ??=
@@ -334,7 +334,7 @@ namespace XiaoFeng.Net
         ///<inheritdoc/>
         public virtual async Task<SocketError> ConnectAsync(IPAddress address, int port)
         {
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
             if (address == null) address =
 #else
             address ??=
@@ -440,7 +440,7 @@ namespace XiaoFeng.Net
         ///<inheritdoc/>
         public virtual async Task<SocketError> ConnectAsync(IPEndPoint remoteEP)
         {
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
             if (remoteEP == null) remoteEP =
 #else
             remoteEP ??=
@@ -614,7 +614,7 @@ namespace XiaoFeng.Net
                 this.OnClientError?.Invoke(this, this.EndPoint, new SocketException((int)SocketError.NotConnected));
                 return null;
             }
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
             if (this.NetStream == null) this.NetStream =
 #else
             this.NetStream ??=
@@ -713,7 +713,7 @@ namespace XiaoFeng.Net
                         }
                         else
                         {
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
                             if (this.ClientCertificates == null) this.ClientCertificates =
 #else
                             this.ClientCertificates ??=
@@ -1102,7 +1102,7 @@ namespace XiaoFeng.Net
                     var index = msg.IndexOf(":");
                     if (index > -1)
                     {
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
                         var type = msg.Substring(0, index);
                         var data = msg.Substring(index + 1);
 #else
@@ -1112,11 +1112,11 @@ namespace XiaoFeng.Net
                         switch (type.ToUpper())
                         {
                             case "ADD":
-                                this.AddChannel(data.Split(',', StringSplitOptions.RemoveEmptyEntries));
+                                this.AddChannel(data.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
                                 ReceiveMessage = "订阅频道:" + data;
                                 break;
                             case "DEL":
-                                this.RemoveChannel(data.Split(',', StringSplitOptions.RemoveEmptyEntries));
+                                this.RemoveChannel(data.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
                                 ReceiveMessage = "取消订阅频道:" + data;
                                 break;
                             case "CLS":
@@ -1220,7 +1220,7 @@ namespace XiaoFeng.Net
             if (stream == null) return -1;
             if (this.ConnectionType == ConnectionType.WebSocket)
             {
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
                 using (var packet = new WebSocketPacket(this))
 #else
                 using var packet = new WebSocketPacket(this);
@@ -1272,7 +1272,7 @@ namespace XiaoFeng.Net
             if (stream == null) return -1;
             if (this.ConnectionType == ConnectionType.WebSocket)
             {
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
                 using (var packet = new WebSocketPacket(this))
 #else
                 using var packet = new WebSocketPacket(this);
@@ -1325,7 +1325,7 @@ namespace XiaoFeng.Net
             this.SocketState = SocketState.Runing;
             this.EndPoint = socket.RemoteEndPoint as IPEndPoint;
             this._IsServer = true;
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
             if (authentication == null) authentication =
 #else
             authentication ??=
@@ -1340,7 +1340,7 @@ namespace XiaoFeng.Net
         ///<inheritdoc/>
         public virtual void AddChannel(params string[] channel)
         {
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
             if (this.TagsData == null) this.TagsData =
 #else
             this.TagsData ??=
@@ -1432,7 +1432,7 @@ namespace XiaoFeng.Net
         public virtual void AddData(string key, object value)
         {
             if (key.IsNullOrEmpty() || key.EqualsIgnoreCase(CHANNEL_KEY)) return;
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
             if (this.TagsData == null) this.TagsData =
 #else
             this.TagsData ??=

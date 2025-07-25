@@ -3,6 +3,7 @@ using System.Collections;
 using System.Globalization;
 using System.Text;
 using System.Threading;
+
 /****************************************************************
 *  Copyright © (2017) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -197,7 +198,7 @@ namespace XiaoFeng
             if (chsStr.CompareTo("吖") < 0)
             {
                 string s = chsStr
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
                 .Substring(0, 1)
 #else
                 [..1]
@@ -239,7 +240,7 @@ namespace XiaoFeng
         public static Hashtable CHSPhraseSpecial
         {
             get => _PhraseSpecial
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
                  ?? (_PhraseSpecial = new Hashtable
                     {
                         { "重庆", "Chong Qing" },

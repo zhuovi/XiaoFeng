@@ -413,7 +413,7 @@ namespace XiaoFeng.Json
             val = new JsonValue();
             if (path.IsNullOrEmpty() || this.Type == JsonType.Null || this.value.IsNullOrEmpty()) return false;
             path = path.TrimStart('/');
-            var _path = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+            var _path = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
             if (this.Type == JsonType.Object || this.Type == JsonType.Array)
             {
                 return this.TryGetElementValue(this, _path.ToList(), out val);
@@ -487,7 +487,7 @@ namespace XiaoFeng.Json
         {
             if (path.IsNullOrEmpty()) return false;
             path = path.TrimStart('/');
-            var _path = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+            var _path = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
             if (this.Type == JsonType.Object || this.Type == JsonType.Array)
             {
                 return this.TryUpdateElementValue(this, _path.ToList(), val);
@@ -557,7 +557,7 @@ namespace XiaoFeng.Json
         {
             if (path.IsNullOrEmpty()) return false;
             path = path.TrimStart('/');
-            var _path = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+            var _path = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
             if (this.Type == JsonType.Object || this.Type == JsonType.Array)
             {
                 return this.TryRemoveElementValue(this, _path.ToList());

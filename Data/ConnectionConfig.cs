@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using XiaoFeng.IO;
@@ -58,6 +59,11 @@ namespace XiaoFeng.Data
         #endregion
 
         #region 属性
+        /// <summary>
+        /// 配置Id
+        /// </summary>
+        [Description("配置Id")]
+        public string Id { get; set; }
         /// <summary>
         ///驱动类型
         /// </summary>
@@ -144,9 +150,20 @@ namespace XiaoFeng.Data
         /// <summary>
         /// 数据库配置类型
         /// </summary>
-        [Description("数据库配置类型")]
+        [Description("数据库配置类型ReadAndWrite,OnlyRead,OnlyWrite")]
         [JsonConverter(typeof(StringEnumConverter))]
         public DbConfigType ConfigType { get; set; } = DbConfigType.ReadAndWrite;
+        /// <summary>
+        /// 只读库列表
+        /// </summary>
+        [Description("只读库列表")]
+        public List<ReadOnlyDbConfig> ReadDbs { get; set; }
+        /// <summary>
+        /// 可读数据库调度算法类型
+        /// </summary>
+        [Description("可读数据库调度算法类型Random,Weight,LeastConnection")]
+        [JsonConverter(typeof(StringEnumConverter))] 
+        public ReadOnlyDbAlgorithmType ReadDbAlgorithmType { get; set; } = ReadOnlyDbAlgorithmType.Random;
         #endregion
 
         #region 方法

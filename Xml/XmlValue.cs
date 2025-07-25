@@ -218,7 +218,7 @@ namespace XiaoFeng.Xml
             if (!this.HasChildNodes || this.ChildNodes.Count == 0 || localName.IsNullOrEmpty()) return null;
             return new XmlValue()
             {
-                Name = LocalName.Split(':', StringSplitOptions.RemoveEmptyEntries).Last(),
+                Name = LocalName.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries).Last(),
                 LocalName = localName,
                 ElementType = XmlType.Array,
                 ParentElement = this,
@@ -232,7 +232,7 @@ namespace XiaoFeng.Xml
         /// <param name="value">子节点</param>
         public void Append(XmlValue value)
         {
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
             if (this.ChildNodes == null) this.ChildNodes =
 #else
             this.ChildNodes ??=
@@ -291,7 +291,7 @@ namespace XiaoFeng.Xml
         {
             if (xmlValue == null) return null;
             if (type == typeof(object) || type == typeof(XmlValue)) return xmlValue;
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
             if (target == null)target =
 #else
             target ??=

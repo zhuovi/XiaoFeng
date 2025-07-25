@@ -137,7 +137,7 @@ namespace XiaoFeng.Collections
         private IEnumerable<KeyValuePair<string, string>> OrderedEnumerable
         {
             get => this._OrderedEnumerable
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
                  ?? (this._OrderedEnumerable = this.GetList());
 #else
                  ??= this.GetList();
@@ -338,7 +338,7 @@ namespace XiaoFeng.Collections
         {
             var list = this.GetList();
             if (list == null) return this;
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
             if (func == null) func = a => a.Key;
 #else
             func ??= a => a.Key;
@@ -355,7 +355,7 @@ namespace XiaoFeng.Collections
         {
             var list = this.GetList();
             if (list == null) return this;
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
             if (func == null) func = a => a.Key;
 #else
             func ??= a => a.Key;

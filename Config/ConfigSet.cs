@@ -122,7 +122,7 @@ namespace XiaoFeng.Config
         /// <returns></returns>
         public virtual TConfig GetEntity(Func<TConfig, Boolean> func)
         {
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
             if (func == null) func = 
 #else
             func ??=
@@ -137,7 +137,7 @@ namespace XiaoFeng.Config
         /// <returns></returns>
         public virtual IEnumerable<TConfig> GetEntities(Func<TConfig, Boolean> func)
         {
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
             if (func == null) func = 
 #else
             func ??=
@@ -240,7 +240,7 @@ namespace XiaoFeng.Config
                     {
 
                     }
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
                     if (this.ConfigFileAttribute == null) this.ConfigFileAttribute =
 #else
                 this.ConfigFileAttribute ??=

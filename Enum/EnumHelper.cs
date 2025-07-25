@@ -417,4 +417,28 @@ namespace XiaoFeng
         OnlyWrite = 2
     }
     #endregion
+
+    #region 可读数据库调度算法类型
+    /// <summary>
+    /// 可读数据库调度算法类型
+    /// </summary>
+    public enum ReadOnlyDbAlgorithmType
+    {
+        /// <summary>
+        /// 随机
+        /// </summary>
+        [Description("随机")]
+        Random = 0,
+        /// <summary>
+        /// 权重
+        /// </summary>
+        [Description("权重")]
+        Weight = 1,
+        /// <summary>
+        /// 最少连接优先分配
+        /// </summary>
+        [Description("最少连接优先分配")]
+        LeastConnection = 2,
+    }
+    #endregion
 }

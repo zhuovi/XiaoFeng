@@ -1,12 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;netstandard2.1;net6.0;net7.0;net8.0;net9.0;</TargetFrameworks>
+		<TargetFrameworks>net4.8;netstandard2.0;netstandard2.1;net6.0;net7.0;net8.0;net9.0;</TargetFrameworks>
 		<OutputType>Library</OutputType>
 		<Title>XiaoFeng</Title>
 		<Authors>Jacky</Authors>
 		<Product>基础类库 数据库中间件</Product>
 		<Description>
-			基础类库、数据库中间件、网络通讯中间件、Redis、Socket、HttpHelper、IQueryableX、Cache、FTP、JSON、XML、IO、配置、各种加密码算法、作业调度、正则、通用数据库操作，支持10多种数据库</Description>
+			基础类库、数据库中间件、网络通讯中间件、Redis、Socket、HttpHelper、IQueryableX、Cache、FTP、JSON、XML、IO、配置、各种加密码算法、作业调度、正则、通用数据库操作，支持10多种数据库
+		</Description>
 		<Copyright>CopyRight © 2008-2026 魔法精灵(www.eelf.cn) QQ:7092734 Email:jacky@eelf.cn</Copyright>
 		<Company>魔法精灵</Company>
 		<VersionPrefix>5.2</VersionPrefix>
@@ -30,7 +31,7 @@
 		<AssemblyOriginatorKeyFile>XiaoFeng.snk</AssemblyOriginatorKeyFile>
 		<PackageIcon>x.png</PackageIcon>
 		<PackageTags>XiaoFeng;FAYELF;ELF;DataHelper;HttpHelper;Redis;Socket;WebSocket;Ftp;JSON;XML;</PackageTags>
-		<PackageReleaseNotes>优化ContentTypes中Get方法扩展名带.的自动移除;增加网络状态的说明;增加网络状态说明;增加数据库配置串读写配置;优化应用池;</PackageReleaseNotes>
+		<PackageReleaseNotes>优化ContentTypes中Get方法扩展名带.的自动移除;增加网络状态的说明;增加网络状态说明;增加数据库配置串读写配置;优化应用池;恢复net4.8框架支持;</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<DelaySign>False</DelaySign>
@@ -38,14 +39,19 @@
 	</PropertyGroup>
 	<PropertyGroup>
 		<DefineConstants Condition="'$(TargetFramework)'=='netstandard2.0'">
-			$(DefineConstants);NETCORE;</DefineConstants>
+			$(DefineConstants);NETCORE;
+		</DefineConstants>
 		<DefineConstants Condition="'$(TargetFramework)'=='netstandard2.1'">
-			$(DefineConstants);NETCORE;</DefineConstants>
+			$(DefineConstants);NETCORE;
+		</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)'=='net4.8'">
+			$(DefineConstants);NETFRAMEWORK;
+		</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
-	  <Compile Remove="FastSql\**" />
-	  <EmbeddedResource Remove="FastSql\**" />
-	  <None Remove="FastSql\**" />
+		<Compile Remove="FastSql\**" />
+		<EmbeddedResource Remove="FastSql\**" />
+		<None Remove="FastSql\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -61,5 +67,15 @@
 		<Compile Remove="Json\XValue.cs" />
 		<Compile Remove="Xml\XmlParser.cs" />
 		<Compile Remove="Xml\XmlValueX.cs" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net4.8'">
+		<Reference Include="System.Configuration" />
+		<Reference Include="System.IO" />
+		<Reference Include="System.IO.Compression" />
+		<Reference Include="System.IO.Compression.ZipFile" />
+		<Reference Include="System.Net" />
+		<Reference Include="System.Net.Http" />
+		<Reference Include="System.Transactions" />
+		<Reference Include="System.Web" />
 	</ItemGroup>
 </Project>

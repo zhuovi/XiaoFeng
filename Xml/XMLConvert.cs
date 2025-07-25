@@ -204,13 +204,13 @@ namespace XiaoFeng
         {
             if (xml.IsNullOrEmpty()) return default;
             Encoding _Encode = encode.IsNullOrEmpty() ? Encoding.Default : Encoding.GetEncoding(encode);
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
             using (var mem = new MemoryStream(_Encode.GetBytes(xml)))
 #else
             using var mem = new MemoryStream(_Encode.GetBytes(xml));
 #endif
             {
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
                 using (var reader = XmlReader.Create(mem))
 #else
                 using var reader = XmlReader.Create(mem);
@@ -239,7 +239,7 @@ namespace XiaoFeng
         {
             try
             {
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
                 using (var sr = new StringReader(xml))
 #else
                 using StringReader sr = new StringReader(xml);

@@ -29,7 +29,7 @@ namespace XiaoFeng.Redis
             if (address.IsNotNullOrWhiteSpace()) return;
             if (address.Contains(":"))
             {
-                var addrs = address.Split(':', StringSplitOptions.RemoveEmptyEntries);
+                var addrs = address.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
                 if (addrs.Length == 1)
                 {
                     if (addrs[0].IsNumberic())

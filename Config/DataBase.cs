@@ -130,9 +130,46 @@ namespace XiaoFeng.Config
                     this.Data = new Dictionary<string, List<ConnectionConfig>>();
                 }
                 if (this.ConfigFileAttribute == null) this.ConfigFileAttribute = attr;
+
+                this.VerifyConfig();
+
                 if (Reload) cache.Set(attr.CacheKey, this, attr.FileName);
             }
             return this;
+        }
+        #endregion
+
+        #region 验证配置中的节点值是否，不存在则默认生成
+        /// <summary>
+        /// 验证配置中的节点值是否，不存在则默认生成
+        /// </summary>
+        private void VerifyConfig()
+        {
+            if (this.Data != null && this.Data.Count > 0)
+            {
+                var isSave = false;
+                this.Data.Keys.Each(k =>
+                {
+                    var configs = this.Data[k];
+                    configs.Each(c =>
+                    {
+                        if (c.AppKey.IsNullOrEmpty())
+                        {
+                            c.AppKey = k;
+                            isSave = true;
+                        }
+                        if (c.Id.IsNullOrEmpty())
+                        {
+                            c.Id = Guid.NewGuid().ToString("N");
+                            isSave = true;
+                        }
+                    });
+                    if (isSave)
+                    {
+                        this.Save();
+                    }
+                });
+            }
         }
         #endregion
 
@@ -212,6 +249,7 @@ namespace XiaoFeng.Config
                     configs.Each(c =>
                     {
                         c.AppKey = k;
+                        if (c.Id.IsNullOrEmpty()) c.Id = Guid.NewGuid().ToString("N");
                     });
                 });
                 string val = "";
@@ -260,7 +298,7 @@ namespace XiaoFeng.Config
                 this.Data = new Dictionary<string, List<ConnectionConfig>>();
             }
             if (config.AppKey.IsNullOrEmpty() || !config.AppKey.EqualsIgnoreCase(key)) config.AppKey = key;
-
+            if (config.Id.IsNullOrEmpty()) config.Id = Guid.NewGuid().ToString("N");
             if (this.Data.TryGetValue(key,out var list))
             {
                 if (index == -1)
@@ -310,6 +348,7 @@ namespace XiaoFeng.Config
             {
                 if (c.AppKey.IsNullOrEmpty() || !c.AppKey.EqualsIgnoreCase(key))
                     c.AppKey = key;
+                if (c.Id.IsNullOrEmpty()) c.Id = Guid.NewGuid().ToString("N");
             });
             Save();
         }

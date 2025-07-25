@@ -500,7 +500,7 @@ namespace XiaoFeng
         {
             if (str.Length <= 5 || (int)strengthType < 1) return 0;
             var matchs = new List<string>();
-            strengthType.ToString().Split(',', StringSplitOptions.RemoveEmptyEntries).Each(s =>
+            strengthType.ToString().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Each(s =>
             {
                 var regex = s.Trim().ToEnum<StrengthType>().GetDefaultValue();
                 if (regex.IsNotNullOrEmpty()) matchs.Add(regex);

@@ -144,7 +144,7 @@ namespace XiaoFeng.Threading
         private ISetting Setting
         {
             get =>
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
             _Setting ?? (_Setting = XiaoFeng.Config.Setting.Current);
 #else
             _Setting ??= XiaoFeng.Config.Setting.Current;
