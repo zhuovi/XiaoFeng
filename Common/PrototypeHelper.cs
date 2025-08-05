@@ -1437,7 +1437,7 @@ namespace XiaoFeng
         {
             d.Each(a =>
             {
-                _ = _.ReplacePattern($@"\$?{{{a.Key.RemovePattern(@"(^\$?\{|\}$)")}}}", a.Value);
+                _ = _.ReplacePattern($@"\$?{{{a.Key.RemovePattern(@"(^\$?\{|\}$)")}}}", a.Value, RegexOptions.None);
             });
             return _;
             /*
