@@ -449,7 +449,7 @@ Accept-Language: zh-CN,zh;q=0.9
 Sec-WebSocket-Key: {WebKey}
 Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits
 ";
-            this.Session.Headers = this.Session.Headers.format(this.Session.Header);
+            this.Session.Headers = this.Session.Headers.format(this.Session.Header, false);
             return this.Session.Headers;
         }
         #endregion

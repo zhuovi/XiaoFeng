@@ -90,9 +90,9 @@ namespace {namespace}
 	/*
      ===================================================================
         Author : jacky
-        Email : jacky@zhuovi.com
+        Email : jacky@eelf.cn
         QQ : 7092734
-        Site : www.zhuovi.com
+        Site : www.eelf.cn
         Create Time : {Time}
         Description : 本类有XiaoFeng类库自动生成
      ===================================================================
@@ -101,9 +101,9 @@ namespace {namespace}
     /// {TableName} 操作类
     /// Version : 1.0.0
     /// Author : jacky
-    /// Email : jacky@zhuovi.com
+    /// Email : jacky@eelf.cn
     /// QQ : 7092734
-    /// Site : www.zhuovi.com
+    /// Site : www.eelf.cn
     /// Update Time : {Time}
     /// </summary>{IndexAttribute}{ViewAttribute}
     [Table(Name = ""{TableFullName}"", PrimaryKey = ""{PrimaryKey}"", ModelType = ModelType.{modelType}, ConnName = ""{ConnName}"", ConnIndex = {ConnIndex})]
@@ -270,7 +270,7 @@ namespace {namespace}
                         dValue = "UUID";
                     dic["DefaultValue"] = dValue;
                     if (dValue.IsMatch(@"(GUID|NEWID)")) dic["getType"] = "Guid?";
-                    ColumnString += this.ColumnTemplate.format(dic);
+                    ColumnString += this.ColumnTemplate.format(dic, false);
                 });
                 keys.Add("Columns", ColumnString);
                 var pc = Columns.Where(a => a.PrimaryKey && a.IsIdentity);
@@ -279,7 +279,7 @@ namespace {namespace}
                 if (pc.Any())
                     PrimaryKey = pc.FirstOrDefault().Name;
                 keys.Add("PrimaryKey", PrimaryKey);
-                FileHelper.WriteText(classPath, this.ModelTemplate.format(keys));
+                FileHelper.WriteText(classPath, this.ModelTemplate.format(keys, false));
             });
             return true;
         }

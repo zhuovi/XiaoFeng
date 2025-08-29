@@ -1431,13 +1431,15 @@ namespace XiaoFeng
         /// </summary>
         /// <param name="_">字符串 自定义变量转换 {key}或${key}</param>
         /// <param name="d">Dictionary集</param>
+        /// <param name="IgnoreCase">KEY区分大小写 true 是区分大小写 false不区分</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:命名样式", Justification = "<挂起>")]
-        public static String format(this String _, IDictionary<String, String> d)
+        public static String format(this String _, IDictionary<String, String> d, Boolean IgnoreCase = true)
         {
+            RegexOptions options = IgnoreCase ? RegexOptions.None : RegexOptions.IgnoreCase;
             d.Each(a =>
             {
-                _ = _.ReplacePattern($@"\$?{{{a.Key.RemovePattern(@"(^\$?\{|\}$)")}}}", a.Value, RegexOptions.None);
+                _ = _.ReplacePattern($@"\$?{{{a.Key.RemovePattern(@"(^\$?\{|\}$)")}}}", a.Value, options);
             });
             return _;
             /*
