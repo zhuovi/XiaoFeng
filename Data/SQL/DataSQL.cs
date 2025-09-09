@@ -301,6 +301,37 @@ namespace XiaoFeng.Data.SQL
         }
         #endregion
 
+        #region 设置随机排序
+        /// <summary>
+        /// 设置随机排序
+        /// </summary>
+        public virtual void SetOrderByRand()
+        {
+            var orderString = string.Empty;
+            switch (this.Config.ProviderType)
+            {
+                case DbProviderType.SqlServer:
+                    orderString = "NEWID()";
+                    break;
+                case DbProviderType.MySql:
+                case DbProviderType.Dameng:
+                    orderString = "RAND()";
+                    break;
+                case DbProviderType.SQLite:
+                    orderString = "RANDOM()";
+                    break;
+                case DbProviderType.Oracle:
+                    orderString = "DBMS_RANDOM.VALUE";
+                    break;
+            }
+            if (orderString.IsNotNullOrEmpty())
+            {
+                if (this.OrderByString.IsNullOrEmpty()) this.OrderByString = "";
+                this.OrderByString += "{0}{1}".format(this.OrderByString == "" ? "" : ",", orderString);
+            }
+        }
+        #endregion
+
         #region 获取拼接后的SQL语句
         /// <summary>
         /// 获取拼接后的SQL语句

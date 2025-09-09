@@ -937,6 +937,18 @@ namespace XiaoFeng.Data.SQL
         }
         #endregion
 
+        #region 扩展随机排序
+        /// <summary>
+        /// 扩展随机排序
+        /// </summary>
+        /// <returns></returns>
+        public IQueryableX<T> OrderByRand()
+        {
+            this.DataSQL.SetOrderByRand();
+            return this;
+        }
+        #endregion
+
         #region 扩展SQL Group By 分组
         /// <summary>
         /// 扩展group by

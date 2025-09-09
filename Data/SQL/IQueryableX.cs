@@ -387,6 +387,14 @@ namespace XiaoFeng.Data.SQL
         IQueryableX<T> OrderByDescending<TResult>(Expression<Func<T, TResult>> func);
         #endregion
 
+        #region 扩展随机排序
+        /// <summary>
+        /// 扩展随机排序
+        /// </summary>
+        /// <returns></returns>
+        IQueryableX<T> OrderByRand();
+        #endregion
+
         #region 扩展SQL Group By
         /// <summary>
         /// 扩展group by
