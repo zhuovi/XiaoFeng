@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using XiaoFeng.Json;
@@ -427,11 +428,18 @@ namespace XiaoFeng.Threading
     public class Job<T> : Job where T : IJobWoker
     {
         /// <summary>
+        /// 是否完成任务再计时 默认为true
+        /// </summary>
+        [Description("是否完成任务再计时")]
+        public Boolean CompleteTiming { get; set; } = true;
+        /// <summary>
         /// 构造器
         /// </summary>
         public Job()
         {
-            this.Worker<T>();
+            if (this.CompleteTiming)
+                this.CompleteWorker<T>();
+            else this.SuccessWorker<T>();
         }
     }
 }

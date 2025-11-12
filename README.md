@@ -38,41 +38,41 @@ XiaoFeng generator with [XiaoFeng](https://github.com/zhuovi/XiaoFeng).
 .NET CLI
 
 ```
-$ dotnet add package XiaoFeng --version 5.2.10
+$ dotnet add package XiaoFeng --version 5.3.0
 ```
 
 Package Manager
 
 ```
-PM> Install-Package XiaoFeng -Version 5.2.10
+PM> Install-Package XiaoFeng -Version 5.3.0
 ```
 
 PackageReference
 
 ```
-<PackageReference Include="XiaoFeng" Version="5.2.10" />
+<PackageReference Include="XiaoFeng" Version="5.3.0" />
 ```
 
 Paket CLI
 
 ```
-> paket add XiaoFeng --version 5.2.10
+> paket add XiaoFeng --version 5.3.0
 ```
 
 Script & Interactive
 
 ```
-> #r "nuget: XiaoFeng, 5.2.10"
+> #r "nuget: XiaoFeng, 5.3.0"
 ```
 
 Cake
 
 ```
 // Install XiaoFeng as a Cake Addin
-#addin nuget:?package=XiaoFeng&version=5.2.10
+#addin nuget:?package=XiaoFeng&version=5.3.0
 
 // Install XiaoFeng as a Cake Tool
-#tool nuget:?package=XiaoFeng&version=5.2.10
+#tool nuget:?package=XiaoFeng&version=5.3.0
 ```
 
 
@@ -2073,6 +2073,25 @@ client.UnSubscribe("取消订阅频道");
 ---
 
 # 更新日志
+
+## 2025-09-24   v 5.3.0
+
+1.优化ContentTypes中Get方法扩展名带.的自动移除;
+
+2.增加网络状态的说明;
+
+3.增加网络状态说明;
+
+4.增加数据库配置串读写配置;
+
+5.优化应用池;
+
+6.恢复net4.8框架支持;
+
+7.优化Format格式化区分大小写;
+
+8.增加 IQueryableX OrderbyRand()方法;
+
 
 ## 2025-04-25   v 5.2.10
 
