@@ -76,6 +76,10 @@ namespace XiaoFeng.Net
         /// 连接时间
         /// </summary>
         DateTime ConnectedTime { get; set; }
+        /// <summary>
+        /// 本地绑定节点
+        /// </summary>
+        IPEndPoint LocalEndPoint { get; set; }
         #endregion
 
         #region 方法
