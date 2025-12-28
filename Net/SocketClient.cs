@@ -114,6 +114,8 @@ namespace XiaoFeng.Net
         ///<inheritdoc/>
         public string HostName { get; set; }
         ///<inheritdoc/>
+        public IPEndPoint LocalEndPoint { get; set; }
+        ///<inheritdoc/>
         public override Boolean ExclusiveAddressUse
         {
             get { return this.Client?.ExclusiveAddressUse ?? false; }
@@ -647,6 +649,8 @@ namespace XiaoFeng.Net
             if (this.SendTimeout > 0) this.Client.SendTimeout = this.SendTimeout;
             this.Client.ReceiveBufferSize = this.ReceiveBufferSize;
             this.Client.SendBufferSize = this.SendBufferSize;
+            if(this.LocalEndPoint!=null)
+                this.Client.Bind(this.LocalEndPoint);
             this._IsServer = false;
         }
         #endregion
