@@ -188,6 +188,8 @@ namespace XiaoFeng.Data
                     return new MySqlHelper(this);
                 case DbProviderType.Dameng:
                     return new DamengHelper(this);
+                case DbProviderType.PostgreSql:
+                    return new PostgreSqlHelper(this);
                 default:
                     return null;
             }

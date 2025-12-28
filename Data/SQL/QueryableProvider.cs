@@ -371,6 +371,9 @@ namespace XiaoFeng.Data.SQL
                         case DbProviderType.MySql:
                             this._SqlFun = fun.MySqlFun;
                             break;
+                        case DbProviderType.PostgreSql:
+                            this._SqlFun = fun.PostgreSqlFun;
+                            break;
                         case DbProviderType.SQLite:
                             this._SqlFun = fun.SQLiteFun;
                             break;
@@ -410,6 +413,9 @@ namespace XiaoFeng.Data.SQL
                             break;
                         case DbProviderType.MySql:
                             this._SqlFun = fun.MySqlUnFun;
+                            break;
+                        case DbProviderType.PostgreSql:
+                            this._SqlFun= fun.PostgreSqlUnFun;
                             break;
                         case DbProviderType.SQLite:
                             this._SqlFun = fun.SQLiteUnFun;
@@ -658,7 +664,7 @@ namespace XiaoFeng.Data.SQL
                         args.RemoveAt(args.Count - 1);
                         var dfType = this.GetParamValue(b).ToString();
                         var _dfType = dfType.ToLower();
-                        if ((DbProviderType.Oracle | DbProviderType.Dameng).HasFlag(this.DataHelper.ProviderType))
+                        if ((DbProviderType.Oracle | DbProviderType.Dameng| DbProviderType.PostgreSql).HasFlag(this.DataHelper.ProviderType))
                         {
                             if (_dfType == "yy" || _dfType == "yyyy")
                                 dfType = "YEAR";
@@ -963,7 +969,7 @@ namespace XiaoFeng.Data.SQL
                         args.RemoveAt(args.Count - 1);
                         var dfType = this.GetParamValue(b).ToString();
                         var _dfType = dfType.ToLower();
-                        if (this.DataHelper.ProviderType == DbProviderType.Oracle)
+                        if ((DbProviderType.Oracle | DbProviderType.Dameng | DbProviderType.PostgreSql).HasFlag(this.DataHelper.ProviderType))
                         {
                             if (_dfType == "yy" || _dfType == "yyyy")
                                 dfType = "YEAR";

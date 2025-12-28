@@ -16,7 +16,7 @@ using System.Text;
 *****************************************************************/
 namespace XiaoFeng
 {
-#if NETSTANDARD2_0
+
     /// <summary>
     /// HashCode操作类
     /// </summary>
@@ -560,5 +560,4 @@ namespace XiaoFeng
             return (int)hash;
         }
     }
-#endif
 }

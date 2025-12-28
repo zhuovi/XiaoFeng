@@ -1009,6 +1009,173 @@ namespace XiaoFeng.Data
         }
         #endregion
 
+        #region PostgreSQL
+        /// <summary>
+        /// PostgreSQL对象集
+        /// </summary>
+        private Dictionary<string, string> _PostgreSqlFun = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        /// <summary>
+        /// PostgreSQL对象集
+        /// </summary>
+        public Dictionary<string, string> PostgreSqlFun
+        {
+            get
+            {
+                if (this._PostgreSqlFun == null || this._PostgreSqlFun.Count == 0)
+                {
+                    this._PostgreSqlFun = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        {"StartsWith","{0} LIKE '{1}%'"},
+                        {"EndsWith","{0} LIKE '%{1}'"},
+                        {"Contains","STRPOS({0},{1}) > 0"},
+                        {"Length","LENGTH({0})"},
+                        {"Replace","REPLACE({0},{1},{2})"},
+                        {"Substring","SUBSTRING({0} FROM {1} FOR {2})"},
+                        {"Trim","LTRIM(RTRIM({0}))"},
+                        {"TrimStart","LTRIM({0})"},
+                        {"TrimEnd","RTRIM({0})"},
+                        {"ToUpper","UPPER({0})"},
+                        {"ToLower","LCASE({0})"},
+                        {"Count","COUNT({0})"},
+                        {"Sum","SUM({0})"},
+                        {"LikeSQL","{0} LIKE '%{1}%'"},
+                        {"LikeSQLX","{0} LIKE '{1}'"},
+                        {"NotLikeSQL","{0} NOT LIKE '%{1}%'"},
+                        {"NotLikeSQLX","{0} NOT LIKE '{1}'"},
+                        {"InSQL","{0} IN ({1})"},
+                        {"NotInSQL","{0} NOT IN ({1})"},
+                        {"IndexOf","position({1} IN {0})"},
+                        {"CharIndexSQL","position({1} IN {0})"},
+                        {"PatindexSQL","position({1} IN {0})"},
+                        {"DateAddSQL","TIMESTAMP {0} + INTERVAL '{1} {2}'"},
+                        {"DateDiffSQL","date_part({2},{0}) - date_part({2},{1})"},
+                        {"DatePartSQL","TO_CHAR({0},{1})"},
+                        {"DateFormatSQL","TO_CHAR({0}, {1})" },
+                        {"AbsSQL","ABS({0})"},
+                        {"CeilingSQL","ceil({0})" },
+                        {"RoundSQL","ROUND({0},{1})" },
+                        {"FloorSQL","FLOOR({0})"},
+                        {"LengthSQL","LENGTH({0})"},
+                        {"LeftSQL","LEFT({0},{1})"},
+                        {"RightSQL","RIGHT({0},{1})"},
+                        {"ReplaceSQL","REPLACE({0},{1},{2})"},
+                        //{"ReplicateSQL","REPLICATE({0},{1})"},
+                        {"ReverseSQL","REVERSE({0})"},
+                        {"StuffSQL","STUFF({0},{1},{2},{3})"},
+                        {"SubstringSQL","SUBSTRING({0} FROM {1} FOR {2})"},
+                        {"TrimSQL","trim({0})"},
+                        {"LTrimSQL","LTRIM({0})"},
+                        {"RTrimSQL","RTRIM({0})"},
+                        {"UpperSQL","UPPER({0})"},
+                        {"LowerSQL","lower({0})"},
+                        {"CountSQL","COUNT({0})"},
+                        {"MaxSQL","MAX({0})"},
+                        {"MinSQL","MIN({0})"},
+                        {"SumSQL","SUM({0})"},
+                        {"IsNullSQL","IFNULL({0},{1})"},
+                        {"AddSQL","{0} + {1}"},
+                        {"SubtractSQL","{0} - {1}"},
+                        {"MultiplySQL","{0} * {1}"},
+                        {"DivideSQL","{0} / {1}"},
+                        {"BetweenSQL","{0} BETWEEN {1} AND {2}"},
+                        {"AvgSQL","AVG({0})" },
+                        {"CastSQL","CAST({0} as {1})" },
+                        {"StDevSQL","STDEV({0})" },
+                        {"StDevpSQL","STDEVP({0})" },
+                        {"GroupConcatSQL","GROUP_CONCAT({0})" },
+                        {"PadLeftSQL","LPAD({0},{1},'{2}')" },
+                        {"PadRightSQL","RPAD({0},{1},'{2}')" },
+                        {"PadLeft","LPAD({0},{1},'{2}')" },
+                        {"PadRight","RPAD({0},{1},'{2}')" }
+                    };
+                }
+                return this._PostgreSqlFun;
+            }
+        }
+        /// <summary>
+        /// PostgreSql对象集
+        /// </summary>
+        private Dictionary<string, string> _PostgreSqlUnFun = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        /// <summary>
+        /// PostgreSql对象集
+        /// </summary>
+        public Dictionary<string, string> PostgreSqlUnFun
+        {
+            get
+            {
+                if (this._PostgreSqlUnFun == null || this._PostgreSqlUnFun.Count == 0)
+                {
+                    this._PostgreSqlUnFun = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        {"StartsWith","{0} NOT LIKE '{1}%'"},
+                        {"EndsWith","{0} NOT LIKE '%{1}'"},
+                        {"Contains","STRPOS({0},{1}) > 0"},
+                        {"Length","LENGTH({0})"},
+                        {"Replace","REPLACE({0},{1},{2})"},
+                        {"Substring","SUBSTRING({0} FROM {1} FOR {2})"},
+                        {"Trim","LTRIM(RTRIM({0}))"},
+                        {"TrimStart","LTRIM({0})"},
+                        {"TrimEnd","RTRIM({0})"},
+                        {"ToUpper","UPPER({0})"},
+                        {"ToLower","LCASE({0})"},
+                        {"Count","COUNT({0})"},
+                        {"Sum","SUM({0})"},
+                        {"LikeSQL","{0} NOT LIKE '%{1}%'"},
+                        {"LikeSQLX","{0} NOT LIKE '{1}'"},
+                        {"NotLikeSQL","{0} LIKE '%{1}%'"},
+                        {"NotLikeSQLX","{0} LIKE '{1}'"},
+                        {"InSQL","{0} NOT IN ({1})"},
+                        {"NotInSQL","{0} IN ({1})"},
+                        {"IndexOf","position({1} IN {0})"},
+                        {"CharIndexSQL","position({1} IN {0})"},
+                        {"PatindexSQL","position({1} IN {0})"},
+                        {"DateAddSQL","TIMESTAMP {0} + INTERVAL '{1} {2}'"},
+                        {"DateDiffSQL","date_part({2},{0}) - date_part({2},{1})"},
+                        {"DatePartSQL","TO_CHAR({0},{1})"},
+                        {"DateFormatSQL","TO_CHAR({0}, {1})" },
+                        {"AbsSQL","ABS({0})"},
+                        {"CeilingSQL","ceil({0})" },
+                        {"RoundSQL","ROUND({0},{1})" },
+                        {"FloorSQL","FLOOR({0})"},
+                        {"LengthSQL","LENGTH({0})"},
+                        {"LeftSQL","LEFT({0},{1})"},
+                        {"RightSQL","RIGHT({0},{1})"},
+                        {"ReplaceSQL","REPLACE({0},{1},{2})"},
+                        //{"ReplicateSQL","REPLICATE({0},{1})"},
+                        {"ReverseSQL","REVERSE({0})"},
+                        {"StuffSQL","STUFF({0},{1},{2},{3})"},
+                        {"SubstringSQL","SUBSTRING({0} FROM {1} FOR {2})"},
+                        {"TrimSQL","trim({0})"},
+                        {"LTrimSQL","LTRIM({0})"},
+                        {"RTrimSQL","RTRIM({0})"},
+                        {"UpperSQL","UPPER({0})"},
+                        {"LowerSQL","lower({0})"},
+                        {"CountSQL","COUNT({0})"},
+                        {"MaxSQL","MAX({0})"},
+                        {"MinSQL","MIN({0})"},
+                        {"SumSQL","SUM({0})"},
+                        {"IsNullSQL","IFNULL({0},{1})"},
+                        {"AddSQL","{0} + {1}"},
+                        {"SubtractSQL","{0} - {1}"},
+                        {"MultiplySQL","{0} * {1}"},
+                        {"DivideSQL","{0} / {1}"},
+                        {"BetweenSQL","{0} BETWEEN {1} AND {2}"},
+                        {"AvgSQL","AVG({0})" },
+                        {"CastSQL","CAST({0} as {1})" },
+                        {"StDevSQL","STDEV({0})" },
+                        {"StDevpSQL","STDEVP({0})" },
+                        {"GroupConcatSQL","GROUP_CONCAT({0})" },
+                        {"PadLeftSQL","LPAD({0},{1},'{2}')" },
+                        {"PadRightSQL","RPAD({0},{1},'{2}')" },
+                        {"PadLeft","LPAD({0},{1},'{2}')" },
+                        {"PadRight","RPAD({0},{1},'{2}')" }
+                    };
+                }
+                return this._PostgreSqlUnFun;
+            }
+        }
+        #endregion
+
         #region 字段表格式
         /// <summary>
         /// 字段表格式
@@ -1042,7 +1209,8 @@ namespace XiaoFeng.Data
                 case DbProviderType.MySql:
                     _ = "`" + _ + "`"; break;
                 case DbProviderType.Dameng:
-                     _ = "\"" + _ + "\"";
+                case DbProviderType.PostgreSql:
+                    _ = "\"" + _ + "\"";
                     break;
                     
                 default:
