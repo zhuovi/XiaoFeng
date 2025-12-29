@@ -72,6 +72,9 @@ namespace XiaoFeng.Data
                     case DbProviderType.MySql:
                         _ = this.MySql.ContainsKey(dataType) ? this.MySql[dataType] : "VARCHAR";
                         break;
+                    case DbProviderType.PostgreSql:
+                        _ = this.PostgreSql.ContainsKey(dataType) ? this.PostgreSql[dataType] : "varchar";
+                        break;
                     case DbProviderType.Oracle:
                         _ = this.Oracle.ContainsKey(dataType) ? this.Oracle[dataType] : "VARCHAR";
                         break;
@@ -314,6 +317,117 @@ namespace XiaoFeng.Data
         }
         #endregion
 
+        #region PostgreSQL 类型
+        /// <summary>
+        /// PostgreSQL
+        /// </summary>
+        private Dictionary<string, string> _PostgreSql = null;
+        /// <summary>
+        /// PostgreSQL
+        /// </summary>
+        public Dictionary<string, string> PostgreSql
+        {
+            get
+            {
+                if (this._PostgreSql == null)
+                {
+                    this._PostgreSql = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase){
+                { "Boolean","bool"},
+                { "bit","bit"},
+                { "sbyte","int" },
+                { "byte","int" },
+                { "Int16","int2" },
+                { "short","int2" },
+                { "smallint","int2" },
+                { "Int32","int" },
+                { "Int64","int8" },
+                { "long","int8" },
+                { "float","float" },
+                { "Single","decimal" },
+                { "Double","decimal" },
+                { "Decimal","decimal" },
+                { "String","varchar" },
+                { "DateTime","timestamp" },
+                { "DateOnly","date" },
+                { "TimeOnly","time" },
+                { "Guid","uuid" },
+                { "XmlValue","xml" },
+                { "JsonValue","json" },
+                { "byte[]","bytea" },
+                { "TimeSpan","interval" }
+            };
+                }
+                return this._PostgreSql;
+            }
+        }
+        /// <summary>
+        /// PostgreSQL
+        /// </summary>
+        private Dictionary<string, string> _PostgreSqlToDotNet = null;
+        /// <summary>
+        /// PostgreSQL
+        /// </summary>
+        public Dictionary<string, string> PostgreSqlToDotNet
+        {
+            get
+            {
+                if (this._PostgreSqlToDotNet == null)
+                {
+                    this._PostgreSqlToDotNet = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase){
+                {"bigserial","long" },
+                { "bit","Boolean"},
+                { "bool","bool"},
+                { "BOOLEAN","Boolean"},
+                { "box","string" },
+                { "bytea","byte[]" },
+                { "char","string" },
+                { "cidr","string" },
+                { "circle","string" },
+                { "date","DateOnly"},
+                { "time","TimeOnly"},
+                { "decimal","Decimal" },
+                { "float4","float" },
+                { "float8","float" },
+                { "inet","string" },
+                { "int2","short" },
+                { "int4","int" },
+                { "int8","long" },
+                {"interval","TimeSpan" },
+                {"timestamp","DateTime" },
+                {"timestampz","DateTime" },
+                {"timetz","DateTime" },
+                {"json","JsonValue" },
+                {"jsonb","JsonValue" },
+                {"line","string" },
+                {"lseg","string" },
+                {"macaddr","string" },
+                { "money","decimal" },
+                { "numeric","decimal" },
+                { "path","string" },
+                { "point","string" },
+                { "polygon","string" },
+                { "serial","int" },
+                { "serial2","short" },
+                { "serial4","int" },
+                { "serial8","long" },
+                { "smallserial","short" },
+                { "text","string" },
+                { "tsquery","string" },
+                { "tsvector","string" },
+                { "txid_snapshot","string" },
+                { "uuid","Guid" },
+                { "varbit","byte" },
+                { "varchar","string" },
+                { "Domain","string" },
+                { "Type","string" },
+                { "xml","XmlValue" }
+            };
+                }
+                return this._PostgreSqlToDotNet;
+            }
+        }
+        #endregion
+
         #region Oracle 类型
         /// <summary>
         /// Oracle
@@ -501,6 +615,9 @@ namespace XiaoFeng.Data
                     break;
                 case DbProviderType.MySql:
                     _ = this.MySqlToDotNet.ContainsKey(dbType) ? this.MySqlToDotNet[dbType] : "string";
+                    break;
+                case DbProviderType.PostgreSql:
+                    _ = this.PostgreSqlToDotNet.ContainsKey(dbType) ? this.PostgreSqlToDotNet[dbType] : "string";
                     break;
                 case DbProviderType.Oracle:
                     _ = this.OracleToDotNet.ContainsKey(dbType) ? this.OracleToDotNet[dbType] : "string";
