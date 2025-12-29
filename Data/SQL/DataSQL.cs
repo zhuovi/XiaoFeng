@@ -354,8 +354,10 @@ namespace XiaoFeng.Data.SQL
             switch (this.SQLType)
             {
                 case SQLType.select:
-                    if ((DbProviderType.SQLite | DbProviderType.MySql | DbProviderType.Oracle | DbProviderType.Dameng | DbProviderType.PostgreSql).HasFlag(this.Config.ProviderType))
+                    if ((DbProviderType.SQLite | DbProviderType.MySql | DbProviderType.Oracle | DbProviderType.Dameng).HasFlag(this.Config.ProviderType))
                         SQLTemplate = "select {Columns} from {TableName} {Where} {GroupBy} {OrderBy} limit 0,{Top};";
+                    else if(DbProviderType.PostgreSql.HasFlag(this.Config.ProviderType))
+                        SQLTemplate = "select {Columns} from {TableName} {Where} {GroupBy} {OrderBy} limit {Top} offset 0;";
                     else
                         SQLTemplate = "select {Top} {Columns} from {TableName} {Where} {GroupBy} {OrderBy};";
                     break;
@@ -390,10 +392,12 @@ namespace XiaoFeng.Data.SQL
                     SQLTemplate = "delete from {TableName} {Where};";
                     break;
                 case SQLType.limit:
-                    if ((DbProviderType.SQLite | DbProviderType.MySql | DbProviderType.Oracle | DbProviderType.Dameng | DbProviderType.PostgreSql).HasFlag(this.Config.ProviderType))
+                    if ((DbProviderType.SQLite | DbProviderType.MySql | DbProviderType.Oracle | DbProviderType.Dameng).HasFlag(this.Config.ProviderType))
                     {
                         SQLTemplate = @"select {Column} from {TableName} {Where} {GroupBy} {OrderBy} limit {Limit},{Top}";
                     }
+                    else if(DbProviderType.PostgreSql.HasFlag(this.Config.ProviderType))
+                        SQLTemplate = @"select {Column} from {TableName} {Where} {GroupBy} {OrderBy} limit {Top} ofsset {Limit}";
                     else if (this.Config.ProviderType == DbProviderType.OleDb)
                     {
                         SQLTemplate = @"select {Top} {Column} from {TableName} {Wheres} ID not in(select top {Limit} ID from {TableName} {Where} {OrderBy}) {OrderBy}";
@@ -420,10 +424,11 @@ select {Limits} row_number() over({OrderBy}) as TempID, {Column} from {TableName
                     }
                     break;
                 case SQLType.exists:
-                    if ((DbProviderType.SQLite | DbProviderType.MySql|DbProviderType.PostgreSql).HasFlag(this.Config.ProviderType))
+                    if ((DbProviderType.SQLite | DbProviderType.MySql).HasFlag(this.Config.ProviderType))
                     {
                         SQLTemplate = @"if (exists(select {Columns} from {TableName} {Where} {GroupBy} {OrderBy} limit 0,1)) select 1;else select 0;";
-                    }
+                    }else if(DbProviderType.PostgreSql.HasFlag(this.Config.ProviderType))
+                        SQLTemplate = @"if (exists(select {Columns} from {TableName} {Where} {GroupBy} {OrderBy} limit 1 offset 0)) select 1;else select 0;";
                     else if ((DbProviderType.Oracle | DbProviderType.Dameng).HasFlag(this.Config.ProviderType))
                     {
                         SQLTemplate = @"declare cnt number;begin select count(0) into cnt from {TableName} {Where} {GroupBy} {OrderBy} limit 0,1;if (cnt > 0) then select 1;else select 0;end if;end;";
@@ -432,10 +437,12 @@ select {Limits} row_number() over({OrderBy}) as TempID, {Column} from {TableName
                         SQLTemplate = @"if (exists(select {Top} {Columns} from {TableName} {Where} {GroupBy} {OrderBy})) select 1;else select 0;";
                     break;
                 case SQLType.join:
-                    if ((DbProviderType.SQLite | DbProviderType.MySql | DbProviderType.Oracle | DbProviderType.Dameng | DbProviderType.PostgreSql).HasFlag(this.Config.ProviderType))
+                    if ((DbProviderType.SQLite | DbProviderType.MySql | DbProviderType.Oracle | DbProviderType.Dameng).HasFlag(this.Config.ProviderType))
                     {
                         SQLTemplate = @"select {Columns} from {TableName} limit {Limit},{Top}";
                     }
+                    else if (DbProviderType.PostgreSql.HasFlag(this.Config.ProviderType))
+                        SQLTemplate = @"select {Columns} from {TableName} limit {Top} offset {Limit}";
                     else
                     {
                         SQLTemplate = @"select {Top} {Columns} from (
