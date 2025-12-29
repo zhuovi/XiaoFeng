@@ -318,6 +318,7 @@ namespace XiaoFeng.Data.SQL
                     orderString = "RAND()";
                     break;
                 case DbProviderType.SQLite:
+                case DbProviderType.PostgreSql:
                     orderString = "RANDOM()";
                     break;
                 case DbProviderType.Oracle:
@@ -353,7 +354,7 @@ namespace XiaoFeng.Data.SQL
             switch (this.SQLType)
             {
                 case SQLType.select:
-                    if ((DbProviderType.SQLite | DbProviderType.MySql | DbProviderType.Oracle | DbProviderType.Dameng).HasFlag(this.Config.ProviderType))
+                    if ((DbProviderType.SQLite | DbProviderType.MySql | DbProviderType.Oracle | DbProviderType.Dameng | DbProviderType.PostgreSql).HasFlag(this.Config.ProviderType))
                         SQLTemplate = "select {Columns} from {TableName} {Where} {GroupBy} {OrderBy} limit 0,{Top};";
                     else
                         SQLTemplate = "select {Top} {Columns} from {TableName} {Where} {GroupBy} {OrderBy};";
@@ -370,6 +371,8 @@ namespace XiaoFeng.Data.SQL
                     {
                         SQLTemplate = "insert into {TableName}({Columns}) values({Values});select LAST_INSERT_ID() as ID;";
                     }
+                    else if (this.Config.ProviderType == DbProviderType.PostgreSql)
+                        SQLTemplate = @"insert into {TableName}({Columns}) values({Values});select currval('{TableName}_ID_seq'::regclass) AS pid;";
                     else
                         SQLTemplate = "insert into {TableName}({Columns}) values({Values});select SCOPE_IDENTITY() as ID;";
                     /*
@@ -387,7 +390,7 @@ namespace XiaoFeng.Data.SQL
                     SQLTemplate = "delete from {TableName} {Where};";
                     break;
                 case SQLType.limit:
-                    if ((DbProviderType.SQLite | DbProviderType.MySql | DbProviderType.Oracle | DbProviderType.Dameng).HasFlag(this.Config.ProviderType))
+                    if ((DbProviderType.SQLite | DbProviderType.MySql | DbProviderType.Oracle | DbProviderType.Dameng | DbProviderType.PostgreSql).HasFlag(this.Config.ProviderType))
                     {
                         SQLTemplate = @"select {Column} from {TableName} {Where} {GroupBy} {OrderBy} limit {Limit},{Top}";
                     }
@@ -417,7 +420,7 @@ select {Limits} row_number() over({OrderBy}) as TempID, {Column} from {TableName
                     }
                     break;
                 case SQLType.exists:
-                    if ((DbProviderType.SQLite | DbProviderType.MySql).HasFlag(this.Config.ProviderType))
+                    if ((DbProviderType.SQLite | DbProviderType.MySql|DbProviderType.PostgreSql).HasFlag(this.Config.ProviderType))
                     {
                         SQLTemplate = @"if (exists(select {Columns} from {TableName} {Where} {GroupBy} {OrderBy} limit 0,1)) select 1;else select 0;";
                     }
@@ -429,7 +432,7 @@ select {Limits} row_number() over({OrderBy}) as TempID, {Column} from {TableName
                         SQLTemplate = @"if (exists(select {Top} {Columns} from {TableName} {Where} {GroupBy} {OrderBy})) select 1;else select 0;";
                     break;
                 case SQLType.join:
-                    if ((DbProviderType.SQLite | DbProviderType.MySql | DbProviderType.Oracle | DbProviderType.Dameng).HasFlag(this.Config.ProviderType))
+                    if ((DbProviderType.SQLite | DbProviderType.MySql | DbProviderType.Oracle | DbProviderType.Dameng | DbProviderType.PostgreSql).HasFlag(this.Config.ProviderType))
                     {
                         SQLTemplate = @"select {Columns} from {TableName} limit {Limit},{Top}";
                     }
@@ -587,7 +590,7 @@ select {Limits} row_number() over({OrderBy}) as TempID, * from
         public virtual string GetTop()
         {
             this.Top = this.Top ?? 0;
-            if ((DbProviderType.SQLite | DbProviderType.MySql | DbProviderType.Oracle | DbProviderType.Dameng).HasFlag(this.Config.ProviderType))
+            if ((DbProviderType.SQLite | DbProviderType.MySql | DbProviderType.Oracle | DbProviderType.Dameng | DbProviderType.PostgreSql).HasFlag(this.Config.ProviderType))
                 return this.Top == 0 ? "" : this.Top.ToString();
             else
                 return this.Top == 0 ? "" : (" top " + this.Top);
