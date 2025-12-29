@@ -600,7 +600,7 @@ select {Limits} row_number() over({OrderBy}) as TempID, * from
             if ((DbProviderType.SQLite | DbProviderType.MySql | DbProviderType.Oracle | DbProviderType.Dameng).HasFlag(this.Config.ProviderType))
                 return this.Top == 0 ? "" : this.Top.ToString();
             else if (DbProviderType.PostgreSql.HasFlag(this.Config.ProviderType))
-                    return this.Top == 0 ? "1" : this.Top.ToString();
+                    return this.Top == 0 ? "NULL" : this.Top.ToString();
             else
                 return this.Top == 0 ? "" : (" top " + this.Top);
         }

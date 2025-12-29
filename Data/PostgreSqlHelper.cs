@@ -139,7 +139,7 @@ JOIN
                 {
                     defaultValue = "NOW";
                 }
-                else if (defaultValue.IsMatch(@"timestamp"))
+                else if (defaultValue.IsMatch(@"EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)"))
                 {
                     defaultValue = "TIMESTAMP";
                 }
@@ -379,12 +379,14 @@ select 1;
                 {
                     string DefaultValue = Column.DefaultValue.ToString();
                     if (DefaultValue == "NOW") DefaultValue = "now()";
-                    else if (DefaultValue == "UUID" || DefaultValue == "TIMESTAMP")
+                    else if (DefaultValue == "UUID")
                     {
                         DefaultValue = "uuid_generate_v4()";
                     }
-                    //var FieldType = dType[p.PropertyType.GetBaseType()];
-                    var FieldType = Column.DataType;
+                    else if (DefaultValue == "TIMESTAMP")
+                        DefaultValue = "EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)";
+                        //var FieldType = dType[p.PropertyType.GetBaseType()];
+                        var FieldType = Column.DataType;
                     Fields += String.Format(@"
     `{0}` {1}{2}{3},",
                     Column.Name,
