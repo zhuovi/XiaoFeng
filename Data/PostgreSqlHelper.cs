@@ -123,12 +123,6 @@ JOIN
                 int NumberLength = dr["numeric_precision_radix"].ToCast<int>();
                 string type = dr["udt_name"].ToString();
                 if (type.Contains("timestamp")) type = "timestamp";
-                if (type == "int2")
-                    type = "smallint";
-                else if (type == "int4")
-                    type = "int";
-                else if (type == "int8")
-                    type = "bigint";
 
                     var defaultValue = dr["column_default"].ToString();
                 if (defaultValue.Contains(@"uuid"))
