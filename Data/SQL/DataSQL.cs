@@ -397,7 +397,7 @@ namespace XiaoFeng.Data.SQL
                         SQLTemplate = @"select {Column} from {TableName} {Where} {GroupBy} {OrderBy} limit {Limit},{Top}";
                     }
                     else if(DbProviderType.PostgreSql.HasFlag(this.Config.ProviderType))
-                        SQLTemplate = @"select {Column} from {TableName} {Where} {GroupBy} {OrderBy} limit {Top} ofsset {Limit}";
+                        SQLTemplate = @"select {Column} from {TableName} {Where} {GroupBy} {OrderBy} limit {Top} offset {Limit}";
                     else if (this.Config.ProviderType == DbProviderType.OleDb)
                     {
                         SQLTemplate = @"select {Top} {Column} from {TableName} {Wheres} ID not in(select top {Limit} ID from {TableName} {Where} {OrderBy}) {OrderBy}";
