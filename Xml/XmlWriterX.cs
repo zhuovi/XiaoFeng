@@ -450,7 +450,7 @@ namespace XiaoFeng.Xml
                       if (_BaseType == ValueTypes.Dictionary || _BaseType == ValueTypes.IDictionary)
                       {
                           WriteStartElement(FieldName, qualifiedName);
-                          foreach (DictionaryEntry item in (IEnumerable)value)
+                          foreach (DictionaryEntry item in (IDictionary)value)
                           {
                               WriteValue(item.Value, qualifiedName, false, ItemName.IfEmpty(item.Key.ToString()));
                           }
@@ -605,8 +605,9 @@ namespace XiaoFeng.Xml
                 var index = elementName.LastIndexOf(':');
                 if (index > -1) elementName = elementName.Substring(index + 1);
                 XmlWriter.WriteStartElement(qualifiedName.Name, elementName, qualifiedName.Namespace);
+                return;
             }
-            else
+            if (elementName.IsNullOrEmpty()) return;
                 XmlWriter.WriteStartElement(elementName);
         }
         #endregion

@@ -122,7 +122,8 @@ namespace XiaoFeng.Data.SQL
             if ((DbProviderType.SQLite | DbProviderType.MySql | DbProviderType.Oracle | DbProviderType.Dameng).HasFlag(this.Config.ProviderType))
             {
                 SQLTemplate = @"select {Column} from {TableNameA} {JoinType} {TableNameB} {OnString} {GroupBy} {OrderBy} limit {Limit},{Top}";
-            }
+            }else if(DbProviderType.PostgreSql.HasFlag(this.Config.ProviderType))
+                SQLTemplate = @"select {Column} from {TableNameA} {JoinType} {TableNameB} {OnString} {GroupBy} {OrderBy} limit {Top} offset {Limit}";
             else
             {
                 SQLTemplate = @"select {Top} {Column} from (

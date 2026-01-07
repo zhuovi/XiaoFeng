@@ -159,7 +159,7 @@ namespace XiaoFeng.Data.SQL
             Stopwatch sTime = new Stopwatch();
             sTime.Start();
             string SQLTemplate = "";
-            if ((DbProviderType.SQLite | DbProviderType.MySql | DbProviderType.Oracle | DbProviderType.Dameng).HasFlag(this.Config.ProviderType))
+            if ((DbProviderType.SQLite | DbProviderType.MySql | DbProviderType.Oracle | DbProviderType.Dameng | DbProviderType.PostgreSql).HasFlag(this.Config.ProviderType))
             {
                 SQLTemplate = @"select {Column} from {JoinTable} {WhereString} {GroupBy} {OrderBy} limit {Limit},{Top}";
             }
