@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+using System.Xml.Serialization;
 
 /****************************************************************
  *  Copyright © (2021) www.fayelf.com All Rights Reserved.      *

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 
 /****************************************************************
@@ -66,6 +67,10 @@ namespace XiaoFeng.Xml
         /// 序列化配置
         /// </summary>
         public XmlSerializerSetting SerializerSetting { get; set; } = new XmlSerializerSetting();
+        /// <summary>
+        /// 命名空间
+        /// </summary>
+        private XmlSerializerNamespaces Namespaces { get; set; }
         #endregion
 
         #region 方法
@@ -86,14 +91,32 @@ namespace XiaoFeng.Xml
         /// <param name="namespaces">命名空间</param>
         public void Write(XmlSerializerNamespaces namespaces = null)
         {
+            this.Namespaces = namespaces ?? new XmlSerializerNamespaces();
             var type = this.ObjectType;
             var rootName = this.SerializerSetting.DefaultRootName;
+            var rootNamespace = string.Empty;
             if (type != null && !(this.Data is XmlValue))
             {
+                var ps = type.GetProperties( BindingFlags.Public| BindingFlags.Instance).Where(a=>a.IsDefined(typeof(XmlNamespaceDeclarationsAttribute), false));
+                if (ps.Any())
+                {
+                    var _namespaces = (XmlSerializerNamespaces)ps.First().GetValue(this.Data, null);
+                    if (_namespaces != null)
+                    {
+                        _namespaces.ToArray().Each(a =>
+                        {
+                            this.Namespaces.Add(a.Name, a.Namespace);
+                        });
+                    }
+                }
                 if (type.IsDefined(typeof(XmlRootAttribute), false))
                 {
                     var root = type.GetCustomAttribute<XmlRootAttribute>();
                     rootName = root.ElementName.IfEmpty(type.Name);
+                    if (root.Namespace.IsNotNullOrEmpty())
+                    {
+                        rootNamespace = root.Namespace;
+                    }
                 }
                 else
                 {
@@ -124,10 +147,10 @@ namespace XiaoFeng.Xml
                             this.Data = xValue.ChildNodes;
                         }
                     }
-                    if (namespaces != null && namespaces.Count > 0)
+                    if (this.Namespaces != null && this.Namespaces.Count > 0)
                     {
-                        var nss = namespaces.ToArray();
-                        QualifiedName = nss.First();
+                        var nss = this.Namespaces.ToArray();
+                        QualifiedName = this.GetQualifiedName(rootNamespace);
                         if (rootName.IsNotNullOrEmpty())
                             XmlWriter.WriteStartElement(QualifiedName.Name, rootName, QualifiedName.Namespace);
                         if (!this.SerializerSetting.OmitNamespace)
@@ -361,14 +384,20 @@ namespace XiaoFeng.Xml
                     /*属性是否有忽略属性*/
                     var FieldOmitEmptyNode = a.IsDefined(typeof(OmitEmptyNodeAttribute), false);
                     if (value.IsNullOrEmpty() && (this.SerializerSetting.OmitEmptyNode || ClassOmitEmptyNode || FieldOmitEmptyNode)) return;
-                    XmlWriter.WriteAttributeString(a.GetCustomAttribute<XmlAttributeAttribute>().AttributeName.IfEmpty(a.Name), value);
+                    var attr = a.GetCustomAttribute<XmlAttributeAttribute>();
+                    if (attr.Namespace.IsNotNullOrEmpty())
+                    {
+                        qualifiedName = this.GetQualifiedName(attr.Namespace);
+                        if (qualifiedName == null) qualifiedName = new XmlQualifiedName(null, attr.Namespace);
+                    }
+                    XmlWriter.WriteAttributeString(qualifiedName?.Name, attr.AttributeName.IfEmpty(a.Name), qualifiedName?.Namespace, value);
                 });
                 fields.Where(a => !a.IsDefined(typeof(XmlAttributeAttribute), false)).Each(m =>
                   {
                       var FieldName = m.Name;
                       var ItemName = "";
                       var ArrayName = "";
-                      if (m.IsDefined(typeof(XmlIgnoreAttribute), false) || !(m.MemberType == MemberTypes.Property || m.MemberType == MemberTypes.Field)) return;
+                      if (m.IsDefined(typeof(XmlIgnoreAttribute), false) || !(m.MemberType == MemberTypes.Property || m.MemberType == MemberTypes.Field) || m.IsDefined(typeof(XmlNamespaceDeclarationsAttribute), false)) return;
                       var value = m.MemberType == MemberTypes.Property ? (m as PropertyInfo).GetValue(data) : (m as FieldInfo).GetValue(data);
                       /*属性是否有忽略属性*/
                       var FieldOmitEmptyNode = m.IsDefined(typeof(OmitEmptyNodeAttribute), false);
@@ -382,17 +411,39 @@ namespace XiaoFeng.Xml
                       }
                       /*写节点名称*/
                       if (m.IsDefined(typeof(XmlElementAttribute), false))
-                          FieldName = m.GetCustomAttribute<XmlElementAttribute>().ElementName.IfEmpty(FieldName);
+                      {
+                          var xeattr = m.GetCustomAttribute<XmlElementAttribute>();
+                          FieldName = xeattr.ElementName.IfEmpty(FieldName);
+                          if (xeattr.Namespace.IsNotNullOrEmpty())
+                          {
+                              qualifiedName = GetQualifiedName(xeattr.Namespace);
+                              if (qualifiedName == null)
+                                  qualifiedName = new XmlQualifiedName("", xeattr.Namespace);
+                          }
+                      }
                       var _type = m.MemberType == MemberTypes.Property ? (m as PropertyInfo).PropertyType : (m as FieldInfo).FieldType;
                       var _BaseType = _type.GetValueType();
                       if (m.IsDefined(typeof(XmlArrayAttribute), false))
                       {
-                          ArrayName = m.GetCustomAttribute<XmlArrayAttribute>().ElementName;
+                          var xaattr = m.GetCustomAttribute<XmlArrayAttribute>();
+                          ArrayName = xaattr.ElementName;
+                          if (xaattr.Namespace.IsNotNullOrEmpty())
+                          {
+                              qualifiedName = GetQualifiedName(xaattr.Namespace);
+                              if (qualifiedName == null)
+                                  qualifiedName = new XmlQualifiedName("", xaattr.Namespace);
+                          }
                       }
                       /*字节名称*/
                       if (m.IsDefined(typeof(XmlArrayItemAttribute), false))
                       {
-                          ItemName = m.GetCustomAttribute<XmlArrayItemAttribute>().ElementName.IfEmpty(FieldName);
+                          var xaiattr = m.GetCustomAttribute<XmlArrayItemAttribute>();
+                          ItemName = xaiattr.ElementName.IfEmpty(FieldName);
+                          if (xaiattr.IsNotNullOrEmpty())
+                          {
+                              qualifiedName = GetQualifiedName(xaiattr.Namespace);
+                              if (qualifiedName == null) qualifiedName = new XmlQualifiedName(null, xaiattr.Namespace);
+                          }
                           //if (ArrayName.IsNullOrEmpty()) ArrayName = FieldName;
                       }
 
@@ -442,8 +493,14 @@ namespace XiaoFeng.Xml
                                       var itemType = item.GetType();
                                       if (itemType.IsDefined(typeof(XmlRootAttribute)))
                                       {
-                                          elementName = itemType.GetCustomAttribute<XmlRootAttribute
-                                              >()?.ElementName;
+                                          var xRootAttr = itemType.GetCustomAttribute<XmlRootAttribute
+                                              >();
+                                          elementName = xRootAttr?.ElementName;
+                                          if (xRootAttr.Namespace.IsNotNullOrEmpty())
+                                          {
+                                              qualifiedName = this.GetQualifiedName(xRootAttr.Namespace);
+                                              if (qualifiedName == null) qualifiedName = new XmlQualifiedName(null, xRootAttr.Namespace);
+                                          }
                                       }
                                       else
                                           elementName = itemType.Name;
@@ -464,6 +521,23 @@ namespace XiaoFeng.Xml
                           }
                           else if (!IsInterface)
                               XmlWriter.WriteEndElement();
+                      } else if (_BaseType == ValueTypes.Class || _BaseType == ValueTypes.Struct|| _BaseType== ValueTypes.Anonymous)
+                      {
+                          if (!m.IsDefined(typeof(XmlElementAttribute), false))
+                          {
+                              var subType = m is PropertyInfo ? ((PropertyInfo)m).PropertyType : ((FieldInfo)m).FieldType;
+                              if (subType.IsDefined(typeof(XmlRootAttribute), false))
+                              {
+                                  var rootAttr = subType.GetCustomAttribute<XmlRootAttribute>();
+                                  FieldName = rootAttr?.ElementName;
+                                  if (rootAttr.Namespace.IsNotNullOrEmpty())
+                                  {
+                                      qualifiedName = GetQualifiedName(rootAttr.Namespace);
+                                      if (qualifiedName == null) qualifiedName = new XmlQualifiedName(null, rootAttr.Namespace);
+                                  }
+                              }
+                          }
+                          WriteValue(value,qualifiedName,false,FieldName);
                       }
                       else
                       {
@@ -534,6 +608,62 @@ namespace XiaoFeng.Xml
             }
             else
                 XmlWriter.WriteStartElement(elementName);
+        }
+        #endregion
+
+        #region 获取命名空间前缀
+        /// <summary>
+        /// 获取命名空间前缀
+        /// </summary>
+        /// <param name="ns">命名空间</param>
+        /// <returns></returns>
+        internal string LookupPrefix(string ns)
+        {
+            if (string.IsNullOrEmpty(ns))
+            {
+                return null;
+            }
+
+            if (this.Namespaces == null || this.Namespaces.Count == 0)
+            {
+                return null;
+            }
+            foreach(var key in this.Namespaces.ToArray())
+            {
+                if (key.IsNotNullOrEmpty() && key.Namespace == ns)
+                {
+                    return key.Namespace;
+                }
+            }
+            return null;
+        }
+        #endregion
+
+        #region 获取XML限定名称
+        /// <summary>
+        /// 获取XML限定名称
+        /// </summary>
+        /// <param name="ns">命名空间</param>
+        /// <returns></returns>
+        internal XmlQualifiedName GetQualifiedName(string ns)
+        {
+            if (string.IsNullOrEmpty(ns))
+            {
+                return null;
+            }
+
+            if (this.Namespaces == null || this.Namespaces.Count == 0)
+            {
+                return null;
+            }
+            foreach (var key in this.Namespaces.ToArray())
+            {
+                if (key.IsNotNullOrEmpty() && key.Namespace == ns)
+                {
+                    return key;
+                }
+            }
+            return null;
         }
         #endregion
     }
