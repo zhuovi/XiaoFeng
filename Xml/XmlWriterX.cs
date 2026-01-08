@@ -390,7 +390,8 @@ namespace XiaoFeng.Xml
                         qualifiedName = this.GetQualifiedName(attr.Namespace);
                         if (qualifiedName == null) qualifiedName = new XmlQualifiedName(null, attr.Namespace);
                     }
-                    XmlWriter.WriteAttributeString(qualifiedName?.Name, attr.AttributeName.IfEmpty(a.Name), qualifiedName?.Namespace, value);
+                    else qualifiedName = null;
+                        XmlWriter.WriteAttributeString(qualifiedName?.Name, attr.AttributeName.IfEmpty(a.Name), qualifiedName?.Namespace, value);
                 });
                 fields.Where(a => !a.IsDefined(typeof(XmlAttributeAttribute), false)).Each(m =>
                   {

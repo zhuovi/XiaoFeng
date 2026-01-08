@@ -356,6 +356,21 @@ namespace XiaoFeng.Xml
                     Name = "";
                     xValue = xmlValue;
                 }
+                else
+                {
+                    if (xValue == null)
+                    {
+                        var subType = (m is PropertyInfo p) ? p.PropertyType : ((FieldInfo)m).FieldType;
+                        if (subType.IsDefined(typeof(XmlRootAttribute), false))
+                        {
+                            var rootAttr = subType.GetCustomAttribute<XmlRootAttribute>();
+                            if (rootAttr.ElementName.IsNotNullOrEmpty())
+                            {
+                                xValue = xmlValue.GetElementByLocalName(rootAttr.ElementName);
+                            }
+                        }
+                    }
+                }
                 if (m.IsDefined(typeof(XmlElementPathAttribute), false))
                 {
                     var Path = m.GetCustomAttribute<XmlElementPathAttribute>();
