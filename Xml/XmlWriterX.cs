@@ -388,7 +388,7 @@ namespace XiaoFeng.Xml
                     if (attr.Namespace.IsNotNullOrEmpty())
                     {
                         qualifiedName = this.GetQualifiedName(attr.Namespace);
-                        if (qualifiedName == null) qualifiedName = new XmlQualifiedName(null, attr.Namespace);
+                        if (qualifiedName == null && attr.Namespace.IsNotNullOrEmpty()) qualifiedName = new XmlQualifiedName(null, attr.Namespace);
                     }
                     else qualifiedName = null;
                         XmlWriter.WriteAttributeString(qualifiedName?.Name, attr.AttributeName.IfEmpty(a.Name), qualifiedName?.Namespace, value);
@@ -443,7 +443,7 @@ namespace XiaoFeng.Xml
                           if (xaiattr.IsNotNullOrEmpty())
                           {
                               qualifiedName = GetQualifiedName(xaiattr.Namespace);
-                              if (qualifiedName == null) qualifiedName = new XmlQualifiedName(null, xaiattr.Namespace);
+                              if (qualifiedName == null && xaiattr.Namespace.IsNotNullOrEmpty()) qualifiedName = new XmlQualifiedName(null, xaiattr.Namespace);
                           }
                           //if (ArrayName.IsNullOrEmpty()) ArrayName = FieldName;
                       }
@@ -500,7 +500,7 @@ namespace XiaoFeng.Xml
                                           if (xRootAttr.Namespace.IsNotNullOrEmpty())
                                           {
                                               qualifiedName = this.GetQualifiedName(xRootAttr.Namespace);
-                                              if (qualifiedName == null) qualifiedName = new XmlQualifiedName(null, xRootAttr.Namespace);
+                                              if (qualifiedName == null && xRootAttr.Namespace.IsNotNullOrEmpty()) qualifiedName = new XmlQualifiedName(null, xRootAttr.Namespace);
                                           }
                                       }
                                       else
@@ -534,7 +534,7 @@ namespace XiaoFeng.Xml
                                   if (rootAttr.Namespace.IsNotNullOrEmpty())
                                   {
                                       qualifiedName = GetQualifiedName(rootAttr.Namespace);
-                                      if (qualifiedName == null) qualifiedName = new XmlQualifiedName(null, rootAttr.Namespace);
+                                      if (qualifiedName == null & rootAttr.Namespace.IsNotNullOrEmpty()) qualifiedName = new XmlQualifiedName(null, rootAttr.Namespace);
                                   }
                               }
                           }
