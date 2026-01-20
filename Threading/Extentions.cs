@@ -33,7 +33,7 @@ namespace XiaoFeng.Threading
             {
                 if (t.Exception != null)
                 {
-                    LogHelper.Error(t.Exception.InnerException, "任务出错:");
+                    LogHelper.Error(t.Exception.InnerException, "任务出错.");
                     func?.Invoke(t.Exception);
                 }
             }, TaskContinuationOptions.OnlyOnFaulted).ConfigureAwait(false);
