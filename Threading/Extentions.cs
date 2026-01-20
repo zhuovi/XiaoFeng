@@ -27,7 +27,7 @@ namespace XiaoFeng.Threading
         /// </summary>
         /// <param name="task">任务</param>
         /// <param name="func">错误回调</param>
-        public static void ForgetTaskSafe(this Task task, Action<Exception> func)
+        public static void ForgetTaskSafe(this Task task, Action<Exception> func = null)
         {
             task.ContinueWith(t =>
             {
