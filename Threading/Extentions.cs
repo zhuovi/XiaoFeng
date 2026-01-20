@@ -26,13 +26,15 @@ namespace XiaoFeng.Threading
         /// 放弃任务安全
         /// </summary>
         /// <param name="task">任务</param>
-        public static void ForgetTaskSafe(this Task task)
+        /// <param name="func">错误回调</param>
+        public static void ForgetTaskSafe(this Task task, Action<Exception> func)
         {
             task.ContinueWith(t =>
             {
                 if (t.Exception != null)
                 {
                     LogHelper.Error(t.Exception.InnerException, "任务出错:");
+                    func?.Invoke(t.Exception);
                 }
             }, TaskContinuationOptions.OnlyOnFaulted).ConfigureAwait(false);
         }
