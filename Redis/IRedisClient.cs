@@ -70,10 +70,6 @@ namespace XiaoFeng.Redis
         /// </summary>
         int ReceiveTimeout { get; set; }
         /// <summary>
-        /// Redis
-        /// </summary>
-        IO.IRedisSocket Redis { get; set; }
-        /// <summary>
         /// 连接池
         /// </summary>
         RedisPool RedisPool{ get; }

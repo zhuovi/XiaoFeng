@@ -107,7 +107,7 @@ namespace XiaoFeng.Redis
         /// <summary>
         /// Redis
         /// </summary>
-        public IO.IRedisSocket Redis { get; set; }
+        //public IO.IRedisSocket Redis { get; set; }
         /// <summary>
         /// 连接池
         /// </summary>
@@ -261,46 +261,6 @@ namespace XiaoFeng.Redis
             }
         }
 
-        #region 初始化
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        private void Init(CommandType commandType)
-        {
-            this.TraceInfo("开始初始化.");
-            if (this.Redis == null)
-                if (this.ConnConfig.IsPool && this.ConnConfig.MaxPool > 0)
-                {
-                    this.TraceInfo("从应用池里获取一个新的连接.");
-                    this.RedisItem = this.RedisPool.Get();
-                    this.Redis = this.RedisItem.Value;
-                }
-                else
-                {
-                    this.TraceInfo($"重新实例化一个新的连接[{this.ConnConfig}].");
-
-                    string readConnString = this.ConnConfig.ConnectionString;
-                    if (commandType.ReadOrWrite == ReadOrWrite.Read)
-                        readConnString = this.ConnConfig.GetReadOnlyDbConfig().ConnectionString;
-                    this.Redis = new IO.RedisSocket(this.ConnConfig)
-                    {
-                        AddressFamily = this.AddressFamily,
-                        ProtocolType = this.ProtocolType,
-                        SocketType = this.SocketType,
-                        ReceiveTimeout = this.ReceiveTimeout,
-                        SendTimeout = this.SendTimeout,
-                        ReadOrWrite = commandType.ReadOrWrite
-                    };
-                }
-            lock (this.Redis)
-            {
-                this.TraceInfo($"连接实例连接状态:{this.Redis.IsConnected}");
-                if (!this.Redis.IsConnected)
-                    this.Redis.Connect();
-            }
-        }
-        #endregion
-
         #region 归还
         /// <summary>
         /// 归还
@@ -329,7 +289,18 @@ namespace XiaoFeng.Redis
             else
             {
                 this.TraceInfo("关闭连接实例.");
-                this.Redis.Close();
+                //this.Redis.Close();
+                if(this.RedisSockets!=null && !this.RedisSockets.IsEmpty)
+                {
+                    this.RedisSockets.Values.Each(a =>
+                    {
+                        a.Each(v =>
+                        {
+                            v.Close();
+                        });
+                    });
+                    this.RedisSockets.Clear();
+                }
             }
             Mutex = new Mutex(false, "RedisMutex");
             StreamAsyncLock?.Dispose();
@@ -746,10 +717,16 @@ namespace XiaoFeng.Redis
         {
             base.Dispose(disposing, () =>
             {
-                if (this.Redis != null)
+                if (this.RedisSockets != null && !this.RedisSockets.IsEmpty)
                 {
-                    this.Redis.Dispose();
-                    this.Redis = null;
+                    this.RedisSockets.Values.Each(a =>
+                    {
+                        a.Each(v =>
+                        {
+                            v.Close();
+                        });
+                    });
+                    this.RedisSockets.Clear();
                 }
                 this.RedisPool?.Dispose();
                 if (StreamAsyncLock != null) StreamAsyncLock.Dispose();
