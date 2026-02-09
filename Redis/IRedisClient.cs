@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using XiaoFeng.Collections;
+using XiaoFeng.Redis.IO;
 using XiaoFeng.Threading;
 
 /****************************************************************
@@ -93,14 +94,16 @@ namespace XiaoFeng.Redis
         /// 验证密码
         /// </summary>
         /// <param name="password">密码</param>
+        /// <param name="redis">socket</param>
         /// <returns></returns>
-        Boolean Auth(string password);
+        Boolean Auth(string password,IRedisSocket redis = null);
         /// <summary>
         /// 验证密码 异步
         /// </summary>
         /// <param name="password">密码</param>
+        /// <param name="redis">socket</param>
         /// <returns></returns>
-        Task<Boolean> AuthAsync(string password);
+        Task<Boolean> AuthAsync(string password, IRedisSocket redis=null);
         #endregion
 
         #region PING
@@ -149,14 +152,16 @@ namespace XiaoFeng.Redis
         /// 选择数据库
         /// </summary>
         /// <param name="dbNum">库索引</param>
+        /// <param name="redis">socket</param>
         /// <returns>是否设置成功</returns>
-        Boolean Select(int dbNum = 0);
+        Boolean Select(int dbNum = 0, IRedisSocket redis=null);
         /// <summary>
         /// 选择数据库 异步
         /// </summary>
         /// <param name="dbNum">库索引</param>
+        /// <param name="redis">socket</param>
         /// <returns></returns>
-        Task<Boolean> SelectAsync(int dbNum = 0);
+        Task<Boolean> SelectAsync(int dbNum = 0, IRedisSocket redis=null);
         #endregion
 
         #region 关闭

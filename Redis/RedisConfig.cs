@@ -40,6 +40,7 @@ namespace XiaoFeng.Redis
         {
             this.IsPool = config.IsPool;
             this.MaxPool = config.MaxPool;
+            base.ReadDbs = config.ReadDbs;
         }
         /// <summary>
         /// 配置数据库连接串 redis://7092734@127.0.0.1:6379/0?配置
