@@ -278,8 +278,7 @@ namespace XiaoFeng.Data
                             Conn.ConnectionString = connectionString;
                         else
                         {
-                            var readConfig = GetReadOnlyDbConfig();
-                            Conn.ConnectionString = readConfig.ConnectionString;
+                            Conn.ConnectionString = this.ConnConfig.GetReadOnlyDbConfig().ConnectionString;
                         }
                     }
                     else
@@ -293,42 +292,6 @@ namespace XiaoFeng.Data
                 this.ErrorMessage = "创建数据库连接失败:" + e.Message;
                 LogHelper.Error(e, "\r\n数据库连接字符串:" + connectionString.BlockPassword() + "[" + Data.ProviderFactory.GetProviderInvariantName(this.ProviderType) + "]");
                 return null;
-            }
-        }
-        #endregion
-
-        #region 读取可读库连接串
-        /// <summary>
-        /// 读取可读库连接串
-        /// </summary>
-        /// <returns></returns>
-        private ReadOnlyDbConfig GetReadOnlyDbConfig()
-        {
-            var list = new List<ReadOnlyDbConfig>();
-
-            if (this.ConnConfig.ReadDbs != null && this.ConnConfig.ReadDbs.Any())
-                list.AddRange(this.ConnConfig.ReadDbs);
-            else
-                return new ReadOnlyDbConfig(this.ConnConfig.ConnectionString, true, false, 1);
-
-            switch (this.ConnConfig.ReadDbAlgorithmType)
-            {
-                case ReadOnlyDbAlgorithmType.Weight:
-                    var totalWeight = list.Select(a => a.Weight).Sum();
-                    var _ = new List<int>();
-                    for (var i = 0; i < list.Count; i++)
-                    {
-                        var item = list[i];
-                        for (var j = 0; j < item.Weight; j++)
-                            _.Add(i);
-                    }
-                    var rans = _.OrderBy(a => Guid.NewGuid()).ToList();
-                    return list[rans[RandomHelper.GetRandomInt(0, rans.Count)]];
-                case ReadOnlyDbAlgorithmType.LeastConnection:
-                    return LeastConnectionsLoadBalancer.Current.GetLeastConnection(ConnConfig);
-                case ReadOnlyDbAlgorithmType.Random:
-                default:
-                    return list[RandomHelper.GetRandomInt(0, list.Count)];
             }
         }
         #endregion

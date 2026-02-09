@@ -194,6 +194,39 @@ namespace XiaoFeng.Data
                     return null;
             }
         }
+        /// <summary>
+        /// 读取可读库连接串
+        /// </summary>
+        /// <returns></returns>
+        public ReadOnlyDbConfig GetReadOnlyDbConfig()
+        {
+            var list = new List<ReadOnlyDbConfig>();
+
+            if (this.ReadDbs != null && this.ReadDbs.Any())
+                list.AddRange(this.ReadDbs);
+            else
+                return new ReadOnlyDbConfig(this.ConnectionString, true, false, 1);
+
+            switch (this.ReadDbAlgorithmType)
+            {
+                case ReadOnlyDbAlgorithmType.Weight:
+                    var totalWeight = list.Select(a => a.Weight).Sum();
+                    var _ = new List<int>();
+                    for (var i = 0; i < list.Count; i++)
+                    {
+                        var item = list[i];
+                        for (var j = 0; j < item.Weight; j++)
+                            _.Add(i);
+                    }
+                    var rans = _.OrderBy(a => Guid.NewGuid()).ToList();
+                    return list[rans[RandomHelper.GetRandomInt(0, rans.Count)]];
+                case ReadOnlyDbAlgorithmType.LeastConnection:
+                    return LeastConnectionsLoadBalancer.Current.GetLeastConnection(this);
+                case ReadOnlyDbAlgorithmType.Random:
+                default:
+                    return list[RandomHelper.GetRandomInt(0, list.Count)];
+            }
+        }
         #endregion
     }
 }

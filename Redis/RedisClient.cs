@@ -199,6 +199,20 @@ namespace XiaoFeng.Redis
         }
         #endregion
 
+        #region 归还
+        /// <summary>
+        /// 归还
+        /// </summary>
+        private void Put()
+        {
+            if(this.ConnConfig.IsPool && this.ConnConfig.MaxPool > 0)
+            {
+                if (this.RedisItem != null && this.RedisItem.Value != null)
+                    this.RedisPool.Put(this.RedisItem);
+            }
+        }
+        #endregion
+
         #region 关闭
         /// <summary>
         /// 关闭
@@ -273,6 +287,7 @@ namespace XiaoFeng.Redis
             }
             finally
             {
+                this.Put();
                 //Mutex.ReleaseMutex();
             }
         }
@@ -347,6 +362,7 @@ namespace XiaoFeng.Redis
             }
             finally
             {
+                this.Put();
                 //Mutex.ReleaseMutex();
             }
         }
