@@ -258,12 +258,10 @@ namespace XiaoFeng.Redis
                     var cmd = new CommandPacket(commandType, args);
                     this.TraceInfo($"发送 [{commandType}] <{commandType.Description}> 命令行:\r\n{cmd}");
                     cmd.SendCommand(this.Redis.GetStream() as NetworkStream);
-                    var ms = new MemoryStream();
-                    var bytes = new byte[1024000];
-                    var length = ((NetworkStream)this.Redis.GetStream()).Read(bytes, 0, bytes.Length);
-                    ms.Write(bytes, 0, length);
-                    ms.Position = 0;
-                    this.TraceInfo($"响应数据:{bytes.GetString(System.Text.Encoding.UTF8, 0, length)}");
+                    var bytes = this.ReadResponseBytes().ConfigureAwait(false).GetAwaiter().GetResult();
+                    var ms = new MemoryStream(bytes);
+                    ms.Seek(0, SeekOrigin.Begin);
+                    this.TraceInfo($"响应数据:{bytes.GetString()}");
                     var result = func.Invoke(new RedisReader(commandType, ms, args, this.TraceInfo));
                     return result;
                 }
@@ -277,6 +275,25 @@ namespace XiaoFeng.Redis
             {
                 //Mutex.ReleaseMutex();
             }
+        }
+        /// <summary>
+        /// 读取流数据
+        /// </summary>
+        /// <returns></returns>
+        private async Task<byte[]> ReadResponseBytes()
+        {
+            var reader = this.Redis.GetStream() as NetworkStream;
+            await Task.Delay(1).ConfigureAwait(false);
+            var ms = new MemoryStream();
+            var bytes = new byte[1024];
+            while (reader.DataAvailable)
+            {
+                var length = await reader.ReadAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
+                if (length == 0) break;
+                ms.Write(bytes, 0, (int)length);
+                if (length < bytes.Length) break;
+            }
+            return ms.ToArray();
         }
         /// <summary>
         /// 执行 异步
@@ -315,12 +332,10 @@ namespace XiaoFeng.Redis
                     var cmd = new CommandPacket(commandType, args);
                     this.TraceInfo($"发送 [{commandType}]<{commandType.Description}> 命令行:\r\n{cmd}");
                     await cmd.SendCommandAsync(this.Redis.GetStream() as NetworkStream).ConfigureAwait(false);
-                    var ms = new MemoryStream();
-                    var bytes = new byte[1024000];
-                    var length = ((NetworkStream)this.Redis.GetStream()).Read(bytes, 0, bytes.Length);
-                    ms.Write(bytes, 0, length);
+                    var bytes = await this.ReadResponseBytes().ConfigureAwait(false);
+                    var ms = new MemoryStream(bytes);
                     ms.Position = 0;
-                    this.TraceInfo($"响应数据:{bytes.GetString(System.Text.Encoding.UTF8, 0, length)}");
+                    this.TraceInfo($"响应数据:\r\n{bytes.GetString()}");
                     var result = await func.Invoke(new RedisReader(commandType, ms, args, this.TraceInfo)).ConfigureAwait(false);
                     return result;
                 }
