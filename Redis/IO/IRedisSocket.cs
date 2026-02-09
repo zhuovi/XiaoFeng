@@ -64,6 +64,10 @@ namespace XiaoFeng.Redis.IO
         /// </summary>
         int? DbNum { get; set; }
         /// <summary>
+        /// 读写配置
+        /// </summary>
+        ReadOrWrite ReadOrWrite { get; set; }
+        /// <summary>
         /// 连接
         /// </summary>
         void Connect();

@@ -93,6 +93,10 @@ namespace XiaoFeng.Redis.IO
         /// 客户端
         /// </summary>
         private ISocketClient Client { get; set; }
+        /// <summary>
+        /// 读写配置
+        /// </summary>
+        public ReadOrWrite ReadOrWrite { get; set; } = ReadOrWrite.ReadAndWrite;
         #endregion
 
         #region 方法
