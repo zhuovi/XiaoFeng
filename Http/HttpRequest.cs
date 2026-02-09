@@ -159,7 +159,7 @@ namespace XiaoFeng.Http
         /// <summary>
         /// 请求超时时间 单位为毫秒
         /// </summary>
-        public int Timeout { get; set; } = 10_000;
+        public int Timeout { get; set; } =30_000;
         /// <summary>
         /// 默认写入Post数据超时时间 单位为毫秒
         /// </summary>
