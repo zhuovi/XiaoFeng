@@ -261,7 +261,7 @@ namespace XiaoFeng.Redis
                     var bytes = this.ReadResponseBytes().ConfigureAwait(false).GetAwaiter().GetResult();
                     var ms = new MemoryStream(bytes);
                     ms.Seek(0, SeekOrigin.Begin);
-                    this.TraceInfo($"响应数据:{bytes.GetString()}");
+                    this.TraceInfo($"响应数据:\r\n{bytes.GetString()}");
                     var result = func.Invoke(new RedisReader(commandType, ms, args, this.TraceInfo));
                     return result;
                 }
@@ -283,16 +283,16 @@ namespace XiaoFeng.Redis
         private async Task<byte[]> ReadResponseBytes()
         {
             var reader = this.Redis.GetStream() as NetworkStream;
-            await Task.Delay(1).ConfigureAwait(false);
+            //await Task.Delay(10).ConfigureAwait(false);
             var ms = new MemoryStream();
             var bytes = new byte[1024];
-            while (reader.DataAvailable)
+            do
             {
                 var length = await reader.ReadAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
                 if (length == 0) break;
                 ms.Write(bytes, 0, (int)length);
                 if (length < bytes.Length) break;
-            }
+            } while (reader.DataAvailable);
             return ms.ToArray();
         }
         /// <summary>
