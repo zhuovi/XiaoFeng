@@ -113,13 +113,14 @@ namespace XiaoFeng.Redis
             }
             Task.Factory.StartNew(() =>
             {
-                while (this.Redis.IsConnected && !SubscribeToken.IsCancellationRequested)
+                var redis = this.GetRedis(CommandType.SUBSCRIBE.ReadOrWrite);
+                while (redis.IsConnected && !SubscribeToken.IsCancellationRequested)
                 {
-                    var stream = this.Redis.GetStream();
+                    var stream = redis.GetStream();
                     stream.ReadTimeout = -1;
                     var ms = new MemoryStream();
                     var bytes = new byte[1024000];
-                    var length = ((NetworkStream)this.Redis.GetStream()).Read(bytes, 0, bytes.Length);
+                    var length = ((NetworkStream)redis.GetStream()).Read(bytes, 0, bytes.Length);
                     ms.Write(bytes, 0, length);
                     ms.Position = 0;
                     this.TraceInfo($"响应数据:{bytes.GetString(System.Text.Encoding.UTF8, 0, length)}");
