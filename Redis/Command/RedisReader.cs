@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using XiaoFeng;
+using XiaoFeng.IO;
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
 *  Author : jacky                                               *
@@ -40,12 +41,13 @@ namespace XiaoFeng.Redis
         /// <param name="stream">网络流</param>
         /// <param name="args">参数</param>
         /// <param name="traceInfo">输出日志</param>
-        public RedisReader(CommandType commandType, Stream stream, object[] args = null,Action<string> traceInfo = null)
+        public RedisReader(CommandType commandType, MemoryStream stream, object[] args = null,Action<string> traceInfo = null)
         {
             this.TraceInfo = traceInfo;
             this.CommandType = commandType;
             this.Arguments = args;
             this.Reader = stream;
+
             this.GetValue();
         }
         #endregion
@@ -70,7 +72,7 @@ namespace XiaoFeng.Redis
         /// <summary>
         /// 流
         /// </summary>
-        public Stream Reader { get; set; }
+        public MemoryStream Reader { get; set; }
         /// <summary>
         /// 数据
         /// </summary>
@@ -1022,10 +1024,10 @@ namespace XiaoFeng.Redis
                 }
             }
             return list.ToArray();*/
-            var reader = this.Reader as NetworkStream;
+            var reader = this.Reader;
             var should_break = false;
             var list = new List<byte>();
-            while (reader.DataAvailable && reader.CanRead)
+            while (reader.Position!=reader.Length-1)
             {
                 var b = this.Reader.ReadByte();
                 var c = (char)b;
