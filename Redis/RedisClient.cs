@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -257,7 +258,13 @@ namespace XiaoFeng.Redis
                     var cmd = new CommandPacket(commandType, args);
                     this.TraceInfo($"发送 [{commandType}] <{commandType.Description}> 命令行:\r\n{cmd}");
                     cmd.SendCommand(this.Redis.GetStream() as NetworkStream);
-                    var result = func.Invoke(new RedisReader(commandType, this.Redis.GetStream() as NetworkStream, args, this.TraceInfo));
+                    var ms = new MemoryStream();
+                    var bytes = new byte[1024000];
+                    var length = ((NetworkStream)this.Redis.GetStream()).Read(bytes, 0, bytes.Length);
+                    ms.Write(bytes, 0, length);
+                    ms.Position = 0;
+                    this.TraceInfo($"响应数据:{bytes.GetString(System.Text.Encoding.UTF8, 0, length)}");
+                    var result = func.Invoke(new RedisReader(commandType, ms, args, this.TraceInfo));
                     return result;
                 }
             }
@@ -308,7 +315,13 @@ namespace XiaoFeng.Redis
                     var cmd = new CommandPacket(commandType, args);
                     this.TraceInfo($"发送 [{commandType}]<{commandType.Description}> 命令行:\r\n{cmd}");
                     await cmd.SendCommandAsync(this.Redis.GetStream() as NetworkStream).ConfigureAwait(false);
-                    var result = await func.Invoke(new RedisReader(commandType, this.Redis.GetStream() as NetworkStream, args, this.TraceInfo)).ConfigureAwait(false);
+                    var ms = new MemoryStream();
+                    var bytes = new byte[1024000];
+                    var length = ((NetworkStream)this.Redis.GetStream()).Read(bytes, 0, bytes.Length);
+                    ms.Write(bytes, 0, length);
+                    ms.Position = 0;
+                    this.TraceInfo($"响应数据:{bytes.GetString(System.Text.Encoding.UTF8, 0, length)}");
+                    var result = await func.Invoke(new RedisReader(commandType, ms, args, this.TraceInfo)).ConfigureAwait(false);
                     return result;
                 }
             }
