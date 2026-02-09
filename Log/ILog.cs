@@ -74,6 +74,16 @@ namespace XiaoFeng.Log
         /// <param name="message">消息</param>
         /// <param name="type">类型</param>
         void Record(string message, LogType type = LogType.Info);
+        /// <summary>
+        /// 跟踪
+        /// </summary>
+        /// <param name="message">消息</param>
+        void Trace(string message);
+        /// <summary>
+        /// 任务
+        /// </summary>
+        /// <param name="message">消息</param>
+        void Task(string message);
         #endregion
     }
 }

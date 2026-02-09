@@ -250,7 +250,7 @@ namespace XiaoFeng.Net
                     var result = this.Client.BeginConnect(this.EndPoint, null, null);
                     if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
                     {
-                        this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
+                        this.OnClientError?.Invoke(this, this.EndPoint, new Exception("连接超时."));
                         return SocketError.TimedOut;
                     }
                     this.Client.EndConnect(result);
@@ -301,7 +301,7 @@ namespace XiaoFeng.Net
                                         var result = this.Client.BeginConnect(address, port, null, null);
                                         if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
                                         {
-                                            this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
+                                            this.OnClientError?.Invoke(this, this.EndPoint, new Exception("连接超时."));
                                             return SocketError.TimedOut;
                                         }
                                         this.Client.EndConnect(result);
@@ -407,7 +407,7 @@ namespace XiaoFeng.Net
                                         var result = this.Client.BeginConnect(address, port, null, null);
                                         if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
                                         {
-                                            this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
+                                            this.OnClientError?.Invoke(this, this.EndPoint, new Exception("连接超时."));
                                             return await Task.FromResult(SocketError.TimedOut);
                                         }
                                         this.Client.EndConnect(result);
@@ -459,7 +459,7 @@ namespace XiaoFeng.Net
                     var result = this.Client.BeginConnect(remoteEP, null, null);
                     if (!result.AsyncWaitHandle.WaitOne(Math.Max(ConnectTimeout, 500), true))
                     {
-                        this.OnClientError?.Invoke(this, this.EndPoint, new Exception());
+                        this.OnClientError?.Invoke(this, this.EndPoint, new Exception("连接超时."));
                         return await Task.FromResult(SocketError.TimedOut).ConfigureAwait(false);
                     }
                     this.Client.EndConnect(result);

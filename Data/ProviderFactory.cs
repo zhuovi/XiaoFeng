@@ -39,7 +39,8 @@ namespace XiaoFeng.Data
                     { DbProviderType.DB2, "IBM.Data.DB2.Core.DB2Factory,IBM.Data.DB2.Core" },
                     { DbProviderType.Informix, "IBM.Data.Informix.IfxFactory,IBM.Data.Informix" },
                     { DbProviderType.SqlServerCe, "System.Data.SqlServerCe.SqlCeProviderFactory,System.Data.SqlServerCe" },
-                    { DbProviderType.Dameng, "Dm.DmClientFactory,DmProvider" }
+                    { DbProviderType.Dameng, "Dm.DmClientFactory,DmProvider" },
+                    { DbProviderType.Vastbase, "Npgsql.NpgsqlFactory,Npgsql" }
                 };
             }
         }

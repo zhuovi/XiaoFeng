@@ -322,7 +322,7 @@ namespace XiaoFeng.Http
                     {
                         if (this.ContentType.IsNullOrEmpty())
                             this.ContentType = "application/json";
-                        HttpContent = new StringContent(this.BodyData, this.Encoding);
+                        HttpContent = new StringContent(this.BodyData, this.Encoding, this.ContentType);
                     }
                     else if(this.BodyBytes!=null && this.BodyBytes.Length > 0)
                     {
@@ -331,7 +331,7 @@ namespace XiaoFeng.Http
                         HttpContent = new ByteArrayContent(this.BodyBytes);
                     }
                     if (HttpContent == null)
-                        HttpContent = new StringContent(string.Empty, this.Encoding);
+                        HttpContent = new StringContent(string.Empty, this.Encoding, this.ContentType);
                     if (this.ContentType.IsNotNullOrEmpty())
                         HttpContent.Headers.ContentType = new MediaTypeHeaderValue(this.ContentType);
                 }

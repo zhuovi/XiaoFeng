@@ -306,6 +306,22 @@ namespace XiaoFeng.Xml
                 var ArrayName = "";
                 var ItemName = "";
                 XmlValue xValue = xmlValue?.GetElementByLocalName(Name);
+                if (m.IsDefined(typeof(XmlNamespaceDeclarationsAttribute), false))
+                {
+                    var namespaces = new XmlSerializerNamespaces();
+                    if (xmlValue.HasAttributes)
+                    {
+                        xmlValue.Attributes.Each(a =>
+                        {
+                            namespaces.Add(a.LocalName+"aa", a.NamespaceURI);
+                        });
+                    }
+                    if (m is PropertyInfo p)
+                        p.SetValue(target, namespaces);
+                    else if (m is FieldInfo f)
+                        f.SetValue(target, namespaces);
+                        return;
+                }
                 if (m.IsDefined(typeof(XmlElementAttribute), false))
                 {
                     Name = m.GetCustomAttribute<XmlElementAttribute>().ElementName;
@@ -339,6 +355,21 @@ namespace XiaoFeng.Xml
                 {
                     Name = "";
                     xValue = xmlValue;
+                }
+                else
+                {
+                    if (xValue == null)
+                    {
+                        var subType = (m is PropertyInfo p) ? p.PropertyType : ((FieldInfo)m).FieldType;
+                        if (subType.IsDefined(typeof(XmlRootAttribute), false))
+                        {
+                            var rootAttr = subType.GetCustomAttribute<XmlRootAttribute>();
+                            if (rootAttr.ElementName.IsNotNullOrEmpty())
+                            {
+                                xValue = xmlValue.GetElementByLocalName(rootAttr.ElementName);
+                            }
+                        }
+                    }
                 }
                 if (m.IsDefined(typeof(XmlElementPathAttribute), false))
                 {

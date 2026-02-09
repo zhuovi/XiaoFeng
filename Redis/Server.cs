@@ -24,12 +24,27 @@ namespace XiaoFeng.Redis
         /// <summary>
         /// 异步执行一个 AOF（AppendOnly File） 文件重写操作。
         /// </summary>
-        public Boolean BackgroundRewriteAOF() => this.Execute(CommandType.BGREWRITEAOF, null, result => result.OK);
+        public Boolean BackgroundRewriteAOF() => this.Execute(CommandType.BGREWRITEAOF, -1, result => result.OK);
         /// <summary>
-        /// 后台异步保存当前数据库的数据到磁盘。
+        /// 异步执行 RDB 持久化。
         /// </summary>
-        /// <param name="dbNum">库索引</param>
-        public Boolean BackgroundSave(int? dbNum = null) => this.Execute(CommandType.BGSAVE, dbNum, result => result.OK);
+        public Boolean BackgroundSave() => this.Execute(CommandType.BGSAVE, -1, result => result.OK);
+        /// <summary>
+        /// 查看最近一次 RDB 持久化时间戳
+        /// </summary>
+        /// <returns></returns>
+        public int LastSave()
+        {
+            return this.Execute(CommandType.LASTSAVE, -1, result => result.OK ? (int)result.Value : -1);
+        }
+        /// <summary>
+        /// 查看最近一次 RDB 持久化时间戳
+        /// </summary>
+        /// <returns></returns>
+        public async Task<int> LastSaveAsync()
+        {
+            return await this.ExecuteAsync(CommandType.LASTSAVE, -1, result => Task.FromResult(result.OK ? (int)result.Value : -1)).ConfigureAwait(false);
+        }
         /// <summary>
         /// 客户端命令
         /// </summary>
