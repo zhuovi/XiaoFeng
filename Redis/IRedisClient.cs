@@ -2105,8 +2105,12 @@ namespace XiaoFeng.Redis
         /// <summary>
         /// 后台异步保存当前数据库的数据到磁盘。
         /// </summary>
-        /// <param name="dbNum">库索引</param>
-        Boolean BackgroundSave(int? dbNum = null);
+        Boolean BackgroundSave();
+        /// <summary>
+        /// 查看最近一次 RDB 持久化时间戳
+        /// </summary>
+        /// <returns></returns>
+        int LastSave();
         /// <summary>
         /// 客户端命令
         /// </summary>

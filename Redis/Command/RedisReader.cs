@@ -39,8 +39,10 @@ namespace XiaoFeng.Redis
         /// <param name="commandType">命令类型</param>
         /// <param name="stream">网络流</param>
         /// <param name="args">参数</param>
-        public RedisReader(CommandType commandType, Stream stream, object[] args = null)
+        /// <param name="traceInfo">输出日志</param>
+        public RedisReader(CommandType commandType, Stream stream, object[] args = null,Action<string> traceInfo = null)
         {
+            this.TraceInfo = traceInfo;
             this.CommandType = commandType;
             this.Arguments = args;
             this.Reader = stream;
@@ -81,6 +83,10 @@ namespace XiaoFeng.Redis
         /// 是否成功
         /// </summary>
         public Boolean OK { get; set; }
+        /// <summary>
+        /// 输出日志
+        /// </summary>
+        private Action<string> TraceInfo { get; set; }
         #endregion
 
         #region 方法
@@ -126,6 +132,7 @@ namespace XiaoFeng.Redis
         public RedisValue GetValue()
         {
             var type = this.ReadType();
+            this.TraceInfo?.Invoke($"读取类型:{type}.");
             this.Status = type;
             var result = this.ReadValue(type);
             switch (this.CommandType.Name)
@@ -157,6 +164,7 @@ namespace XiaoFeng.Redis
                 case "XGROUP SETID":/*CommandType.XGROUPSETID*/
                 case "SCRIPT KILL":/*CommandType.SCRIPTKILL*/
                 case "SCRIPT FLUSH":/*CommandType.SCRIPTFLUSH*/
+                case "SWAPDB":/*CommandType.SWAPDB*/
                     this.OK = type == ResultType.Status;
                     this.Value = result;
                     break;
@@ -232,6 +240,7 @@ namespace XiaoFeng.Redis
                 case "XGROUP DESTROY":/*CommandType.XGROUPDESTROY*/
                 case "XGROUP DELCONSUMER":/*CommandType.XGROUPDELCONSUMER*/
                 case "XACK":/*CommandType.XACK*/
+                case "LASTSAVE":/*CommandType.LASTSAVE*/
                     if (type == ResultType.Int)
                     {
                         this.Value = result;
@@ -837,6 +846,7 @@ namespace XiaoFeng.Redis
                     this.Value = result;
                     break;
             }
+            this.TraceInfo?.Invoke($"读取内容:{this.Value.ToJson()}");
             return this.Value;
         }
         #endregion

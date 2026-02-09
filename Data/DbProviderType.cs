@@ -103,7 +103,12 @@ namespace XiaoFeng.Data
         /// Memcached
         /// </summary>
         [Description("Memcached")]
-        Memcached = 1 << 16
+        Memcached = 1 << 16,
+        /// <summary>
+        /// 海量
+        /// </summary>
+        [Description("海量")]
+        Vastbase = 1 << 17,
     }
     #endregion
 }

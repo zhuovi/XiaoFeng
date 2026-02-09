@@ -155,6 +155,10 @@ namespace XiaoFeng.Redis
         /// 流异步锁
         /// </summary>
         readonly AsyncLock StreamAsyncLock = new AsyncLock();
+        /// <summary>
+        /// 是否调试
+        /// </summary>
+        public Boolean Debug { get; set; }
         #endregion
 
         #region 方法
@@ -165,13 +169,17 @@ namespace XiaoFeng.Redis
         /// </summary>
         private void Init()
         {
+            this.TraceInfo("开始初始化.");
             if (this.Redis == null)
                 if (this.ConnConfig.IsPool && this.ConnConfig.MaxPool > 0)
                 {
+                    this.TraceInfo("从应用池里获取一个新的连接.");
                     this.RedisItem = this.RedisPool.Get();
                     this.Redis = this.RedisItem.Value;
                 }
                 else
+                {
+                    this.TraceInfo($"重新实例化一个新的连接[{this.ConnConfig}].");
                     this.Redis = new IO.RedisSocket(this.ConnConfig)
                     {
                         AddressFamily = this.AddressFamily,
@@ -180,8 +188,10 @@ namespace XiaoFeng.Redis
                         ReceiveTimeout = this.ReceiveTimeout,
                         SendTimeout = this.SendTimeout
                     };
+                }
             lock (this.Redis)
             {
+                this.TraceInfo($"连接实例连接状态:{this.Redis.IsConnected}");
                 if (!this.Redis.IsConnected)
                     this.Redis.Connect();
             }
@@ -195,9 +205,15 @@ namespace XiaoFeng.Redis
         public void Close()
         {
             if (this.ConnConfig.IsPool && this.ConnConfig.MaxPool > 0)
+            {
+                this.TraceInfo("还给连接池一个实例.");
                 RedisPool.Put(this.RedisItem);
+            }
             else
+            {
+                this.TraceInfo("关闭连接实例.");
                 this.Redis.Close();
+            }
             Mutex = new Mutex(false, "RedisMutex");
             StreamAsyncLock?.Dispose();
         }
@@ -215,16 +231,18 @@ namespace XiaoFeng.Redis
         /// <returns>执行结果</returns>
         protected T Execute<T>(CommandType commandType, int? dbNum, Func<RedisReader, T> func, params object[] args)
         {
+            this.TraceInfo($"请求参数:CommandType={commandType},DbNum={dbNum.GetValueOrDefault()},参数={args.ToJson()}");
             this.Init();
             if (!this.Redis.IsAuth && commandType != CommandType.AUTH && this.ConnConfig.Password.IsNotNullOrEmpty())
             {
                 this.Redis.IsAuth = this.Auth(this.ConnConfig.Password);
+                this.TraceInfo($"Redis认证{(this.Redis.IsAuth ? "成功" : "失败")}.");
                 if (!this.Redis.IsAuth)
                     throw new RedisException("认证失败.");
             }
             if (!dbNum.HasValue && !this.Redis.DbNum.HasValue && this.ConnConfig.DbNum > 0)
-                dbNum = this.ConnConfig.DbNum;
-            if (dbNum.HasValue && dbNum != this.Redis.DbNum)
+                this.Redis.DbNum = this.ConnConfig.DbNum;
+            if (dbNum.HasValue && dbNum > -1 && dbNum != this.Redis.DbNum)
             {
                 if (this.Select(dbNum.Value))
                     this.Redis.DbNum = dbNum;
@@ -236,8 +254,10 @@ namespace XiaoFeng.Redis
                 //Mutex.WaitOne(TimeSpan.FromMilliseconds(1000));
                 lock (RedisLock)
                 {
-                    new CommandPacket(commandType, args).SendCommand(this.Redis.GetStream() as NetworkStream);
-                    var result = func.Invoke(new RedisReader(commandType, this.Redis.GetStream() as NetworkStream, args));
+                    var cmd = new CommandPacket(commandType, args);
+                    this.TraceInfo($"发送 [{commandType}] <{commandType.Description}> 命令行:\r\n{cmd}");
+                    cmd.SendCommand(this.Redis.GetStream() as NetworkStream);
+                    var result = func.Invoke(new RedisReader(commandType, this.Redis.GetStream() as NetworkStream, args, this.TraceInfo));
                     return result;
                 }
             }
@@ -262,14 +282,18 @@ namespace XiaoFeng.Redis
         /// <returns>执行结果</returns>
         protected async Task<T> ExecuteAsync<T>(CommandType commandType, int? dbNum, Func<RedisReader, Task<T>> func, params object[] args)
         {
+            this.TraceInfo($"请求参数:CommandType={commandType},DbNum={dbNum.GetValueOrDefault()},参数={args.ToJson()}");
             this.Init();
             if (commandType != CommandType.AUTH && this.ConnConfig.Password.IsNotNullOrEmpty())
             {
                 this.Redis.IsAuth = await this.AuthAsync(this.ConnConfig.Password).ConfigureAwait(false);
+                this.TraceInfo($"Redis认证{(this.Redis.IsAuth ? "成功" : "失败")}.");
                 if (!this.Redis.IsAuth)
                     throw new RedisException("认证失败.");
             }
-            if (dbNum.HasValue && dbNum != this.Redis.DbNum)
+            if (!dbNum.HasValue && !this.Redis.DbNum.HasValue && this.ConnConfig.DbNum > 0)
+                this.Redis.DbNum = this.ConnConfig.DbNum;
+            if (dbNum.HasValue && dbNum > -1 && dbNum != this.Redis.DbNum)
             {
                 if (await this.SelectAsync(dbNum.Value).ConfigureAwait(false))
                     this.Redis.DbNum = dbNum;
@@ -281,8 +305,10 @@ namespace XiaoFeng.Redis
                 //Mutex.WaitOne(TimeSpan.FromMilliseconds(1000));
                 using (await StreamAsyncLock.EnterAsync().ConfigureAwait(false))
                 {
-                    await new CommandPacket(commandType, args).SendCommandAsync(this.Redis.GetStream() as NetworkStream).ConfigureAwait(false);
-                    var result = await func.Invoke(new RedisReader(commandType, this.Redis.GetStream() as NetworkStream, args)).ConfigureAwait(false);
+                    var cmd = new CommandPacket(commandType, args);
+                    this.TraceInfo($"发送 [{commandType}]<{commandType.Description}> 命令行:\r\n{cmd}");
+                    await cmd.SendCommandAsync(this.Redis.GetStream() as NetworkStream).ConfigureAwait(false);
+                    var result = await func.Invoke(new RedisReader(commandType, this.Redis.GetStream() as NetworkStream, args, this.TraceInfo)).ConfigureAwait(false);
                     return result;
                 }
             }
@@ -309,7 +335,7 @@ namespace XiaoFeng.Redis
         public Boolean Auth(string password)
         {
             if (password.IsNullOrEmpty()) return false;
-
+            this.TraceInfo($"开始认证,认证密码:{password}");
             return this.Execute(CommandType.AUTH, null, result => result.OK, password);
         }
         /// <summary>
@@ -320,6 +346,7 @@ namespace XiaoFeng.Redis
         public async Task<Boolean> AuthAsync(string password)
         {
             if (password.IsNullOrEmpty()) return false;
+            this.TraceInfo($"开始认证,认证密码:{password}");
             return await this.ExecuteAsync(CommandType.AUTH, null, async result => await Task.FromResult(result.OK), password);
         }
         #endregion
@@ -383,20 +410,88 @@ namespace XiaoFeng.Redis
         {
             var curDbNum = this.Redis.DbNum.GetValueOrDefault();
             if (Interlocked.CompareExchange(ref curDbNum, dbNum, dbNum) == dbNum) return true;
+            this.TraceInfo($"开始切换库,原来库为 {curDbNum},目的库为 {dbNum}");
             if (this.Execute(CommandType.SELECT, null, result => result.OK, Math.Abs(dbNum)))
             {
                 this.Redis.DbNum = dbNum;
+                this.TraceInfo($"切换库成功,当前库为 {dbNum}");
                 return true;
             }
             else
+            {
+                this.TraceInfo($"切换库失败.");
                 return false;
+            }
         }
         /// <summary>
         /// 选择数据库 异步
         /// </summary>
         /// <param name="dbNum">库索引</param>
         /// <returns></returns>
-        public async Task<Boolean> SelectAsync(int dbNum = 0) => await this.ExecuteAsync(CommandType.SELECT, null, result => Task.FromResult(result.OK), Math.Abs(dbNum));
+        public async Task<Boolean> SelectAsync(int dbNum = 0)
+        {
+            var curDbNum = this.Redis.DbNum.GetValueOrDefault();
+            if (Interlocked.CompareExchange(ref curDbNum, dbNum, dbNum) == dbNum) return true;
+            this.TraceInfo($"开始切换库,原来库为 {curDbNum},目的库为 {dbNum}");
+            if( await this.ExecuteAsync(CommandType.SELECT, null, result => Task.FromResult(result.OK), Math.Abs(dbNum)))
+            {
+                this.Redis.DbNum = dbNum;
+                this.TraceInfo($"切换库成功,当前库为 {dbNum}");
+                return true;
+            }
+            else
+            {
+                this.TraceInfo($"切换库失败.");
+                return false;
+            }
+        }
+        #endregion
+
+        #region 交换两个数据库
+        /// <summary>
+        /// 交换两个数据库
+        /// </summary>
+        /// <param name="oldDb">原库索引</param>
+        /// <param name="newDb">新库索引</param>
+        /// <returns></returns>
+        public bool Swapdb(uint oldDb, uint newDb)
+        {
+            if (oldDb == newDb) return false;
+
+            this.TraceInfo($"开始交换库,原来库为 {oldDb},目的库为 {newDb}");
+            if (this.Execute(CommandType.SWAPDB, null, result => result.OK, oldDb, newDb))
+            {
+                this.TraceInfo($"交换库成功.");
+                return true;
+            }
+            else
+            {
+                this.TraceInfo($"交换库失败.");
+                return false;
+            }
+        }
+        /// <summary>
+        /// 交换两个数据库
+        /// </summary>
+        /// <param name="oldDb">原库索引</param>
+        /// <param name="newDb">新库索引</param>
+        /// <returns></returns>
+        public async Task<bool> SwapdbAsync(uint oldDb, uint newDb)
+        {
+            if (oldDb == newDb) return false;
+
+            this.TraceInfo($"开始交换库,原来库为 {oldDb},目的库为 {newDb}");
+            if (await this.ExecuteAsync(CommandType.SWAPDB, null, result => Task.FromResult(result.OK), oldDb, newDb).ConfigureAwait(false))
+            {
+                this.TraceInfo($"交换库成功.");
+                return true;
+            }
+            else
+            {
+                this.TraceInfo($"交换库失败.");
+                return false;
+            }
+        }
         #endregion
 
         #endregion
@@ -484,6 +579,25 @@ namespace XiaoFeng.Redis
         ~RedisClient()
         {
             this.Dispose(false);
+        }
+        #endregion
+
+        #region 输出调试日志
+        /// <summary>
+        /// 输出调试日志
+        /// </summary>
+        /// <param name="data">数据</param>
+        public void TraceInfo(object data)
+        {
+            if (!this.Debug) return;
+            var message = string.Empty;
+            if (data.IsNotNullOrEmpty())
+            {
+                var valType = data.GetType().GetValueType();
+                if (valType == ValueTypes.Value || valType == ValueTypes.String || valType == ValueTypes.Enum) message = data.ToString();
+                else message = data.ToJson();
+            }
+            LogHelper.Debug($"{message}");
         }
         #endregion
 
