@@ -1,6 +1,11 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
+using XiaoFeng.Collections;
+using XiaoFeng.Threading;
 
 /****************************************************************
 *  Copyright © (2022) www.fayelf.com All Rights Reserved.       *
@@ -36,6 +41,49 @@ namespace XiaoFeng.Redis
         /// 出错
         /// </summary>
         event OnErrorEventHandler OnError;
+        #endregion
+
+        #region 属性
+        /// <summary>
+        /// 连接配置
+        /// </summary>
+        RedisConfig ConnConfig { get; set; }
+        /// <summary>
+        /// 寻址方案
+        /// </summary>
+        AddressFamily AddressFamily { get; set; }
+        /// <summary>
+        /// 套接字类型
+        /// </summary>
+        SocketType SocketType { get; set; }
+        /// <summary>
+        /// 支持协议
+        /// </summary>
+        ProtocolType ProtocolType { get; set; }
+        /// <summary>
+        /// 发送超时
+        /// </summary>
+        int SendTimeout { get; set; }
+        /// <summary>
+        /// 接收超时
+        /// </summary>
+        int ReceiveTimeout { get; set; }
+        /// <summary>
+        /// Redis
+        /// </summary>
+        IO.IRedisSocket Redis { get; set; }
+        /// <summary>
+        /// 连接池
+        /// </summary>
+        RedisPool RedisPool{ get; }
+        /// <summary>
+        /// RedisSocket 项
+        /// </summary>
+        PoolItem<IO.IRedisSocket> RedisItem { get; set; }
+        /// <summary>
+        /// 是否调试
+        /// </summary>
+        Boolean Debug { get; set; }
         #endregion
 
         #region 基础
