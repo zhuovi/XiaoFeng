@@ -387,16 +387,37 @@ namespace XiaoFeng.Redis
         private async Task<byte[]> ReadResponseBytes(IRedisSocket redis)
         {
             var reader = redis.GetStream() as NetworkStream;
-            //await Task.Delay(10).ConfigureAwait(false);
+
             var ms = new MemoryStream();
             var bytes = new byte[1024];
-            do
+            var cancel = new CancellationTokenSource();
+            cancel.CancelAfter(TimeSpan.FromMilliseconds(50));
+
+            for (var i = 0; i < 10; i++)
             {
-                var length = await reader.ReadAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
-                if (length == 0) break;
-                ms.Write(bytes, 0, (int)length);
-                if (length < bytes.Length) break;
-            } while (reader.DataAvailable);
+                var length = 0;
+                do
+                {
+                    try
+                    {
+                        length = await reader.ReadAsync(bytes, 0, bytes.Length, cancel.Token).ConfigureAwait(false);
+                        if (length == 0) break;
+                        ms.Write(bytes, 0, (int)length);
+                        this.TraceInfo($"读取数据:{bytes[length - 2]}-{bytes[length - 1]}");
+                    }
+                    catch
+                    {
+                        break;
+                    }
+                } while (reader.DataAvailable);
+                if (length > 2 && (bytes[length - 2] != 13 || bytes[length - 1] != 10))
+                {
+                    this.TraceInfo("等待继续读.");
+
+                    //await Task.Delay(10).ConfigureAwait(false);
+                }
+                else break;
+            }
             return ms.ToArray();
         }
         /// <summary>
