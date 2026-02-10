@@ -316,14 +316,16 @@ namespace XiaoFeng.Redis
         /// <param name="dbNum">库索引</param>
         /// <param name="func">回调方法</param>
         /// <param name="redis">socket</param>
+        /// <param name="retry">重试次数</param>
         /// <param name="args">参数集</param>
         /// <returns>执行结果</returns>
-        protected T Execute<T>(CommandType commandType, int? dbNum, Func<RedisReader, T> func, IRedisSocket redis, params object[] args)
+        protected T Execute<T>(CommandType commandType, int? dbNum, Func<RedisReader, T> func, IRedisSocket redis,int retry, params object[] args)
         {
             this.TraceInfo($"请求参数:CommandType={commandType},DbNum={dbNum.GetValueOrDefault()},参数={args.ToJson()}");
             //this.Init(commandType);
             if (redis == null)
                 redis = this.GetRedis(commandType.ReadOrWrite);
+            if (!redis.IsConnected) redis.Connect();
             if (!redis.IsAuth && commandType != CommandType.AUTH && redis.ConnConfig.Password.IsNotNullOrEmpty())
             {
                 redis.IsAuth = this.Auth(redis.ConnConfig.Password, redis);
@@ -347,12 +349,22 @@ namespace XiaoFeng.Redis
                 {
                     var cmd = new CommandPacket(commandType, args);
                     this.TraceInfo($"发送 [{commandType}] <{commandType.Description}> 命令行:\r\n{cmd}");
-                    cmd.SendCommand(redis.GetStream() as NetworkStream);
-                    var bytes = this.ReadResponseBytes(redis).ConfigureAwait(false).GetAwaiter().GetResult();
-                    var ms = new MemoryStream(bytes);
-                    ms.Seek(0, SeekOrigin.Begin);
-                    this.TraceInfo($"响应数据:\r\n{bytes.GetString()}");
-                    var result = func.Invoke(new RedisReader(commandType, ms, args, this.TraceInfo));
+                    cmd.SendCommand(redis);
+                    //var bytes = this.ReadResponseBytes(redis).ConfigureAwait(false).GetAwaiter().GetResult();
+                    //var ms = new MemoryStream(bytes);
+                    //ms.Seek(0, SeekOrigin.Begin);
+                    //this.TraceInfo($"响应数据:\r\n{bytes.GetString()}");
+                    var reader = new RedisReader(commandType, redis, args, this.TraceInfo);
+                    if(reader.SocketState== Net.SocketState.Stop)
+                    {
+                        //读取过程中 网络断了 进行重试
+                        if(Interlocked.Increment(ref retry) > 3)
+                        {
+                            return func.Invoke(reader);
+                        }
+                        return this.Execute(commandType, dbNum, func, redis, args);
+                    }
+                    var result = func.Invoke(reader);
                     return result;
                 }
             }
@@ -378,7 +390,7 @@ namespace XiaoFeng.Redis
         /// <returns>执行结果</returns>
         protected T Execute<T>(CommandType commandType, int? dbNum, Func<RedisReader, T> func, params object[] args)
         {
-            return this.Execute(commandType, dbNum, func, null, args);
+            return this.Execute(commandType, dbNum, func, null, 0, args);
         }
         /// <summary>
         /// 读取流数据
@@ -389,7 +401,7 @@ namespace XiaoFeng.Redis
             var reader = redis.GetStream() as NetworkStream;
 
             var ms = new MemoryStream();
-            var tokenTimeout = 100;
+            var tokenTimeout = 1000;
             var bytes = new byte[1024];
             var flag = false;
             for (var i = 0; i < 10; i++)
@@ -435,14 +447,16 @@ namespace XiaoFeng.Redis
         /// <param name="dbNum">库索引</param>
         /// <param name="func">回调方法</param>
         /// <param name="redis">socket</param>
+        /// <param name="retry">重试次数</param>
         /// <param name="args">参数集</param>
         /// <returns>执行结果</returns>
-        protected async Task<T> ExecuteAsync<T>(CommandType commandType, int? dbNum, Func<RedisReader, Task<T>> func,IRedisSocket redis, params object[] args)
+        protected async Task<T> ExecuteAsync<T>(CommandType commandType, int? dbNum, Func<RedisReader, Task<T>> func,IRedisSocket redis,int retry, params object[] args)
         {
             this.TraceInfo($"请求参数:CommandType={commandType},DbNum={dbNum.GetValueOrDefault()},参数={args.ToJson()}");
             //this.Init(commandType);
             if (redis == null)
                 redis = this.GetRedis(commandType.ReadOrWrite);
+            if (!redis.IsConnected) redis.Connect();
             if (commandType != CommandType.AUTH && redis.ConnConfig.Password.IsNotNullOrEmpty())
             {
                 redis.IsAuth = await this.AuthAsync(redis.ConnConfig.Password,redis).ConfigureAwait(false);
@@ -466,12 +480,24 @@ namespace XiaoFeng.Redis
                 {
                     var cmd = new CommandPacket(commandType, args);
                     this.TraceInfo($"发送 [{commandType}]<{commandType.Description}> 命令行:\r\n{cmd}");
-                    await cmd.SendCommandAsync(redis.GetStream() as NetworkStream).ConfigureAwait(false);
-                    var bytes = await this.ReadResponseBytes(redis).ConfigureAwait(false);
-                    var ms = new MemoryStream(bytes);
-                    ms.Position = 0;
-                    this.TraceInfo($"响应数据:\r\n{bytes.GetString()}");
-                    var result = await func.Invoke(new RedisReader(commandType, ms, args, this.TraceInfo)).ConfigureAwait(false);
+                    await cmd.SendCommandAsync(redis).ConfigureAwait(false);
+                    //var bytes = await this.ReadResponseBytes(redis).ConfigureAwait(false);
+                    //var ms = new MemoryStream(bytes);
+                    //ms.Position = 0;
+                    //this.TraceInfo($"响应数据:\r\n{bytes.GetString()}");
+
+                    var reader = new RedisReader(commandType, redis, args, this.TraceInfo);
+                    if(reader.SocketState== Net.SocketState.Stop)
+                    {
+                        //读取过程中 网络断了 进行重试
+                        StreamAsyncLock.Release();
+                        if (Interlocked.Increment(ref retry) > 3)
+                        {
+                            return await func.Invoke(reader).ConfigureAwait(false);
+                        }
+                        return await this.ExecuteAsync(commandType, dbNum, func, redis, args).ConfigureAwait(false);
+                    }
+                    var result = await func.Invoke(reader).ConfigureAwait(false);
                     return result;
                 }
             }
@@ -497,7 +523,7 @@ namespace XiaoFeng.Redis
         /// <returns>执行结果</returns>
         protected async Task<T> ExecuteAsync<T>(CommandType commandType, int? dbNum, Func<RedisReader, Task<T>> func, params object[] args)
         {
-            return await this.ExecuteAsync(commandType, dbNum, func, null, args).ConfigureAwait(false);
+            return await this.ExecuteAsync(commandType, dbNum, func, null, 0, args).ConfigureAwait(false);
         }
         #endregion
 

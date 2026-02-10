@@ -1,6 +1,7 @@
 ﻿using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using XiaoFeng.Redis.IO;
 
 /****************************************************************
 *  Copyright © (2021) www.fayelf.com All Rights Reserved.       *
@@ -70,9 +71,13 @@ namespace XiaoFeng.Redis
         /// <summary>
         /// 发送命令
         /// </summary>
-        /// <param name="stream">流</param>
-        public void SendCommand(NetworkStream stream)
+        /// <param name="redis">socket</param>
+        public void SendCommand(IRedisSocket redis)
         {
+            if (redis == null) return;
+            if (!redis.IsConnected) redis.Connect();
+            if (!redis.IsConnected) return;
+            var stream = redis.GetStream();
             if (stream == null || !stream.CanWrite) return;
             var lines = this.ToBytes();
             stream.Write(lines, 0, lines.Length);
@@ -81,9 +86,13 @@ namespace XiaoFeng.Redis
         /// <summary>
         /// 发送命令
         /// </summary>
-        /// <param name="stream">流</param>
-        public async Task SendCommandAsync(NetworkStream stream)
+        /// <param name="redis">socket</param>
+        public async Task SendCommandAsync(IRedisSocket redis)
         {
+            if (redis == null) return;
+            if (!redis.IsConnected) redis.Connect();
+            if (!redis.IsConnected) return;
+            var stream = redis.GetStream();
             if (stream == null || !stream.CanWrite) return;
             var lines = this.ToBytes();
             await stream.WriteAsync(lines, 0, lines.Length).ConfigureAwait(false);

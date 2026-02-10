@@ -154,16 +154,16 @@ namespace XiaoFeng.Data
         [JsonConverter(typeof(StringEnumConverter))]
         public DbConfigType ConfigType { get; set; } = DbConfigType.ReadAndWrite;
         /// <summary>
+        /// 可读数据库调度算法类型
+        /// </summary>
+        [Description("可读数据库调度算法类型Random,Weight,LeastConnection")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public ReadOnlyDbAlgorithmType ReadDbAlgorithmType { get; set; } = ReadOnlyDbAlgorithmType.Random;
+        /// <summary>
         /// 只读库列表
         /// </summary>
         [Description("只读库列表")]
         public List<ReadOnlyDbConfig> ReadDbs { get; set; }
-        /// <summary>
-        /// 可读数据库调度算法类型
-        /// </summary>
-        [Description("可读数据库调度算法类型Random,Weight,LeastConnection")]
-        [JsonConverter(typeof(StringEnumConverter))] 
-        public ReadOnlyDbAlgorithmType ReadDbAlgorithmType { get; set; } = ReadOnlyDbAlgorithmType.Random;
         #endregion
 
         #region 方法

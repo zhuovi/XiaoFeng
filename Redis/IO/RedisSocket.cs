@@ -155,8 +155,8 @@ namespace XiaoFeng.Redis.IO
         ///<inheritdoc/>
         public Stream GetStream()
         {
-            if (this.Stream != null) return this.Stream;
-
+            if (this.Stream != null && this.Stream.CanRead && this.Stream.CanWrite) return this.Stream;
+            if (!this.Client.Connected) this.Connect();
             return this.Stream = this.Client.GetSslStream();
             /*var ns = new NetworkStream(this.SocketClient, true);
 
