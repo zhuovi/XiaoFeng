@@ -389,35 +389,42 @@ namespace XiaoFeng.Redis
             var reader = redis.GetStream() as NetworkStream;
 
             var ms = new MemoryStream();
+            var tokenTimeout = 100;
             var bytes = new byte[1024];
-            var cancel = new CancellationTokenSource();
-            cancel.CancelAfter(TimeSpan.FromMilliseconds(50));
-
+            var flag = false;
             for (var i = 0; i < 10; i++)
             {
-                var length = 0;
+                var readLength = 0;
                 do
                 {
+                    var cancel = new CancellationTokenSource();
+                    cancel.CancelAfter(TimeSpan.FromMilliseconds(tokenTimeout));
                     try
                     {
-                        length = await reader.ReadAsync(bytes, 0, bytes.Length, cancel.Token).ConfigureAwait(false);
-                        if (length == 0) break;
-                        ms.Write(bytes, 0, (int)length);
-                        this.TraceInfo($"读取数据:{bytes[length - 2]}-{bytes[length - 1]}");
+                        readLength = await reader.ReadAsync(bytes, 0, bytes.Length, cancel.Token).ConfigureAwait(false);
+                        if (readLength == 0) break;
+                        ms.Write(bytes, 0, (int)readLength);
+                        this.TraceInfo($"读取数据:{bytes[readLength - 2]}-{bytes[readLength - 1]}-{bytes.GetString("",0,readLength)}");
                     }
-                    catch
+                    catch(IOException ex)
                     {
+                        this.TraceInfo($"等待超时,超时时长 {tokenTimeout} 毫秒.{ex.Message}-第 {i} 次尝试读取.");
+                        break;
+                    }
+
+                    if (readLength >= 2 && bytes[readLength - 2] == 13 && bytes[readLength - 1] == 10)
+                    {
+                        flag = true;
+                        this.TraceInfo($"数据读取完成.");
                         break;
                     }
                 } while (reader.DataAvailable);
-                if (length > 2 && (bytes[length - 2] != 13 || bytes[length - 1] != 10))
+                if (flag)
                 {
-                    this.TraceInfo("等待继续读.");
-
-                    //await Task.Delay(10).ConfigureAwait(false);
+                    break;
                 }
-                else break;
             }
+            if (!flag) this.TraceInfo($"数据未读取完全.");
             return ms.ToArray();
         }
         /// <summary>
