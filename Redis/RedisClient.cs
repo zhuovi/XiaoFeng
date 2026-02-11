@@ -333,8 +333,7 @@ namespace XiaoFeng.Redis
                 if (!redis.IsAuth)
                     throw new RedisException("认证失败.");
             }
-            //if (!dbNum.HasValue && !redis.DbNum.HasValue && this.ConnConfig.DbNum > 0)
-            //    this.Redis.DbNum = this.ConnConfig.DbNum;
+
             if (dbNum.HasValue && dbNum > -1 && dbNum != redis.DbNum)
             {
                 if (this.Select(dbNum.Value, redis))
@@ -350,10 +349,7 @@ namespace XiaoFeng.Redis
                     var cmd = new CommandPacket(commandType, args);
                     this.TraceInfo($"发送 [{commandType}] <{commandType.Description}> 命令行:\r\n{cmd}");
                     cmd.SendCommand(redis);
-                    //var bytes = this.ReadResponseBytes(redis).ConfigureAwait(false).GetAwaiter().GetResult();
-                    //var ms = new MemoryStream(bytes);
-                    //ms.Seek(0, SeekOrigin.Begin);
-                    //this.TraceInfo($"响应数据:\r\n{bytes.GetString()}");
+
                     var reader = new RedisReader(commandType, redis, args, this.TraceInfo);
                     if(reader.SocketState== Net.SocketState.Stop)
                     {
@@ -391,53 +387,6 @@ namespace XiaoFeng.Redis
         protected T Execute<T>(CommandType commandType, int? dbNum, Func<RedisReader, T> func, params object[] args)
         {
             return this.Execute(commandType, dbNum, func, null, 0, args);
-        }
-        /// <summary>
-        /// 读取流数据
-        /// </summary>
-        /// <returns></returns>
-        private async Task<byte[]> ReadResponseBytes(IRedisSocket redis)
-        {
-            var reader = redis.GetStream() as NetworkStream;
-
-            var ms = new MemoryStream();
-            var tokenTimeout = 1000;
-            var bytes = new byte[1024];
-            var flag = false;
-            for (var i = 0; i < 10; i++)
-            {
-                var readLength = 0;
-                do
-                {
-                    var cancel = new CancellationTokenSource();
-                    cancel.CancelAfter(TimeSpan.FromMilliseconds(tokenTimeout));
-                    try
-                    {
-                        readLength = await reader.ReadAsync(bytes, 0, bytes.Length, cancel.Token).ConfigureAwait(false);
-                        if (readLength == 0) break;
-                        ms.Write(bytes, 0, (int)readLength);
-                        this.TraceInfo($"读取数据:{bytes[readLength - 2]}-{bytes[readLength - 1]}-{bytes.GetString("",0,readLength)}");
-                    }
-                    catch(IOException ex)
-                    {
-                        this.TraceInfo($"等待超时,超时时长 {tokenTimeout} 毫秒.{ex.Message}-第 {i} 次尝试读取.");
-                        break;
-                    }
-
-                    if (readLength >= 2 && bytes[readLength - 2] == 13 && bytes[readLength - 1] == 10)
-                    {
-                        flag = true;
-                        this.TraceInfo($"数据读取完成.");
-                        break;
-                    }
-                } while (reader.DataAvailable);
-                if (flag)
-                {
-                    break;
-                }
-            }
-            if (!flag) this.TraceInfo($"数据未读取完全.");
-            return ms.ToArray();
         }
         /// <summary>
         /// 执行 异步
@@ -481,10 +430,6 @@ namespace XiaoFeng.Redis
                     var cmd = new CommandPacket(commandType, args);
                     this.TraceInfo($"发送 [{commandType}]<{commandType.Description}> 命令行:\r\n{cmd}");
                     await cmd.SendCommandAsync(redis).ConfigureAwait(false);
-                    //var bytes = await this.ReadResponseBytes(redis).ConfigureAwait(false);
-                    //var ms = new MemoryStream(bytes);
-                    //ms.Position = 0;
-                    //this.TraceInfo($"响应数据:\r\n{bytes.GetString()}");
 
                     var reader = new RedisReader(commandType, redis, args, this.TraceInfo);
                     if(reader.SocketState== Net.SocketState.Stop)
