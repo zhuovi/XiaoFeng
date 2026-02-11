@@ -74,11 +74,7 @@ namespace XiaoFeng.Redis
         /// <summary>
         /// 读取数据超时时长 单位为毫秒
         /// </summary>
-        private int ReadBytesTimeout { get; set; } = 20000;
-        /// <summary>
-        /// 流异步锁
-        /// </summary>
-        readonly AsyncLock StreamAsyncLock = new AsyncLock();
+        private int ReadBytesTimeout { get; set; } = 1000;
         /// <summary>
         /// 参数
         /// </summary>
@@ -162,6 +158,7 @@ namespace XiaoFeng.Redis
         {
             if (!resultType.HasValue)
                 resultType = await this.ReadTypeAsync().ConfigureAwait(false);
+            if (resultType == ResultType.Unknow) return null;
             RedisValue result;
             switch (resultType.Value)
             {
@@ -921,6 +918,7 @@ namespace XiaoFeng.Redis
             this.Status = type;
             var result = await this.ReadValueAsync(type).ConfigureAwait(false);
             this.TraceInfo.Invoke($"响应数据:\r\n{this.MemoryStream.ToArray().GetString()}");
+            if (result == null) return null;
             
             switch (this.CommandType.Name)
             {
@@ -1692,50 +1690,49 @@ namespace XiaoFeng.Redis
         /// <returns></returns>
         private async Task<byte?> ReadByteAsync()
         {
-            //using(await StreamAsyncLock.EnterAsync().ConfigureAwait(false))
+            var readCount = 0;
+            var readBytes = new byte[1];
+            var readFlag = false;
+            while (true)
             {
-                var readCount = 0;
-                var readBytes = new byte[1];
-                var readFlag = false;
-                while (true)
+                var cancel = new CancellationTokenSource(this.ReadBytesTimeout);
+                var readLength = 0;
+                try
                 {
-                    var cancel = new CancellationTokenSource(this.ReadBytesTimeout);
-                    var readLength = 0;
-                    try
+                    readLength = await this.Reader.ReadAsync(readBytes, 0, 1, cancel.Token).ConfigureAwait(false);
+                    if (readLength == 1)
                     {
-                        readLength = await this.Reader.ReadAsync(readBytes, 0, 1, cancel.Token).ConfigureAwait(false);
-                        if (readLength == 1)
-                        {
-                            this.MemoryStream.WriteByte(readBytes[0]);
-                            readFlag = true;
-                            break;
-                        }
-                    }
-                    catch (IOException ie)
-                    {
-                        this.TraceInfo.Invoke($"等待超时,超时时长 {this.ReadBytesTimeout} 毫秒.{ie.Message}-第 {readCount + 1} 次尝试读取.");
-                    }
-                    catch (SocketException se)
-                    {
-                        if (se.SocketErrorCode == SocketError.NotConnected)
-                        {
-                            //重新连接
-                            this.SocketState = SocketState.Stop;
-                        }
-                    }
-                    if (readLength == -1)
-                    {
-                        //网络断开了
-                        this.SocketState = SocketState.Stop;
-                    }
-                    if (Interlocked.Increment(ref readCount) > 10)
-                    {
-                        this.TraceInfo.Invoke($"超出读取等待最大时长 {this.ReadBytesTimeout * 10} 毫秒.");
+                        this.MemoryStream.WriteByte(readBytes[0]);
+                        readFlag = true;
                         break;
                     }
                 }
-                return readFlag ? readBytes[0] : default;
+                catch (IOException ie)
+                {
+                    this.TraceInfo.Invoke($"等待超时,超时时长 {this.ReadBytesTimeout} 毫秒.{ie.Message}-第 {readCount + 1} 次尝试读取.");
+                }
+                catch (SocketException se)
+                {
+                    if (se.SocketErrorCode == SocketError.NotConnected)
+                    {
+                        //重新连接
+                        this.SocketState = SocketState.Stop;
+                        break;
+                    }
+                }
+                if (readLength == -1)
+                {
+                    //网络断开了
+                    this.SocketState = SocketState.Stop;
+                    break;
+                }
+                if (Interlocked.Increment(ref readCount) > 10)
+                {
+                    this.TraceInfo.Invoke($"超出读取等待最大时长 {this.ReadBytesTimeout * 10} 毫秒.");
+                    break;
+                }
             }
+            return readFlag ? readBytes[0] : default;
         }
         #endregion
 
@@ -1747,34 +1744,31 @@ namespace XiaoFeng.Redis
         /// <returns></returns>
         private async Task<byte[]> ReadLineBytesAsync(int length = -1)
         {
-            //using (await StreamAsyncLock.EnterAsync().ConfigureAwait(false))
+            var should_break = false;
+            var ms = new MemoryStream();
+
+            while (true)
             {
-                var should_break = false;
-                var ms = new MemoryStream();
-                
-                while (true)
+                var readByte = await this.ReadByteAsync().ConfigureAwait(false);
+                if (!readByte.HasValue)
                 {
-                    var readByte = await this.ReadByteAsync().ConfigureAwait(false);
-                    if (!readByte.HasValue)
-                    {
-                        this.TraceInfo.Invoke($"读取出错.");
-                        break;
-                    }
-                    if (readByte.Value == 13)
-                        should_break = true;
-                    else if (should_break && readByte.Value == 10)
-                    {
-                        if (length == -1 || length == ms.Length)
-                            break;
-                    }
-                    else
-                    {
-                        ms.WriteByte(readByte.Value);
-                        should_break = false;
-                    }
+                    this.TraceInfo.Invoke($"读取出错.");
+                    break;
                 }
-                return await Task.FromResult((ms.Length == 0) ? Array.Empty<byte>() : ms.ToArray());
+                if (readByte.Value == 13)
+                    should_break = true;
+                else if (should_break && readByte.Value == 10)
+                {
+                    if (length == -1 || length == ms.Length)
+                        break;
+                }
+                else
+                {
+                    ms.WriteByte(readByte.Value);
+                    should_break = false;
+                }
             }
+            return await Task.FromResult((ms.Length == 0) ? Array.Empty<byte>() : ms.ToArray());
         }
         #endregion
 

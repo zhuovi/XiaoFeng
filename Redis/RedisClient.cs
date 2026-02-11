@@ -540,7 +540,7 @@ namespace XiaoFeng.Redis
         {
             if (password.IsNullOrEmpty()) return false;
             this.TraceInfo($"开始认证,认证密码:{password}");
-            return this.Execute(CommandType.AUTH, null, result => result.OK, redis, password);
+            return this.Execute(CommandType.AUTH, null, result => result.OK, redis,0, password);
         }
         /// <summary>
         /// 验证密码 异步
@@ -552,7 +552,7 @@ namespace XiaoFeng.Redis
         {
             if (password.IsNullOrEmpty()) return false;
             this.TraceInfo($"开始认证,认证密码:{password}");
-            return await this.ExecuteAsync(CommandType.AUTH, null, async result => await Task.FromResult(result.OK), redis, password);
+            return await this.ExecuteAsync(CommandType.AUTH, null, async result => await Task.FromResult(result.OK), redis, 0,password);
         }
         #endregion
 
@@ -612,12 +612,12 @@ namespace XiaoFeng.Redis
         /// <param name="dbNum">库索引</param>
         /// <param name="redis">socket</param>
         /// <returns>是否设置成功</returns>
-        public Boolean Select(int dbNum = 0,IRedisSocket redis = null)
+        public Boolean Select(int dbNum = 0, IRedisSocket redis = null)
         {
             var curDbNum = redis == null ? 0 : redis.DbNum.GetValueOrDefault();
             if (Interlocked.CompareExchange(ref curDbNum, dbNum, dbNum) == dbNum) return true;
             this.TraceInfo($"开始切换库,原来库为 {curDbNum},目的库为 {dbNum}");
-            if (this.Execute(CommandType.SELECT, null, result => result.OK,redis, Math.Abs(dbNum)))
+            if (this.Execute(CommandType.SELECT, null, result => result.OK, redis, 0, Math.Abs(dbNum)))
             {
                 redis.DbNum = dbNum;
                 this.TraceInfo($"切换库成功,当前库为 {dbNum}");
@@ -635,12 +635,12 @@ namespace XiaoFeng.Redis
         /// <param name="dbNum">库索引</param>
         /// <param name="redis">socket</param>
         /// <returns></returns>
-        public async Task<Boolean> SelectAsync(int dbNum = 0,IRedisSocket redis = null)
+        public async Task<Boolean> SelectAsync(int dbNum = 0, IRedisSocket redis = null)
         {
             var curDbNum = redis == null ? 0 : redis.DbNum.GetValueOrDefault();
             if (Interlocked.CompareExchange(ref curDbNum, dbNum, dbNum) == dbNum) return true;
             this.TraceInfo($"开始切换库,原来库为 {curDbNum},目的库为 {dbNum}");
-            if( await this.ExecuteAsync(CommandType.SELECT, null, result => Task.FromResult(result.OK),redis, Math.Abs(dbNum)))
+            if (await this.ExecuteAsync(CommandType.SELECT, null, result => Task.FromResult(result.OK), redis, 0, Math.Abs(dbNum)))
             {
                 redis.DbNum = dbNum;
                 this.TraceInfo($"切换库成功,当前库为 {dbNum}");
