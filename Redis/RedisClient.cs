@@ -771,7 +771,7 @@ namespace XiaoFeng.Redis
         {
             base.Dispose(disposing, () =>
             {
-                if (this.RedisSockets != null && !this.RedisSockets.IsEmpty)
+                /*if (this.RedisSockets != null && !this.RedisSockets.IsEmpty)
                 {
                     this.RedisSockets.Values.Each(a =>
                     {
@@ -781,7 +781,7 @@ namespace XiaoFeng.Redis
                         });
                     });
                     this.RedisSockets.Clear();
-                }
+                }*/
                 this.RedisPool?.Dispose();
                 if (StreamAsyncLock != null) StreamAsyncLock.Dispose();
             });

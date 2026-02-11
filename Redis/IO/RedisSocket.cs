@@ -214,7 +214,7 @@ namespace XiaoFeng.Redis.IO
         {
             base.Dispose(disposing, () =>
             {
-                this.Close();
+                /*this.Close();
                 if (this.Client != null)
                 {
                     this.Client.Dispose();
@@ -229,7 +229,7 @@ namespace XiaoFeng.Redis.IO
                 {
                     this.Stream.Dispose();
                     this.Stream = null;
-                }
+                }*/
             });
         }
         /// <summary>

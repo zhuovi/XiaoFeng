@@ -77,7 +77,7 @@ namespace XiaoFeng.Redis
             if (redis == null) return;
             if (!redis.IsConnected) redis.Connect();
             if (!redis.IsConnected) return;
-            var stream = redis.GetStream();
+            var stream = redis.GetStream() as NetworkStream;
             if (stream == null || !stream.CanWrite) return;
             var lines = this.ToBytes();
             stream.Write(lines, 0, lines.Length);
@@ -92,7 +92,7 @@ namespace XiaoFeng.Redis
             if (redis == null) return;
             if (!redis.IsConnected) redis.Connect();
             if (!redis.IsConnected) return;
-            var stream = redis.GetStream();
+            var stream = redis.GetStream() as NetworkStream;
             if (stream == null || !stream.CanWrite) return;
             var lines = this.ToBytes();
             await stream.WriteAsync(lines, 0, lines.Length).ConfigureAwait(false);
