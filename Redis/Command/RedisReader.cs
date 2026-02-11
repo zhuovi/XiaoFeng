@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using XiaoFeng;
@@ -67,6 +68,10 @@ namespace XiaoFeng.Redis
         /// 读取数据流
         /// </summary>
         public MemoryStream MemoryStream { get; set; }
+        /// <summary>
+        /// 字符编码
+        /// </summary>
+        public Encoding Encoding { get; set; } = Encoding.UTF8;
         /// <summary>
         /// 连接
         /// </summary>
@@ -917,7 +922,7 @@ namespace XiaoFeng.Redis
             this.TraceInfo?.Invoke($"读取类型:{type}.");
             this.Status = type;
             var result = await this.ReadValueAsync(type).ConfigureAwait(false);
-            this.TraceInfo.Invoke($"响应数据:\r\n{this.MemoryStream.ToArray().GetString()}");
+            this.TraceInfo.Invoke($"响应数据:\r\n{this.MemoryStream.ToArray().GetString(this.Encoding)}");
             if (result == null) return null;
             
             switch (this.CommandType.Name)
@@ -1838,13 +1843,13 @@ namespace XiaoFeng.Redis
         /// $1\r\n数据\r\n 单条数据
         /// </summary>
         /// <returns>单条数据</returns>
-        public RedisValue ReadBulkString() => this.ReadBulkBytes().GetString();
+        public RedisValue ReadBulkString() => this.ReadBulkBytes().GetString(this.Encoding);
         /// <summary>
         /// 读取单条数据
         /// $1\r\n数据\r\n 单条数据
         /// </summary>
         /// <returns>单条数据</returns>
-        public async Task<RedisValue> ReadBulkStringAsync() => (await this.ReadBulkBytesAsync().ConfigureAwait(false)).GetString();
+        public async Task<RedisValue> ReadBulkStringAsync() => (await this.ReadBulkBytesAsync().ConfigureAwait(false)).GetString(this.Encoding);
         #endregion
 
         #region 读取单条数据
@@ -1877,7 +1882,7 @@ namespace XiaoFeng.Redis
         /// *2\r\n 多条数据
         /// </summary>
         /// <returns>数据</returns>
-        public List<String> ReadMultiBulkString() => (from a in this.ReadMultiBulkBytes() select a.GetString()).ToList();
+        public List<String> ReadMultiBulkString() => (from a in this.ReadMultiBulkBytes() select a.GetString(this.Encoding)).ToList();
         #endregion
 
         #region 读取多行数据
@@ -1930,12 +1935,12 @@ namespace XiaoFeng.Redis
         /// 读取内容
         /// </summary>
         /// <returns>一行数据</returns>
-        public string ReadLine() => this.ReadLineBytes().GetString();
+        public string ReadLine() => this.ReadLineBytes().GetString(this.Encoding);
         /// <summary>
         /// 读取内容
         /// </summary>
         /// <returns>一行数据</returns>
-        public async Task<string> ReadLineAsync() => (await this.ReadLineBytesAsync().ConfigureAwait(false)).GetString();
+        public async Task<string> ReadLineAsync() => (await this.ReadLineBytesAsync().ConfigureAwait(false)).GetString(this.Encoding);
         #endregion
 
         #region 读取内容
