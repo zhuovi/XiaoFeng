@@ -36,6 +36,11 @@ namespace XiaoFeng.Threading
         /// 停止中
         /// </summary>
         [Description("停止中")]
-        Stoping = 3
+        Stoping = 3,
+        /// <summary>
+        /// 暂停
+        /// </summary>
+        [Description("暂停中")]
+        Paused = 4
     }
 }

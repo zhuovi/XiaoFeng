@@ -156,7 +156,7 @@ namespace XiaoFeng.Xml
         public XmlValue GetAttribute(string name)
         {
             if (!this.HasAttributes || this.Attributes.Count == 0) return null;
-            return this.Attributes.Find(a => a.Name.EqualsIgnoreCase(name));
+            return this.Attributes.Find(a => (a.Prefix == "" && a.Name.EqualsIgnoreCase(name)) || a.LocalName.EqualsIgnoreCase(name));
         }
         /// <summary>
         /// 获取节点
@@ -313,7 +313,7 @@ namespace XiaoFeng.Xml
                     {
                         xmlValue.Attributes.Each(a =>
                         {
-                            namespaces.Add(a.LocalName+"aa", a.NamespaceURI);
+                            namespaces.Add(a.LocalName, a.NamespaceURI);
                         });
                     }
                     if (m is PropertyInfo p)
@@ -354,7 +354,15 @@ namespace XiaoFeng.Xml
                 else if (m.IsDefined(typeof(XmlTextAttribute), false))
                 {
                     Name = "";
-                    xValue = xmlValue;
+                    if (xmlValue.HasChildNodes)
+                    {
+                        xValue = new XmlValue
+                        {
+                            Value = xmlValue.ChildNodes.EntityToXml(OmitXmlDeclaration:true,Indented: false)
+                        };
+                    }
+                    else
+                        xValue = xmlValue;
                 }
                 else
                 {

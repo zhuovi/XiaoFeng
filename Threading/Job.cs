@@ -203,6 +203,11 @@ namespace XiaoFeng.Threading
         public void Start(CancellationToken token) => this.SetCancelToken(token).Start();
         #endregion
 
+        #region 暂停作业
+        ///<inheritdoc/>
+        public void Pause() => this.Status = JobStatus.Paused;
+        #endregion
+
         #region 停止作业
         /// <summary>
         /// 停止作业

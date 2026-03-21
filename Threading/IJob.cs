@@ -142,6 +142,13 @@ namespace XiaoFeng.Threading
         void Start(CancellationToken token);
         #endregion
 
+        #region 暂停作业
+        /// <summary>
+        /// 暂停作业
+        /// </summary>
+        void Pause();
+        #endregion
+
         #region 停止作业
         /// <summary>
         /// 停止作业

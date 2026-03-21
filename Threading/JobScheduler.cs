@@ -125,9 +125,16 @@ namespace XiaoFeng.Threading
             if (job == null || this.SchedulerJobs.ContainsKey(job.ID)) return;
             var j = this.SchedulerJobs.Values.Where(a => a.Name == job.Name);
             //如果作业中有正在等待的作业并且名和要加入的作业名称一样的情况下则不再添加作业
-            if (j.Any() && j != null && j.First().Status == JobStatus.Waiting)
+            if (j.Any() && j != null)
             {
-                return;
+                var firstJob = j.First();
+                if (firstJob.Status == JobStatus.Waiting)
+                    return;
+                else if (firstJob.Status == JobStatus.Paused)
+                {
+                    firstJob.Status = JobStatus.Runing;
+                    return;
+                }
             }
             if (job.ExpireTime.HasValue && job.ExpireTime <= DateTime.Now) return;
             

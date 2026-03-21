@@ -94,7 +94,7 @@ namespace XiaoFeng.Model
             }
             if (this.Data.IsEmpty) return;
             var val = this.Data.GetEnumerator();
-            this.Remove(val.Current);
+            //this.Remove(val.Current);
             while (val.MoveNext())
             {
                 this.Remove(val.Current);
