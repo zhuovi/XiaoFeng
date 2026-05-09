@@ -2071,7 +2071,7 @@ namespace XiaoFeng
                     }
                     else
                         o = _val;
-                    try { o = Convert.ChangeType(o, targetType); } catch { o = 0; }
+                    try { o = Convert.ChangeType(o, targetType);return o; } catch { o = 0; }
                 }
             }
             else if (targetType == typeof(bool))
