@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using XiaoFeng.Net;
 /****************************************************************
 *  Copyright © (2021) www.fayelf.com All Rights Reserved.      *
@@ -56,6 +57,20 @@ namespace XiaoFeng
             if (f != null && f.IsDefined(typeof(PortAttribute), false))
                 return f.GetPort(false);
             return (int)f.GetValue(e);
+        }
+        /// <summary>
+        /// 获取枚举扩展属性
+        /// </summary>
+        /// <param name="e">枚举</param>
+        /// <returns></returns>
+        public static EnumAttribute GetEnumExpandAttribute(this Enum e)
+        {
+            var f = e.GetType().GetField(e.ToString());
+            if (f != null && f.IsDefined(typeof(EnumAttribute), false))
+            {
+                return f.GetCustomAttribute<EnumAttribute>();
+            }
+            return default;
         }
     }
 }

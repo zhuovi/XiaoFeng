@@ -81,7 +81,7 @@ namespace XiaoFeng.Redis
             if (stream == null || !stream.CanWrite) return;
             var lines = this.ToBytes();
             stream.Write(lines, 0, lines.Length);
-            stream.Flush();
+            //stream.Flush();
         }
         /// <summary>
         /// 发送命令
@@ -96,7 +96,7 @@ namespace XiaoFeng.Redis
             if (stream == null || !stream.CanWrite) return;
             var lines = this.ToBytes();
             await stream.WriteAsync(lines, 0, lines.Length).ConfigureAwait(false);
-            await stream.FlushAsync().ConfigureAwait(false);
+            //await stream.FlushAsync().ConfigureAwait(false);
         }
         #endregion
     }
