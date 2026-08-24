@@ -82,7 +82,7 @@ namespace XiaoFeng.Redis
         public override PoolItem<IRedisSocket> Get()
         {
             var value = base.Get();
-            if (value.Value.IsConnected) value.Value.Connect();
+            if (!value.Value.IsConnected) value.Value.Connect();
             return value;
         }
         ///<inheritdoc/>
@@ -100,9 +100,10 @@ namespace XiaoFeng.Redis
         {
             if (obj == null) return;
 
-            if (obj.IsConnected)
+            //归还时若连接已断开或未认证,则关闭底层连接,下次借出时重新建立并认证
+            if (!obj.IsConnected || !obj.IsAuth)
             {
-                //obj.Disconnect(true);
+                obj.Close();
             }
         }
         ///<inheritdoc/>

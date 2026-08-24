@@ -331,7 +331,13 @@ namespace XiaoFeng.Redis
                 redis.IsAuth = this.Auth(redis.ConnConfig.Password, redis);
                 this.TraceInfo($"Redis认证{(redis.IsAuth ? "成功" : "失败")}.");
                 if (!redis.IsAuth)
+                {
+                    //认证失败,关闭连接使其失效,并归还连接,避免坏连接长期滞留在池中
+                    redis.IsAuth = false;
+                    redis.Close();
+                    this.Put();
                     throw new RedisException("认证失败.");
+                }
             }
 
             if (dbNum.HasValue && dbNum > -1 && dbNum != redis.DbNum)
@@ -411,7 +417,13 @@ namespace XiaoFeng.Redis
                 redis.IsAuth = await this.AuthAsync(redis.ConnConfig.Password,redis).ConfigureAwait(false);
                 this.TraceInfo($"Redis认证{(redis.IsAuth ? "成功" : "失败")}.");
                 if (!redis.IsAuth)
+                {
+                    //认证失败,关闭连接使其失效,并归还连接,避免坏连接长期滞留在池中
+                    redis.IsAuth = false;
+                    redis.Close();
+                    this.Put();
                     throw new RedisException("认证失败.");
+                }
             }
             if (!dbNum.HasValue && !redis.DbNum.HasValue && redis.ConnConfig.DbNum > 0)
                 redis.DbNum = redis.ConnConfig.DbNum;
