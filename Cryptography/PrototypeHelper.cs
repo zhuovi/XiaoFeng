@@ -382,5 +382,17 @@ namespace XiaoFeng
         }
         #endregion
 
+        #region 获取字节流的Hash值
+        /// <summary>
+        /// 获取字节流的Hash值
+        /// </summary>
+        /// <param name="data">字节数组</param>
+        /// <returns></returns>
+        public static string GetHashValue(this byte[] data)
+        {
+            return new SHAEncryption().Encode(data, SHAType.MD5).ToHexString(false);
+        }
+        #endregion
+
     }
 }

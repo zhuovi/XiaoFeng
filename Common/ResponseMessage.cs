@@ -116,13 +116,17 @@ namespace XiaoFeng
         [Description("条数")]
         public int? Counts { get; set; }
         /// <summary>
-        /// 时间
+        /// 时间戳
+        /// </summary>
+        private int _Time = DateTime.Now.ToTimeStamp();
+        /// <summary>
+        /// 时间戳
         /// </summary>
         [DataMember]
         [JsonElement("time")]
         [XmlElement("time")]
         [Description("时间")]
-        public int Time { get { return DateTime.Now.ToTimeStamp(); } }
+        public int Time { get => this._Time; set => this._Time = value; }
         /// <summary>
         /// 输出编码
         /// </summary>
