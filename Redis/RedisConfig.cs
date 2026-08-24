@@ -179,7 +179,7 @@ namespace XiaoFeng.Redis
         /// <returns></returns>
         public override string ToString()
         {
-            return $"redis://{this.User}{(this.Password.IsNotNullOrEmpty() ? ":" : "") + this.Password}{(this.User.IsNotNullOrEmpty() || this.Password.IsNotNullOrEmpty() ? "@" : "")}{this.Host}:{this.Port}/{this.DbNum}?connectiontimout={this.ConnectionTimeout}&readtimeout={this.ReadTimeout}&pool={this.MaxPool}";
+            return $"redis://{this.User}{(this.Password.IsNotNullOrEmpty() ? ":" : "") + this.Password}{(this.User.IsNotNullOrEmpty() || this.Password.IsNotNullOrEmpty() ? "@" : "")}{this.Host}:{this.Port}/{this.DbNum}?connectiontimeout={this.ConnectionTimeout}&readtimeout={this.ReadTimeout}&pool={this.MaxPool}";
         }
         /// <summary>
         /// 转换成字符串

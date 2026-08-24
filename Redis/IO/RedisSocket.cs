@@ -27,7 +27,7 @@ namespace XiaoFeng.Redis.IO
         /// <param name="isSSL">是否是SSL</param>
         public RedisSocket(Boolean isSSL)
         {
-            this.IsSsl = IsSsl;
+            this.IsSsl = isSSL;
         }
         /// <summary>
         /// 配置
@@ -106,6 +106,12 @@ namespace XiaoFeng.Redis.IO
         private void Init()
         {
             if (this.Client != null) this.Client.Stop();
+            if (this.Stream != null)
+            {
+                this.Stream.Close();
+                this.Stream.Dispose();
+                this.Stream = null;
+            }
             this.Client = new SocketClient()
             {
                 SocketType = this.SocketType,
@@ -136,6 +142,8 @@ namespace XiaoFeng.Redis.IO
         public void Connect()
         {
             Init();
+            //重连后服务端会视为新连接,认证状态必须重置,否则会跳过AUTH命令导致认证失败
+            this.IsAuth = false;
             var state = this.Client.Connect(this.ConnConfig.Host, this.ConnConfig.Port);
             if (state == SocketError.Success)
             {
