@@ -176,8 +176,12 @@ namespace XiaoFeng
                     var p = m as PropertyInfo;
                     if (p.IsIndexer()) return;
                     object val = value.GetValue(p.PropertyType);
-                    if (p.CanWrite) p.SetValue(this, val);
-                    this.SetAllValues(name, val);
+                    if (p.CanWrite)
+                    {
+                        p.SetValue(this, val);
+                        this.SetAllValues(name, val);
+                        this.AddDirty(name, this[name], val);
+                    }
                 }
                 else if (m.MemberType == MemberTypes.Field)
                 {
@@ -185,6 +189,7 @@ namespace XiaoFeng
                     var val = value.GetValue(f.FieldType);
                     f.SetValue(this, val);
                     this.SetAllValues(name, val);
+                    this.AddDirty(name, this[name], val);
                 }
             }
         }
