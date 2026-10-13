@@ -78,6 +78,7 @@ namespace XiaoFeng.Log
         /// <summary>
         /// 是否去除前缀
         /// </summary>
+        [Description("是否去除前缀")]
         public Boolean IsReplace { get; set; }
         /// <summary>
         /// 错误堆栈
@@ -137,7 +138,7 @@ namespace XiaoFeng.Log
             {
                 if (this.Message.IsNotNullOrEmpty())
                 {
-                    sb.AppendLine($"{this.LogType.GetValue(loggerConfig.MessageType)}".PadRight(loggerConfig.MessageType == EnumValueType.Description ? 2 : 5, ' ') + (Fields.Contains("AddTime") ? DateTime.Now.ToString(": yyyy-MM-dd HH:mm:ss.fff") : ""));
+                    sb.AppendLine($"{this.LogType.GetValue(loggerConfig.MessageType)}".PadRight(loggerConfig.MessageType == EnumValueType.Description ? 2 : 5, ' ') + $"[PID:{Process.GetCurrentProcess().Id}] " + (Fields.Contains("AddTime") ? DateTime.Now.ToString(": yyyy-MM-dd HH:mm:ss.fff") : ""));
                     sb.AppendLine(this.Message);
                 }
             }
@@ -146,7 +147,7 @@ namespace XiaoFeng.Log
                 if (Fields.Contains("LogType"))
                 {
                     sb.AppendLine("".PadLeft(70, '='));
-                    sb.AppendLine($"{this.LogType.GetValue(loggerConfig.MessageType)}".PadRight(loggerConfig.MessageType == EnumValueType.Description ? 2 : 5, ' ') + (Fields.Contains("AddTime") ? DateTime.Now.ToString(": yyyy-MM-dd HH:mm:ss.fff") : ""));
+                    sb.AppendLine($"{this.LogType.GetValue(loggerConfig.MessageType)}".PadRight(loggerConfig.MessageType == EnumValueType.Description ? 2 : 5, ' ') + $"[PID:{Process.GetCurrentProcess().Id}] " + (Fields.Contains("AddTime") ? DateTime.Now.ToString(": yyyy-MM-dd HH:mm:ss.fff") : ""));
                     sb.AppendLine("".PadLeft(70, '='));
                 }
                 if (this.DataSource.IsNotNullOrEmpty() && (Fields.Length == 0 || (Fields.Length > 0 && Fields.Contains("StackTrace")))) sb.AppendLine("数 据 源: " + this.DataSource);

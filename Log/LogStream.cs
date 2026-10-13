@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using XiaoFeng.Config;
 using XiaoFeng.Data;
@@ -43,17 +45,31 @@ namespace XiaoFeng.Log
         /// </summary>
         public string FilePath { get; set; }
         /// <summary>
-        /// 文件写流
+        /// 缓存大小
         /// </summary>
-        public StreamWriter Writer { get; set; }
+        public int BufferSize { get; set; } = 8192;
         /// <summary>
         /// 日志数据库
         /// </summary>
         public IDataHelper DataHelper { get; set; }
         /// <summary>
-        /// IO锁
+        /// 进程内文件锁集合
         /// </summary>
-        private static readonly object IOLock = new object();
+        private static readonly ConcurrentDictionary<string, object> FileLocks = new ConcurrentDictionary<string, object>();
+        /// <summary>
+        /// 数据库写入锁
+        /// </summary>
+        private static readonly object DbLock = new object();
+        /// <summary>
+        /// 跨进程文件锁集合
+        /// </summary>
+        private static readonly ConcurrentDictionary<string, Mutex> FileMutexes = new ConcurrentDictionary<string, Mutex>();
+        /// <summary>
+        /// 获取进程内文件锁
+        /// </summary>
+        /// <param name="filePath">文件路径</param>
+        /// <returns></returns>
+        private static object GetFileLock(string filePath) => FileLocks.GetOrAdd(GetMutexName(filePath), key => new object());
         /// <summary>
         /// 日志文件名
         /// </summary>
@@ -70,43 +86,96 @@ namespace XiaoFeng.Log
         /// </summary>
         /// <param name="logData">日志对象</param>
         /// <returns></returns>
-        public async Task WriteAsync(LogData logData)
+        public Task WriteAsync(LogData logData)
         {
-            if (this.FileName.StartsWith(DateTime.Now.ToString("yyyy-MM-dd")))
+            this.Write(logData);
+            return Task.CompletedTask;
+        }
+        /// <summary>
+        /// 写日志
+        /// </summary>
+        /// <param name="logData">日志对象</param>
+        private void Write(LogData logData)
+        {
+            var today = DateTime.Now.ToString("yyyy-MM-dd");
+            if (this.FileName.StartsWith(today))
             {
-                if (this.Writer.BaseStream.Length > this.LoggerConfig.FileLength)
+                var fileInfo = new FileInfo(this.FilePath);
+                if (fileInfo.Exists)
                 {
-                    this.FilePath = this.FilePath.ReplacePattern(@"(_(?<a>\d+))?\.log$", m =>
+                    if (this.LoggerConfig.FileLength > 0 && fileInfo.Length >= this.LoggerConfig.FileLength)
                     {
-                        var val = m.Groups["a"]?.Value.ToCast<int>();
-                        return $"_{++val}.log";
-                    });
-                    this.Init();
+                        //分卷:循环滚动直到找到未超限的文件,避免只滚动一档导致分卷文件无限增长
+                        this.FilePath = RollFileName(this.FilePath);
+                        fileInfo = new FileInfo(this.FilePath);
+                        while (this.LoggerConfig.FileLength > 0 && fileInfo.Exists && fileInfo.Length >= this.LoggerConfig.FileLength)
+                        {
+                            this.FilePath = RollFileName(this.FilePath);
+                            fileInfo = new FileInfo(this.FilePath);
+                        }
+                        this.Init();
+                    }
                 }
+                else
+                    this.Init();
             }
             else
             {
-                this.FilePath = this.FilePath.ReplacePattern(@"(\d+\-\d+\-\d+(_\d+)?)(\.log)$", DateTime.Now.ToString("yyyy-MM-dd") + ".log");
-                this.ClearLog().ConfigureAwait(false).GetAwaiter();
+                this.FilePath = this.FilePath.ReplacePattern(@"(\d+\-\d+\-\d+(_\d+)?)(\.log)$", today + ".log");
+                this.ClearLog();
                 this.Init();
             }
-            if (this.Writer != null && this.Writer.BaseStream.CanWrite)
+            if (this.LoggerConfig.StorageType.HasFlag(StorageType.File) && this.FilePath.IsNotNullOrEmpty())
             {
-                if (!this.LoggerConfig.FileFlags.HasFlag(logData.LogType) && this.LoggerConfig.FileFlags != 0) return;
-                lock (IOLock)
+                //文件标志不匹配时只跳过文件写入,不能 return,否则会跳过后面的数据库写入
+                if (this.LoggerConfig.FileFlags == 0 || this.LoggerConfig.FileFlags.HasFlag(logData.LogType))
                 {
-                    this.Writer.WriteAsync(logData.ToString(LoggerConfig)).ConfigureAwait(false).GetAwaiter().GetResult();
+                    var mutex = GetFileMutex(this.FilePath);
+                    var hasHandle = false;
+                    try
+                    {
+                        try { hasHandle = mutex.WaitOne(); }
+                        catch (AbandonedMutexException) { hasHandle = true; }
+                        lock (GetFileLock(this.FilePath))
+                        {
+                            //跨进程安全:使用 FileMode.Append 原子追加到文件末尾,避免多进程并发写互相覆盖导致日志丢失
+                            using (var fs = new FileStream(this.FilePath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite, BufferSize))
+                            {
+                                var bytes = Encoding.UTF8.GetBytes(logData.ToString(LoggerConfig));
+                                fs.Write(bytes, 0, bytes.Length);
+                                fs.Flush();
+                            }
+                        }
+                    }
+                    finally
+                    {
+                        if (hasHandle) mutex.ReleaseMutex();
+                    }
                 }
             }
             if (this.DataHelper != null)
             {
-                if (!this.LoggerConfig.DataBaseFlags.HasFlag(logData.LogType) && this.LoggerConfig.DataBaseFlags != 0) return;
-                lock (IOLock)
+                if (this.LoggerConfig.DataBaseFlags == 0 || this.LoggerConfig.DataBaseFlags.HasFlag(logData.LogType))
                 {
-                    this.DataHelper.ExecuteNonQuery(logData.ToSqlString(LoggerConfig));
+                    lock (DbLock)
+                    {
+                        this.DataHelper.ExecuteNonQuery(logData.ToSqlString(LoggerConfig));
+                    }
                 }
             }
-            await Task.CompletedTask;
+        }
+        /// <summary>
+        /// 获取下一个分卷文件名 如 a.log -> a_1.log, a_1.log -> a_2.log
+        /// </summary>
+        /// <param name="filePath">当前文件路径</param>
+        /// <returns></returns>
+        private static string RollFileName(string filePath)
+        {
+            return filePath.ReplacePattern(@"(_(?<a>\d+))?\.log$", m =>
+            {
+                var val = m.Groups["a"]?.Value.ToCast<int>();
+                return $"_{++val}.log";
+            });
         }
         /// <summary>
         /// 初始化
@@ -123,23 +192,64 @@ namespace XiaoFeng.Log
             if (!this.LoggerConfig.StorageType.HasFlag(StorageType.File)) return;
             if (this.FilePath.IsNullOrEmpty()) return;
             FileHelper.CreateDirectory(this.FilePath.GetDirectoryName());
-            lock (IOLock)
+            //跨进程安全:确保文件存在,并在文件为空时写入文件头
+            var mutex = GetFileMutex(this.FilePath);
+            var hasHandle = false;
+            try
             {
-                if (this.Writer != null)
+                try { hasHandle = mutex.WaitOne(); }
+                catch (AbandonedMutexException) { hasHandle = true; }
+                using (var fs = new FileStream(this.FilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite, BufferSize))
                 {
-                    this.Writer.FlushAsync().ConfigureAwait(false).GetAwaiter().GetResult();
-                    this.Writer.Close();
-                    this.Writer.Dispose();
+                    if (fs.Length < 10)
+                    {
+                        var head = Encoding.UTF8.GetBytes(GetFileHead);
+                        fs.Write(head, 0, head.Length);
+                        fs.Flush();
+                    }
                 }
-                this.Writer = new StreamWriter(new FileStream(this.FilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite, 8192, FileOptions.Asynchronous), Encoding.UTF8)
-                {
-                    AutoFlush = true
-                };
-                if (this.Writer.BaseStream.Length < 10)
-                {
-                    this.Writer.WriteAsync(GetFileHead).ConfigureAwait(false).GetAwaiter().GetResult();
-                }
-                this.Writer.BaseStream.Seek(0, SeekOrigin.End);
+            }
+            finally
+            {
+                if (hasHandle) mutex.ReleaseMutex();
+            }
+        }
+        /// <summary>
+        /// 获取文件锁
+        /// </summary>
+        /// <param name="filePath">文件路径</param>
+        /// <returns></returns>
+        private static Mutex GetFileMutex(string filePath)
+        {
+            var name = GetMutexName(filePath);
+            return FileMutexes.GetOrAdd(name, key => CreateMutex(key));
+        }
+        /// <summary>
+        /// 创建跨进程互斥锁,优先使用全局命名空间(Global)以支持跨会话进程互斥,权限不足时降级为当前会话
+        /// </summary>
+        /// <param name="name">锁名称</param>
+        /// <returns></returns>
+        private static Mutex CreateMutex(string name)
+        {
+            try
+            {
+                return new Mutex(false, "Global\\" + name);
+            }
+            catch (UnauthorizedAccessException) { }
+            catch (System.Security.SecurityException) { }
+            return new Mutex(false, name);
+        }
+        /// <summary>
+        /// 获取文件锁名称
+        /// </summary>
+        /// <param name="filePath">文件路径</param>
+        /// <returns></returns>
+        private static string GetMutexName(string filePath)
+        {
+            using (var md5 = System.Security.Cryptography.MD5.Create())
+            {
+                var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(filePath.ToUpper()));
+                return "XiaoFeng.LogStream." + BitConverter.ToString(hash).Replace("-", string.Empty);
             }
         }
         #region 获取文件头
@@ -148,9 +258,9 @@ namespace XiaoFeng.Log
         /// </summary>
         /// <returns></returns>
         private static string GetFileHead => @"{0}
-                    App Log  v4.5
+                    App Log  v4.6
 {0}
-            Copyright: FayElf(www.eelf.cn)
+            Copyright: EELF.CN All rights Reserved.
             Author      : jacky
             QQ     : 7092734
             Email       : jacky@eelf.cn
@@ -180,10 +290,20 @@ namespace XiaoFeng.Log
                         try
                         {
                             var file = a.GetMatch(@"(?<a>\d{4}-\d{2}-\d{2})(_\d+)?\.log$");
-                            if (file.IsNullOrEmpty()) return;
+                            if (file.IsNullOrEmpty())
+                            {
+                                var f = new FileInfo(a);
+                                if (DateTime.Now.Subtract(f.LastWriteTime).TotalDays>=days)
+                                {
+                                    f.Delete();
+                                    LogHelper.Info("清理日志文件成功,文件路径:" + a);
+                                }
+                                return;
+                            }
                             if (DateTime.Now.Subtract(file.ToDateTime()).TotalDays >= days)
                             {
                                 File.Delete(a);
+                                LogHelper.Info("清理日志文件成功,文件路径:" + a);
                             }
                         }
                         catch (Exception ex)
