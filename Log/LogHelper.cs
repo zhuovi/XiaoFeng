@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using XiaoFeng.Config;
 using XiaoFeng.Log;
 using XiaoFeng.Threading;
 /****************************************************************
@@ -174,6 +177,58 @@ namespace XiaoFeng
 
         #region 调试日志
         /// <summary>
+        /// 创建跨进程互斥锁,优先使用全局命名空间(Global)以支持跨会话进程互斥,权限不足时降级为当前会话
+        /// </summary>
+        /// <param name="name">锁名称</param>
+        /// <returns></returns>
+        private static Mutex CreateMutex(string name)
+        {
+            try
+            {
+                return new Mutex(false, "Global\\" + name);
+            }
+            catch (UnauthorizedAccessException) { }
+            catch (System.Security.SecurityException) { }
+            return new Mutex(false, name);
+        }
+        /// <summary>
+        /// 跨进程文件锁集合
+        /// </summary>
+        private static readonly ConcurrentDictionary<string, Mutex> FileMutexes = new ConcurrentDictionary<string, Mutex>();
+        /// <summary>
+        /// 进程内文件锁集合
+        /// </summary>
+        private static readonly ConcurrentDictionary<string, object> FileLocks = new ConcurrentDictionary<string, object>();
+        /// <summary>
+        /// 获取进程内文件锁
+        /// </summary>
+        /// <param name="filePath">文件路径</param>
+        /// <returns></returns>
+        private static object GetFileLock(string filePath) => FileLocks.GetOrAdd(GetMutexName(filePath), key => new object());
+        /// <summary>
+        /// 获取文件锁
+        /// </summary>
+        /// <param name="filePath">文件路径</param>
+        /// <returns></returns>
+        private static Mutex GetFileMutex(string filePath)
+        {
+            var name = GetMutexName(filePath);
+            return FileMutexes.GetOrAdd(name, key => CreateMutex(key));
+        }
+        /// <summary>
+        /// 获取文件锁名称
+        /// </summary>
+        /// <param name="filePath">文件路径</param>
+        /// <returns></returns>
+        private static string GetMutexName(string filePath)
+        {
+            using (var md5 = System.Security.Cryptography.MD5.Create())
+            {
+                var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(filePath.ToUpper()));
+                return "XiaoFeng.LogStream." + BitConverter.ToString(hash).Replace("-", string.Empty);
+            }
+        }
+        /// <summary>
         /// 写调试日志
         /// </summary>
         /// <param name="message">日志信息</param>
@@ -190,16 +245,26 @@ namespace XiaoFeng
             if (path.IsNullOrEmpty()) path = "debug.log";
             path = Path.GetFullPath("debug.log");
             var msg = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fffffff}] - {message}";
-            using (var fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite, 4096, true))
+            var mutex = GetFileMutex(path);
+            var hasHandle = false;
+            try
             {
-                fs.Seek(0, SeekOrigin.End);
-                if (fs.Position > 0)
+                try { hasHandle = mutex.WaitOne(); }
+                catch (AbandonedMutexException) { hasHandle = true; }
+                lock (GetFileLock(path))
                 {
-                    var brs = Encoding.UTF8.GetBytes("\r\n");
-                    fs.Write(brs, 0, brs.Length);
+                    //跨进程安全:使用 FileMode.Append 原子追加到文件末尾,避免多进程并发写互相覆盖导致日志丢失
+                    using (var fs = new FileStream(path, FileMode.Append, FileAccess.Write, FileShare.ReadWrite, 8192))
+                    {
+                        var bytes = Encoding.UTF8.GetBytes(msg);
+                        fs.Write(bytes, 0, bytes.Length);
+                        fs.Flush();
+                    }
                 }
-                var bytes = Encoding.UTF8.GetBytes(msg);
-                fs.Write(bytes, 0, bytes.Length);
+            }
+            finally
+            {
+                if (hasHandle) mutex.ReleaseMutex();
             }
             lock (lockObject)
             {

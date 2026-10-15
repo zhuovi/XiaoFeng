@@ -159,7 +159,9 @@ namespace XiaoFeng.Log
                 {
                     lock (DbLock)
                     {
-                        this.DataHelper.ExecuteNonQuery(logData.ToSqlString(LoggerConfig));
+                        var sqlString = logData.ToSqlString(LoggerConfig);
+                        if (sqlString.IsNotNullOrEmpty())
+                            this.DataHelper.ExecuteNonQuery(sqlString);
                     }
                 }
             }
