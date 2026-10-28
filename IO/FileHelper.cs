@@ -454,7 +454,10 @@ MIDI (mid)，文件头：4D546864
             if (newName.IsNullOrEmpty()) return false;
             var _source = GetFullPathFunction(source);
             if (!File.Exists(_source)) return false;
-            return MoveFile(source, source.ReplacePattern(DirectorySeparatorChar + @"[\s\S]+$", DirectorySeparatorChar + newName));
+            var file = new FileInfo(_source);
+            if (!file.Exists) return false;
+            var dest = file.DirectoryName.Combine(newName);
+            return MoveFile(source, dest);
         }
         #endregion
 

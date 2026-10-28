@@ -233,11 +233,18 @@ namespace XiaoFeng.Certificate
                 switch (oid)
                 {
                     case "2.5.29.14":
-                        info.SubjectKeyIdentifier = SM2Encryption.ToHex(valueNode.Content);
+                        /*扩展值为OCTET STRING 其内容才是密钥标识*/
+                        info.SubjectKeyIdentifier = SM2Encryption.ToHex(value.Content.Length > 0 ? value.Content : valueNode.Content);
                         break;
                     case "2.5.29.35":
                         if (value.Count > 0)
-                            info.AuthorityKeyIdentifier = SM2Encryption.ToHex(value[0].Content);
+                        {
+                            /*keyIdentifier为[0]隐式标签 兼容显式标签的旧数据*/
+                            var keyIdentifier = value[0].Content;
+                            if (keyIdentifier.Length > 2 && keyIdentifier[0] == DerWriter.TagOctetString)
+                                keyIdentifier = DerReader.Parse(keyIdentifier).Content;
+                            info.AuthorityKeyIdentifier = SM2Encryption.ToHex(keyIdentifier);
+                        }
                         break;
                     case "2.5.29.15":
                         info.KeyUsage = ParseKeyUsage(DerReader.Parse(valueNode.Content));

@@ -118,8 +118,9 @@ namespace XiaoFeng.Certificate
             var signatureOid = CertificateKey.GetSignatureAlgorithmOid(this.IssuerKey.AlgorithmType, this.DigestAlgorithm);
             var spki = this.SubjectKey.ToSubjectPublicKeyInfo();
             var subjectKeyIdentifier = ComputeKeyIdentifier(spki);
+            /*颁发者密钥标识 始终取签发者公钥的密钥标识 自签名证书签发者即自身 中间CA证书不能指向自身否则证书链断裂*/
             if (this.AuthorityKeyIdentifier == null || this.AuthorityKeyIdentifier.Length == 0)
-                this.AuthorityKeyIdentifier = this.IsCA ? subjectKeyIdentifier : ComputeKeyIdentifier(this.IssuerKey.ToSubjectPublicKeyInfo());
+                this.AuthorityKeyIdentifier = ComputeKeyIdentifier(this.IssuerKey.ToSubjectPublicKeyInfo());
 
             var items = new List<byte[]>
             {
@@ -155,16 +156,20 @@ namespace XiaoFeng.Certificate
             /*密钥用法*/
             if (this.KeyUsage != KeyUsageFlag.None)
                 list.Add(BuildExtension("2.5.29.15", true, EncodeKeyUsage(this.KeyUsage)));
-            /*基本约束*/
-            var basicConstraints = this.PathLengthConstraint >= 0
-                ? DerWriter.Sequence(DerWriter.Boolean(this.IsCA), DerWriter.Integer(this.PathLengthConstraint))
-                : DerWriter.Sequence(DerWriter.Boolean(this.IsCA));
+            /*基本约束 cA为FALSE时按DER规则省略默认值 路径长度限制仅对CA证书有效*/
+            byte[] basicConstraints;
+            if (this.IsCA)
+                basicConstraints = this.PathLengthConstraint >= 0
+                    ? DerWriter.Sequence(DerWriter.Boolean(true), DerWriter.Integer(this.PathLengthConstraint))
+                    : DerWriter.Sequence(DerWriter.Boolean(true));
+            else
+                basicConstraints = DerWriter.Sequence();
             list.Add(BuildExtension("2.5.29.19", true, basicConstraints));
             /*主体密钥标识*/
             list.Add(BuildExtension("2.5.29.14", false, DerWriter.OctetString(subjectKeyIdentifier)));
-            /*颁发者密钥标识*/
+            /*颁发者密钥标识 keyIdentifier为[0]隐式标签 内容直接为密钥标识字节 不能再包一层OCTET STRING*/
             if (this.AuthorityKeyIdentifier != null && this.AuthorityKeyIdentifier.Length > 0)
-                list.Add(BuildExtension("2.5.29.35", false, DerWriter.Sequence(DerWriter.Context(0, DerWriter.OctetString(this.AuthorityKeyIdentifier), false))));
+                list.Add(BuildExtension("2.5.29.35", false, DerWriter.Sequence(DerWriter.Context(0, this.AuthorityKeyIdentifier, false))));
             /*扩展密钥用法*/
             if (this.ExtendedKeyUsage != null && this.ExtendedKeyUsage.Count > 0)
             {
